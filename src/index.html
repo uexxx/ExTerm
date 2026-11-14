@@ -30,26 +30,27 @@
   <div class="quote"><span id="qSym">BTC-USD</span><b id="qPrice">–</b><span id="qChg" class="chg">–</span></div>
   <div class="spacer"></div>
   <div class="pill" id="srcPill" title="Live data source status"><i class="dot" id="srcDot"></i><span id="srcText">connecting…</span></div>
-  <div class="eqbox"><span class="lbl">Paper equity</span><b id="eqVal">–</b><span id="eqPnl" class="chg"></span></div>
+  <div class="eqbox"><span class="lbl" data-i18n="hdr.equity">Paper equity</span><b id="eqVal">–</b><span id="eqPnl" class="chg"></span></div>
+  <button id="btnLang" class="ghost lang-pill" type="button" title="Language" data-i18n-title="lang.label">🌐 EN</button>
   <button id="btnTheme" class="ghost" title="Change theme">🎨</button>
   <button id="btnPalette" class="ghost kbd" title="Command palette (Ctrl/⌘+K)">⌘K</button>
 </header>
 <div id="banner" class="banner" hidden></div>
 <div id="ticker" class="ticker"><div class="track" id="tickerTrack"></div></div>
 <nav id="nav">
-  <button data-tab="markets" class="on"><span class="ni">📈</span>Markets</button>
-  <button data-tab="heat"><span class="ni">🟩</span>Heat Map</button>
-  <button data-tab="bots"><span class="ni">🤖</span>Bots &amp; Backtest</button>
-  <button data-tab="port"><span class="ni">💼</span>Portfolio<span class="nbadge" id="pfBadge" hidden></span></button>
+  <button data-tab="markets" class="on"><span class="ni">📈</span><span data-i18n="nav.markets">Markets</span></button>
+  <button data-tab="heat"><span class="ni">🟩</span><span data-i18n="nav.heat">Heat Map</span></button>
+  <button data-tab="bots"><span class="ni">🤖</span><span data-i18n="nav.bots">Bots &amp; Backtest</span></button>
+  <button data-tab="port"><span class="ni">💼</span><span data-i18n="nav.port">Portfolio</span><span class="nbadge" id="pfBadge" hidden></span></button>
   <button data-tab="whales"><span class="ni">🛰️</span><span id="navTrack">Wallet Tracker</span></button>
-  <button data-tab="social"><span class="ni">📣</span>Social</button>
-  <button data-tab="workspace"><span class="ni">🗔</span>Workspace</button>
-  <button data-tab="journal"><span class="ni">📓</span>Journal</button>
-  <button data-tab="challenge"><span class="ni">🎮</span>Challenges</button>
-  <button data-tab="ai"><span class="ni">✨</span>AI Copilot</button>
+  <button data-tab="social"><span class="ni">📣</span><span data-i18n="nav.social">Social</span></button>
+  <button data-tab="workspace"><span class="ni">🗔</span><span data-i18n="nav.workspace">Workspace</span></button>
+  <button data-tab="journal"><span class="ni">📓</span><span data-i18n="nav.journal">Journal</span></button>
+  <button data-tab="challenge"><span class="ni">🎮</span><span data-i18n="nav.challenge">Challenges</span></button>
+  <button data-tab="ai"><span class="ni">✨</span><span data-i18n="nav.ai">AI Copilot</span></button>
   <button data-tab="grok"><span class="ni">⚡</span>Grok</button>
-  <button data-tab="lab"><span class="ni">🧪</span>Lab</button>
-  <button data-tab="set"><span class="ni">⚙️</span>Settings</button>
+  <button data-tab="lab"><span class="ni">🧪</span><span data-i18n="nav.lab">Lab</span></button>
+  <button data-tab="set"><span class="ni">⚙️</span><span data-i18n="nav.set">Settings</span></button>
   <span class="navsp"></span><span class="note" id="navMode"></span>
 </nav>
 <main>

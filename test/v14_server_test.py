@@ -17,13 +17,13 @@ def fresh(rel, now=None):
     def fetch(url): seen.append(url); return rel() if callable(rel) else rel
     return serve.update_info(fetch=fetch, now=now or time.time()), seen
 
-ok("version is 15.0", serve.VERSION == "15.0")
-r, seen = fresh({"tag_name": "v15.2", "html_url": REL + "v15.2", "body": "Faster radar\n\n- fixes"})
-ok("a newer release is reported", r["newer"] is True and r["latest"] == "15.2" and r["current"] == "15.0" and r["url"] == REL + "v15.2", r)
+ok("version is 15.x", re.match(r"^15\.\d+$", serve.VERSION) is not None)
+r, seen = fresh({"tag_name": "v15.9", "html_url": REL + "v15.9", "body": "Faster radar\n\n- fixes"})
+ok("a newer release is reported", r["newer"] is True and r["latest"] == "15.9" and r["current"] == serve.VERSION and r["url"] == REL + "v15.9", r)
 ok("it asks only the fixed GitHub API URL", seen == ["https://api.github.com/repos/%s/releases/latest" % serve.UPDATE_REPO], seen)
 ok("notes are flattened to one plain line", r["notes"] == "Faster radar - fixes", r["notes"])
 r, _ = fresh({"tag_name": "13.9", "html_url": REL + "13.9"}); ok("an older release is not newer", r["newer"] is False and r["latest"] == "13.9")
-r, _ = fresh({"tag_name": "v15.0", "html_url": REL + "v15.0"}); ok("the same version is not newer", r["newer"] is False)
+r, _ = fresh({"tag_name": "v" + serve.VERSION, "html_url": REL + "v" + serve.VERSION}); ok("the same version is not newer", r["newer"] is False)
 r, _ = fresh({"tag_name": "v15.10", "html_url": REL + "v15.10"}); ok("15.10 counts as newer than 15.0 (numeric, not text)", r["newer"] is True)
 for bad_url in ["https://evil.example/releases/x", "javascript:alert(1)", "https://github.com/someone-else/novaterm/releases/x", "http://github.com/%s/releases/x" % serve.UPDATE_REPO]:
     r, _ = fresh({"tag_name": "v99", "html_url": bad_url})
@@ -59,10 +59,10 @@ def req(path, token):
     except urllib.error.HTTPError as e: return e.code, e.read()
 proc = start(); TOKEN = re.search(r'name="nt-token" content="([^"]+)"', urllib.request.urlopen(BASE + "/").read().decode()).group(1)
 st, body = req("/api/caps", TOKEN); caps = json.loads(body)
-ok("caps report v15 and the update check", caps["version"] == "15.0" and caps["update"] is True and caps["state"] is True, caps)
+ok("caps report v15 and the update check", caps["version"] == serve.VERSION and caps["update"] is True and caps["state"] is True, caps)
 ok("/api/update needs the session token", req("/api/update", None)[0] == 403 and req("/api/update", "wrong")[0] == 403)
 st, body = req("/api/update", TOKEN); j = json.loads(body)
-ok("/api/update answers with the current version (offline here: nothing newer)", st == 200 and j["current"] == "15.0" and j["newer"] is False, body[:200])
+ok("/api/update answers with the current version (offline here: nothing newer)", st == 200 and j["current"] == serve.VERSION and j["newer"] is False, body[:200])
 def post(path):
     try: return urllib.request.urlopen(urllib.request.Request(BASE + path, data=b"{}", method="POST", headers={"X-ExTerm": TOKEN, "Content-Type": "application/json"}), timeout=10).status
     except urllib.error.HTTPError as e: return e.code

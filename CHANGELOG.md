@@ -2,6 +2,30 @@
 
 ExTerm (formerly NovaTerm) is paper trading only in every version: nothing signs or sends a real order.
 
+## v15.2 — ExTerm — 14 Nov 2026
+
+### First-launch language gate + i18n engine
+- New `src/i18n.js`: the first screen on a fresh install is an Obsidian & Gold **Choose Your Language** modal (fuzzy search with typo tolerance, flag + native-name cards, browser language pre-selected). 32 languages translate the app shell (nav, header, gate, workstation); every other ISO-639-1 locale is selectable with English text. Arabic, Hebrew, Persian and Urdu set `dir="rtl"`. The choice is saved with your settings; the 🌐 pill and `Ctrl+K` switch it live (`data-i18n` attributes + `I18N.t(key)`). The first-60-seconds walkthrough now waits for the gate.
+
+### 44 workstation upgrades behind progressive disclosure (`src/v152core.js`, `src/v152.js`)
+- Default screen: only the 🌐 pill, a 🧭 Workstation button and the bar-timer ring are new. Everything else is in 30 collapsed drawer sections (rendered on open), `Ctrl+K`, `H` (HUD clean mode) and opt-in overlays.
+- Charting: bar-timer ring, sync groups A/B/C (crosshair, timeframe, symbol) over BroadcastChannel, draggable TP1–TP3 ladder with break-even after TP1, FVG / order-block / engulfing / sweep labels (off by default), Ctrl-hold magnet snap, future FOMC / CPI / earnings / custom markers, HUD clean mode with a Candle X watermark, higher-timeframe PiP on sub-minute charts.
+- Order flow & options: iceberg / spoof wall detector, CVD divergence, click-to-anchor VWAP with ±1σ / ±2σ bands, Asia / London / NY session profiles, zero-gamma + gamma flip + call / put walls, unusual options filter with watchlist badges, multi-leg payoff builder with breakevens and theta curve.
+- Markets: market-swap memory (timeframe, indicators, risk %), formula scanner (recursive-descent parser, no `eval`) saved as tabs, DEX safety strip, smart-money leaderboard + 2-wallet / 5-minute confluence alerts, bubble heat map net-inflow mode, watchlist sparklines + relative strength + plan notes, DEX fee / slippage presets.
+- Quant: no-code composer → Pine Script v5 / JSON, portfolio backtester, sensitivity heatmap with plateau verdict, Fix Weak Gate for the 17-test lab, Apex / Topstep / FTMO / custom prop rulebooks, replay speed keys 1 / 2 / 5 / 0, Blind Drill, MFE / MAE + auto-tags, 4-way strategy battle.
+- Grok / copilot / World: plain-English rule compiler, chart-range copilot query, devil's advocate A–F grade, World impact tags with trade-impact switch, Discord / Telegram cards with a chart snapshot, daemon health strip, pre-market brief + EOD recap, dry-run shadow mode.
+- Platform: ECDSA P-256 signed `.exterm` share codes with signer fingerprints and whitelisted import, sub-minute memory governor, theme token editor, `Ctrl+K` calculator, cache manager, in-app build-integrity check.
+
+### Launcher
+- `GET /api/health` (uptime, RAM cache hit rate, bot heartbeats) and `GET /api/integrity` (exterm.html + serve.py vs `SHA256SUMS.txt`, relative names only), both behind the session token.
+- `/api/notify` accepts an optional PNG chart snapshot (magic bytes checked, 400 KB cap) and sends it as a Telegram photo / Discord embed image through the same host allow-list.
+
+### Docs
+- Fresh 1440×900 headless-Chrome screenshots: first-launch language modal, hero chart (TP ladder, anchored VWAP, event markers), DEX mode (simulated demo pools), Grok tab and World tab (demo headlines).
+
+### Tests
+- `test/v152.test.js` (77 unit checks incl. hostile input), `test/v152_server_test.py` (13), `test/v152_e2e.js` (44 headless-Chrome checks: gate, RTL, persistence, drawer, overlays, HUD, palette, share codes, integrity, replay, CSP).
+
 ## v15.1 — ExTerm — 13 Nov 2026
 
 ### Candle X brand
@@ -14,13 +38,13 @@ ExTerm (formerly NovaTerm) is paper trading only in every version: nothing signs
 ### Cross-feature bridges
 - **⚙ Auto-Setup** on Market Scanner rows, Launch Radar rows and bubble heat-map nodes (Shift+click), plus Alt+A and Ctrl+K: opens the chart, turns on Auto-Fibs and PDH / PDL, places preview Entry / SL / TP lines sized to your risk %, and shows the 3-agent Copilot risk summary.
 - **MACRO / BOT pins** on the candle timeline: World Monitor CRITICAL headlines and bot entries / exits with their autopsy reason, with escaped hover tooltips.
-- **Whale and smart-money markers** on 1s–30s candles from large prints (crypto and DEX) and tracked Solana wallets, plus glowing watchlist badges, mutable WebAudio chimes and opt-in Discord / Telegram pushes through the launcher.
+- **Whale and smart-money markers** on 1s–30s candles from large prints (crypto and DEX) and tracked on-chain wallets, plus glowing watchlist badges, mutable WebAudio chimes and opt-in Discord / Telegram pushes through the launcher.
 - **Strategy → prop challenge runner**: any backtestable strategy inside the $50K / $100K Prop-Firm rules or a Black Swan event. **Regime lock** (opt-in): idle in-tab bots switch to the Market Regime Detector's pick; a bot with an open position is never touched.
 
 ### Workspaces, themes and trader tools
-- One-click **workspace presets** in the nav (Alt+1…4): Scalper, Solana Trench, Quant Lab, Macro War Room.
+- One-click **workspace presets** in the nav (Alt+1…4): Scalper, On-chain Trench, Quant Lab, Macro War Room.
 - New flagship **Obsidian & Gold** theme. Every new panel, pill, badge, modal and canvas overlay uses the semantic theme tokens; tests check contrast in every theme.
-- **% risk sizing pill** on the Entry / SL bracket with **Apply Size**; **killzone countdown** (Asia, London, NY Open, Power Hour in New York time); **benchmark ghost line** (BTC, SPY or SOL; Alt+G); **Share Setup PNG** and **Daily Recap PNG**; **? cheat sheet** listing every shortcut; **cross-asset correlation matrix** (BTC, SOL, SPY, NVDA, DXY via UUP, GOLD via GLD); **Copy / Import Setup JSON** (strictly validated).
+- **% risk sizing pill** on the Entry / SL bracket with **Apply Size**; **killzone countdown** (Asia, London, NY Open, Power Hour in New York time); **benchmark ghost line** (BTC, SPY and other markets; Alt+G); **Share Setup PNG** and **Daily Recap PNG**; **? cheat sheet** listing every shortcut; **cross-asset correlation matrix** (BTC, SPY, NVDA, DXY via UUP, GOLD via GLD and more); **Copy / Import Setup JSON** (strictly validated).
 - Pine Script buttons now read **Export Pine Script v5** and **Import Pine Script v5 compatible**. No third-party platform names or affiliation claims remain in the app.
 
 ## v15 — ExTerm, phase 5 — 13 Nov 2026
@@ -31,7 +55,7 @@ ExTerm (formerly NovaTerm) is paper trading only in every version: nothing signs
 ### 🏛 Pro Desk: a new tab with nine institutional panels
 - **DOM ladder + order flow:** a depth-of-market ladder for crypto pairs. Click a bid to buy and an ask to sell; the resting side of the market places a **limit**, through the market arms a **stop**, and working orders are tagged on their rows. Orders can go to the main account or any sub-wallet. Next to it: **CVD** (cumulative volume delta from the tick rule on live trades) and **footprint** bars (bid × ask per price level for the last 4 minutes, POC and 3:1 diagonal imbalances).
 - **Options:** the Yahoo options chain with expiry picker, **max pain**, **dealer GEX** by strike (call wall, put wall, gamma flip) and **paper options** (buy calls / puts at the ask, mark-to-market P&L, isolated options cash). When Yahoo refuses the request (it often wants a cookie crumb) a Black-Scholes model chain is shown and clearly labelled MODEL.
-- **Ratio & grid:** synthetic **ratio charts** for any two markets (SOL/ETH, NVDA/AMD, BTC/GOLD via GLD), a 4-chart grid with a shared crosshair, and **pop-out windows** for a second monitor that follow the main window's symbol, timeframe and crosshair over a validated `BroadcastChannel`.
+- **Ratio & grid:** synthetic **ratio charts** for any two markets (ETH/BTC, NVDA/AMD, BTC/GOLD via GLD), a 4-chart grid with a shared crosshair, and **pop-out windows** for a second monitor that follow the main window's symbol, timeframe and crosshair over a validated `BroadcastChannel`.
 - **Risk & wallets:** an opt-in **cross-bot correlation guard** blocks new entries (manual, bots, sub-wallets; never backtests) that are too correlated with what you already hold, with a live correlation matrix and a block log. **Isolated paper sub-wallets** are carved out of main paper cash. A **market regime** read is shown for the open chart.
 - **Tape & profiler:** a **Time & Sales whale tape** (prints above your $ threshold, with aggressor side), a **smart-money wallet profiler** (FIFO round trips, win rate, realised P&L, holding time, trading style, best tokens) and a 1080×1080 **PNG flex card** watermarked **@exterm.labs**.
 - **Chart intel:** a **multi-timeframe trend matrix** (15m / 1h / 4h / 1d). Opt-in overlays on the Markets chart: **auto-Fibonacci**, **PDH / PDL / PDC**, **volume profile** (VPVR with POC and value area), **FOMC (2026) and Form 4 markers**, **extended-hours shading** for stocks and an MTF HUD.
@@ -46,7 +70,7 @@ ExTerm (formerly NovaTerm) is paper trading only in every version: nothing signs
 ## v15 — ExTerm, phase 4 — 13 Nov 2026
 
 ### Crisp 1s / 5s / 15s candles
-- Every sub-minute bar now **opens at the prior bar's close**, whether it was built from REST trades, live Coinbase / Kraken / Binance WebSocket trades, the launcher's stock tick buffer or simulated data, so high-liquidity charts (BTC, ETH, SOL, DOGE, NVDA, SPY) no longer show artificial micro-gaps. 1m and above keep the real first-trade open, like TradingView.
+- Every sub-minute bar now **opens at the prior bar's close**, whether it was built from REST trades, live Coinbase / Kraken / Binance WebSocket trades, the launcher's stock tick buffer or simulated data, so high-liquidity charts (BTC, ETH, NVDA, SPY) no longer show artificial micro-gaps. 1m and above keep the real first-trade open, like TradingView.
 - Candle bodies are pixel-snapped, centred on the wick and never thinner than 2 px (3 px when zoomed in), so flat ticks draw as clean bars instead of scattered dashes.
 
 ### 🫧 Dense bubble heat maps with buy-pressure windows
@@ -80,14 +104,14 @@ ExTerm (formerly NovaTerm) is paper trading only in every version: nothing signs
 - The launcher polls World Monitor's key-free public news digest (`api.worldmonitor.app`, `list-feed-digest?public=1`) every 3 minutes into RAM. Headlines get **CRITICAL**, **HIGH** or **MACRO** badges in the Grok tab and in a compact strip under Lab → News sentiment. A fresh CRITICAL warns the Copilot, can push to your phone, and (opt-in) **pauses new bot entries for an hour** and/or **tightens bot stops to 1%**. Stops are never loosened.
 
 ### 🧠 3-agent AI Quant Copilot
-- `desk SOL 1h`: a Technical / Order-Flow Analyst, an On-Chain / Insider / Macro Intelligence agent and a Chief Risk Officer (1% risk sizing, vetoes on CRITICAL news, half size on serious behavioral leaks) with action cards: **Plot Levels on Chart**, **Run 17-Test Backtest**, **Place Paper Order with SL/TP**, **Send Setup to Grok Tab**.
+- `desk BTC 1h`: a Technical / Order-Flow Analyst, an On-Chain / Insider / Macro Intelligence agent and a Chief Risk Officer (1% risk sizing, vetoes on CRITICAL news, half size on serious behavioral leaks) with action cards: **Plot Levels on Chart**, **Run 17-Test Backtest**, **Place Paper Order with SL/TP**, **Send Setup to Grok Tab**.
 - `show my leaks`: the **Behavioral Leak & Mistake Detector** checks your last 10 closed journal trades for revenge entries, missing stops, size spikes, letting losers run, cutting winners, overtrading, emotional tags and losing streaks.
 
 ### 📱 Mobile alerts
 - Discord / Telegram channels are entered in the Grok tab, kept in the vault, and synced to the launcher after every unlock. Discord messages are now rich embeds (red CRITICAL, violet bot trades, amber price alerts) with Markdown escaped and pings disabled.
 
 ### 40 new strategies with Pine Script v5 export
-- 10 each for **Crypto Spot/Perps**, **US Equities/Stocks**, **On-Chain Solana/DEX** and **Multi-Asset Quant/Scalping**. All are validated no-code specs: they backtest, run the Validation Lab, run as 24/7 launcher bots (parity-tested) and export to TradingView **Pine Script v5** from the Grok tab's strategy library.
+- 10 each for **Crypto Spot/Perps**, **US Equities/Stocks**, **On-Chain/DEX** and **Multi-Asset Quant/Scalping**. All are validated no-code specs: they backtest, run the Validation Lab, run as 24/7 launcher bots (parity-tested) and export to TradingView **Pine Script v5** from the Grok tab's strategy library.
 
 ## v15 — ExTerm, phase 2 — 13 Nov 2026
 
@@ -103,7 +127,7 @@ ExTerm (formerly NovaTerm) is paper trading only in every version: nothing signs
 - **Trade arrows overlay** on the backtest price chart: an entry and exit arrow per round trip joined by a dashed line, green for wins and red for losses, with the % result. Hover an arrow for prices, times, P&L and the strategy's reasons. Toggle above the chart.
 
 ### Challenges Hub
-- The replay challenge (daily, blind, pick a market) is unchanged. New modes: **Prop-Firm $50K / $100K Evaluation** (+8% target, 4% daily loss limit, 8% max trailing drawdown), **Black Swan Survival** (2020 COVID, 2022 FTX, 2008 financial crisis, modeled on each event's approximate key closes with simulated candles in between), **10-Min Scalping Sprint**, **Zero-Indicator Naked Price Action** and **Solana Trench Survival** (a simulated memecoin with fees, slippage and rugs).
+- The replay challenge (daily, blind, pick a market) is unchanged. New modes: **Prop-Firm $50K / $100K Evaluation** (+8% target, 4% daily loss limit, 8% max trailing drawdown), **Black Swan Survival** (2020 COVID, 2022 FTX, 2008 financial crisis, modeled on each event's approximate key closes with simulated candles in between), **10-Min Scalping Sprint**, **Zero-Indicator Naked Price Action** and **Trench Survival** (a simulated token with fees, slippage and rugs).
 - Every round tracks max drawdown (at candle lows) and win rate and earns a **discipline grade from A+ to F**. **📸 Flex Card** saves a shareable 1080×1080 image.
 
 ### Getting started
@@ -123,7 +147,7 @@ ExTerm (formerly NovaTerm) is paper trading only in every version: nothing signs
 
 ### Live data
 - **Launcher price feed**: a multithreaded RAM cache polls DexScreener (30 pools per call) and Yahoo Finance (`spark?symbols=…`) every 2 seconds. The page reads it with one token-gated `GET /api/feed` instead of many direct calls. Symbols used by background bots and price alerts stay watched with the browser closed, and alerts read the cached price first. `--no-feed` turns it off.
-- **WebSockets**: keepalive pings (Kraken, Solana/Helius `logsSubscribe`), a watchdog that reconnects a subscribed socket that goes quiet for 30 s (Coinbase, Kraken, Binance), jittered backoff and an instant reconnect when the network returns. New **Binance** source (spot USDT pairs; Settings → Source; not in Auto because Binance refuses US visitors).
+- **WebSockets**: keepalive pings (Kraken, on-chain RPC `logsSubscribe`), a watchdog that reconnects a subscribed socket that goes quiet for 30 s (Coinbase, Kraken, Binance), jittered backoff and an instant reconnect when the network returns. New **Binance** source (spot USDT pairs; Settings → Source; not in Auto because Binance refuses US visitors).
 - **Deep history**: charts load 300 candles fast, then backfill to 5,000 once in the background (exchanges that paginate). Live trades are folded into one bar update per symbol per second in a Web Worker, so bursts don't stall the page.
 
 ### Charts
@@ -163,7 +187,7 @@ ExTerm (formerly NovaTerm) is paper trading only in every version: nothing signs
 ## v13 — 9 Nov 2026
 
 ### On-chain
-- **Launch Radar** on the on-chain heat map: a live list of brand-new pairs (two pages of GeckoTerminal new pools) with an age ring, market cap, liquidity, 1h volume, 5m change, 5-minute buy/sell bar, socials, automatic safety grade (newest Solana tokens are scanned in the background, one every 4 s) and a momentum score. Sort by newest, momentum, volume or buy pressure; filter by liquidity and "has socials". New pairs pulse when they first appear.
+- **Launch Radar** on the on-chain heat map: a live list of brand-new pairs (two pages of GeckoTerminal new pools) with an age ring, market cap, liquidity, 1h volume, 5m change, 5-minute buy/sell bar, socials, automatic safety grade (newest tokens are scanned in the background, one every 4 s) and a momentum score. Sort by newest, momentum, volume or buy pressure; filter by liquidity and "has socials". New pairs pulse when they first appear.
 - **Bubble map** view: x = age, y = 5-minute buy pressure, size = 1h volume, colour = 1h change. Hover for stats, click to open the chart.
 - **Token card** (Markets, on-chain mode): website and socials (DexScreener pair info + GeckoTerminal token info; only `https` links, odd handles are rejected rather than repaired), description (escaped), holders and top-10 share, buy/sell pressure for 5m · 1h · 24h, buyers vs sellers, pool stats (price, market cap, FDV, liquidity and its share of market cap, volume, age), an automatic safety grade with its top three issues, and one-tap paper Buy $25 / $100 / $250 and Sell ½ / all.
 - **Launch forensics**: creator, snipers (first 3 blocks), bundled buys (3+ wallets in the launch block) and the share of supply they hold, from a token's first 25 transactions. "Track the earliest buyers" adds them to the wallet tracker.
@@ -209,8 +233,8 @@ ExTerm (formerly NovaTerm) is paper trading only in every version: nothing signs
 - Installable app (PWA) when served by the launcher; a lighter mobile layout; 3D tilt no longer applies to cards with buttons.
 
 ### Security
-- Fixed: exported backups contained the Solana Tracker key, Helius key, Solana RPC URL, X token and SEC contact (only the AI key was stripped). Every secret field is now removed, and imports are sanitised.
-- Fixed: the wallet leaderboard's fallback could throw an unhandled error when a bad Solana Tracker key was set.
+- Fixed: exported backups contained the wallet-tracker key, RPC key and URL, X token and SEC contact (only the AI key was stripped). Every secret field is now removed, and imports are sanitised.
+- Fixed: the wallet leaderboard's fallback could throw an unhandled error when a bad wallet-tracker key was set.
 - Fixed: Telegram / Discord messages could contain clickable links chosen by token creators (Markdown masked links, auto-linked URLs and domains). Links are now broken with a zero-width space, Discord Markdown is escaped and link previews are off.
 - Fixed: a malformed social handle could be "repaired" into a different real-looking link; invalid handles are now dropped.
 - New launcher endpoints (`/api/bots`, `/api/notify`) use the same session token, Host / Origin checks, JSON-object-only bodies, size limits and a rate limit; bots are re-validated server-side; `bots.json` is owner-only. See [SECURITY-AUDIT.md](SECURITY-AUDIT.md).

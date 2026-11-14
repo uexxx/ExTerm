@@ -583,7 +583,7 @@ const V15P2 = {
     if (typeof chart !== 'undefined' && chart) ChartTrade.attach(chart);
     document.addEventListener('keydown', ChartTrade.onKey, true);
     Manual.mount(); V15P2.mountHeader();
-    if (!ST.settings.walkDone && !ST.settings.tourDone && !navigator.webdriver) { ST.settings.tourDone = true; setTimeout(() => Walk.start(0), 5000); } // replaces the v13 tour on a first run
+    if (!ST.settings.walkDone && !ST.settings.tourDone && !navigator.webdriver) { ST.settings.tourDone = true; setTimeout(function w() { if (document.getElementById('langGate')) return setTimeout(w, 1000); Walk.start(0); }, 5000); } // replaces the v13 tour on a first run; waits for the v15.2 language gate
     else Brief.auto();
     window.__exterm_p2 = true;
   },

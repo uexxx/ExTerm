@@ -67,7 +67,9 @@ class NoRedirect(urllib.request.HTTPRedirectHandler):
 NOTIFY_OPENER = urllib.request.build_opener(NoRedirect(), urllib.request.HTTPSHandler(context=CTX))
 LOCAL_OPENER = urllib.request.build_opener(NoRedirect(), urllib.request.HTTPHandler())
 
-VERSION = "15.0"
+VERSION = "15.2"
+STARTED = time.time()
+CACHE_STATS = {"hits": 0, "total": 0}  # /api/feed symbols answered from RAM vs asked for (Grok telemetry strip)
 OLD_DATA_DIR = pathlib.Path.home() / ".novaterm"  # pre-v15 name, moved to ~/.exterm on first start
 DATA_DIR = pathlib.Path(os.environ.get("EXTERM_DATA") or os.environ.get("NOVATERM_DATA") or (pathlib.Path.home() / ".exterm"))
 
@@ -229,6 +231,32 @@ class Alerts:
             self._post("https://api.telegram.org/bot%s/sendMessage" % cfg["tgToken"], {"chat_id": cfg["tgChat"], "text": text, "disable_web_page_preview": True}); sent.append("telegram")
         if cfg.get("discord"):
             self._post(cfg["discord"], self.discord_payload(text)); sent.append("discord")
+        return sent
+
+    def _post_multipart(self, url, fields, fname, data):
+        """multipart/form-data POST (chart snapshot cards), same host allow-list and no-redirect opener as _post."""
+        u = urllib.parse.urlparse(url)
+        if u.scheme != "https" or (u.hostname or "") not in NOTIFY_HOSTS: raise ValueError("notification host not allowed")
+        bnd = "exterm" + secrets.token_hex(12); parts = []
+        for k, v in fields.items():
+            parts.append(("--%s\r\nContent-Disposition: form-data; name=\"%s\"\r\n\r\n%s\r\n" % (bnd, k, v)).encode())
+        parts.append(("--%s\r\nContent-Disposition: form-data; name=\"%s\"; filename=\"chart.png\"\r\nContent-Type: image/png\r\n\r\n" % (bnd, fname)).encode() + data + b"\r\n")
+        body = b"".join(parts) + ("--%s--\r\n" % bnd).encode()
+        req = urllib.request.Request(url, data=body, headers={"Content-Type": "multipart/form-data; boundary=" + bnd, "User-Agent": "ExTerm-Alerts/1.0"}, method="POST")
+        with NOTIFY_OPENER.open(req, timeout=20) as r:
+            return r.status
+
+    def send_card(self, text, png=b""):
+        """Rich alert card: text + optional PNG chart snapshot (Telegram sendPhoto, Discord embed image). Text-only without a PNG."""
+        if not png: return self.send(text)
+        sent = []
+        with self.lock:
+            cfg = dict(self.cfg)
+        if cfg.get("tgToken") and cfg.get("tgChat"):
+            self._post_multipart("https://api.telegram.org/bot%s/sendPhoto" % cfg["tgToken"], {"chat_id": cfg["tgChat"], "caption": text[:1000]}, "photo", png); sent.append("telegram")
+        if cfg.get("discord"):
+            pl = self.discord_payload(text); pl["embeds"][0]["image"] = {"url": "attachment://chart.png"}
+            self._post_multipart(cfg["discord"], {"payload_json": json.dumps(pl)}, "files[0]", png); sent.append("discord")
         return sent
 
     @staticmethod
@@ -1279,6 +1307,12 @@ class H(http.server.BaseHTTPRequestHandler):
             if p == "/api/update" and method == "GET":
                 if "--no-update-check" in sys.argv: return self._send(503, b'{"error":"update check is off"}')
                 return self._send(200, json.dumps(update_info()).encode())
+            if p == "/api/health" and method == "GET":  # Grok telemetry strip: uptime, RAM cache hit rate, bot heartbeats (read-only, no secrets)
+                bots = BOTS.public()["bots"] if BOTS is not None else []
+                return self._send(200, json.dumps({"version": VERSION, "uptime": int(time.time() - STARTED), "cache": dict(CACHE_STATS), "polls": FEED.polls if FEED is not None else 0,
+                                                   "bots": {"total": len(bots), "active": sum(1 for b in bots if b.get("active")), "lastBar": max([b.get("lastBar") or 0 for b in bots] or [0])}}).encode())
+            if p == "/api/integrity" and method == "GET":  # Settings -> Verify build integrity: on-disk files vs SHA256SUMS.txt
+                return self._send(200, json.dumps(integrity()).encode())
             if p == "/api/doctor" and method == "GET":  # read-only health checks for Settings -> Field Manual -> System Doctor
                 return self._send(200, json.dumps({"checks": doctor_cached(net="--offline" not in sys.argv)}).encode())
             if p == "/api/feed" and method == "GET":  # ?syms=oc:solana:<pool>,AAPL,... registers them; answers from RAM, never blocks on upstream
@@ -1286,7 +1320,9 @@ class H(http.server.BaseHTTPRequestHandler):
                 q = urllib.parse.parse_qs(urllib.parse.urlparse(self.path).query)
                 syms = [x for x in (q.get("syms") or [""])[0][:40000].split(",")[:PriceFeed.MAX_SYMS + 1] if x][:PriceFeed.MAX_SYMS]
                 FEED.want(syms)
-                return self._send(200, json.dumps({"ts": time.time(), "prices": FEED.snapshot(syms or None), "polls": FEED.polls, "error": FEED.last_err}).encode())
+                snap = FEED.snapshot(syms or None)
+                if syms: CACHE_STATS["total"] += len(syms); CACHE_STATS["hits"] += sum(1 for s in syms if s in snap)
+                return self._send(200, json.dumps({"ts": time.time(), "prices": snap, "polls": FEED.polls, "error": FEED.last_err}).encode())
             if p == "/api/ticks" and method == "GET":  # ?sym=AAPL -> the RAM tick buffer (last hour at 2 s) for 1s / 5s / 15s bars
                 if FEED is None: return self._send(503, b'{"error":"the price feed is off"}')
                 sym = (urllib.parse.parse_qs(urllib.parse.urlparse(self.path).query).get("sym") or [""])[0][:120]
@@ -1322,9 +1358,16 @@ class H(http.server.BaseHTTPRequestHandler):
             if p == "/api/notify" and method == "POST":  # wallet-tracker / social alerts from the page -> your Telegram / Discord
                 if ALERTS is None: return self._send(503, b'{"error":"notifications are off"}')
                 if not NOTIFY_RL.ok(): return self._send(429, b'{"error":"too many notifications (max 20 a minute)"}')
-                text = str(self._json_body(8 * 1024).get("text", "")).replace("\r", " ")[:900]
+                body = self._json_body(600 * 1024)
+                text = str(body.get("text", "")).replace("\r", " ")[:900]
                 if len(text.strip()) < 3: raise ValueError("empty message")
-                sent = ALERTS.send("ExTerm · " + neutralize(text))
+                png = b""
+                if body.get("png"):  # optional chart snapshot: base64 PNG, magic bytes checked, 400 KB max
+                    import base64 as _b64
+                    try: png = _b64.b64decode(str(body["png"])[:560000], validate=True)
+                    except Exception: raise ValueError("bad snapshot")
+                    if not png.startswith(b"\x89PNG\r\n\x1a\n") or len(png) > 400 * 1024: raise ValueError("snapshot must be a PNG under 400 KB")
+                sent = ALERTS.send_card("ExTerm · " + neutralize(text), png) if png and hasattr(ALERTS, "send_card") else ALERTS.send("ExTerm · " + neutralize(text))
                 return self._send(200, json.dumps({"ok": bool(sent), "sent": sent}).encode())
             if ALERTS is None and p.startswith("/api/alerts"):
                 return self._send(503, b'{"error":"background alerts are off"}')
@@ -1602,6 +1645,27 @@ def doctor(net=True, port=None, fetch=None):
             elif u.get("newer"): add("Update check", None, "ExTerm %s is out (you have %s): %s" % (u["latest"], u["current"], u["url"]))
             else: add("Update check", True, ("you have the latest release (%s)" % VERSION) if u.get("latest") else "no published release found")
     return rows
+def integrity():
+    """SHA-256 of the shipped files on disk vs SHA256SUMS.txt (dist/ or next to this file). LF-normalised for serve.py,
+    exactly as build.py hashes it. Relative names only: no paths leave this function."""
+    sums_file = next((c for c in (HERE / "dist" / "SHA256SUMS.txt", HERE / "SHA256SUMS.txt") if c.exists()), None)
+    want = {}
+    if sums_file:
+        for ln in sums_file.read_text(encoding="utf-8", errors="replace").splitlines():
+            m = re.match(r"^([0-9a-f]{64})\s+\*?([\w./-]{1,80})$", ln.strip())
+            if m: want[m.group(2).replace("dist/", "")] = m.group(1)
+    rows = []
+    for name, path, lf in (("exterm.html", APP, False), ("serve.py", pathlib.Path(__file__).resolve(), True)):
+        try:
+            b = path.read_bytes()
+            if lf: b = b.replace(b"\r\n", b"\n")
+            sha = hashlib.sha256(b).hexdigest()
+        except Exception as e:
+            rows.append({"name": name, "ok": False, "why": "unreadable"}); continue
+        exp = want.get(name)
+        rows.append({"name": name, "sha": sha, "expected": exp, "ok": exp == sha, "why": "" if exp == sha else ("not listed in SHA256SUMS.txt" if not exp else "hash differs from SHA256SUMS.txt")})
+    return {"sums": bool(sums_file), "files": rows}
+
 def doctor_cached(net=True):
     with _doc_run:
         with _doc_lock:

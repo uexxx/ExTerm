@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-kmRh+29voWzQpT0VkGA5YZfmQf0RYzJ03/4xOXBmjAY='; worker-src 'self' blob:; media-src 'none'; child-src 'none'; manifest-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' https: data: blob:; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https: wss: http://localhost:* http://127.0.0.1:* ws://localhost:*; object-src 'none'; base-uri 'none'; form-action 'none'; frame-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-KBA1RbUDWlOCOPpupdQXtazeXPBL5hIkf/A2a9D20Y8='; worker-src 'self' blob:; media-src 'none'; child-src 'none'; manifest-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' https: data: blob:; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https: wss: http://localhost:* http://127.0.0.1:* ws://localhost:*; object-src 'none'; base-uri 'none'; form-action 'none'; frame-src 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#05060e">
@@ -1147,6 +1147,62 @@ body[data-theme="obsidian"] .brand .logo{filter:drop-shadow(0 2px 14px rgba(212,
 #v14Keys .v14-keys kbd{color:var(--acc);border-color:color-mix(in srgb,var(--acc) 35%,var(--line))}
 @media (max-width:760px){.v151-navpre{display:none}.v151-corr{font-size:10.5px}.v151-corr td,.v151-corr th{padding:3px}}
 
+/* ═════ v15.2: language gate, 🌐 pill, workstation drawer, chart chrome, HUD clean mode, RTL ═════ */
+.lang-pill{font-weight:700;letter-spacing:.02em;font-size:12px;min-width:52px}
+.lg-ov{position:fixed;inset:0;z-index:9000;display:grid;place-items:center;padding:16px;background:radial-gradient(1200px 600px at 50% 0%,rgba(212,175,55,.14),transparent 60%),rgba(5,5,6,.86);backdrop-filter:blur(10px)}
+.lg-card-wrap{width:min(920px,100%);max-height:calc(100vh - 32px);display:flex;flex-direction:column;gap:12px;padding:22px;border-radius:18px;background:linear-gradient(180deg,#121110,#0b0b0c);border:1px solid rgba(212,175,55,.45);box-shadow:0 30px 80px rgba(0,0,0,.6),0 0 0 1px rgba(212,175,55,.08) inset;color:#f6f3ea}
+.lg-head{display:flex;gap:14px;align-items:center}.lg-head h2{margin:0;font-size:22px;font-weight:800;background:linear-gradient(180deg,#F5E6A8,#D4AF37 55%,#B8943A);-webkit-background-clip:text;background-clip:text;color:transparent}
+.lg-head .note{color:#a59d8a}
+.lg-q{width:100%;font-size:15px;padding:10px 12px;background:#0b0b0d;border:1px solid #3a3426;color:#f6f3ea;border-radius:10px}
+.lg-q:focus{outline:2px solid #D4AF37;outline-offset:1px}
+.lg-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;overflow:auto;min-height:120px;padding:2px}
+.lg-card{display:flex;flex-direction:column;align-items:flex-start;gap:2px;padding:10px 12px;border-radius:12px;border:1px solid #2a2620;background:#141311;color:#f6f3ea;text-align:start;cursor:pointer;transition:border-color .15s,transform .15s,background .15s;min-width:0}
+.lg-card b{font-size:14px;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.lg-card .note{font-size:11px;color:#a59d8a;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lg-card:hover,.lg-card:focus-visible{border-color:rgba(212,175,55,.6);transform:translateY(-1px);outline:none}
+.lg-card.on{border-color:#D4AF37;background:linear-gradient(180deg,rgba(212,175,55,.18),rgba(212,175,55,.05));box-shadow:0 0 0 1px #D4AF37 inset}
+.lg-card.fb{opacity:.85}.lg-flag{font-size:14px;line-height:1;font-weight:800;letter-spacing:.08em;color:#D4AF37;opacity:.9}
+.lg-foot{display:flex;gap:10px;align-items:center}.lg-foot .sp{flex:1}.lg-foot .note{color:#a59d8a}
+.lg-foot .btn.pri{background:linear-gradient(180deg,#F5E6A8,#D4AF37);color:#0b0b0d;border:0;font-weight:800;padding:9px 20px}
+.v152-drawer{position:fixed;top:64px;right:0;bottom:0;width:min(440px,100vw);z-index:800;display:flex;flex-direction:column;background:var(--panel-solid);border-left:1px solid var(--line2);box-shadow:-20px 0 50px rgba(0,0,0,.45);transform:translateX(102%);transition:transform .22s var(--ease)}
+.v152-drawer.on{transform:none}
+.v152-dh{display:flex;gap:8px;align-items:center;padding:10px 12px;border-bottom:1px solid var(--line)}.v152-dh b{color:var(--acc);white-space:nowrap}.v152-dh .in{flex:1;min-width:0}
+.v152-dh .x{background:none;border:0;color:var(--mut);font-size:20px;cursor:pointer}
+.v152-db{overflow:auto;padding:6px 12px 30px}.v152-ph h4{margin:12px 0 4px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--mut)}
+.v152-db details{border:1px solid var(--line);border-radius:10px;margin:5px 0;background:var(--panel2)}
+.v152-db summary{cursor:pointer;padding:8px 10px;font-weight:600;font-size:13px;list-style:none}.v152-db summary::-webkit-details-marker{display:none}
+.v152-db summary::before{content:'▸';display:inline-block;width:14px;color:var(--acc);transition:transform .15s}.v152-db details[open] summary::before{transform:rotate(90deg)}
+.v152-sb{padding:2px 10px 10px;display:flex;flex-direction:column;gap:6px;font-size:12px}
+.v152-tg{display:flex;flex-wrap:wrap;gap:4px 12px}.v152-num{width:64px}.v152-t .v152-num{width:100%;min-width:72px}
+.v152-t{width:100%;border-collapse:collapse;font-size:11.5px}.v152-t td,.v152-t th{padding:3px 5px;border-bottom:1px solid var(--line);text-align:start}.v152-t tr[data-open]{cursor:pointer}.v152-t tr[data-open]:hover{background:var(--accA)}
+.v152-heat td{text-align:center;background:color-mix(in srgb,var(--up) var(--c),transparent)}.v152-heat td.neg{background:color-mix(in srgb,var(--dn) var(--c),transparent)}
+.v152-svg{width:100%;height:110px;border:1px solid var(--line);border-radius:8px;background:var(--bg)}
+#v152Drawer select[multiple]{min-height:96px}#v152Drawer select[multiple] option{padding:2px 4px;color:var(--text)}#v152Drawer select[multiple] option:checked{background:var(--acc) linear-gradient(0deg,var(--acc),var(--acc));color:var(--on-acc,#0b0b0d);font-weight:700}
+.v152-cond{gap:4px;flex-wrap:nowrap}.v152-cond .in{min-width:0;flex:1}.v152-tabs{flex-wrap:wrap}.v152-sw{display:inline-block;width:8px;height:8px;border-radius:2px;margin-inline-end:4px}
+.v152-tok{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.v152-tok input{width:100%;height:26px;border:1px solid var(--line2);border-radius:6px;background:none}
+.v152-imp{display:flex;justify-content:space-between;gap:8px;padding:4px 0;border-bottom:1px solid var(--line)}
+.v152-pip{position:absolute;left:8px;bottom:34px;z-index:5;border:1px solid var(--line2);border-radius:10px;background:color-mix(in srgb,var(--panel-solid) 92%,transparent);overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,.35)}
+.v152-pip canvas{display:block;width:220px;height:110px}.v152-pip.min canvas{display:none}
+.v152-piph{display:block;width:100%;text-align:start;background:none;border:0;color:var(--mut);font-size:11px;padding:3px 8px;cursor:pointer}
+.v152-sync{position:absolute;left:8px;top:8px;z-index:6;font-size:11px;font-weight:700;padding:3px 8px;border-radius:999px;border:1px solid var(--acc);background:var(--accA);color:var(--acc);cursor:pointer}
+.v152-sync[data-g="B"]{border-color:#38bdf8;color:#38bdf8;background:rgba(56,189,248,.12)}.v152-sync[data-g="C"]{border-color:#f472b6;color:#f472b6;background:rgba(244,114,182,.12)}
+.v152-dex{position:absolute;left:50%;transform:translateX(-50%);top:8px;z-index:6;display:flex;gap:4px;flex-wrap:wrap;justify-content:center;max-width:calc(100% - 200px)}
+.v152-b{font-size:10.5px;font-weight:700;padding:2px 7px;border-radius:999px;border:1px solid var(--line2);background:var(--panel-solid);color:var(--mut);white-space:nowrap}
+.v152-b.ok,.v152-b.safer{color:var(--up);border-color:color-mix(in srgb,var(--up) 50%,transparent)}.v152-b.bad,.v152-b.danger{color:var(--dn);border-color:color-mix(in srgb,var(--dn) 50%,transparent)}.v152-b.caution{color:var(--amber);border-color:color-mix(in srgb,var(--amber) 50%,transparent)}
+.v152-spark{display:inline-flex;align-items:center;gap:4px;margin-inline-start:auto;font-size:10px}.v152-spark b{font-weight:700;white-space:nowrap}
+.v152-tele{display:flex;flex-wrap:wrap;gap:6px 16px;padding:8px 12px;margin:0 0 8px;border:1px solid var(--line);border-radius:10px;background:var(--panel2);font-size:12px}
+.v152-tk{display:inline-flex;gap:6px;align-items:baseline}.v152-tk .k{color:var(--mut)}.v152-tk b{font-variant-numeric:tabular-nums}
+.v152-grok{margin-bottom:8px}.v152-grok summary{cursor:pointer;padding:10px 12px;font-weight:700}
+.v152-grade{font-size:44px;font-weight:900;display:flex;gap:10px;align-items:baseline;color:var(--acc)}.v152-grade span{font-size:13px;color:var(--mut)}
+.v152-grade.g-a,.v152-grade.g-b{color:var(--up)}.v152-grade.g-d,.v152-grade.g-f{color:var(--dn)}.v152-notes{margin:6px 0;padding-inline-start:18px;font-size:13px}
+.hud-mark{position:absolute;right:76px;bottom:30px;z-index:6;display:flex;gap:6px;align-items:center;font-size:11px;font-weight:700;letter-spacing:.06em;color:var(--mut);opacity:.7;pointer-events:none}
+body.hud-clean #nav,body.hud-clean #ticker,body.hud-clean #banner,body.hud-clean .v151-navpre,body.hud-clean #toasts{display:none!important}
+body.hud-clean #tab-markets .mk>.panel:not(:has(#chartHost)){display:none!important}
+body.hud-clean #tab-markets .mk{grid-template-columns:1fr!important}
+body.blind #qSym,body.blind .quote,body.blind #watchList,body.blind #ticker,body.blind #symInput{visibility:hidden}
+body.rtl .v152-drawer{right:auto;left:0;border-left:0;border-right:1px solid var(--line2);transform:translateX(-102%)}body.rtl .v152-drawer.on{transform:none}
+body.rtl #chartHost,body.rtl canvas{direction:ltr}
+@media (max-width:640px){.lg-card-wrap{padding:16px}.lg-grid{grid-template-columns:repeat(auto-fill,minmax(130px,1fr))}.v152-drawer{top:0}.v152-dex{max-width:calc(100% - 20px);top:34px}}
+
 </style>
 </head>
 <body class="mode-crypto">
@@ -1164,26 +1220,27 @@ body[data-theme="obsidian"] .brand .logo{filter:drop-shadow(0 2px 14px rgba(212,
   <div class="quote"><span id="qSym">BTC-USD</span><b id="qPrice">–</b><span id="qChg" class="chg">–</span></div>
   <div class="spacer"></div>
   <div class="pill" id="srcPill" title="Live data source status"><i class="dot" id="srcDot"></i><span id="srcText">connecting…</span></div>
-  <div class="eqbox"><span class="lbl">Paper equity</span><b id="eqVal">–</b><span id="eqPnl" class="chg"></span></div>
+  <div class="eqbox"><span class="lbl" data-i18n="hdr.equity">Paper equity</span><b id="eqVal">–</b><span id="eqPnl" class="chg"></span></div>
+  <button id="btnLang" class="ghost lang-pill" type="button" title="Language" data-i18n-title="lang.label">🌐 EN</button>
   <button id="btnTheme" class="ghost" title="Change theme">🎨</button>
   <button id="btnPalette" class="ghost kbd" title="Command palette (Ctrl/⌘+K)">⌘K</button>
 </header>
 <div id="banner" class="banner" hidden></div>
 <div id="ticker" class="ticker"><div class="track" id="tickerTrack"></div></div>
 <nav id="nav">
-  <button data-tab="markets" class="on"><span class="ni">📈</span>Markets</button>
-  <button data-tab="heat"><span class="ni">🟩</span>Heat Map</button>
-  <button data-tab="bots"><span class="ni">🤖</span>Bots &amp; Backtest</button>
-  <button data-tab="port"><span class="ni">💼</span>Portfolio<span class="nbadge" id="pfBadge" hidden></span></button>
+  <button data-tab="markets" class="on"><span class="ni">📈</span><span data-i18n="nav.markets">Markets</span></button>
+  <button data-tab="heat"><span class="ni">🟩</span><span data-i18n="nav.heat">Heat Map</span></button>
+  <button data-tab="bots"><span class="ni">🤖</span><span data-i18n="nav.bots">Bots &amp; Backtest</span></button>
+  <button data-tab="port"><span class="ni">💼</span><span data-i18n="nav.port">Portfolio</span><span class="nbadge" id="pfBadge" hidden></span></button>
   <button data-tab="whales"><span class="ni">🛰️</span><span id="navTrack">Wallet Tracker</span></button>
-  <button data-tab="social"><span class="ni">📣</span>Social</button>
-  <button data-tab="workspace"><span class="ni">🗔</span>Workspace</button>
-  <button data-tab="journal"><span class="ni">📓</span>Journal</button>
-  <button data-tab="challenge"><span class="ni">🎮</span>Challenges</button>
-  <button data-tab="ai"><span class="ni">✨</span>AI Copilot</button>
+  <button data-tab="social"><span class="ni">📣</span><span data-i18n="nav.social">Social</span></button>
+  <button data-tab="workspace"><span class="ni">🗔</span><span data-i18n="nav.workspace">Workspace</span></button>
+  <button data-tab="journal"><span class="ni">📓</span><span data-i18n="nav.journal">Journal</span></button>
+  <button data-tab="challenge"><span class="ni">🎮</span><span data-i18n="nav.challenge">Challenges</span></button>
+  <button data-tab="ai"><span class="ni">✨</span><span data-i18n="nav.ai">AI Copilot</span></button>
   <button data-tab="grok"><span class="ni">⚡</span>Grok</button>
-  <button data-tab="lab"><span class="ni">🧪</span>Lab</button>
-  <button data-tab="set"><span class="ni">⚙️</span>Settings</button>
+  <button data-tab="lab"><span class="ni">🧪</span><span data-i18n="nav.lab">Lab</span></button>
+  <button data-tab="set"><span class="ni">⚙️</span><span data-i18n="nav.set">Settings</span></button>
   <span class="navsp"></span><span class="note" id="navMode"></span>
 </nav>
 <main>
@@ -13963,7 +14020,7 @@ const V15P2 = {
     if (typeof chart !== 'undefined' && chart) ChartTrade.attach(chart);
     document.addEventListener('keydown', ChartTrade.onKey, true);
     Manual.mount(); V15P2.mountHeader();
-    if (!ST.settings.walkDone && !ST.settings.tourDone && !navigator.webdriver) { ST.settings.tourDone = true; setTimeout(() => Walk.start(0), 5000); } // replaces the v13 tour on a first run
+    if (!ST.settings.walkDone && !ST.settings.tourDone && !navigator.webdriver) { ST.settings.tourDone = true; setTimeout(function w() { if (document.getElementById('langGate')) return setTimeout(w, 1000); Walk.start(0); }, 5000); } // replaces the v13 tour on a first run; waits for the v15.2 language gate
     else Brief.auto();
     window.__exterm_p2 = true;
   },
@@ -16488,6 +16545,1176 @@ const V151UI = (() => {
   return U;
 })();
 if (typeof window !== 'undefined' && typeof document !== 'undefined') V151UI.start();
+
+/* ===== i18n.js ===== */
+/* ExTerm v15.2 i18n engine: first-launch language gate, live DOM translation (data-i18n / data-i18n-ph / data-i18n-title
+   + t(key)), RTL mirroring for Arabic, Hebrew, Persian and Urdu, and a 🌐 header pill to switch any time.
+   32 named languages translate every key; any other ISO-639-1 locale is selectable and falls back to English text.
+   shortcut: the dictionary covers the app shell (nav, header, gate, workstation); deeper panels stay English until their
+   strings are moved to keys. Pure parts (tr, norm, search) are unit-tested in Node. Strict CSP: no inline handlers. */
+const I18N = (() => {
+  const I = {};
+  I.KEYS = ['nav.markets', 'nav.heat', 'nav.bots', 'nav.port', 'nav.social', 'nav.workspace', 'nav.journal', 'nav.challenge', 'nav.ai', 'nav.lab', 'nav.set', 'hdr.equity', 'gate.title', 'gate.sub', 'gate.search', 'gate.go', 'gate.more', 'ws.title', 'ws.hud', 'lang.label'];
+  // code, native name, English name, flag, translations (same order as KEYS, '|'-separated)
+  const RAW = [
+    ['en', 'English', 'English', '🇬🇧', 'Markets|Heat Map|Bots & Backtest|Portfolio|Social|Workspace|Journal|Challenges|AI Copilot|Lab|Settings|Paper equity|Choose your language|You can change it any time with the 🌐 button.|Search languages…|Continue|More languages (English interface)|Workstation|Clean mode|Language'],
+    ['es', 'Español', 'Spanish', '🇪🇸', 'Mercados|Mapa de calor|Bots y backtest|Cartera|Social|Espacio de trabajo|Diario|Desafíos|Copiloto IA|Laboratorio|Ajustes|Capital simulado|Elige tu idioma|Puedes cambiarlo en cualquier momento con el botón 🌐.|Buscar idiomas…|Continuar|Más idiomas (interfaz en inglés)|Estación de trabajo|Modo limpio|Idioma'],
+    ['zh-CN', '中文 (简体)', 'Chinese (Simplified)', '🇨🇳', '市场|热力图|机器人与回测|投资组合|社交|工作区|交易日志|挑战|AI 助手|实验室|设置|模拟资产|选择您的语言|您可以随时通过 🌐 按钮更改。|搜索语言…|继续|更多语言（英文界面）|工作站|简洁模式|语言'],
+    ['zh-TW', '中文 (繁體)', 'Chinese (Traditional)', '🇹🇼', '市場|熱力圖|機器人與回測|投資組合|社群|工作區|交易日誌|挑戰|AI 助理|實驗室|設定|模擬資產|選擇您的語言|您可以隨時透過 🌐 按鈕變更。|搜尋語言…|繼續|更多語言（英文介面）|工作站|簡潔模式|語言'],
+    ['ja', '日本語', 'Japanese', '🇯🇵', 'マーケット|ヒートマップ|ボットとバックテスト|ポートフォリオ|ソーシャル|ワークスペース|ジャーナル|チャレンジ|AI コパイロット|ラボ|設定|ペーパー資産|言語を選択|🌐 ボタンでいつでも変更できます。|言語を検索…|続ける|その他の言語（英語表示）|ワークステーション|クリーンモード|言語'],
+    ['ko', '한국어', 'Korean', '🇰🇷', '마켓|히트맵|봇 & 백테스트|포트폴리오|소셜|워크스페이스|매매일지|챌린지|AI 코파일럿|랩|설정|모의 자산|언어를 선택하세요|🌐 버튼으로 언제든지 변경할 수 있습니다.|언어 검색…|계속|더 많은 언어 (영어 인터페이스)|워크스테이션|클린 모드|언어'],
+    ['hi', 'हिन्दी', 'Hindi', '🇮🇳', 'बाज़ार|हीट मैप|बॉट और बैकटेस्ट|पोर्टफोलियो|सोशल|वर्कस्पेस|जर्नल|चुनौतियाँ|AI कोपायलट|लैब|सेटिंग्स|पेपर इक्विटी|अपनी भाषा चुनें|आप इसे 🌐 बटन से कभी भी बदल सकते हैं।|भाषाएँ खोजें…|जारी रखें|अधिक भाषाएँ (अंग्रेज़ी इंटरफ़ेस)|वर्कस्टेशन|क्लीन मोड|भाषा'],
+    ['ar', 'العربية', 'Arabic', '🇸🇦', 'الأسواق|خريطة حرارية|الروبوتات والاختبار الرجعي|المحفظة|اجتماعي|مساحة العمل|السجل|التحديات|مساعد الذكاء الاصطناعي|المختبر|الإعدادات|رصيد تجريبي|اختر لغتك|يمكنك تغييرها في أي وقت عبر زر 🌐.|ابحث عن لغة…|متابعة|لغات أخرى (واجهة إنجليزية)|محطة العمل|الوضع النظيف|اللغة'],
+    ['pt', 'Português', 'Portuguese', '🇧🇷', 'Mercados|Mapa de calor|Bots e backtest|Carteira|Social|Área de trabalho|Diário|Desafios|Copiloto IA|Laboratório|Configurações|Patrimônio simulado|Escolha seu idioma|Você pode mudar a qualquer momento no botão 🌐.|Pesquisar idiomas…|Continuar|Mais idiomas (interface em inglês)|Estação de trabalho|Modo limpo|Idioma'],
+    ['fr', 'Français', 'French', '🇫🇷', 'Marchés|Carte thermique|Bots et backtest|Portefeuille|Social|Espace de travail|Journal|Défis|Copilote IA|Labo|Paramètres|Capital fictif|Choisissez votre langue|Vous pouvez la changer à tout moment avec le bouton 🌐.|Rechercher une langue…|Continuer|Plus de langues (interface en anglais)|Station de travail|Mode épuré|Langue'],
+    ['de', 'Deutsch', 'German', '🇩🇪', 'Märkte|Heatmap|Bots & Backtest|Portfolio|Social|Arbeitsbereich|Journal|Challenges|KI-Copilot|Labor|Einstellungen|Papierkapital|Sprache wählen|Du kannst sie jederzeit über die 🌐-Taste ändern.|Sprachen suchen…|Weiter|Weitere Sprachen (englische Oberfläche)|Workstation|Clean-Modus|Sprache'],
+    ['ru', 'Русский', 'Russian', '🇷🇺', 'Рынки|Тепловая карта|Боты и бэктест|Портфель|Соцсети|Рабочая область|Журнал|Испытания|ИИ-помощник|Лаборатория|Настройки|Демо-капитал|Выберите язык|Его можно сменить в любой момент кнопкой 🌐.|Поиск языка…|Продолжить|Другие языки (интерфейс на английском)|Рабочая станция|Чистый режим|Язык'],
+    ['it', 'Italiano', 'Italian', '🇮🇹', 'Mercati|Mappa di calore|Bot e backtest|Portafoglio|Social|Area di lavoro|Diario|Sfide|Copilota IA|Laboratorio|Impostazioni|Capitale simulato|Scegli la tua lingua|Puoi cambiarla in qualsiasi momento con il pulsante 🌐.|Cerca lingue…|Continua|Altre lingue (interfaccia in inglese)|Postazione|Modalità pulita|Lingua'],
+    ['tr', 'Türkçe', 'Turkish', '🇹🇷', 'Piyasalar|Isı haritası|Botlar ve geriye dönük test|Portföy|Sosyal|Çalışma alanı|Günlük|Meydan okumalar|Yapay zekâ yardımcısı|Laboratuvar|Ayarlar|Sanal sermaye|Dilinizi seçin|🌐 düğmesiyle istediğiniz zaman değiştirebilirsiniz.|Dil ara…|Devam|Diğer diller (İngilizce arayüz)|İş istasyonu|Sade mod|Dil'],
+    ['vi', 'Tiếng Việt', 'Vietnamese', '🇻🇳', 'Thị trường|Bản đồ nhiệt|Bot & kiểm thử|Danh mục|Mạng xã hội|Không gian làm việc|Nhật ký|Thử thách|Trợ lý AI|Phòng thí nghiệm|Cài đặt|Vốn giấy|Chọn ngôn ngữ của bạn|Bạn có thể đổi bất cứ lúc nào bằng nút 🌐.|Tìm ngôn ngữ…|Tiếp tục|Ngôn ngữ khác (giao diện tiếng Anh)|Trạm làm việc|Chế độ gọn|Ngôn ngữ'],
+    ['th', 'ไทย', 'Thai', '🇹🇭', 'ตลาด|แผนที่ความร้อน|บอทและแบ็กเทสต์|พอร์ตโฟลิโอ|โซเชียล|พื้นที่ทำงาน|บันทึกการเทรด|ความท้าทาย|ผู้ช่วย AI|แล็บ|การตั้งค่า|ทุนจำลอง|เลือกภาษาของคุณ|เปลี่ยนได้ทุกเมื่อด้วยปุ่ม 🌐|ค้นหาภาษา…|ดำเนินการต่อ|ภาษาอื่น ๆ (อินเทอร์เฟซภาษาอังกฤษ)|เวิร์กสเตชัน|โหมดสะอาดตา|ภาษา'],
+    ['id', 'Bahasa Indonesia', 'Indonesian', '🇮🇩', 'Pasar|Peta panas|Bot & backtest|Portofolio|Sosial|Ruang kerja|Jurnal|Tantangan|Kopilot AI|Lab|Pengaturan|Ekuitas simulasi|Pilih bahasa Anda|Anda dapat mengubahnya kapan saja dengan tombol 🌐.|Cari bahasa…|Lanjutkan|Bahasa lain (antarmuka Inggris)|Stasiun kerja|Mode bersih|Bahasa'],
+    ['ms', 'Bahasa Melayu', 'Malay', '🇲🇾', 'Pasaran|Peta haba|Bot & ujian balik|Portfolio|Sosial|Ruang kerja|Jurnal|Cabaran|Kopilot AI|Makmal|Tetapan|Ekuiti simulasi|Pilih bahasa anda|Anda boleh menukarnya bila-bila masa dengan butang 🌐.|Cari bahasa…|Teruskan|Lebih banyak bahasa (antara muka Inggeris)|Stesen kerja|Mod bersih|Bahasa'],
+    ['pl', 'Polski', 'Polish', '🇵🇱', 'Rynki|Mapa cieplna|Boty i backtest|Portfel|Społeczność|Obszar roboczy|Dziennik|Wyzwania|Asystent AI|Laboratorium|Ustawienia|Kapitał wirtualny|Wybierz język|Możesz go zmienić w każdej chwili przyciskiem 🌐.|Szukaj języka…|Dalej|Więcej języków (interfejs angielski)|Stacja robocza|Tryb czysty|Język'],
+    ['nl', 'Nederlands', 'Dutch', '🇳🇱', 'Markten|Heatmap|Bots & backtest|Portefeuille|Sociaal|Werkruimte|Dagboek|Uitdagingen|AI-copiloot|Lab|Instellingen|Papierkapitaal|Kies je taal|Je kunt dit altijd wijzigen met de 🌐-knop.|Talen zoeken…|Doorgaan|Meer talen (Engelse interface)|Werkstation|Schone modus|Taal'],
+    ['sv', 'Svenska', 'Swedish', '🇸🇪', 'Marknader|Värmekarta|Botar & backtest|Portfölj|Socialt|Arbetsyta|Dagbok|Utmaningar|AI-copilot|Labb|Inställningar|Papperskapital|Välj ditt språk|Du kan ändra det när som helst med 🌐-knappen.|Sök språk…|Fortsätt|Fler språk (engelskt gränssnitt)|Arbetsstation|Rent läge|Språk'],
+    ['uk', 'Українська', 'Ukrainian', '🇺🇦', 'Ринки|Теплова карта|Боти та бектест|Портфель|Соцмережі|Робоча область|Журнал|Виклики|ШІ-помічник|Лабораторія|Налаштування|Демо-капітал|Оберіть мову|Її можна змінити будь-коли кнопкою 🌐.|Пошук мови…|Продовжити|Інші мови (англійський інтерфейс)|Робоча станція|Чистий режим|Мова'],
+    ['bn', 'বাংলা', 'Bengali', '🇧🇩', 'বাজার|হিট ম্যাপ|বট ও ব্যাকটেস্ট|পোর্টফোলিও|সোশ্যাল|ওয়ার্কস্পেস|জার্নাল|চ্যালেঞ্জ|AI কোপাইলট|ল্যাব|সেটিংস|পেপার ইকুইটি|আপনার ভাষা বেছে নিন|🌐 বোতাম দিয়ে যেকোনো সময় পরিবর্তন করতে পারবেন।|ভাষা খুঁজুন…|চালিয়ে যান|আরও ভাষা (ইংরেজি ইন্টারফেস)|ওয়ার্কস্টেশন|ক্লিন মোড|ভাষা'],
+    ['ur', 'اردو', 'Urdu', '🇵🇰', 'مارکیٹس|ہیٹ میپ|بوٹس اور بیک ٹیسٹ|پورٹ فولیو|سوشل|ورک اسپیس|جرنل|چیلنجز|AI معاون|لیب|ترتیبات|فرضی سرمایہ|اپنی زبان منتخب کریں|آپ اسے کسی بھی وقت 🌐 بٹن سے بدل سکتے ہیں۔|زبانیں تلاش کریں…|جاری رکھیں|مزید زبانیں (انگریزی انٹرفیس)|ورک اسٹیشن|صاف موڈ|زبان'],
+    ['fa', 'فارسی', 'Persian', '🇮🇷', 'بازارها|نقشه حرارتی|ربات‌ها و بک‌تست|سبد دارایی|اجتماعی|فضای کار|ژورنال|چالش‌ها|دستیار هوش مصنوعی|آزمایشگاه|تنظیمات|سرمایه آزمایشی|زبان خود را انتخاب کنید|می‌توانید هر زمان با دکمه 🌐 آن را تغییر دهید.|جستجوی زبان…|ادامه|زبان‌های بیشتر (رابط انگلیسی)|ایستگاه کاری|حالت تمیز|زبان'],
+    ['he', 'עברית', 'Hebrew', '🇮🇱', 'שווקים|מפת חום|בוטים ובקטסט|תיק השקעות|חברתי|סביבת עבודה|יומן|אתגרים|עוזר AI|מעבדה|הגדרות|הון וירטואלי|בחרו שפה|אפשר לשנות בכל עת בכפתור 🌐.|חיפוש שפה…|המשך|שפות נוספות (ממשק באנגלית)|תחנת עבודה|מצב נקי|שפה'],
+    ['el', 'Ελληνικά', 'Greek', '🇬🇷', 'Αγορές|Θερμικός χάρτης|Bots & backtest|Χαρτοφυλάκιο|Κοινωνικά|Χώρος εργασίας|Ημερολόγιο|Προκλήσεις|Βοηθός AI|Εργαστήριο|Ρυθμίσεις|Εικονικό κεφάλαιο|Επιλέξτε γλώσσα|Μπορείτε να την αλλάξετε οποτεδήποτε με το κουμπί 🌐.|Αναζήτηση γλώσσας…|Συνέχεια|Περισσότερες γλώσσες (αγγλική διεπαφή)|Σταθμός εργασίας|Καθαρή λειτουργία|Γλώσσα'],
+    ['cs', 'Čeština', 'Czech', '🇨🇿', 'Trhy|Teplotní mapa|Boti a backtest|Portfolio|Sociální|Pracovní plocha|Deník|Výzvy|AI kopilot|Laboratoř|Nastavení|Fiktivní kapitál|Vyberte jazyk|Můžete jej kdykoli změnit tlačítkem 🌐.|Hledat jazyk…|Pokračovat|Další jazyky (anglické rozhraní)|Pracovní stanice|Čistý režim|Jazyk'],
+    ['ro', 'Română', 'Romanian', '🇷🇴', 'Piețe|Hartă termică|Boți și backtest|Portofoliu|Social|Spațiu de lucru|Jurnal|Provocări|Copilot AI|Laborator|Setări|Capital simulat|Alegeți limba|O puteți schimba oricând cu butonul 🌐.|Căutați limba…|Continuă|Mai multe limbi (interfață în engleză)|Stație de lucru|Mod curat|Limbă'],
+    ['hu', 'Magyar', 'Hungarian', '🇭🇺', 'Piacok|Hőtérkép|Botok és visszatesztelés|Portfólió|Közösség|Munkaterület|Napló|Kihívások|AI segéd|Labor|Beállítások|Papírtőke|Válassz nyelvet|Bármikor módosíthatod a 🌐 gombbal.|Nyelv keresése…|Tovább|További nyelvek (angol felület)|Munkaállomás|Tiszta mód|Nyelv'],
+    ['fil', 'Filipino / Tagalog', 'Filipino', '🇵🇭', 'Mga Merkado|Heat Map|Mga Bot at Backtest|Portfolio|Social|Workspace|Journal|Mga Hamon|AI Copilot|Lab|Mga Setting|Paper equity|Piliin ang iyong wika|Mapapalitan mo ito anumang oras gamit ang 🌐 na button.|Maghanap ng wika…|Magpatuloy|Iba pang wika (Ingles na interface)|Workstation|Malinis na mode|Wika'],
+    ['sw', 'Kiswahili', 'Swahili', '🇰🇪', 'Masoko|Ramani ya joto|Boti na majaribio|Jalada|Kijamii|Eneo la kazi|Shajara|Changamoto|Msaidizi wa AI|Maabara|Mipangilio|Mtaji wa majaribio|Chagua lugha yako|Unaweza kuibadilisha wakati wowote kwa kitufe cha 🌐.|Tafuta lugha…|Endelea|Lugha zaidi (kiolesura cha Kiingereza)|Kituo cha kazi|Hali safi|Lugha'],
+  ];
+  I.RTL = new Set(['ar', 'he', 'fa', 'ur', 'yi', 'ps', 'sd', 'ug', 'dv', 'ku']);
+  I.LANGS = RAW.map(([code, native, english, flag]) => ({ code, native, english, flag, rtl: I.RTL.has(code.split('-')[0]) }));
+  I.DICT = Object.fromEntries(RAW.map(([code, , , , s]) => [code, Object.fromEntries(s.split('|').map((v, k) => [I.KEYS[k], v]))]));
+  // every ISO-639-1 code: selectable, English text, native name from Intl.DisplayNames where the runtime has it
+  I.ISO = 'aa ab ae af ak am an ar as av ay az ba be bg bi bm bn bo br bs ca ce ch co cr cs cu cv cy da de dv dz ee el en eo es et eu fa ff fi fj fo fr fy ga gd gl gn gu gv ha he hi ho hr ht hu hy hz ia id ie ig ii ik io is it iu ja jv ka kg ki kj kk kl km kn ko kr ks ku kv kw ky la lb lg li ln lo lt lu lv mg mh mi mk ml mn mr ms mt my na nb nd ne ng nl nn no nr nv ny oc oj om or os pa pi pl ps pt qu rm rn ro ru rw sa sc sd se sg si sk sl sm sn so sq sr ss st su sv sw ta te tg th ti tk tl tn to tr ts tt tw ty ug uk ur uz ve vi vo wa wo xh yi yo za zh zu'.split(' ');
+  const NAMED = new Map(I.LANGS.map((l) => [l.code, l]));
+  const dn = (loc, code) => { try { return new Intl.DisplayNames([loc], { type: 'language' }).of(code) || code; } catch (e) { return code; } };
+  let extra = null;
+  I.extra = () => extra || (extra = I.ISO.filter((c) => !NAMED.has(c) && c !== 'zh' && c !== 'tl').map((c) => ({ code: c, native: dn(c, c), english: dn('en', c), flag: '🌐', rtl: I.RTL.has(c), fallback: true })));
+  I.isRtl = (code) => I.RTL.has(String(code || '').split('-')[0]);
+  I.norm = (code) => {
+    const s = String(code || ''); if (!/^[A-Za-z]{2,3}(-[A-Za-z0-9]{2,8})*$/.test(s)) return null;
+    const [b, r = ''] = s.split('-'), base = b.toLowerCase(), R = r.toUpperCase();
+    if (base === 'zh') return ['TW', 'HK', 'MO', 'HANT'].includes(R) ? 'zh-TW' : 'zh-CN';
+    if (base === 'tl') return 'fil';
+    if (NAMED.has(base)) return base; return I.ISO.includes(base) ? base : null;
+  };
+  I.tr = (lang, key) => { const d = I.DICT[lang]; return (d && d[key]) || I.DICT.en[key] || key; };
+  const lev = (a, b) => { const m = a.length, n = b.length, d = Array.from({ length: m + 1 }, (_, i) => [i]); for (let j = 1; j <= n; j++) d[0][j] = j; for (let i = 1; i <= m; i++) for (let j = 1; j <= n; j++) d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1)); return d[m][n]; };
+  const fold = (s) => String(s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+  /* fuzzy search: exact code, then prefix, then substring, then ≤ 2 typos against a name prefix */
+  I.search = (q, withExtra = true) => {
+    const all = withExtra ? I.LANGS.concat(I.extra()) : I.LANGS, s = fold(q).trim(); if (!s) return I.LANGS.slice();
+    const out = [];
+    all.forEach((l, idx) => {
+      const names = [fold(l.native), fold(l.english), l.code.toLowerCase()]; let sc = null;
+      if (l.code.toLowerCase() === s) sc = 0; else if (names.some((n) => n.startsWith(s) || n.split(/[\s()/]+/).some((w) => w && w.startsWith(s)))) sc = 1; else if (names.some((n) => n.includes(s))) sc = 2;
+      else if (s.length >= 4) { const d = Math.min(...names.slice(0, 2).map((n) => Math.min(lev(s, n.slice(0, s.length)), lev(s, n)))); if (d <= 2) sc = 3 + d; }
+      if (sc != null) out.push({ l, sc, idx });
+    });
+    return out.sort((a, b) => a.sc - b.sc || a.idx - b.idx).map((x) => x.l);
+  };
+
+  /* ══ browser: current language, live DOM translation, gate modal, header pill ══ */
+  I.cur = () => { const c = typeof ST !== 'undefined' && ST && ST.settings ? I.norm(ST.settings.lang) : null; return c || 'en'; };
+  I.t = (key) => I.tr(I.cur(), key);
+  I.label = (code) => (NAMED.get(code) || I.extra().find((x) => x.code === code) || { native: code }).native;
+  I.apply = () => {
+    if (typeof document === 'undefined') return; const c = I.cur(), h = document.documentElement;
+    h.lang = c; h.dir = I.isRtl(c) ? 'rtl' : 'ltr'; document.body.classList.toggle('rtl', I.isRtl(c));
+    for (const el of document.querySelectorAll('[data-i18n]')) el.textContent = I.t(el.dataset.i18n);
+    for (const el of document.querySelectorAll('[data-i18n-ph]')) el.setAttribute('placeholder', I.t(el.dataset.i18nPh));
+    for (const el of document.querySelectorAll('[data-i18n-title]')) el.setAttribute('title', I.t(el.dataset.i18nTitle));
+    const p = document.getElementById('btnLang'); if (p) { p.textContent = '🌐 ' + (c === 'zh-TW' ? 'ZH-TW' : c.split('-')[0].toUpperCase()); p.setAttribute('aria-label', I.t('lang.label') + ': ' + I.label(c)); }
+  };
+  I.set = (code) => {
+    const c = I.norm(code); if (!c || typeof ST === 'undefined') return false;
+    ST.settings.lang = c; saveState(); I.apply(); return true;
+  };
+  const guess = () => { for (const l of (typeof navigator !== 'undefined' && (navigator.languages || [navigator.language])) || []) { const c = I.norm(l); if (c) return c; } return 'en'; };
+  const card = (l, on) => `<button type="button" class="lg-card${on ? ' on' : ''}${l.fallback ? ' fb' : ''}" data-lang="${esc(l.code)}" role="option" aria-selected="${on}" lang="${esc(l.code)}" dir="${l.rtl ? 'rtl' : 'ltr'}"><span class="lg-flag" aria-hidden="true">${esc(l.flag)}</span><b>${esc(l.native)}</b><span class="note">${esc(l.english)}</span></button>`;
+  /* first: shown on a first launch (no language saved yet): Esc / Continue picks the highlighted language */
+  I.gate = (first = false) => {
+    const old = document.getElementById('langGate'); if (old) old.remove();
+    let pick = first ? guess() : I.cur(); const tx = (k) => I.tr(pick, k);
+    const ov = document.createElement('div'); ov.id = 'langGate'; ov.className = 'lg-ov'; ov.setAttribute('role', 'dialog'); ov.setAttribute('aria-modal', 'true'); ov.setAttribute('aria-labelledby', 'lgTitle');
+    ov.innerHTML = `<div class="lg-card-wrap"><div class="lg-head"><span class="lg-mark" aria-hidden="true">${typeof V151 !== 'undefined' ? V151.markSvg(40, 'lg') : ''}</span><div><h2 id="lgTitle"></h2><div class="note" id="lgSub"></div></div></div>
+      <input class="in lg-q" id="lgQ" type="search" autocomplete="off" spellcheck="false"><div class="lg-grid" id="lgGrid" role="listbox" aria-label="Languages"></div>
+      <div class="row lg-foot"><span class="note" id="lgMore"></span><span class="sp"></span><button type="button" class="btn pri" id="lgGo"></button></div></div>`;
+    document.body.appendChild(ov);
+    const q = ov.querySelector('#lgQ'), grid = ov.querySelector('#lgGrid');
+    const paint = () => {
+      ov.querySelector('#lgTitle').textContent = tx('gate.title'); ov.querySelector('#lgSub').textContent = tx('gate.sub'); q.placeholder = tx('gate.search'); q.setAttribute('aria-label', tx('gate.search'));
+      ov.querySelector('#lgGo').textContent = tx('gate.go'); ov.querySelector('#lgMore').textContent = q.value.trim() ? '' : tx('gate.more') + ': ' + I.extra().length + '+';
+      const list = q.value.trim() ? I.search(q.value).slice(0, 60) : I.LANGS; grid.innerHTML = list.map((l) => card(l, l.code === pick)).join('') || '<div class="note">–</div>';
+      ov.dir = I.isRtl(pick) ? 'rtl' : 'ltr';
+    };
+    const done = (code) => { I.set(code || pick); ov.remove(); document.removeEventListener('keydown', key, true); };
+    const key = (e) => { if (e.key === 'Escape') { e.stopPropagation(); done(first ? pick : I.cur()); } else if (e.key === 'Enter' && document.activeElement === q) { const f = grid.querySelector('[data-lang]'); if (f) done(f.dataset.lang); } };
+    grid.addEventListener('click', (e) => { const b = e.target.closest('[data-lang]'); if (!b) return; if (pick === b.dataset.lang) return done(pick); pick = b.dataset.lang; paint(); });
+    grid.addEventListener('dblclick', (e) => { const b = e.target.closest('[data-lang]'); if (b) done(b.dataset.lang); });
+    ov.querySelector('#lgGo').addEventListener('click', () => done(pick));
+    q.addEventListener('input', paint); document.addEventListener('keydown', key, true);
+    paint(); setTimeout(() => q.focus(), 30); return ov;
+  };
+  I.start = () => {
+    const p = document.getElementById('btnLang'); if (p) p.addEventListener('click', () => I.gate(false));
+    let force = false; try { force = localStorage.getItem('nt.forceGate') === '1'; } catch (e) { /* storage blocked */ }
+    I.apply();
+    if (!I.norm(ST.settings.lang) && (!navigator.webdriver || force)) I.gate(true); // tests opt in; real first launches always see it
+  };
+  return I;
+})();
+if (typeof module === 'object' && module.exports) module.exports = I18N;
+else if (typeof window !== 'undefined' && typeof document !== 'undefined' && typeof loadState === 'function') { // ST is loaded at the top of boot(): show the gate right after that, before the network part of boot
+  const _ls = loadState; loadState = function () { const r = _ls.apply(this, arguments); if (!I18N.started) { I18N.started = true; setTimeout(() => { try { I18N.start(); } catch (e) { console.warn('i18n', e); } }, 0); } return r; };
+}
+
+/* ===== v152core.js ===== */
+/* ExTerm v15.2 core: pure logic behind the 44 workstation upgrades. Charting (bar timer, TP ladder, price-action labels,
+   magnet snap, future event markers), order flow (walls, CVD divergence, anchored VWAP, session profiles, zero gamma,
+   unusual options, multi-leg payoff), markets (swap memory, scanner formulas, DEX safety, wallet confluence, net inflow,
+   sparklines, DEX fee simulator), quant (composer → Pine v5, portfolio backtest, sensitivity grid, weak-gate fixes, prop
+   rulebooks, blind drill, MFE/MAE, battles), copilot (NL rule compiler, range stats, devil's advocate grade, impact tags,
+   alert cards, brief, shadow fills) and platform (signed share codes, ring-buffer trim, theme tokens, safe calculator,
+   SHA256SUMS + CSP checks). No DOM and no eval here: unit-tested in Node. */
+const V152 = (() => {
+  const V = {};
+  const fin = (x) => typeof x === 'number' && Number.isFinite(x);
+  const STR = (s, n) => String(s == null ? '' : s).slice(0, n);
+  const r2 = (x, k = 2) => Math.round(x * 10 ** k) / 10 ** k;
+  const mean = (a) => (a.length ? a.reduce((s, x) => s + x, 0) / a.length : 0);
+  const sd = (a) => { if (a.length < 2) return 0; const m = mean(a); return Math.sqrt(a.reduce((s, x) => s + (x - m) ** 2, 0) / (a.length - 1)); };
+  V.pearson = (a, b) => { const n = Math.min(a.length, b.length); if (n < 3) return null; const ma = mean(a.slice(0, n)), mb = mean(b.slice(0, n)); let x = 0, ya = 0, yb = 0; for (let i = 0; i < n; i++) { const da = a[i] - ma, db = b[i] - mb; x += da * db; ya += da * da; yb += db * db; } return ya && yb ? x / Math.sqrt(ya * yb) : null; };
+
+  /* ══ PHASE 1 · charting ══ */
+  /* 1. time left in the current bar */
+  V.barTimer = (nowMs, tfSec) => {
+    if (!(tfSec > 0) || !fin(nowMs)) return null;
+    const p = tfSec * 1000, left = p - (((nowMs % p) + p) % p);
+    const label = left >= 60000 ? `${Math.floor(left / 60000)}:${String(Math.floor((left % 60000) / 1000)).padStart(2, '0')}` : tfSec <= 15 ? (left / 1000).toFixed(1) + 's' : Math.ceil(left / 1000) + 's';
+    return { left, frac: 1 - left / p, label };
+  };
+  /* 2. sync groups: messages between windows, accepted only for the same group and a known kind */
+  V.GROUPS = ['A', 'B', 'C'];
+  const SYM_RX = /^[A-Za-z0-9:._^=\-]{1,100}$/, TF_RX = /^(1s|5s|15s|1m|5m|15m|1h|4h|1d|1w)$/;
+  V.syncAccept = (m, group, opt = {}) => {
+    if (!m || typeof m !== 'object' || m.k !== 'v152sync' || !V.GROUPS.includes(m.g) || m.g !== group) return null;
+    if (m.kind === 'cross' && opt.cross !== false && fin(m.v)) return { kind: 'cross', v: m.v };
+    if (m.kind === 'tf' && opt.tf !== false && typeof m.v === 'string' && TF_RX.test(m.v)) return { kind: 'tf', v: m.v };
+    if (m.kind === 'sym' && opt.sym !== false && typeof m.v === 'string' && SYM_RX.test(m.v)) return { kind: 'sym', v: m.v };
+    return null;
+  };
+  /* 3. partial take-profit ladder: TPn at rs[n] × risk, splits in % of the position; after TP1 the stop moves to entry */
+  V.tpLadder = (entry, sl, splits = [50, 30, 20], rs = [1, 2, 3]) => {
+    if (!(entry > 0) || !(sl > 0) || entry === sl) return null;
+    const long = sl < entry, risk = Math.abs(entry - sl), tot = splits.reduce((s, x) => s + Math.max(0, +x || 0), 0) || 1;
+    return { entry, sl, long, be: false, levels: rs.slice(0, 3).map((r, i) => ({ k: 'TP' + (i + 1), p: long ? entry + risk * r : entry - risk * r, pct: r2((Math.max(0, +splits[i] || 0) / tot) * 100, 1), hit: false })) };
+  };
+  V.tpStep = (L, price) => {
+    if (!L || !(price > 0)) return { closePct: 0, events: [] };
+    const ev = []; let closePct = 0;
+    if (L.long ? price <= L.sl : price >= L.sl) { const left = L.levels.filter((x) => !x.hit).reduce((s, x) => s + x.pct, 0); if (left > 0) { L.levels.forEach((x) => (x.hit = true)); ev.push(L.be ? 'stopped at break-even' : 'stopped out'); return { closePct: r2(left, 1), events: ev, done: true }; } }
+    for (const x of L.levels) if (!x.hit && (L.long ? price >= x.p : price <= x.p)) { x.hit = true; closePct += x.pct; ev.push(x.k + ' hit'); if (x.k === 'TP1' && !L.be) { L.be = true; L.sl = L.entry; ev.push('stop → break-even'); } }
+    return { closePct: r2(closePct, 1), events: ev, done: L.levels.every((x) => x.hit) };
+  };
+  /* 4. price-action labels: fair value gaps, engulfing bars, order blocks, liquidity sweeps */
+  V.fvg = (D, from = 2, to = D.length) => { const out = []; for (let i = Math.max(2, from); i < Math.min(to, D.length); i++) { const a = D[i - 2], c = D[i]; if (a.h < c.l) out.push({ i, dir: 'bull', top: c.l, bot: a.h, kind: 'FVG' }); else if (a.l > c.h) out.push({ i, dir: 'bear', top: a.l, bot: c.h, kind: 'FVG' }); } return out; };
+  V.engulf = (D, from = 1, to = D.length) => {
+    const out = [];
+    for (let i = Math.max(1, from); i < Math.min(to, D.length); i++) {
+      const p = D[i - 1], c = D[i], pb = Math.abs(p.c - p.o), cb = Math.abs(c.c - c.o); if (!(cb > pb) || pb === 0) continue;
+      if (p.c < p.o && c.c > c.o && c.o <= p.c && c.c >= p.o) out.push({ i, dir: 'bull', kind: 'ENG', p: c.l });
+      else if (p.c > p.o && c.c < c.o && c.o >= p.c && c.c <= p.o) out.push({ i, dir: 'bear', kind: 'ENG', p: c.h });
+    }
+    return out;
+  };
+  V.orderBlocks = (D, from = 21, to = D.length, k = 2) => {
+    const out = [];
+    for (let i = Math.max(21, from); i < Math.min(to, D.length); i++) {
+      const avg = mean(D.slice(i - 20, i).map((x) => Math.abs(x.c - x.o))), c = D[i], b = Math.abs(c.c - c.o); if (!(avg > 0) || b < k * avg) continue;
+      const up = c.c > c.o; for (let j = i - 1; j >= Math.max(0, i - 5); j--) { const o = D[j]; if (up ? o.c < o.o : o.c > o.o) { out.push({ i: j, dir: up ? 'bull' : 'bear', top: o.h, bot: o.l, kind: 'OB' }); break; } }
+    }
+    return out;
+  };
+  V.sweeps = (D, from = 20, to = D.length, look = 20) => {
+    const out = [];
+    for (let i = Math.max(look, from); i < Math.min(to, D.length); i++) {
+      let hh = -Infinity, ll = Infinity; for (let j = i - look; j < i; j++) { hh = Math.max(hh, D[j].h); ll = Math.min(ll, D[j].l); }
+      const c = D[i]; if (c.h > hh && c.c < hh) out.push({ i, dir: 'bear', kind: 'SWEEP', p: c.h }); else if (c.l < ll && c.c > ll) out.push({ i, dir: 'bull', kind: 'SWEEP', p: c.l });
+    }
+    return out;
+  };
+  V.patterns = (D, from, to, on = {}) => [].concat(on.fvg ? V.fvg(D, from, to) : [], on.eng ? V.engulf(D, from, to) : [], on.ob ? V.orderBlocks(D, from, to) : [], on.sweep ? V.sweeps(D, from, to) : []).slice(-120);
+  /* 5. magnet: snap a price to the nearest OHLC of a candle (within tol, if given) */
+  V.snap = (price, c, tol) => {
+    if (!c || !fin(price)) return price; let best = price, bd = Infinity;
+    for (const v of [c.o, c.h, c.l, c.c]) { const d = Math.abs(v - price); if (fin(v) && d < bd) { bd = d; best = v; } }
+    return tol == null || bd <= tol ? best : price;
+  };
+  /* 6. upcoming events (scheduled, earnings, user-added) inside a horizon */
+  V.futureEvents = (nowSec, list, horizonSec = 14 * 86400) => (list || []).filter((e) => e && fin(+e.t) && e.t >= nowSec && e.t <= nowSec + horizonSec).map((e) => ({ t: +e.t, k: STR(e.k || 'ev', 8), l: STR(e.l || 'Event', 60), inSec: e.t - nowSec })).sort((a, b) => a.t - b.t).slice(0, 20);
+  V.parseEvent = (s) => { const m = /^\s*([A-Za-z][\w &/.-]{0,30}?)\s+(\d{4}-\d{2}-\d{2})(?:[ T](\d{2}):(\d{2}))?\s*$/.exec(String(s || '')); if (!m) return null; const t = Date.parse(`${m[2]}T${m[3] || '12'}:${m[4] || '30'}:00Z`) / 1000; return fin(t) ? { t, k: /cpi/i.test(m[1]) ? 'cpi' : /fomc|fed/i.test(m[1]) ? 'fomc' : /earn/i.test(m[1]) ? 'earn' : 'ev', l: m[1].trim() } : null; };
+
+  /* ══ PHASE 2 · order flow, options ══ */
+  /* 9. DOM walls: absorption (traded into but still there / refilled = iceberg) vs spoof (pulled without trading) */
+  const med = (a) => { if (!a.length) return 0; const s = a.slice().sort((x, y) => x - y), m = s.length >> 1; return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2; };
+  V.wallsOf = (book, k = 4) => { const out = []; for (const side of ['bids', 'asks']) { const lv = (book && book[side]) || [], m = med(lv.map((x) => +x[1])); if (!(m > 0)) continue; for (const [p, q] of lv) if (+q >= k * m) out.push({ side, p: +p, q: +q }); } return out; };
+  V.wallEvents = (prev, cur, traded = {}, k = 4) => {
+    const now = new Map(); for (const side of ['bids', 'asks']) for (const [p, q] of (cur && cur[side]) || []) now.set(side + ':' + +p, +q);
+    return V.wallsOf(prev, k).map((w) => {
+      const q2 = now.get(w.side + ':' + w.p), hit = +traded[w.p] || 0;
+      if (q2 == null || q2 < 0.25 * w.q) return hit < 0.3 * w.q ? Object.assign(w, { ev: 'spoof', note: 'pulled without trading' }) : Object.assign(w, { ev: 'broken', note: 'eaten through' });
+      if (hit >= 0.5 * w.q && q2 >= 0.8 * w.q) return Object.assign(w, { ev: 'iceberg', note: 'refilled after ' + r2(hit, 2) + ' traded' });
+      if (hit >= 0.2 * w.q) return Object.assign(w, { ev: 'absorb', note: 'absorbing market orders' });
+      return Object.assign(w, { ev: 'rest', note: 'resting' });
+    }).filter((w) => w.ev !== 'rest');
+  };
+  /* 10. CVD (candle-estimated delta) + divergence at swing highs / lows */
+  V.cvd = (D) => { let s = 0; return D.map((c) => { const rng = c.h - c.l; s += rng > 0 ? ((c.c - c.o) / rng) * (c.v || 0) : 0; return s; }); };
+  V.cvdDiv = (D, look = 3) => {
+    const cv = V.cvd(D), piv = (i, hi) => { for (let j = i - look; j <= i + look; j++) if (j !== i && (hi ? D[j].h >= D[i].h : D[j].l <= D[i].l)) return false; return true; };
+    const H = [], L = [], out = [];
+    for (let i = look; i < D.length - look; i++) { if (piv(i, true)) H.push(i); if (piv(i, false)) L.push(i); }
+    for (let k = 1; k < H.length; k++) { const a = H[k - 1], b = H[k]; if (D[b].h > D[a].h && cv[b] < cv[a]) out.push({ i: b, dir: 'bear', p: D[b].h, from: a }); }
+    for (let k = 1; k < L.length; k++) { const a = L[k - 1], b = L[k]; if (D[b].l < D[a].l && cv[b] > cv[a]) out.push({ i: b, dir: 'bull', p: D[b].l, from: a }); }
+    return out.sort((x, y) => x.i - y.i);
+  };
+  /* 11. anchored VWAP with ±1σ / ±2σ volume-weighted bands */
+  V.avwap = (D, i0) => {
+    const out = []; let pv = 0, v = 0, pv2 = 0;
+    for (let i = Math.max(0, i0 | 0); i < D.length; i++) {
+      const c = D[i], tp = (c.h + c.l + c.c) / 3, w = c.v > 0 ? c.v : 1; pv += tp * w; v += w; pv2 += tp * tp * w;
+      const m = pv / v, s = Math.sqrt(Math.max(0, pv2 / v - m * m)); out.push({ i, t: c.t, vw: m, u1: m + s, d1: m - s, u2: m + 2 * s, d2: m - 2 * s });
+    }
+    return out;
+  };
+  /* 12. session volume profiles (UTC hours) */
+  V.SESS = { asia: [0, 7], london: [7, 13], ny: [13, 21] };
+  V.sessionOf = (t) => { const h = Math.floor((((t % 86400) + 86400) % 86400) / 3600); return h >= 13 && h < 21 ? 'ny' : h >= 7 && h < 13 ? 'london' : h < 7 ? 'asia' : null; };
+  V.profile = (D, keep = () => true, bins = 24) => {
+    const S = D.filter(keep); if (!S.length) return null;
+    const lo = Math.min(...S.map((c) => c.l)), hi = Math.max(...S.map((c) => c.h)), w = (hi - lo) / bins || 1, B = Array.from({ length: bins }, (_, k) => ({ p0: lo + k * w, p1: lo + (k + 1) * w, v: 0 }));
+    for (const c of S) { const tp = (c.h + c.l + c.c) / 3; B[Math.min(bins - 1, Math.max(0, Math.floor((tp - lo) / w)))].v += c.v || 0; }
+    const poc = B.reduce((a, b) => (b.v > a.v ? b : a), B[0]); return { bins: B, poc: (poc.p0 + poc.p1) / 2, lo, hi };
+  };
+  V.sessionProfiles = (D, bins = 24) => ({ asia: V.profile(D, (c) => V.sessionOf(c.t) === 'asia', bins), london: V.profile(D, (c) => V.sessionOf(c.t) === 'london', bins), ny: V.profile(D, (c) => V.sessionOf(c.t) === 'ny', bins) });
+  /* 13. zero-gamma level: the spot price where total dealer GEX crosses zero (gexFn = P5.gex) */
+  V.zeroGamma = (chain, spot, T, gexFn, span = 0.15, steps = 60) => {
+    if (!(spot > 0) || typeof gexFn !== 'function') return null; let prev = null;
+    for (let k = 0; k <= steps; k++) {
+      const S = spot * (1 - span + (2 * span * k) / steps), g = gexFn(chain, S, T).total;
+      if (prev && Math.sign(prev.g) !== Math.sign(g) && prev.g !== 0) return r2(prev.S + ((S - prev.S) * -prev.g) / (g - prev.g), 4);
+      prev = { S, g };
+    }
+    return null;
+  };
+  /* 14. unusual options activity from the chain: vol/OI, block premium, sweep-like short-dated OTM bursts */
+  V.unusual = (chain, spot, o = {}) => {
+    const out = [], minPrem = o.minPrem || 250000;
+    for (const [type, rows] of [['call', chain.calls || []], ['put', chain.puts || []]]) for (const r of rows) {
+      const vol = +r.vol || 0, oi = +r.oi || 0, prem = vol * (+r.last || +r.mid || 0) * 100, tags = [];
+      if (vol > oi && vol >= 100) tags.push('UNUSUAL'); if (prem >= minPrem * 4) tags.push('BLOCK');
+      if (vol >= 3 * Math.max(1, oi) && spot > 0 && (type === 'call' ? r.strike > spot : r.strike < spot)) tags.push('SWEEP-LIKE');
+      if (tags.length && prem >= minPrem) out.push({ type, strike: r.strike, vol, oi, prem: Math.round(prem), tags });
+    }
+    return out.sort((a, b) => b.prem - a.prem).slice(0, 40);
+  };
+  /* 15. multi-leg payoff (legs: {type: call|put|stock, strike, qty ±, prem, iv}) at expiry and today, breakevens, theta curve */
+  V.legsPreset = (kind, S, w = 0.05, prem = (k, t) => 0) => {
+    const k = (m) => Math.round(S * (1 + m) * 100) / 100, L = (type, m, qty) => ({ type, strike: k(m), qty, prem: prem(k(m), type), iv: 0.5 });
+    return ({ bullcall: [L('call', 0, 1), L('call', w, -1)], bearput: [L('put', 0, 1), L('put', -w, -1)], straddle: [L('call', 0, 1), L('put', 0, 1)], strangle: [L('call', w, 1), L('put', -w, 1)], condor: [L('put', -2 * w, 1), L('put', -w, -1), L('call', w, -1), L('call', 2 * w, 1)] })[kind] || [];
+  };
+  const legVal = (g, S, T, bs) => (g.type === 'stock' ? S : T <= 0 || !bs ? Math.max(0, g.type === 'call' ? S - g.strike : g.strike - S) : bs(S, g.strike, T, 0.04, g.iv || 0.5, g.type).price);
+  V.payoff = (legs, S0, o = {}) => {
+    const span = o.span || 0.25, n = o.n || 80, T = o.T || 0, bs = o.bs, pts = [];
+    for (let k = 0; k <= n; k++) { const S = S0 * (1 - span + (2 * span * k) / n); let e = 0, t = 0; for (const g of legs) { const m = g.type === 'stock' ? 1 : 100; e += (legVal(g, S, 0, bs) - g.prem) * g.qty * m; t += (legVal(g, S, T, bs) - g.prem) * g.qty * m; } pts.push({ S: r2(S, 4), exp: r2(e), now: r2(t) }); }
+    const be = []; for (let k = 1; k < pts.length; k++) { const a = pts[k - 1], b = pts[k]; if (Math.sign(a.exp) !== Math.sign(b.exp) && a.exp !== 0) be.push(r2(a.S + ((b.S - a.S) * -a.exp) / (b.exp - a.exp), 2)); }
+    return { pts, be, maxP: Math.max(...pts.map((p) => p.exp)), maxL: Math.min(...pts.map((p) => p.exp)) };
+  };
+  V.thetaCurve = (legs, S, T, bs, steps = 10) => Array.from({ length: steps + 1 }, (_, k) => { const t = T * (1 - k / steps); let v = 0; for (const g of legs) v += (legVal(g, S, t, bs) - g.prem) * g.qty * (g.type === 'stock' ? 1 : 100); return { days: r2(t * 365, 1), pnl: r2(v) }; });
+
+  /* ══ PHASE 3 · markets ══ */
+  /* 16. per-market memory for the universal swap */
+  V.memo = (store, mode, s) => { if (!['crypto', 'stocks', 'onchain'].includes(mode) || !s) return store; store[mode] = { tf: TF_RX.test(s.tf) ? s.tf : '1h', preset: STR(s.preset || '', 20), risk: Math.min(10, Math.max(0.1, +s.risk || 1)), ind: s.ind && typeof s.ind === 'object' ? Object.fromEntries(Object.entries(s.ind).filter(([k, v]) => /^[a-z0-9]{1,12}$/i.test(k) && typeof v === 'boolean').slice(0, 40)) : {} }; return store; };
+  V.recall = (store, mode) => (store && store[mode] && TF_RX.test(store[mode].tf) ? store[mode] : null);
+  /* 17. scanner formula: IDENT op NUMBER|IDENT joined by AND / OR, with parentheses. Parsed, never eval'd. */
+  V.FIELDS = ['RVOL', 'PRICE', 'VWAP', 'CHG', 'VOL', 'RSI', 'MCAP', 'LIQ', 'EMA20', 'EMA50', 'ATR', 'SPREAD'];
+  V.parseFormula = (src) => {
+    const s = String(src || '').slice(0, 300), toks = []; const rx = /\s*(>=|<=|==|!=|>|<|\(|\)|AND\b|OR\b|-?\d+(?:\.\d+)?|[A-Za-z][A-Za-z0-9]*)/iy; let m, pos = 0;
+    while (pos < s.length) { rx.lastIndex = pos; m = rx.exec(s); if (!m || !m[1]) { if (/^\s*$/.test(s.slice(pos))) break; return { error: 'Unexpected "' + s.slice(pos).trim().slice(0, 12) + '"' }; } toks.push(m[1]); pos = rx.lastIndex; }
+    let i = 0; const peek = () => toks[i], up = (t) => (t || '').toUpperCase();
+    const atom = () => { const t = toks[i++]; if (t == null) throw new Error('Formula ends early'); if (/^-?\d/.test(t)) return { n: +t }; if (!V.FIELDS.includes(up(t))) throw new Error('Unknown field ' + t.slice(0, 12) + ' (use ' + V.FIELDS.join(', ') + ')'); return { f: up(t) }; };
+    const cmp = () => { if (peek() === '(') { i++; const e = or(); if (toks[i++] !== ')') throw new Error('Missing )'); return e; } const a = atom(), op = toks[i++]; if (!['>', '<', '>=', '<=', '==', '!='].includes(op)) throw new Error('Expected a comparison after ' + (a.f || a.n)); return { op, a, b: atom() }; };
+    const and = () => { let l = cmp(); while (up(peek()) === 'AND') { i++; l = { and: [l, cmp()] }; } return l; };
+    const or = () => { let l = and(); while (up(peek()) === 'OR') { i++; l = { or: [l, and()] }; } return l; };
+    try { if (!toks.length) return { error: 'Empty formula' }; const ast = or(); if (i < toks.length) return { error: 'Unexpected "' + toks[i] + '"' }; return { ast }; } catch (e) { return { error: e.message }; }
+  };
+  V.evalFormula = (ast, row) => {
+    const val = (x) => (x.n != null ? x.n : +row[x.f.toLowerCase()]);
+    if (ast.and) return V.evalFormula(ast.and[0], row) && V.evalFormula(ast.and[1], row);
+    if (ast.or) return V.evalFormula(ast.or[0], row) || V.evalFormula(ast.or[1], row);
+    const a = val(ast.a), b = val(ast.b); if (!fin(a) || !fin(b)) return false;
+    return { '>': a > b, '<': a < b, '>=': a >= b, '<=': a <= b, '==': a === b, '!=': a !== b }[ast.op];
+  };
+  /* 18. DEX pair safety strip */
+  V.dexSafety = (x = {}) => {
+    const b = [
+      { k: 'mint', ok: x.mintAuth === null || x.mintAuth === false, unk: x.mintAuth === undefined, label: 'Mint authority' },
+      { k: 'freeze', ok: x.freezeAuth === null || x.freezeAuth === false, unk: x.freezeAuth === undefined, label: 'Freeze authority' },
+      { k: 'top10', ok: fin(x.top10) && x.top10 <= 30, unk: !fin(x.top10), label: 'Top-10 holders' + (fin(x.top10) ? ' ' + r2(x.top10, 1) + '%' : '') },
+      { k: 'lp', ok: fin(x.lpLocked) && x.lpLocked >= 80, unk: !fin(x.lpLocked), label: 'LP locked' + (fin(x.lpLocked) ? ' ' + r2(x.lpLocked, 0) + '%' : '') },
+    ];
+    const known = b.filter((y) => !y.unk), score = known.length ? Math.round((known.filter((y) => y.ok).length / known.length) * 100) : null;
+    return { badges: b, score, verdict: score == null ? 'unknown' : score >= 75 ? 'safer' : score >= 50 ? 'caution' : 'danger' };
+  };
+  /* 19. smart-money leaderboard + confluence (2+ high-win-rate wallets buying the same token within the window) */
+  V.leaderboard = (ws) => (ws || []).filter((w) => w && fin(w.winRate) && fin(w.trades)).map((w) => Object.assign({}, w, { score: r2(w.winRate * Math.log10(1 + w.trades) * 100, 1) })).sort((a, b) => b.score - a.score);
+  V.confluence = (buys, o = {}) => {
+    const win = o.window || 300, min = o.min || 2, minWin = o.minWin != null ? o.minWin : 0.55, by = new Map(), out = [];
+    for (const b of (buys || []).filter((x) => x && x.side === 'buy' && fin(x.t) && (x.winRate == null || x.winRate >= minWin)).sort((a, b) => a.t - b.t)) {
+      const L = by.get(b.sym) || []; L.push(b); while (L.length && b.t - L[0].t > win) L.shift(); by.set(b.sym, L);
+      const who = [...new Set(L.map((x) => x.who))]; if (who.length >= min && !out.some((y) => y.sym === b.sym && b.t - y.t < win)) out.push({ sym: b.sym, t: b.t, wallets: who.slice(0, 8), usd: Math.round(L.reduce((s, x) => s + (+x.usd || 0), 0)) });
+    }
+    return out;
+  };
+  /* 20. net dollar inflow per symbol over a window */
+  V.netFlow = (trades, nowSec, win) => { const m = {}; for (const t of trades || []) { if (!t || !(nowSec - t.t <= win) || t.t > nowSec + 1) continue; const u = (+t.usd || +t.p * +t.q || 0) * (t.side === 'sell' ? -1 : 1); m[t.sym] = (m[t.sym] || 0) + u; } return m; };
+  /* 21. sparkline polyline + relative strength vs a benchmark (% points over the same window) */
+  V.spark = (vals, w = 60, h = 16) => { const v = (vals || []).filter(fin); if (v.length < 2) return ''; const lo = Math.min(...v), hi = Math.max(...v), d = hi - lo || 1; return v.map((x, i) => `${r2((i / (v.length - 1)) * w, 1)},${r2(h - ((x - lo) / d) * h, 1)}`).join(' '); };
+  V.relStrength = (a, b) => { const ch = (v) => (v && v.length > 1 && v[0] > 0 ? (v[v.length - 1] / v[0] - 1) * 100 : null), x = ch(a), y = ch(b); return x == null || y == null ? null : r2(x - y, 2); };
+  /* 22. paper DEX: priority-fee + slippage presets and a constant-product price-impact estimate */
+  V.FEES = { normal: { prio: 0.00001, slip: 0.5, ms: 1800 }, fast: { prio: 0.0001, slip: 1, ms: 900 }, turbo: { prio: 0.001, slip: 2.5, ms: 450 } };
+  V.dexSim = (usd, liqUsd, preset = 'normal') => {
+    const P = V.FEES[preset] || V.FEES.normal; if (!(usd > 0) || !(liqUsd > 0)) return null;
+    const pool = liqUsd / 2, impact = (usd / (pool + usd)) * 100;
+    return { preset, impactPct: r2(impact, 3), slipPct: P.slip, feeSol: P.prio, landingMs: P.ms, fails: impact > P.slip, minOutPct: r2(100 - P.slip, 2) };
+  };
+
+  /* ══ PHASE 4 · quant lab ══ */
+  /* 23. no-code composer → JSON / Pine Script v5 */
+  V.SERIES = { close: 'close', open: 'open', high: 'high', low: 'low', volume: 'volume', rsi14: 'ta.rsi(close, 14)', ema20: 'ta.ema(close, 20)', ema50: 'ta.ema(close, 50)', ema200: 'ta.ema(close, 200)', sma20: 'ta.sma(close, 20)', vwap: 'ta.vwap(hlc3)', atr14: 'ta.atr(14)', macd: 'ta.macd(close, 12, 26, 9)[0]', macdsig: 'ta.macd(close, 12, 26, 9)[1]' };
+  const OPS = ['>', '<', '>=', '<=', 'crosses above', 'crosses below'];
+  V.isSeries = (k) => typeof k === 'string' && Object.prototype.hasOwnProperty.call(V.SERIES, k); // never 'constructor' / '__proto__'
+  V.validRules = (r) => {
+    if (!r || typeof r !== 'object') return 'Not a rule set';
+    for (const side of ['entry', 'exit']) { const g = r[side]; if (!g || !['AND', 'OR'].includes(g.logic) || !Array.isArray(g.conds) || !g.conds.length || g.conds.length > 8) return side + ': needs 1–8 conditions joined by AND / OR'; for (const c of g.conds) { if (!c || !V.isSeries(c.a) || !OPS.includes(c.op) || !(V.isSeries(c.b) || fin(c.b))) return side + ': bad condition'; } }
+    if (r.sl != null && !(r.sl > 0 && r.sl < 50)) return 'Stop must be 0–50 %'; if (r.tp != null && !(r.tp > 0 && r.tp < 500)) return 'Target must be 0–500 %';
+    return null;
+  };
+  /* rebuild a rule set from validated fields only (imported codes carry nothing else) */
+  V.cleanRules = (r) => { if (V.validRules(r)) return null; const g = (x) => ({ logic: x.logic, conds: x.conds.map((c) => ({ a: c.a, op: c.op, b: V.isSeries(c.b) ? c.b : +c.b })) }); return { entry: g(r.entry), exit: g(r.exit), sl: r.sl == null ? null : +r.sl, tp: r.tp == null ? null : +r.tp }; };
+  const pineCond = (c) => { const a = V.SERIES[c.a], b = V.isSeries(c.b) ? V.SERIES[c.b] : String(+c.b); return c.op === 'crosses above' ? `ta.crossover(${a}, ${b})` : c.op === 'crosses below' ? `ta.crossunder(${a}, ${b})` : `${a} ${c.op} ${b}`; };
+  V.toPine = (r, name = 'ExTerm strategy') => {
+    const e = V.validRules(r); if (e) return { error: e };
+    const nm = STR(name, 60).replace(/["\\\n\r]/g, ''), j = (g) => g.conds.map(pineCond).join(g.logic === 'AND' ? ' and ' : ' or ');
+    return { pine: `//@version=5\nstrategy("${nm}", overlay=true, default_qty_type=strategy.percent_of_equity, default_qty_value=100)\nlongEntry = ${j(r.entry)}\nlongExit = ${j(r.exit)}\nif longEntry\n    strategy.entry("Long", strategy.long)\nif longExit\n    strategy.close("Long")\n${r.sl || r.tp ? `strategy.exit("Risk", "Long"${r.sl ? `, stop=strategy.position_avg_price * ${r2(1 - r.sl / 100, 4)}` : ''}${r.tp ? `, limit=strategy.position_avg_price * ${r2(1 + r.tp / 100, 4)}` : ''})\n` : ''}` };
+  };
+  /* evaluate a rule set on candles → boolean arrays (shared by the composer preview and the NL compiler) */
+  const ema = (v, n) => { const k = 2 / (n + 1), o = []; let e = null; for (const x of v) { e = e == null ? x : x * k + e * (1 - k); o.push(e); } return o; };
+  const rsi = (v, n = 14) => { const o = [null]; let g = 0, l = 0; for (let i = 1; i < v.length; i++) { const d = v[i] - v[i - 1]; if (i <= n) { g += Math.max(0, d); l += Math.max(0, -d); o.push(i === n ? 100 - 100 / (1 + (l ? g / l : 99)) : null); if (i === n) { g /= n; l /= n; } continue; } g = (g * (n - 1) + Math.max(0, d)) / n; l = (l * (n - 1) + Math.max(0, -d)) / n; o.push(100 - 100 / (1 + (l ? g / l : 99))); } return o; };
+  V.seriesOf = (D, key) => {
+    const c = D.map((x) => x.c);
+    switch (key) {
+      case 'close': return c; case 'open': return D.map((x) => x.o); case 'high': return D.map((x) => x.h); case 'low': return D.map((x) => x.l); case 'volume': return D.map((x) => x.v || 0);
+      case 'rsi14': return rsi(c, 14); case 'ema20': return ema(c, 20); case 'ema50': return ema(c, 50); case 'ema200': return ema(c, 200);
+      case 'sma20': return c.map((_, i) => (i >= 19 ? mean(c.slice(i - 19, i + 1)) : null));
+      case 'vwap': { let pv = 0, v = 0; return D.map((x) => { pv += ((x.h + x.l + x.c) / 3) * (x.v || 1); v += x.v || 1; return pv / v; }); }
+      case 'atr14': { const tr = D.map((x, i) => (i ? Math.max(x.h - x.l, Math.abs(x.h - D[i - 1].c), Math.abs(x.l - D[i - 1].c)) : x.h - x.l)); return ema(tr, 14); }
+      case 'macd': case 'macdsig': { const e26 = ema(c, 26), m = ema(c, 12).map((x, i) => x - e26[i]); return key === 'macd' ? m : ema(m, 9); }
+      default: return c.map(() => null);
+    }
+  };
+  V.signals = (D, g) => {
+    const cache = {}, S = (k) => (cache[k] = cache[k] || V.seriesOf(D, k)), out = new Array(D.length).fill(false);
+    for (let i = 1; i < D.length; i++) {
+      const res = g.conds.map((c) => { const a = S(c.a), b = V.isSeries(c.b) ? S(c.b) : null, bv = (j) => (b ? b[j] : +c.b); if (a[i] == null || bv(i) == null || a[i - 1] == null || bv(i - 1) == null) return false; return c.op === 'crosses above' ? a[i - 1] <= bv(i - 1) && a[i] > bv(i) : c.op === 'crosses below' ? a[i - 1] >= bv(i - 1) && a[i] < bv(i) : { '>': a[i] > bv(i), '<': a[i] < bv(i), '>=': a[i] >= bv(i), '<=': a[i] <= bv(i) }[c.op]; });
+      out[i] = g.logic === 'AND' ? res.every(Boolean) : res.some(Boolean);
+    }
+    return out;
+  };
+  /* tiny long-only simulator for composed rules: next-bar-open fills, % stop / target, fee per side */
+  V.simRules = (D, r, fee = 0.001) => {
+    const en = V.signals(D, r.entry), ex = V.signals(D, r.exit), eq = [1], trades = []; let pos = null, e = 1;
+    for (let i = 1; i < D.length; i++) {
+      const c = D[i];
+      if (pos) {
+        const sl = r.sl ? pos.p * (1 - r.sl / 100) : null, tp = r.tp ? pos.p * (1 + r.tp / 100) : null; let out = null;
+        if (sl && c.l <= sl) out = Math.min(c.o, sl); else if (tp && c.h >= tp) out = Math.max(c.o, tp); else if (ex[i - 1]) out = c.o;
+        if (out != null) { const ret = (out / pos.p) * (1 - fee) ** 2 - 1; e *= 1 + ret; trades.push({ i0: pos.i, i1: i, ret }); pos = null; }
+      } else if (en[i - 1]) pos = { p: c.o, i };
+      eq.push(pos ? e * (c.c / pos.p) * (1 - fee) : e);
+    }
+    return { eq, trades };
+  };
+  V.stats = (eq, bpy = 8760) => {
+    const r = []; for (let i = 1; i < eq.length; i++) if (eq[i - 1] > 0) r.push(eq[i] / eq[i - 1] - 1);
+    let pk = eq[0] || 1, dd = 0; for (const v of eq) { pk = Math.max(pk, v); dd = Math.max(dd, 1 - v / pk); }
+    const s = sd(r); return { ret: r2((eq[eq.length - 1] / eq[0] - 1) * 100), maxDD: r2(dd * 100), sharpe: s > 0 ? r2((mean(r) / s) * Math.sqrt(bpy)) : 0 };
+  };
+  /* 24. portfolio: equal-weight basket of equity curves, combined stats + return correlation */
+  V.portfolio = (curves, bpy) => {
+    const keys = Object.keys(curves || {}).filter((k) => Array.isArray(curves[k]) && curves[k].length > 2); if (!keys.length) return null;
+    const n = Math.min(...keys.map((k) => curves[k].length)), norm = keys.map((k) => { const c = curves[k].slice(-n); return c.map((v) => v / c[0]); });
+    const eq = Array.from({ length: n }, (_, i) => mean(norm.map((c) => c[i]))), rets = norm.map((c) => c.slice(1).map((v, i) => v / c[i] - 1));
+    return Object.assign(V.stats(eq, bpy), { keys, eq, each: keys.map((k, j) => Object.assign({ k }, V.stats(norm[j], bpy))), corr: rets.map((a) => rets.map((b) => (a === b ? 1 : V.pearson(a, b)))) });
+  };
+  /* 25. sensitivity grid + plateau score (share of profitable cells, best-neighbourhood vs best cell) */
+  V.grid = (xs, ys, fn) => ys.map((y) => xs.map((x) => { try { const v = fn(x, y); return fin(v) ? v : null; } catch (e) { return null; } }));
+  V.plateau = (M) => {
+    const cells = M.flat().filter(fin); if (!cells.length) return null; let bi = 0, bj = 0, bv = -Infinity;
+    M.forEach((row, i) => row.forEach((v, j) => { if (fin(v) && v > bv) { bv = v; bi = i; bj = j; } }));
+    const nb = []; for (let di = -1; di <= 1; di++) for (let dj = -1; dj <= 1; dj++) { const v = (M[bi + di] || [])[bj + dj]; if ((di || dj) && fin(v)) nb.push(v); }
+    const pos = cells.filter((v) => v > 0).length / cells.length, keep = bv > 0 && nb.length ? mean(nb) / bv : 0;
+    return { best: bv, at: [bi, bj], profitable: r2(pos * 100, 0), neighbour: r2(keep * 100, 0), verdict: pos >= 0.6 && keep >= 0.5 ? 'robust plateau' : pos >= 0.4 ? 'mixed' : 'fragile / overfit' };
+  };
+  /* 26. weak-gate fixes: failed 17-test checks → backtest enhancer options */
+  V.FIXES = { dd: { atrStop: 2 }, cost: { cooldown: 6 }, lag: { timeStop: 48 }, regime: { trendEma: 200 }, oos: { trendEma: 200, atrTrail: 3 }, wf: { trendEma: 200, atrTrail: 3 }, time: { trendEma: 100 }, outlier: { atrTrail: 2.5 }, mc: { atrStop: 2 }, bench: { trendEma: 200 }, profit: { atrStop: 2, trendEma: 100 } };
+  V.fixGate = (checks, o = {}) => {
+    const o2 = Object.assign({}, o), applied = [];
+    for (const c of checks || []) if (c && c.status === 'fail' && V.FIXES[c.id]) for (const [k, v] of Object.entries(V.FIXES[c.id])) if (o2[k] == null) { o2[k] = v; applied.push(k + '=' + v + ' (' + c.id + ')'); }
+    return { o: o2, applied };
+  };
+  /* 27. prop-firm rulebooks (approximate public rules for a 50K account; verify with the firm) */
+  V.PROP = {
+    apex: { name: 'Apex 50K', target: 6, dailyDD: null, maxDD: 5, trail: true },
+    topstep: { name: 'Topstep 50K', target: 6, dailyDD: 2, maxDD: 4, trail: true },
+    ftmo: { name: 'FTMO 100K', target: 10, dailyDD: 5, maxDD: 10, trail: false },
+    custom: { name: 'Custom', target: 8, dailyDD: 4, maxDD: 8, trail: true },
+  };
+  V.ruleOk = (r) => r && [r.target, r.maxDD].every((x) => fin(+x) && +x > 0 && +x <= 100) && (r.dailyDD == null || (fin(+r.dailyDD) && +r.dailyDD > 0 && +r.dailyDD <= 100));
+  V.propRun = (eq, R, bpd = 24) => {
+    if (!Array.isArray(eq) || eq.length < 2 || !V.ruleOk(R)) return { ok: false, error: 'Need an equity curve and valid rules' };
+    const c0 = eq[0]; let pk = c0, day0 = c0, maxDD = 0, worst = 0;
+    for (let i = 1; i < eq.length; i++) {
+      const v = eq[i]; if (i % bpd === 0) day0 = eq[i - 1]; pk = Math.max(pk, v);
+      const dd = (1 - v / (R.trail ? pk : c0)) * 100, dl = (1 - v / day0) * 100; maxDD = Math.max(maxDD, dd); worst = Math.max(worst, dl);
+      if (R.dailyDD != null && dl > R.dailyDD) return { ok: true, passed: false, i, fail: `daily loss ${r2(dl)}% > ${R.dailyDD}%`, maxDD: r2(maxDD), worstDay: r2(worst), ret: r2((v / c0 - 1) * 100) };
+      if (dd > R.maxDD) return { ok: true, passed: false, i, fail: `${R.trail ? 'trailing' : 'max'} drawdown ${r2(dd)}% > ${R.maxDD}%`, maxDD: r2(maxDD), worstDay: r2(worst), ret: r2((v / c0 - 1) * 100) };
+      if ((v / c0 - 1) * 100 >= R.target) return { ok: true, passed: true, i, maxDD: r2(maxDD), worstDay: r2(worst), ret: r2((v / c0 - 1) * 100) };
+    }
+    return { ok: true, passed: false, i: eq.length - 1, fail: 'target not reached', maxDD: r2(maxDD), worstDay: r2(worst), ret: r2((eq[eq.length - 1] / c0 - 1) * 100) };
+  };
+  /* 28. blind drill: prices rebased to 100 and dates moved to a neutral epoch, so the ticker / date can't be guessed */
+  V.BLIND_T0 = 946857600; // 2000-01-03
+  V.blind = (D) => { if (!D || !D.length) return []; const k = 100 / D[0].c, t0 = D[0].t; return D.map((c) => ({ t: V.BLIND_T0 + (c.t - t0), o: c.o * k, h: c.h * k, l: c.l * k, c: c.c * k, v: c.v })); };
+  V.REPLAY_KEYS = { Digit1: 1, Digit2: 2, Digit5: 5, Digit0: 10 };
+  /* 29. MFE / MAE of a closed trade against the candles it lived through, plus auto-tags */
+  V.excursion = (tr, D) => {
+    if (!tr || !(tr.entry > 0) || !(tr.exit > 0) || !D || !D.length) return null; const long = tr.side !== 'short';
+    const S = D.filter((c) => c.t >= tr.t0 && c.t <= tr.t1); if (!S.length) return null;
+    const hi = Math.max(...S.map((c) => c.h)), lo = Math.min(...S.map((c) => c.l)), ret = ((tr.exit / tr.entry - 1) * 100) * (long ? 1 : -1);
+    const mfe = (long ? hi / tr.entry - 1 : 1 - lo / tr.entry) * 100, mae = (long ? 1 - lo / tr.entry : hi / tr.entry - 1) * 100;
+    return { mfe: r2(mfe), mae: r2(mae), ret: r2(ret), eff: mfe > 0 ? r2(Math.max(0, ret) / mfe * 100, 0) : 0 };
+  };
+  V.autoTag = (tr, x) => {
+    const t = [], held = (tr.t1 - tr.t0) / 60;
+    if (held < 15) t.push('scalp'); else if (held > 1440) t.push('swing');
+    if (x) { if (x.ret > 0 && x.mfe > 2 * x.ret) t.push('left-money'); if (x.ret < 0 && x.mae > 0 && Math.abs(x.ret) >= 0.9 * x.mae) t.push('max-pain-exit'); if (x.ret < 0 && x.mfe > 1) t.push('was-green'); if (x.eff >= 80) t.push('clean-exit'); }
+    if (tr.stop === false) t.push('no-stop'); return t;
+  };
+  /* 30. strategy battle: rank up to 4 on identical data by return / drawdown */
+  V.battle = (rows) => (rows || []).slice(0, 4).filter((r) => r && Array.isArray(r.eq) && r.eq.length > 1).map((r) => { const s = V.stats(r.eq); return Object.assign({ name: STR(r.name, 40), eq: r.eq }, s, { score: r2(s.ret / Math.max(1, s.maxDD), 3) }); }).sort((a, b) => b.score - a.score).map((r, i) => Object.assign(r, { rank: i + 1 }));
+
+  /* ══ PHASE 5 · Grok, copilot, World ══ */
+  /* 31. plain-English rules → workflow JSON (the composer's rule format, so it backtests the same way) */
+  const IND = [[/rsi(?:\s*\(?\s*14\s*\)?)?/, 'rsi14'], [/ema\s*\(?\s*200\s*\)?|200\s*ema/, 'ema200'], [/ema\s*\(?\s*50\s*\)?|50\s*ema/, 'ema50'], [/ema\s*\(?\s*20\s*\)?|20\s*ema|\bema\b/, 'ema20'], [/sma\s*\(?\s*20\s*\)?|20\s*sma/, 'sma20'], [/vwap/, 'vwap'], [/macd signal/, 'macdsig'], [/macd/, 'macd'], [/price|close/, 'close'], [/volume/, 'volume']];
+  const indOf = (s) => { for (const [rx, k] of IND) if (rx.test(s)) return k; return null; };
+  const condOf = (txt) => {
+    const s = txt.trim().toLowerCase(); let m;
+    const OPW = [[/crosses above|crosses over|crossover/, 'crosses above'], [/crosses below|crosses under|crossunder/, 'crosses below'], [/>=|at least/, '>='], [/<=|at most/, '<='], [/\babove\b|>|over|greater than/, '>'], [/\bbelow\b|<|under|less than/, '<']];
+    for (const [rx, op] of OPW) { if ((m = rx.exec(s))) { const L = s.slice(0, m.index), R = s.slice(m.index + m[0].length), a = indOf(L), num = /-?\d+(?:\.\d+)?/.exec(R), b = a === 'rsi14' && num ? +num[0] : indOf(R) || (num ? +num[0] : null); if (a && b != null && a !== b) return { a, op, b }; } }
+    return null;
+  };
+  V.nlCompile = (text) => {
+    const s = String(text || '').slice(0, 600).replace(/\s+/g, ' ').trim(), lc = s.toLowerCase(); if (s.length < 8) return { ok: false, error: 'Describe a rule, e.g. "buy SOL when RSI below 30 and price above EMA 200, sell when RSI above 70, stop 2%, target 6%"' };
+    const grab = (rx) => { const m = rx.exec(lc); return m ? m[1] : ''; };
+    const entryTxt = grab(/(?:buy|long|enter)[^,;.]*?\bwhen\b(.+?)(?:[,;.]\s*(?:and\s+)?(?:sell|exit|close)|[,;.]\s*(?:stop|sl|take|target|tp)|$)/), exitTxt = grab(/(?:sell|exit|close)[^,;.]*?\bwhen\b(.+?)(?:[,;.]|$)/);
+    const split = (t) => { const logic = /\bor\b/.test(t) && !/\band\b/.test(t) ? 'OR' : 'AND'; return { logic, conds: t.split(logic === 'OR' ? /\bor\b/ : /\band\b/).map(condOf).filter(Boolean).slice(0, 8) }; };
+    const entry = split(entryTxt), exit = exitTxt ? split(exitTxt) : { logic: 'AND', conds: [] };
+    if (!entry.conds.length) return { ok: false, error: 'No entry condition understood. Try "buy when RSI below 30".' };
+    if (!exit.conds.length) exit.conds.push(entry.conds[0].a === 'rsi14' ? { a: 'rsi14', op: '>', b: 70 } : { a: 'close', op: 'crosses below', b: 'ema20' });
+    const sym = /\b(?:buy|long|trade)\s+([a-z]{2,6}(?:-usd)?)\b/.exec(lc), tf = /\b(1m|5m|15m|1h|4h|1d)\b/.exec(lc), sl = /(?:stop(?:\s*loss)?|sl)\s*(?:at|of)?\s*(\d+(?:\.\d+)?)\s*%/.exec(lc), tp = /(?:take\s*profit|target|tp)\s*(?:at|of)?\s*(\d+(?:\.\d+)?)\s*%/.exec(lc);
+    const rules = { entry, exit, sl: sl ? +sl[1] : null, tp: tp ? +tp[1] : null }, err = V.validRules(rules); if (err) return { ok: false, error: err };
+    const SKIP = new Set(['when', 'the', 'if', 'at', 'on']), su = sym && !SKIP.has(sym[1]) ? sym[1].toUpperCase() : null;
+    return { ok: true, workflow: { v: 1, kind: 'exterm-workflow', name: STR(s, 60), sym: su, tf: tf ? tf[1] : '1h', rules } };
+  };
+  /* 32. stats for a selected candle range (fed to the 3-agent copilot) */
+  V.rangeStats = (D, i0, i1) => {
+    const a = Math.max(0, Math.min(i0, i1)), b = Math.min(D.length - 1, Math.max(i0, i1)); if (!(b > a)) return null;
+    const S = D.slice(a, b + 1), cv = V.cvd(S), hi = Math.max(...S.map((c) => c.h)), lo = Math.min(...S.map((c) => c.l));
+    return { bars: S.length, t0: S[0].t, t1: S[S.length - 1].t, ret: r2((S[S.length - 1].c / S[0].o - 1) * 100), hi, lo, rangePct: r2((hi / lo - 1) * 100), vol: Math.round(S.reduce((s, c) => s + (c.v || 0), 0)), cvd: r2(cv[cv.length - 1], 2), up: S.filter((c) => c.c >= c.o).length };
+  };
+  V.rangePrompt = (sym, tf, st) => `Analyze this ${STR(tf, 4)} candle range on ${STR(sym, 30)}: ${st.bars} bars, return ${st.ret}%, range ${st.rangePct}% (high ${st.hi}, low ${st.lo}), ${st.up}/${st.bars} up bars, estimated CVD ${st.cvd} (${st.cvd >= 0 ? 'net buying' : 'net selling'}). What does the price action and order flow say, and what are the risks?`;
+  /* 33. devil's advocate: grade a manual order A–F before it is sent */
+  V.critique = (o) => {
+    let s = 100; const n = [], hit = (pts, why) => { s -= pts; n.push(why); };
+    if (!(o.sl > 0)) hit(30, 'No stop loss: one bad candle decides this trade.');
+    else { const rr = o.tp > 0 ? Math.abs(o.tp - o.entry) / Math.abs(o.entry - o.sl) : null; if (rr == null) hit(8, 'No target: decide the exit before the entry.'); else if (rr < 1.5) hit(15, `Reward:risk is only ${r2(rr, 2)}.`); }
+    if (o.riskPct > 2) hit(Math.min(25, (o.riskPct - 2) * 8), `Risking ${r2(o.riskPct, 2)}% of equity (most pros cap at 1–2%).`);
+    if (o.trendUp === false && o.side === 'buy') hit(12, 'Buying below the 200 EMA: you are fighting the trend.');
+    if (o.trendUp === true && o.side === 'sell') hit(12, 'Selling above the 200 EMA: you are fighting the trend.');
+    if (o.side === 'buy' && o.rsi > 75) hit(10, `RSI ${Math.round(o.rsi)}: chasing an overbought move.`); if (o.side === 'sell' && o.rsi < 25) hit(10, `RSI ${Math.round(o.rsi)}: selling into an oversold move.`);
+    if (o.eventSoon) hit(12, 'A high-impact event is close: spreads and gaps can blow through stops.');
+    if (o.openPositions >= 5) hit(8, `${o.openPositions} positions already open.`);
+    if (o.lossStreak >= 3) hit(10, `${o.lossStreak} losses in a row: possible revenge trade.`);
+    s = Math.max(0, Math.round(s)); return { score: s, grade: s >= 90 ? 'A' : s >= 80 ? 'B' : s >= 70 ? 'C' : s >= 60 ? 'D' : 'F', notes: n.length ? n : ['No red flags found. Size it right and follow the plan.'] };
+  };
+  /* 34. World Monitor headline → asset-impact tags with a tradeable symbol */
+  V.IMPACT = [[/oil|opec|crude|brent|refiner|strait of hormuz|pipeline/i, 'OIL/XLE', 'XLE'], [/nvidia|semiconductor|chip|tsmc|export control|ai model|gpu/i, 'NVDA/SMH', 'NVDA'], [/bitcoin|crypto|stablecoin|\bsec\b.*crypto|etf flow|dollar index|\bdxy\b/i, 'BTC/DXY', 'BTC-USD'], [/gold|safe haven|bullion/i, 'GOLD/GLD', 'GLD'], [/fed|fomc|rate (?:cut|hike)|treasur|yield|inflation|\bcpi\b/i, 'RATES/TLT', 'TLT'], [/china|beijing|tariff|yuan/i, 'CHINA/FXI', 'FXI'], [/missile|war|military|defen[cs]e|nato|drone strike/i, 'DEFENSE/ITA', 'ITA'], [/bank|credit|default|liquidity crisis/i, 'BANKS/XLF', 'XLF']];
+  V.impactTags = (text) => { const s = String(text || '').slice(0, 2000), out = []; for (const [rx, tag, sym] of V.IMPACT) if (rx.test(s)) out.push({ tag, sym }); return out.slice(0, 4); };
+  /* 35. alert card text (Discord / Telegram): setup + R:R */
+  V.alertCard = (o) => {
+    const rr = o.entry > 0 && o.sl > 0 && o.tp > 0 && o.entry !== o.sl ? r2(Math.abs(o.tp - o.entry) / Math.abs(o.entry - o.sl), 2) : null;
+    const lines = [`🔔 ${STR(o.side || 'setup', 8).toUpperCase()} ${STR(o.sym, 30)} · ${STR(o.tf || '', 4)}`, o.setup ? STR(o.setup, 120) : null, o.entry > 0 ? `Entry ${o.entry}` : null, o.sl > 0 ? `Stop ${o.sl}` : null, o.tp > 0 ? `Target ${o.tp}` : null, rr != null ? `R:R ${rr}` : null, 'Paper trading · not financial advice'].filter(Boolean);
+    return { rr, text: lines.join('\n') };
+  };
+  /* 36. telemetry helpers */
+  V.fmtUptime = (s) => { s = Math.max(0, Math.floor(+s || 0)); const d = Math.floor(s / 86400), h = Math.floor((s % 86400) / 3600), m = Math.floor((s % 3600) / 60); return d ? `${d}d ${h}h` : h ? `${h}h ${m}m` : `${m}m ${s % 60}s`; };
+  V.pctl = (a, p) => { const s = (a || []).filter(fin).sort((x, y) => x - y); return s.length ? s[Math.min(s.length - 1, Math.floor((p / 100) * s.length))] : null; };
+  /* 37. pre-market levels (previous UTC day high / low / close + overnight range since 00:00 UTC) and EOD recap */
+  V.levels = (D, nowSec) => {
+    const d0 = Math.floor(nowSec / 86400) * 86400, prev = D.filter((c) => c.t >= d0 - 86400 && c.t < d0), today = D.filter((c) => c.t >= d0 && c.t <= nowSec);
+    if (!prev.length) return null;
+    return { pdh: Math.max(...prev.map((c) => c.h)), pdl: Math.min(...prev.map((c) => c.l)), pdc: prev[prev.length - 1].c, onh: today.length ? Math.max(...today.map((c) => c.h)) : null, onl: today.length ? Math.min(...today.map((c) => c.l)) : null };
+  };
+  V.recap = (closed) => { const C = closed || [], w = C.filter((x) => x.pnl > 0), pnl = C.reduce((s, x) => s + (+x.pnl || 0), 0); return { n: C.length, wins: w.length, pnl: r2(pnl), wr: C.length ? r2((w.length / C.length) * 100, 0) : null, best: C.length ? C.reduce((a, b) => (b.pnl > a.pnl ? b : a)) : null, worst: C.length ? C.reduce((a, b) => (b.pnl < a.pnl ? b : a)) : null }; };
+  /* 38. shadow mode: a hypothetical fill against a live tick (never touches balances) */
+  V.shadowFill = (o, tick, slipBps = 5) => { if (!o || !tick || !(tick.price > 0) || !['buy', 'sell'].includes(o.side) || !(o.usd > 0)) return null; const k = (slipBps / 1e4) * (o.side === 'buy' ? 1 : -1), price = tick.price * (1 + k); return { ts: tick.ts || Date.now(), sym: STR(o.sym, 100), side: o.side, usd: o.usd, mid: tick.price, price, slipUsd: r2(Math.abs(price - tick.price) * (o.usd / tick.price), 4), bot: STR(o.bot || '', 40) }; };
+  V.shadowStats = (log) => { const L = log || []; return { n: L.length, slipUsd: r2(L.reduce((s, x) => s + (x.slipUsd || 0), 0), 2), buys: L.filter((x) => x.side === 'buy').length, sells: L.filter((x) => x.side === 'sell').length }; };
+
+  /* ══ PHASE 6 · platform ══ */
+  /* 39. signed share codes: EXT1.<payload>.<ECDSA P-256 signature>, the signer's public key travels in the payload */
+  const b64u = (bytes) => { let s = ''; for (const b of bytes) s += String.fromCharCode(b); return (typeof btoa === 'function' ? btoa(s) : Buffer.from(s, 'binary').toString('base64')).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); };
+  const unb64u = (s) => { const t = String(s).replace(/-/g, '+').replace(/_/g, '/') + '==='.slice((String(s).length + 3) % 4); const bin = typeof atob === 'function' ? atob(t) : Buffer.from(t, 'base64').toString('binary'); return Uint8Array.from(bin, (c) => c.charCodeAt(0)); };
+  const enc = (s) => new TextEncoder().encode(s), dec = (b) => new TextDecoder().decode(b);
+  const ALG = { name: 'ECDSA', namedCurve: 'P-256' }, SIG = { name: 'ECDSA', hash: 'SHA-256' };
+  V.newKey = (subtle, extractable = true) => subtle.generateKey(ALG, extractable, ['sign', 'verify']); // the public half is always exportable
+  V.fingerprint = async (subtle, jwk) => { const h = new Uint8Array(await subtle.digest('SHA-256', enc(jwk.x + '.' + jwk.y))); return [...h.slice(0, 6)].map((b) => b.toString(16).padStart(2, '0')).join(':'); };
+  V.signCode = async (subtle, kp, kind, data) => {
+    if (!['workspace', 'strategy'].includes(kind)) throw new Error('bad kind');
+    const jwk = await subtle.exportKey('jwk', kp.publicKey), body = enc(JSON.stringify({ v: 1, app: 'ExTerm', kind, data, pub: { x: jwk.x, y: jwk.y }, ts: Math.floor(Date.now() / 1000) }));
+    if (body.length > 24000) throw new Error('Too large to share');
+    const sig = new Uint8Array(await subtle.sign(SIG, kp.privateKey, body)); return 'EXT1.' + b64u(body) + '.' + b64u(sig);
+  };
+  V.verifyCode = async (subtle, code) => {
+    const m = /^EXT1\.([A-Za-z0-9_-]{10,40000})\.([A-Za-z0-9_-]{40,200})$/.exec(String(code || '').trim()); if (!m) return { ok: false, error: 'Not an .exterm share code' };
+    let body, j; try { body = unb64u(m[1]); j = JSON.parse(dec(body)); } catch (e) { return { ok: false, error: 'Corrupted code' }; }
+    if (!j || j.v !== 1 || j.app !== 'ExTerm' || !['workspace', 'strategy'].includes(j.kind) || !j.pub || typeof j.pub.x !== 'string' || typeof j.pub.y !== 'string') return { ok: false, error: 'Not an ExTerm share code' };
+    try { const key = await subtle.importKey('jwk', { kty: 'EC', crv: 'P-256', x: j.pub.x, y: j.pub.y, ext: true }, ALG, false, ['verify']); if (!(await subtle.verify(SIG, key, unb64u(m[2]), body))) return { ok: false, error: 'Signature does not match: the code was altered' }; } catch (e) { return { ok: false, error: 'Bad signature key' }; }
+    return { ok: true, kind: j.kind, data: j.data, ts: j.ts, signer: await V.fingerprint(subtle, j.pub) };
+  };
+  /* workspace payload whitelist (theme, timeframe, indicator toggles, theme tokens, language) */
+  V.cleanWorkspace = (d) => {
+    if (!d || typeof d !== 'object') return null; const o = {};
+    if (typeof d.theme === 'string' && /^[a-z]{2,12}$/.test(d.theme)) o.theme = d.theme; if (typeof d.tf === 'string' && TF_RX.test(d.tf)) o.tf = d.tf;
+    if (typeof d.lang === 'string' && /^[a-z]{2,3}(-[A-Za-z]{2,4})?$/.test(d.lang)) o.lang = d.lang;
+    if (d.ind && typeof d.ind === 'object') o.ind = Object.fromEntries(Object.entries(d.ind).filter(([k, v]) => /^[a-z0-9]{1,12}$/i.test(k) && typeof v === 'boolean').slice(0, 40));
+    if (d.tokens && typeof d.tokens === 'object') o.tokens = V.cleanTokens(d.tokens);
+    return o;
+  };
+  /* 40. memory governor: keep the newest max bars (returns how many were trimmed) + frame pacing */
+  V.trim = (arr, max) => { if (!Array.isArray(arr) || !(max > 0) || arr.length <= max) return 0; const n = arr.length - max; arr.splice(0, n); return n; };
+  V.pace = (lastMs, nowMs, hz = 240) => nowMs - lastMs >= 1000 / hz - 0.5;
+  /* 41. theme tokens: only known CSS variables, only #rgb / #rrggbb colours */
+  V.TOKENS = [['--acc', 'Accent'], ['--up', 'Up / buy'], ['--dn', 'Down / sell'], ['--bg', 'Background'], ['--panel-solid', 'Panel'], ['--text', 'Text']];
+  V.cleanTokens = (t) => Object.fromEntries(Object.entries(t || {}).filter(([k, v]) => V.TOKENS.some((x) => x[0] === k) && typeof v === 'string' && /^#[0-9a-fA-F]{3}([0-9a-fA-F]{3})?$/.test(v)));
+  /* 42. palette calculator: + - * / % ^ and parentheses, recursive descent (no eval) */
+  V.isCalc = (s) => /^[\d\s.+\-*/%^()]+$/.test(String(s || '')) && /\d\s*[+\-*/%^]\s*[\d(.]/.test(String(s));
+  V.calc = (src) => {
+    const s = String(src || '').replace(/\s+/g, ''); if (!s || s.length > 120 || !/^[\d.+\-*/%^()]+$/.test(s)) return null; let i = 0;
+    const num = () => { const m = /^\d*\.?\d+(?:e[+-]?\d+)?/i.exec(s.slice(i)); if (!m) throw 0; i += m[0].length; return +m[0]; };
+    const prim = () => { if (s[i] === '(') { i++; const v = add(); if (s[i++] !== ')') throw 0; return v; } if (s[i] === '-') { i++; return -prim(); } if (s[i] === '+') { i++; return prim(); } return num(); };
+    const pow = () => { const b = prim(); if (s[i] === '^') { i++; return b ** pow(); } return b; };
+    const mul = () => { let v = pow(); while ('*/%'.includes(s[i]) && s[i]) { const o = s[i++], r = pow(); v = o === '*' ? v * r : o === '/' ? v / r : v % r; } return v; };
+    const add = () => { let v = mul(); while (s[i] === '+' || s[i] === '-') { const o = s[i++], r = mul(); v = o === '+' ? v + r : v - r; } return v; };
+    try { const v = add(); return i === s.length && fin(v) ? v : null; } catch (e) { return null; }
+  };
+  /* 44. build integrity: SHA256SUMS parser + CSP check */
+  V.parseSums = (txt) => { const m = {}; for (const ln of String(txt || '').split(/\r?\n/)) { const x = /^([0-9a-f]{64})\s+\*?([\w.\/-]{1,80})$/.exec(ln.trim()); if (x) m[x[2].replace(/^dist\//, '')] = x[1]; } return m; };
+  V.cspOk = (csp) => { const c = String(csp || ''); return /(^|;)\s*default-src 'none'/.test(c) && /script-src 'sha256-[A-Za-z0-9+/=]{40,}'/.test(c) && !/script-src[^;]*'unsafe-(inline|eval)'/.test(c); };
+
+  return V;
+})();
+if (typeof module === 'object' && module.exports) module.exports = V152;
+
+/* ===== v152.js ===== */
+/* ExTerm v15.2 UI: the 44 workstation upgrades behind progressive disclosure. The default screen only gains a 🌐 pill,
+   a 🧭 Workstation button and a subtle bar-timer ring; everything else lives in collapsed drawer sections (rendered when
+   opened), Ctrl+K commands, H (HUD clean mode) and opt-in chart overlays. Pure logic is in v152core.js (V152).
+   Security: every external string reaches the DOM through esc() / textContent, listeners are attached in JS (strict CSP,
+   no inline handlers), formulas and maths are parsed (never eval'd), share codes are signature-checked and whitelisted,
+   chart snapshots go only to the launcher's Telegram / Discord notifier. */
+const V152UI = (() => {
+  const U = { ctrl: false, flow: new Map(), lat: [], shadow: [], ladder: null, pick: null, range: null, cross: null, walls: [], book0: null, traded: {}, cache: {}, frames: 0, fps: 0, lastSwapMs: null, tele: null, conf: [], buys: [] };
+  const TF_OK = /^(1s|5s|15s|1m|5m|15m|1h|4h|1d)$/;
+  const cfg = () => {
+    const c = ST.v152 && typeof ST.v152 === 'object' ? ST.v152 : (ST.v152 = {});
+    c.timer = c.timer !== false; for (const k of ['magnet', 'events']) c[k] = c[k] !== false;
+    for (const k of ['pip', 'walls', 'cvdDiv', 'gamma', 'sparks', 'cro', 'autoBrief', 'shadow', 'dexStrip']) c[k] = !!c[k];
+    c.labels = Object.assign({ fvg: false, eng: false, ob: false, sweep: false }, c.labels || {});
+    c.sess = Object.assign({ asia: false, london: false, ny: false }, c.sess || {});
+    c.sync = Object.assign({ cross: true, tf: true, sym: false }, c.sync || {}); if (!V152.GROUPS.includes(c.group)) c.group = null;
+    c.pipTf = ['15m', '1h'].includes(c.pipTf) ? c.pipTf : '15m'; c.fee = V152.FEES[c.fee] ? c.fee : 'normal';
+    c.splits = Array.isArray(c.splits) && c.splits.length === 3 && c.splits.every((x) => +x >= 0 && +x <= 100) ? c.splits.map(Number) : [50, 30, 20];
+    c.mem = c.mem && typeof c.mem === 'object' ? c.mem : {}; c.notes = c.notes && typeof c.notes === 'object' ? c.notes : {};
+    c.scanners = Array.isArray(c.scanners) ? c.scanners.filter((s) => s && typeof s.name === 'string' && typeof s.f === 'string').slice(0, 12) : [];
+    c.userEv = Array.isArray(c.userEv) ? c.userEv.filter((e) => e && isFinite(e.t)).slice(-30) : [];
+    c.tokens = V152.cleanTokens(c.tokens); if (c.anchor != null && !isFinite(c.anchor)) c.anchor = null;
+    return c;
+  };
+  const save = () => { cfg(); saveState(); };
+  const inv = () => { if (typeof chart !== 'undefined' && chart) chart.invalidate(); };
+  const fp = (p) => (p == null || !isFinite(p) ? '–' : p < 0.01 ? NT.fmtTiny(p) : NT.fmtPrice(p));
+  const candles = () => { try { const st = getStore(ST.sel, ST.tf); return st && st.candles && st.candles.length ? st.candles : (typeof chart !== 'undefined' && chart ? chart.data : []); } catch (e) { return []; } };
+  const openSym = (sym) => { showTab('markets'); const m = modeOf(sym); if (m !== ST.mode) setMode(m, sym); else if (ST.sel !== sym) selectSym(sym); };
+  const stratList = () => Object.entries(NT.strategies).filter(([, S]) => S && !S.liveOnly && typeof S.prepare === 'function').map(([id, S]) => [id, String(S.name || id).replace(/^★ /, '')]).sort((a, b) => a[1].localeCompare(b[1]));
+  const stratSel = (id, cur, multi) => `<select class="in" id="${id}" ${multi ? 'multiple size="5"' : ''} aria-label="Strategy">${stratList().map(([k, n]) => `<option value="${esc(k)}" ${k === cur ? 'selected' : ''}>${esc(n)}</option>`).join('')}</select>`;
+  const kpis = (rows) => `<div class="v151-kpis">${rows.map(([k, v, c]) => `<div><span class="k">${esc(k)}</span><b class="${c || ''}">${esc(v)}</b></div>`).join('')}</div>`;
+  const tog = (path, label) => { const [a, b] = path.split('.'), c = cfg(), on = b ? c[a][b] : c[a]; return `<label class="chk"><input type="checkbox" data-c="${esc(path)}" ${on ? 'checked' : ''}> ${esc(label)}</label>`; };
+  const svgLine = (series, w = 360, h = 110, cols = ['var(--acc)', 'var(--up)', 'var(--dn)', '#38bdf8']) => {
+    const all = series.flatMap((s) => s.filter(isFinite)); if (!all.length) return ''; const lo = Math.min(...all), hi = Math.max(...all), d = hi - lo || 1;
+    return `<svg class="v152-svg" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" aria-hidden="true">${series.map((s, k) => `<polyline fill="none" stroke="${cols[k % cols.length]}" stroke-width="1.6" points="${s.map((v, i) => `${((i / Math.max(1, s.length - 1)) * w).toFixed(1)},${(h - ((v - lo) / d) * (h - 4) - 2).toFixed(1)}`).join(' ')}"/>`).join('')}</svg>`;
+  };
+  const busy = (el, txt = 'Running…') => { if (el) el.innerHTML = `<div class="note">${esc(txt)}</div>`; return new Promise((r) => setTimeout(r, 20)); };
+  const hist = async (sym, sec, n) => { try { return await History.get(sym, sec, n); } catch (e) { return []; } };
+
+  /* ══ chart overlay ══ */
+  const ov = {};
+  ov.timer = (g, L, ch) => {
+    if (!cfg().timer || !(ch.tfSec > 0) || !L.D.length) return; const T = V152.barTimer(Date.now(), ch.tfSec); if (!T) return;
+    const y = L.py(L.D[L.D.length - 1].c), x = L.W - L.Rm - 14; if (!(y > L.y0 && y < L.y0 + L.mainH)) return;
+    g.save(); g.lineWidth = 2; g.strokeStyle = L.col.fg; g.globalAlpha = 0.18; g.beginPath(); g.arc(x, y, 7, 0, Math.PI * 2); g.stroke();
+    g.globalAlpha = 0.9; g.strokeStyle = T.left < 3000 ? L.col.amb : L.col.acc; g.beginPath(); g.arc(x, y, 7, -Math.PI / 2, -Math.PI / 2 + T.frac * Math.PI * 2); g.stroke();
+    g.font = '600 9px JetBrains Mono, monospace'; g.fillStyle = L.col.fg; g.globalAlpha = 0.75; g.textAlign = 'right'; g.textBaseline = 'middle'; g.fillText(T.label, x - 11, y); g.restore();
+  };
+  ov.ladder = (g, L, ch) => {
+    const Ld = U.ladder; if (!Ld || Ld.sym !== ST.sel) return;
+    g.save(); g.font = '700 10px Inter, system-ui, sans-serif'; g.textBaseline = 'bottom';
+    for (const x of Ld.L.levels) { const y = L.py(x.p); if (!(y > L.y0 && y < L.y0 + L.mainH)) continue; g.strokeStyle = L.col.up; g.globalAlpha = x.hit ? 0.3 : 0.85; g.setLineDash([6, 3]); g.beginPath(); g.moveTo(L.Lm, y); g.lineTo(L.W - L.Rm, y); g.stroke(); g.setLineDash([]); g.fillStyle = L.col.up; g.fillText(`${x.k} ${x.pct}%${x.hit ? ' ✓' : ' ⇕'}`, L.Lm + (L.W - L.Rm - L.Lm) * 0.58, y - 2); }
+    const ys = L.py(Ld.L.sl); if (ys > L.y0 && ys < L.y0 + L.mainH) { g.strokeStyle = Ld.L.be ? L.col.acc : L.col.dn; g.globalAlpha = 0.8; g.beginPath(); g.moveTo(L.Lm, ys); g.lineTo(L.W - L.Rm, ys); g.stroke(); g.fillStyle = g.strokeStyle; g.fillText(Ld.L.be ? 'SL → break-even' : 'SL', L.Lm + (L.W - L.Rm - L.Lm) * 0.58, ys - 2); }
+    g.restore();
+  };
+  ov.labels = (g, L) => {
+    const on = cfg().labels; if (!on.fvg && !on.eng && !on.ob && !on.sweep) return;
+    const D = L.D, key = 'pat|' + ST.sel + '|' + L.start + '|' + L.end + '|' + D.length + '|' + (D[D.length - 1] || {}).c + JSON.stringify(on);
+    if (U.cache.patKey !== key) { U.cache.patKey = key; const all = V152.patterns(D, L.start, L.end, on), per = {}; U.cache.pat = all.reverse().filter((p) => (per[p.kind] = (per[p.kind] || 0) + 1) <= 8).reverse(); } /* newest 8 per kind: subtle, not wallpaper */
+    g.save(); g.font = '700 9px Inter, system-ui, sans-serif'; g.textAlign = 'center';
+    for (const p of U.cache.pat) {
+      const x = L.kx(p.i), c = p.dir === 'bull' ? L.col.up : L.col.dn;
+      if (p.top != null) { const y1 = L.py(p.top), y2 = L.py(p.bot); g.fillStyle = c; g.globalAlpha = p.kind === 'OB' ? 0.1 : 0.08; g.fillRect(x, y1, L.W - L.Rm - x, y2 - y1); g.globalAlpha = 0.7; g.textBaseline = 'bottom'; g.fillText(p.kind, x + 10, y1 - 1); }
+      else { const y = L.py(p.p) + (p.dir === 'bull' ? 11 : -4); g.fillStyle = c; g.globalAlpha = 0.75; g.textBaseline = 'middle'; g.fillText(p.kind === 'ENG' ? 'E' : 'SW', x, y); }
+    }
+    g.restore();
+  };
+  U.eventList = () => { const now = Date.now(); if (U._ev && now - U._ev.ts < 1000 && U._ev.n === cfg().userEv.length) return U._ev.v.map((e) => Object.assign({}, e, { inSec: e.t - now / 1000 })); const ev = (typeof P5 !== 'undefined' ? P5.events({}) : []).concat(cfg().userEv), v = V152.futureEvents(now / 1000, ev, 21 * 86400); U._ev = { ts: now, n: cfg().userEv.length, v }; return v; }; // cached 1 s: the overlay asks every frame
+  ov.events = (g, L, ch) => {
+    if (!cfg().events) return; const evs = U.eventList(); if (!evs.length) return;
+    const top = L.y0, bot = L.y0 + L.mainH - (L.volH || 0) - 4, right = L.W - L.Rm; let stack = 0;
+    g.save(); g.font = '700 9px Inter, system-ui, sans-serif'; g.textBaseline = 'middle';
+    for (const e of evs) {
+      const x = ch.tToX(e.t), c = e.k === 'fomc' ? L.col.amb : e.k === 'cpi' ? '#f472b6' : '#38bdf8', lbl = (e.k === 'fomc' ? 'FOMC' : e.k === 'cpi' ? 'CPI' : e.k === 'earn' ? 'ER' : 'EV') + ' ' + V151.fmtDur(e.inSec);
+      g.fillStyle = c; g.strokeStyle = c;
+      if (x <= right) { g.globalAlpha = 0.6; g.setLineDash([3, 4]); g.beginPath(); g.moveTo(x, top + 14); g.lineTo(x, bot); g.stroke(); g.setLineDash([]); g.globalAlpha = 0.95; g.textAlign = 'center'; g.fillText(lbl, x, bot - 8); }
+      else if (stack < 4) { g.globalAlpha = 0.9; g.textAlign = 'right'; g.fillText('→ ' + lbl, right - 30, top + 26 + 12 * stack++); }
+    }
+    g.restore();
+  };
+  ov.avwap = (g, L) => {
+    const a = cfg().anchor; if (a == null) return; const D = L.D; let i0 = D.findIndex((c) => c.t >= a); if (i0 < 0) return;
+    const key = 'av|' + ST.sel + '|' + a + '|' + D.length + '|' + (D[D.length - 1] || {}).c; if (U.cache.avKey !== key) { U.cache.avKey = key; U.cache.av = V152.avwap(D, i0); }
+    const rows = U.cache.av; g.save(); g.lineWidth = 1.3;
+    for (const [k, col, a2, dash] of [['vw', L.col.acc, 0.95, []], ['u1', L.col.fg, 0.35, [4, 3]], ['d1', L.col.fg, 0.35, [4, 3]], ['u2', L.col.fg, 0.22, [2, 4]], ['d2', L.col.fg, 0.22, [2, 4]]]) {
+      g.strokeStyle = col; g.globalAlpha = a2; g.setLineDash(dash); g.beginPath(); let on = false;
+      for (const r of rows) { if (r.i < L.start || r.i >= L.end) continue; const x = L.kx(r.i), y = L.py(r[k]); if (!on) { g.moveTo(x, y); on = true; } else g.lineTo(x, y); }
+      g.stroke();
+    }
+    g.setLineDash([]); g.globalAlpha = 0.9; g.fillStyle = L.col.acc; g.font = '700 9px Inter, system-ui, sans-serif'; const last = rows[rows.length - 1]; if (last) g.fillText('AVWAP', L.W - L.Rm - 70, L.py(last.vw) - 4); g.restore();
+  };
+  ov.sess = (g, L) => {
+    const s = cfg().sess; if (!s.asia && !s.london && !s.ny) return; const D = L.D.slice(L.start, L.end), key = 'sp|' + ST.sel + '|' + L.start + '|' + L.end + '|' + (D[D.length - 1] || {}).c;
+    if (U.cache.spKey !== key) { U.cache.spKey = key; U.cache.sp = V152.sessionProfiles(D, 32); }
+    const cols = { asia: '#a78bfa', london: '#38bdf8', ny: '#f59e0b' }, right = L.W - L.Rm - 4; let off = 0;
+    g.save();
+    for (const k of ['asia', 'london', 'ny']) {
+      const P = U.cache.sp[k]; if (!s[k] || !P) continue; const vmax = Math.max(...P.bins.map((b) => b.v)) || 1;
+      g.fillStyle = cols[k]; for (const b of P.bins) { const y1 = L.py(b.p1), y2 = L.py(b.p0), w = (b.v / vmax) * 46; g.globalAlpha = 0.28; g.fillRect(right - off - w, y1, w, Math.max(1, y2 - y1 - 1)); }
+      g.globalAlpha = 0.9; g.fillRect(right - off - 46, L.py(P.poc), 46, 1.5); g.font = '700 9px Inter, system-ui, sans-serif'; g.textAlign = 'right'; g.fillText(k.toUpperCase(), right - off, L.y0 + 12); off += 52;
+    }
+    g.restore();
+  };
+  ov.gamma = (g, L) => {
+    if (!cfg().gamma || typeof P5UI === 'undefined') return; const ch = P5UI.chain; if (!ch || ch.sym !== ST.sel) return;
+    if (U.cache.gKey !== ch) { const T = Math.max(1 / 365, (ch.exp - Date.now() / 1000) / 31557600), gx = P5.gex(ch, ch.spot, T); U.cache.gKey = ch; U.cache.g = { flip: gx.flip, call: gx.callWall, put: gx.putWall, zero: V152.zeroGamma(ch, ch.spot, T, P5.gex) }; }
+    const G = U.cache.g; g.save(); g.font = '700 9px Inter, system-ui, sans-serif'; g.textAlign = 'right';
+    for (const [k, p, c] of [['Zero γ', G.zero, '#e879f9'], ['γ flip', G.flip, '#c084fc'], ['Call wall', G.call, L.col.up], ['Put wall', G.put, L.col.dn]]) { if (!(p > 0)) continue; const y = L.py(p); if (!(y > L.y0 && y < L.y0 + L.mainH)) continue; g.strokeStyle = c; g.fillStyle = c; g.globalAlpha = 0.7; g.setLineDash([8, 4]); g.beginPath(); g.moveTo(L.Lm, y); g.lineTo(L.W - L.Rm, y); g.stroke(); g.setLineDash([]); g.fillText(k + ' ' + fp(p), L.W - L.Rm - 4, y - 3); }
+    g.restore();
+  };
+  ov.cvd = (g, L) => {
+    if (!cfg().cvdDiv) return; const D = L.D, key = 'cv|' + ST.sel + '|' + D.length + '|' + (D[D.length - 1] || {}).c; if (U.cache.cvKey !== key) { U.cache.cvKey = key; U.cache.cv = V152.cvdDiv(D.slice(-400), 3).map((x) => Object.assign(x, { i: x.i + Math.max(0, D.length - 400) })); }
+    g.save(); g.font = '700 9px Inter, system-ui, sans-serif'; g.textAlign = 'center';
+    for (const d of U.cache.cv) { if (d.i < L.start || d.i >= L.end) continue; const x = L.kx(d.i), y = L.py(d.p) + (d.dir === 'bull' ? 14 : -8); g.fillStyle = d.dir === 'bull' ? L.col.up : L.col.dn; g.globalAlpha = 0.85; g.fillText('CVD÷', x, y); }
+    g.restore();
+  };
+  ov.misc = (g, L, ch) => {
+    const top = L.y0, bot = L.y0 + L.mainH - (L.volH || 0) - 4; g.save();
+    if (U.range && U.range.sym === ST.sel && U.range.t1 != null) { const x1 = ch.tToX(U.range.t0), x2 = ch.tToX(U.range.t1); g.fillStyle = L.col.acc; g.globalAlpha = 0.1; g.fillRect(Math.min(x1, x2), top, Math.abs(x2 - x1) + L.bw, bot - top); }
+    if (U.cross != null && cfg().group) { const x = ch.tToX(U.cross); if (x >= L.Lm && x <= L.W - L.Rm) { g.strokeStyle = L.col.acc; g.globalAlpha = 0.6; g.setLineDash([2, 2]); g.beginPath(); g.moveTo(x, top); g.lineTo(x, bot); g.stroke(); g.setLineDash([]); } }
+    if (cfg().walls && U.walls.length && U.book0 && U.book0.sym === ST.sel) for (const w of U.walls) { const y = L.py(w.p); if (!(y > top && y < bot)) continue; g.strokeStyle = w.ev === 'spoof' ? L.col.amb : w.side === 'bids' ? L.col.up : L.col.dn; g.globalAlpha = 0.55; g.lineWidth = 3; g.beginPath(); g.moveTo(L.W - L.Rm - 40, y); g.lineTo(L.W - L.Rm, y); g.stroke(); }
+    g.restore();
+  };
+  U.overlay = (g, L, ch) => { if (typeof chart === 'undefined' || ch !== chart || !L.py || !L.D || !L.D.length) return; for (const k of ['labels', 'sess', 'avwap', 'gamma', 'cvd', 'events', 'ladder', 'misc', 'timer']) { g.save(); try { ov[k](g, L, ch); } catch (e) { /* an overlay must never break the chart */ } g.restore(); } };
+
+  /* ══ chart pointer hooks: TP-ladder drag, AVWAP anchor pick, range pick; magnet snap via toTP ══ */
+  const ptHook = (cv) => {
+    if (cv._v152) return; cv._v152 = true;
+    cv.addEventListener('pointerdown', (e) => {
+      const L = chart.L; if (!L || !L.D) return; const r = cv.getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top, pt = chart.toTP(x, y);
+      if (U.pick && pt) { e.stopImmediatePropagation(); e.preventDefault(); const mode = U.pick; U.pick = null; cv.style.cursor = '';
+        if (mode === 'avwap') { cfg().anchor = pt.t; save(); toast('⚓ AVWAP anchored at ' + esc(fmtStamp(pt.t * 1000))); }
+        else if (mode === 'range0') { U.range = { sym: ST.sel, t0: pt.t, t1: null }; U.pick = 'range1'; cv.style.cursor = 'crosshair'; toast('Now click the last candle of the range'); }
+        else if (mode === 'range1' && U.range) { U.range.t1 = pt.t; drawerRefresh('copilot'); toast('Range selected: open 🧭 → Copilot to ask about it'); }
+        inv(); return; }
+      if (U.ladder && U.ladder.sym === ST.sel) { const lv = U.ladder.L.levels.find((v) => !v.hit && Math.abs(L.py(v.p) - y) < 6); if (lv) { e.stopImmediatePropagation(); e.preventDefault(); U.drag = lv; try { cv.setPointerCapture(e.pointerId); } catch (x2) { /* old browser */ } } }
+    }, true);
+    cv.addEventListener('pointermove', (e) => { if (!U.drag) return; const r = cv.getBoundingClientRect(), pt = chart.toTP(e.clientX - r.left, e.clientY - r.top); if (pt && pt.p > 0) { const L0 = U.ladder && U.ladder.L; U.drag.p = L0 ? (L0.long ? Math.max(pt.p, L0.entry * 1.0005) : Math.min(pt.p, L0.entry * 0.9995)) : pt.p; inv(); } e.stopImmediatePropagation(); }, true);
+    for (const ev of ['pointercancel', 'lostpointercapture']) cv.addEventListener(ev, () => { U.drag = null; }, true);
+    cv.addEventListener('pointerup', (e) => { if (U.drag) { U.drag = null; e.stopImmediatePropagation(); } }, true);
+    const base = Object.getPrototypeOf(chart).toTP;
+    chart.toTP = function (x, y) { const p = base.call(this, x, y); if (p && U.ctrl && cfg().magnet && this.L && this.L.D) { const c = this.L.D.find((k) => k.t === p.t); if (c) p.p = V152.snap(p.p, c, (this.L.hi - this.L.lo) * 0.04); } return p; };
+  };
+  U.attachLadder = () => {
+    const d = typeof ChartTrade !== 'undefined' && ChartTrade.draft && ChartTrade.draft.sym === ST.sel ? ChartTrade.draft : null, pos = ACC.pos && ACC.pos[ST.sel], D = candles();
+    let entry = d ? d.entry : pos ? pos.cost / pos.qty : px(ST.sel), sl = d && d.sl > 0 ? d.sl : pos && pos.sl > 0 ? pos.sl : null;
+    if (!(entry > 0)) { toast('No price yet', 'amb'); return; }
+    if (!sl) { const a = V152.seriesOf(D.slice(-60), 'atr14').pop() || entry * 0.01; sl = entry - 1.5 * a; }
+    const L = V152.tpLadder(entry, sl, cfg().splits); if (!L) { toast('Entry and stop must differ', 'amb'); return; }
+    U.ladder = { sym: ST.sel, L, qty0: pos ? pos.qty : 0 }; inv(); toast('🎯 TP ladder on the chart: drag TP1–TP3; the stop moves to break-even after TP1 fills.', 'acc', 6000); drawerRefresh('ladder');
+  };
+  const ladderTick = (sym, p) => {
+    const Ld = U.ladder; if (!Ld || Ld.sym !== sym || !(p > 0)) return;
+    const pos = ACC.pos && ACC.pos[sym]; if (!pos) return; // a ladder on a draft waits for the fill
+    if (!Ld.qty0 && !Ld.L.levels.some((x) => x.hit)) Ld.qty0 = pos.qty; // splits are % of the size at the first tick in position
+    const r = V152.tpStep(Ld.L, p); if (!r.events.length) return;
+    const all = r.done || /stopped/.test(r.events[0]);
+    if (r.closePct > 0) { try { const q = all ? null : Math.min(pos.qty, Ld.qty0 * (r.closePct / 100)); ACC.sell(sym, p, q != null && q >= pos.qty * 0.999 ? null : q, Date.now(), { reason: 'TP ladder', src: 'manual' }); } catch (e) { console.warn('ladder', e); } }
+    if (pos && Ld.L.be && ACC.pos[sym]) ACC.pos[sym].sl = Ld.L.entry;
+    toast('🎯 ' + esc(baseOf(sym)) + ': ' + esc(r.events.join(' · ')), 'acc'); if (r.done) U.ladder = null; inv();
+  };
+
+  /* ══ PiP mini chart, sync badge, HUD clean mode, DEX safety strip ══ */
+  const pip = () => {
+    const host = $('#chartHost'); if (!host) return; let el = $('#v152Pip'); const show = cfg().pip && typeof chart !== 'undefined' && chart && chart.tfSec > 0 && chart.tfSec < 60;
+    if (!show) { if (el) el.remove(); return; }
+    if (!el) { el = document.createElement('div'); el.id = 'v152Pip'; el.className = 'v152-pip'; el.innerHTML = '<button type="button" class="v152-piph" aria-expanded="true"></button><canvas width="220" height="110" aria-label="Higher timeframe mini chart"></canvas>'; host.appendChild(el); el.querySelector('button').addEventListener('click', () => { el.classList.toggle('min'); el.querySelector('button').setAttribute('aria-expanded', String(!el.classList.contains('min'))); }); }
+    el.querySelector('button').textContent = '▣ ' + baseOf(ST.sel) + ' · ' + cfg().pipTf;
+    const st = getStore(ST.sel, cfg().pipTf); if (!st.loaded) { if (!st.loading) st.load(200); return; }
+    const D = st.candles.slice(-60), cv = el.querySelector('canvas'), g = cv.getContext('2d'); if (!D.length) return;
+    const lo = Math.min(...D.map((c) => c.l)), hi = Math.max(...D.map((c) => c.h)), y = (p) => 104 - ((p - lo) / (hi - lo || 1)) * 98, w = 220 / D.length;
+    g.clearRect(0, 0, 220, 110); D.forEach((c, i) => { const col = c.c >= c.o ? cssv('--up', '#2fd08a') : cssv('--dn', '#ff5470'); g.strokeStyle = col; g.fillStyle = col; const x = i * w + w / 2; g.beginPath(); g.moveTo(x, y(c.h)); g.lineTo(x, y(c.l)); g.stroke(); g.fillRect(x - w * 0.3, Math.min(y(c.o), y(c.c)), Math.max(1, w * 0.6), Math.max(1, Math.abs(y(c.o) - y(c.c)))); });
+  };
+  const syncBadge = () => {
+    const host = $('#chartHost'); if (!host) return; let b = $('#v152Sync'); const g = cfg().group;
+    if (!g) { if (b) b.remove(); return; }
+    if (!b) { b = document.createElement('button'); b.type = 'button'; b.id = 'v152Sync'; b.className = 'v152-sync'; host.appendChild(b); b.addEventListener('click', () => { const c = cfg(), i = V152.GROUPS.indexOf(c.group); c.group = V152.GROUPS[(i + 1) % 3]; save(); syncBadge(); }); }
+    b.textContent = '🔗 Group ' + g; b.title = 'Synced with other ExTerm windows in group ' + g + ' (click to cycle A → B → C)'; b.dataset.g = g;
+  };
+  let bc = null; const chan = () => { if (!bc && typeof BroadcastChannel !== 'undefined') { bc = new BroadcastChannel('exterm-v152'); bc.onmessage = (e) => onSync(e.data); } return bc; };
+  const post = (kind, v) => { const c = cfg(); if (!c.group || U.applying) return; const ch = chan(); if (ch) ch.postMessage({ k: 'v152sync', g: c.group, kind, v }); };
+  const onSync = (m) => {
+    const c = cfg(), a = V152.syncAccept(m, c.group, c.sync); if (!a) return;
+    U.applying = true; try { if (a.kind === 'cross') { U.cross = a.v; inv(); } else if (a.kind === 'tf') { const b = [...$$('#tfBtns button')].find((x) => x.textContent.trim() === a.v); if (b && ST.tf !== a.v) b.click(); } else if (a.kind === 'sym' && ST.sel !== a.v && (isStock(a.v) || isOnchain(a.v) || (Providers.ids && Providers.ids.has(a.v)))) openSym(a.v); } finally { U.last = { sel: ST.sel, tf: ST.tf }; U.applying = false; }
+  };
+  U.hud = (on) => {
+    const v = on == null ? !document.body.classList.contains('hud-clean') : !!on; document.body.classList.toggle('hud-clean', v);
+    let m = $('#hudMark'); if (v && !m && $('#chartHost')) { m = document.createElement('div'); m.id = 'hudMark'; m.className = 'hud-mark'; m.innerHTML = V151.markSvg(20, 'hud') + '<span>Candle X</span>'; $('#chartHost').appendChild(m); } if (!v && m) m.remove();
+    setTimeout(() => { window.dispatchEvent(new Event('resize')); inv(); }, 30); return v;
+  };
+  const dexStrip = () => {
+    const host = $('#chartHost'); if (!host) return; let el = $('#v152Dex'); const sym = ST.sel;
+    if (!cfg().dexStrip || !isOnchain(sym)) { if (el) el.remove(); return; }
+    const m = (OC.meta && OC.meta[sym]) || {}, p = OC.parse(sym) || {}, r = m.ca ? Safety.cache[p.chain + ':' + m.ca] : null;
+    if (m.ca && p.chain && p.chain !== 'sim' && !r && !(U.scanned || (U.scanned = new Set())).has(m.ca)) { U.scanned.add(m.ca); Safety.scan(m.ca, p.chain).then(dexStrip, () => {}); }
+    const st = (id) => (r ? (r.checks.find((c) => c.id === id) || {}).status : undefined), hol = r ? r.checks.find((c) => c.id === 'holders') : null;
+    const S = V152.dexSafety({ mintAuth: st('mint') === 'pass' ? null : st('mint') === 'fail' ? 'set' : undefined, freezeAuth: st('freeze') === 'pass' ? null : st('freeze') === 'fail' ? 'set' : undefined, top10: hol && isFinite(hol.top10) ? hol.top10 : undefined, lpLocked: st('lp') === 'pass' ? 100 : st('lp') === 'fail' ? 0 : undefined });
+    if (!el) { el = document.createElement('div'); el.id = 'v152Dex'; el.className = 'v152-dex'; host.appendChild(el); }
+    el.innerHTML = S.badges.map((b) => `<span class="v152-b ${b.unk ? 'unk' : b.ok ? 'ok' : 'bad'}" title="${esc(b.label)}">${b.unk ? '?' : b.ok ? '✓' : '✕'} ${esc(b.label)}</span>`).join('') + `<span class="v152-b ${S.verdict}">${esc(S.verdict)}</span>`;
+  };
+
+  /* ══ order flow: book polling for walls, trade ring for net inflow + latency ══ */
+  const pollWalls = async () => {
+    if (!cfg().walls || isOnchain(ST.sel) || isStock(ST.sel) || document.hidden || U.wBusy) return; U.wBusy = true;
+    try { const b = Object.assign(await Providers.active.book(ST.sel), { sym: ST.sel }); if (U.book0 && U.book0.sym === b.sym) { const ev = V152.wallEvents(U.book0, b, U.traded, 4); if (ev.length) { U.walls = ev; for (const w of ev) if (w.ev === 'spoof' || w.ev === 'iceberg') V151UI.badge(b.sym, 'signal', `${w.ev === 'spoof' ? '👻 spoof' : '🧊 iceberg'} ${w.side === 'bids' ? 'bid' : 'ask'} ${fp(w.p)}`); } } U.book0 = b; U.traded = {}; drawerRefresh('walls', true); inv(); }
+    catch (e) { U.wErr = e.message; } finally { U.wBusy = false; }
+  };
+  const onTrade = (sym, p, q, side, ts) => {
+    const a = U.flow.get(sym) || (U.flow.set(sym, []), U.flow.get(sym)); V151.pushCapped(a, { t: ts, p, q, side, usd: p * q, sym }, 3000);
+    const lag = Date.now() - ts * 1000; if (ts > 1e9 && ts < 1e11 && lag >= 0 && lag < 30000) V151.pushCapped(U.lat, lag, 200); /* replayed / simulated ticks with old stamps are not latency */
+    if (cfg().walls && U.book0 && sym === U.book0.sym) { const k = p; U.traded[k] = (U.traded[k] || 0) + q; for (const s of ['bids', 'asks']) for (const [bp] of U.book0[s] || []) if (Math.abs(bp - p) / p < 0.0002) U.traded[bp] = (U.traded[bp] || 0) + q; }
+    ladderTick(sym, p); if (cfg().shadow && U.flowRules && sym === U.flowRules.sym) shadowTick(sym, p, ts);
+  };
+
+  /* ══ drawer ══ */
+  const SECTIONS = [
+    ['p1', '📈 Chart & execution', [['chart', 'Overlays & labels'], ['ladder', 'Partial take-profit ladder'], ['sync', 'Sync groups & PiP']]],
+    ['p2', '🌊 Order flow & options', [['walls', 'Iceberg / spoof walls'], ['avwap', 'Anchored VWAP & session profiles'], ['gamma', '0DTE gamma & unusual options'], ['payoff', 'Multi-leg payoff builder']]],
+    ['p3', '🔀 Markets, scanners & DEX', [['swap', 'Market-swap memory'], ['scan', 'Formula scanner'], ['dex', 'DEX safety & fee simulator'], ['smart', 'Smart-money leaderboard'], ['watch', 'Watchlist sparklines & notes']]],
+    ['p4', '🧪 Quant lab', [['compose', 'No-code strategy composer'], ['port', 'Portfolio backtester'], ['sens', 'Parameter sensitivity heatmap'], ['gate', 'Fix weak gate (17-test lab)'], ['prop', 'Prop-firm rulebooks'], ['drill', 'Replay speed & blind drill'], ['mfe', 'Journal MFE / MAE'], ['battle', 'Strategy battle']]],
+    ['p5', '⚡ Grok, copilot & World', [['copilot', 'Chart-range copilot'], ['cro', "Devil's advocate risk grade"], ['impact', 'World impact tags'], ['card', 'Alert cards (Discord / Telegram)'], ['brief', 'Pre-market brief & EOD recap']]],
+    ['p6', '🛡 Platform', [['share', 'Signed .exterm share codes'], ['perf', 'Frame pacing & memory governor'], ['theme', 'Theme token editor'], ['cachem', 'Local data cache'], ['verify', 'Verify build integrity']]],
+  ];
+  const R = {}; // section renderers → html
+  R.chart = () => `<div class="v152-tg">${tog('timer', 'Bar-timer ring')}${tog('magnet', 'Magnet snap (hold Ctrl while drawing)')}${tog('events', 'Future FOMC / CPI / earnings markers')}${tog('cvdDiv', 'CVD divergence markers')}</div>
+    <div class="note">Price-action auto-labels (off by default):</div><div class="v152-tg">${tog('labels.fvg', 'Fair value gaps')}${tog('labels.ob', 'Order blocks')}${tog('labels.eng', 'Engulfing')}${tog('labels.sweep', 'Liquidity sweeps')}</div>
+    <div class="row v151-row"><input class="in" id="v152Ev" placeholder="Add event: CPI 2026-12-10 13:30" aria-label="Add a future event"><button type="button" class="btn sm" data-a="addEv">Add</button></div>
+    <div class="note">${U.eventList().slice(0, 5).map((e) => esc(e.l) + ' · in ' + esc(V151.fmtDur(e.inSec))).join('<br>') || 'No events in the next 3 weeks.'}</div>
+    <div class="row v151-row"><button type="button" class="btn sm" data-a="hud">⌧ HUD clean mode (H)</button></div>`;
+  R.ladder = () => { const c = cfg(), L = U.ladder; return `<div class="row v151-row">${c.splits.map((v, i) => `<label class="note">TP${i + 1} % <input class="in mono v152-num" data-split="${i}" value="${esc(v)}" inputmode="decimal"></label>`).join('')}</div>
+    <div class="row v151-row"><button type="button" class="btn sm pri" data-a="ladder">Attach to bracket / position</button>${L ? '<button type="button" class="btn sm" data-a="ladderOff">Remove</button>' : ''}</div>
+    ${L ? `<div class="note">${esc(baseOf(L.sym))}: ${L.L.levels.map((x) => `${x.k} ${fp(x.p)} (${x.pct}%)${x.hit ? ' ✓' : ''}`).map(esc).join(' · ')} · SL ${esc(fp(L.L.sl))}${L.L.be ? ' (break-even)' : ''}</div>` : '<div class="note">TPs at 1R / 2R / 3R from your bracket or open position; drag them on the chart.</div>'}`; };
+  R.sync = () => { const c = cfg(); return `<div class="row v151-row"><span class="note">Group</span><div class="seg" id="v152Grp">${['off', ...V152.GROUPS].map((g) => `<button type="button" data-grp="${g}" class="${(c.group || 'off') === g ? 'on' : ''}">${g === 'off' ? 'Off' : g}</button>`).join('')}</div></div>
+    <div class="v152-tg">${tog('sync.cross', 'Crosshair')}${tog('sync.tf', 'Timeframe')}${tog('sync.sym', 'Symbol')}</div><div class="note">Pop out a chart (Ctrl+K → Pop out) and give both windows the same group.</div>
+    <div class="v152-tg">${tog('pip', 'Picture-in-picture mini chart on 1s / 5s / 15s')}</div><div class="seg" id="v152PipTf">${['15m', '1h'].map((t) => `<button type="button" data-piptf="${t}" class="${c.pipTf === t ? 'on' : ''}">${t}</button>`).join('')}</div>`; };
+  R.walls = () => `<div class="v152-tg">${tog('walls', 'Detect iceberg / spoof walls (crypto order books)')}</div>${U.walls.length ? `<table class="v152-t"><tr><th>Side</th><th>Price</th><th>Size</th><th>Event</th></tr>${U.walls.slice(0, 12).map((w) => `<tr><td>${w.side === 'bids' ? 'Bid' : 'Ask'}</td><td class="mono">${esc(fp(w.p))}</td><td class="mono">${esc(NT.fmtCompact(w.q))}</td><td class="${w.ev === 'spoof' ? 'dn' : 'up'}">${esc(w.ev)} · ${esc(w.note)}</td></tr>`).join('')}</table>` : `<div class="note">${cfg().walls ? (U.wErr ? 'Book unavailable: ' + esc(U.wErr) : 'Watching the book every 2 s…') : 'Walls ≥ 4× the median level size that absorb market orders or get pulled.'}</div>`}`;
+  R.avwap = () => { const c = cfg(); return `<div class="row v151-row"><button type="button" class="btn sm pri" data-a="pickAv">⚓ Click a candle to anchor</button><button type="button" class="btn sm" data-a="avMacro">Anchor to latest ⚠️ MACRO pin</button>${c.anchor != null ? '<button type="button" class="btn sm" data-a="avOff">Clear</button>' : ''}</div>
+    <div class="note">${c.anchor != null ? 'Anchored at ' + esc(fmtStamp(c.anchor * 1000)) + ' with ±1σ / ±2σ bands.' : 'Volume-weighted from any swing candle.'}</div><div class="note">Session volume profiles (UTC: Asia 00–07, London 07–13, NY 13–21):</div><div class="v152-tg">${tog('sess.asia', 'Asia')}${tog('sess.london', 'London')}${tog('sess.ny', 'New York')}</div>`; };
+  R.gamma = () => {
+    const ch = typeof P5UI !== 'undefined' ? P5UI.chain : null, ok = ch && ch.sym === ST.sel, un = ok ? V152.unusual(ch, ch.spot, { minPrem: 100000 }) : [];
+    return `<div class="v152-tg">${tog('gamma', 'Zero-gamma, gamma flip and call / put walls on the stock chart')}</div><div class="row v151-row"><button type="button" class="btn sm" data-a="loadChain">Load options chain (${esc(isStock(ST.sel) ? ST.sel : 'SPY')})</button><button type="button" class="btn sm" data-a="routeUn" ${un.length ? '' : 'disabled'}>Route alerts to watchlist</button></div>
+      ${ok ? `<div class="note">${ch.sim ? 'Model chain (Black-Scholes, live chain unavailable). ' : ''}${un.length} unusual strikes</div><table class="v152-t"><tr><th>Type</th><th>Strike</th><th>Vol / OI</th><th>Premium</th><th>Tags</th></tr>${un.slice(0, 10).map((x) => `<tr><td>${esc(x.type)}</td><td class="mono">${esc(fp(x.strike))}</td><td class="mono">${esc(x.vol + ' / ' + x.oi)}</td><td class="mono">${esc(NT.fmtUSD(x.prem, 0))}</td><td>${esc(x.tags.join(' '))}</td></tr>`).join('')}</table>` : '<div class="note">Open a stock chart and load its chain.</div>'}`;
+  };
+  R.payoff = () => { const S = px(ST.sel) || 100, P = U.payoff || (U.payoff = { kind: 'bullcall', legs: null });
+    if (!P.legs) P.legs = V152.legsPreset(P.kind, S, 0.05, (k, t) => +P5.bs(S, k, 30 / 365, 0.04, 0.5, t).price.toFixed(2));
+    const res = V152.payoff(P.legs, S, { span: 0.25, T: 30 / 365, bs: P5.bs }), th = V152.thetaCurve(P.legs, S, 30 / 365, P5.bs, 6);
+    return `<div class="row v151-row"><select class="in" id="v152Pre" aria-label="Strategy">${[['bullcall', 'Bull call vertical'], ['bearput', 'Bear put vertical'], ['straddle', 'Long straddle'], ['strangle', 'Long strangle'], ['condor', 'Iron condor']].map(([k, n]) => `<option value="${k}" ${P.kind === k ? 'selected' : ''}>${n}</option>`).join('')}</select><span class="note">Spot ${esc(fp(S))} · 30 DTE · IV 50%</span></div>
+      <table class="v152-t"><tr><th>Leg</th><th>Strike</th><th>Qty</th><th>Premium</th></tr>${P.legs.map((g, i) => `<tr><td>${esc(g.type)}</td><td><input class="in mono v152-num" data-leg="${i}.strike" value="${esc(g.strike)}"></td><td><input class="in mono v152-num" data-leg="${i}.qty" value="${esc(g.qty)}"></td><td><input class="in mono v152-num" data-leg="${i}.prem" value="${esc(g.prem)}"></td></tr>`).join('')}</table>
+      ${svgLine([res.pts.map((p) => p.exp), res.pts.map((p) => p.now), res.pts.map(() => 0)], 360, 110, ['var(--acc)', '#38bdf8', 'var(--fg)'])}
+      ${kpis([['Breakevens', res.be.map(fp).join(' / ') || '–'], ['Max profit', NT.fmtUSD(res.maxP, 0), 'up'], ['Max loss', NT.fmtUSD(res.maxL, 0), 'dn']])}<div class="note">Gold = at expiry · blue = today · theta decay at spot: ${th.map((x) => esc(x.days + 'd ' + NT.fmtUSD(x.pnl, 0))).join(' → ')}</div>`; };
+  R.swap = () => { const c = cfg(); return `<div class="note">Alt+M or the market switch keeps each market's timeframe, indicators and risk %.${U.lastSwapMs != null ? ` Last swap: <b class="mono">${esc(U.lastSwapMs.toFixed(0))} ms</b>.` : ''}</div><table class="v152-t"><tr><th>Market</th><th>TF</th><th>Risk</th><th>Indicators</th></tr>${['crypto', 'stocks', 'onchain'].map((m) => { const r = V152.recall(c.mem, m); return `<tr><td>${esc(m)}</td><td>${esc(r ? r.tf : (ST.mk[m] || {}).tf || '–')}</td><td>${esc(r ? r.risk + '%' : '–')}</td><td>${esc(r ? Object.keys(r.ind).filter((k) => r.ind[k]).slice(0, 6).join(', ') : '–')}</td></tr>`; }).join('')}</table>`; };
+  R.scan = () => { const c = cfg(); return `<div class="row v151-row"><input class="in mono" id="v152F" placeholder="RVOL > 3 AND Price > VWAP" value="${esc(U.lastF || '')}" aria-label="Scanner formula"><input class="in" id="v152Fn" placeholder="Tab name" style="max-width:110px" aria-label="Scanner name"><button type="button" class="btn sm" data-a="runF">Run</button><button type="button" class="btn sm pri" data-a="saveF">Save tab</button></div>
+    <div class="note">Fields: ${esc(V152.FIELDS.join(' · '))} · AND / OR / ( ) · runs over your watchlist</div><div class="seg v152-tabs">${c.scanners.map((s, i) => `<button type="button" data-scan="${i}" title="${esc(s.f)}">${esc(s.name)}</button>`).join('')}</div><div id="v152ScanOut"></div>`; };
+  R.dex = () => { const c = cfg(), sym = ST.sel, liq = isOnchain(sym) && OC.stats[sym] ? +OC.stats[sym].liq || 0 : 0, usd = +(U.dexUsd || 500), sim = V152.dexSim(usd, liq || 50000, c.fee);
+    return `<div class="v152-tg">${tog('dexStrip', 'Safety strip on every DEX pair (mint · freeze · top-10 · LP lock)')}</div><div class="row v151-row"><div class="seg" id="v152Fee">${Object.keys(V152.FEES).map((k) => `<button type="button" data-fee="${k}" class="${c.fee === k ? 'on' : ''}">${k[0].toUpperCase() + k.slice(1)}</button>`).join('')}</div><label class="note">Size $ <input class="in mono v152-num" id="v152DexUsd" value="${esc(usd)}"></label></div>
+      ${kpis([['Liquidity', liq ? NT.fmtUSD(liq, 0) : '$50K (sample)'], ['Price impact', sim.impactPct + '%', sim.fails ? 'dn' : ''], ['Slippage cap', sim.slipPct + '%'], ['Priority fee', sim.feeSol + ' SOL'], ['Landing', '~' + sim.landingMs + ' ms']])}<div class="note">${sim.fails ? 'This size would exceed the slippage cap and fail: use Turbo, a smaller size or split it.' : 'Paper DEX fills use this preset.'}</div>`; };
+  R.smart = () => {
+    const ws = typeof Sol !== 'undefined' ? (Sol.wallets || []).map((w) => ({ name: w.name, addr: w.addr, winRate: w.stats && isFinite(w.stats.winRate) ? w.stats.winRate : isFinite(w.winRate) ? w.winRate : null, trades: w.stats && isFinite(w.stats.trades) ? w.stats.trades : (Sol.trades || []).filter((t) => t.wallet === w.addr || t.who === w.addr).length })) : [];
+    const lb = V152.leaderboard(ws.map((w) => Object.assign(w, { winRate: w.winRate == null ? 0.5 : w.winRate })));
+    return `<table class="v152-t"><tr><th>#</th><th>Wallet</th><th>Win</th><th>Trades</th><th>Score</th></tr>${lb.slice(0, 10).map((w, i) => `<tr><td>${i + 1}</td><td>${esc(w.name || Sol.short(w.addr))}</td><td>${esc(Math.round(w.winRate * 100) + '%')}</td><td>${esc(w.trades)}</td><td class="mono">${esc(w.score)}</td></tr>`).join('') || '<tr><td colspan="5" class="note">Track wallets in the Wallet Tracker first.</td></tr>'}</table>
+      <div class="note">Confluence alert: 2+ tracked wallets (≥ 55% win rate) buying the same token within 5 minutes.</div><div class="note">${U.conf.slice(-5).reverse().map((x) => `🎯 ${esc(baseOf(x.sym))}: ${esc(x.wallets.join(', '))} · ${esc(NT.fmtUSD(x.usd, 0))}`).join('<br>') || 'No confluence yet this session.'}</div>`;
+  };
+  R.watch = () => `<div class="v152-tg">${tog('sparks', '24h sparklines + relative strength vs BTC / SPY in the watchlist')}</div><div class="note">Trade-plan note for ${esc(baseOf(ST.sel))} (shown on hover in the watchlist):</div><textarea class="in" id="v152Note" rows="2" maxlength="300" aria-label="Trade plan note">${esc(cfg().notes[ST.sel] || '')}</textarea><div class="row v151-row"><button type="button" class="btn sm" data-a="saveNote">Save note</button><button type="button" class="btn sm" data-a="flowHeat">🫧 Bubble map in net-inflow mode</button></div>`;
+  const condRow = (side, c, i) => `<div class="row v152-cond" data-side="${side}" data-i="${i}"><select class="in" data-k="a">${Object.keys(V152.SERIES).map((k) => `<option ${c.a === k ? 'selected' : ''}>${k}</option>`).join('')}</select><select class="in" data-k="op">${['>', '<', '>=', '<=', 'crosses above', 'crosses below'].map((o) => `<option ${c.op === o ? 'selected' : ''}>${esc(o)}</option>`).join('')}</select><input class="in mono" data-k="b" value="${esc(c.b)}" list="v152Ser" aria-label="Value or series"><button type="button" class="btn xs" data-a="delCond" aria-label="Remove condition">×</button></div>`;
+  U.rules = () => U.comp || (U.comp = { entry: { logic: 'AND', conds: [{ a: 'rsi14', op: '<', b: 30 }, { a: 'close', op: '>', b: 'ema200' }] }, exit: { logic: 'OR', conds: [{ a: 'rsi14', op: '>', b: 70 }] }, sl: 3, tp: 8 });
+  R.compose = () => { const r = U.rules(); return `<datalist id="v152Ser">${Object.keys(V152.SERIES).map((k) => `<option value="${k}">`).join('')}</datalist>${['entry', 'exit'].map((side) => `<div class="note"><b>${side === 'entry' ? 'Enter long when' : 'Exit when'}</b> <select class="in v152-logic" data-logic="${side}"><option ${r[side].logic === 'AND' ? 'selected' : ''}>AND</option><option ${r[side].logic === 'OR' ? 'selected' : ''}>OR</option></select> <button type="button" class="btn xs" data-a="addCond" data-side="${side}">+ condition</button></div>${r[side].conds.map((c, i) => condRow(side, c, i)).join('')}`).join('')}
+    <div class="row v151-row"><label class="note">Stop % <input class="in mono v152-num" id="v152Sl" value="${esc(r.sl || '')}"></label><label class="note">Target % <input class="in mono v152-num" id="v152Tp" value="${esc(r.tp || '')}"></label></div>
+    <div class="row v151-row"><button type="button" class="btn sm pri" data-a="compBt">Backtest on this chart</button><button type="button" class="btn sm" data-a="compPine">Pine Script v5</button><button type="button" class="btn sm" data-a="compJson">JSON</button></div><div id="v152CompOut"></div>`; };
+  R.port = () => `<div class="row v151-row">${stratSel('v152PS', U.ps)}<input class="in" id="v152Basket" value="${esc(U.basket || 'NVDA, TSLA, BTC-USD, SOL-USD')}" aria-label="Basket"><button type="button" class="btn sm pri" data-a="portRun">Run</button></div><div id="v152PortOut"><div class="note">Same strategy across a basket on 1h history: combined Sharpe, drawdown and return correlation.</div></div>`;
+  R.sens = () => `<div class="row v151-row">${stratSel('v152SS', U.ss)}<button type="button" class="btn sm pri" data-a="sensRun">Run 5 × 5 grid</button></div><div id="v152SensOut"><div class="note">Sweeps the first two parameters ±40% on the open market's 1h history.</div></div>`;
+  R.gate = () => `<div class="row v151-row">${stratSel('v152GS', U.gs)}<button type="button" class="btn sm pri" data-a="gateRun">Validate</button></div><div id="v152GateOut"><div class="note">Runs the 17-test Validation Lab, then one click adds the ATR / trend / time filters that target each failed gate and re-runs.</div></div>`;
+  R.prop = () => { const k = U.propK || 'apex', r = Object.assign({}, V152.PROP[k], k === 'custom' ? cfg().propCustom || {} : {}); return `<div class="row v151-row"><div class="seg" id="v152PropK">${Object.keys(V152.PROP).map((x) => `<button type="button" data-propk="${x}" class="${k === x ? 'on' : ''}">${esc(V152.PROP[x].name)}</button>`).join('')}</div></div>
+    <div class="row v151-row"><label class="note">Target % <input class="in mono v152-num" id="v152PT" value="${esc(r.target)}" ${k === 'custom' ? '' : 'disabled'}></label><label class="note">Daily % <input class="in mono v152-num" id="v152PD" value="${esc(r.dailyDD == null ? '' : r.dailyDD)}" ${k === 'custom' ? '' : 'disabled'}></label><label class="note">Max DD % <input class="in mono v152-num" id="v152PM" value="${esc(r.maxDD)}" ${k === 'custom' ? '' : 'disabled'}></label><label class="chk"><input type="checkbox" id="v152PTr" ${r.trail ? 'checked' : ''} ${k === 'custom' ? '' : 'disabled'}> trailing</label></div>
+    <div class="row v151-row">${stratSel('v152PrS', U.prs)}<button type="button" class="btn sm pri" data-a="propRun">Run gauntlet</button></div><div id="v152PropOut"><div class="note">Rules are approximate public 50K / 100K figures: check the firm's current rulebook.</div></div>`; };
+  R.drill = () => `<div class="note">In Bar Replay: <b>1</b> = 1×, <b>2</b> = 2×, <b>5</b> = 5×, <b>0</b> = 10×.</div><div class="row v151-row"><button type="button" class="btn sm pri" data-a="blind">🙈 Start Blind Drill</button>${document.body.classList.contains('blind') ? '<button type="button" class="btn sm" data-a="blindOff">Reveal</button>' : ''}</div><div class="note">Hides the ticker and dates and rebases price to 100: pure price-action training. Reveal shows what it was.</div>`;
+  R.mfe = () => `<div class="row v151-row"><button type="button" class="btn sm pri" data-a="mfeRun">Analyse last 30 closed trades</button></div><div id="v152MfeOut"><div class="note">Maximum favourable / adverse excursion, capture efficiency and auto-tags (scalp, swing, left-money, was-green, no-stop…).</div></div>`;
+  R.battle = () => `<div class="note">Pick 2–4 strategies (Ctrl+click):</div><div class="row v151-row">${stratSel('v152BS', null, true)}<button type="button" class="btn sm pri" data-a="battleRun">Battle</button></div><div id="v152BattleOut"></div>`;
+  R.copilot = () => { const st = U.range && U.range.t1 != null && U.range.sym === ST.sel ? (() => { const D = candles(), i0 = D.findIndex((c) => c.t >= U.range.t0), i1 = D.findIndex((c) => c.t >= U.range.t1); return i0 >= 0 && i1 >= 0 ? V152.rangeStats(D, i0, i1) : null; })() : null;
+    return `<div class="row v151-row"><button type="button" class="btn sm pri" data-a="pickRange">Select a candle range</button>${st ? '<button type="button" class="btn sm" data-a="askRange">✨ Ask the 3-agent Copilot</button><button type="button" class="btn sm" data-a="clrRange">Clear</button>' : ''}</div>${st ? kpis([['Bars', st.bars], ['Return', st.ret + '%', st.ret >= 0 ? 'up' : 'dn'], ['Range', st.rangePct + '%'], ['Est. CVD', st.cvd, st.cvd >= 0 ? 'up' : 'dn'], ['Up bars', st.up + '/' + st.bars]]) : '<div class="note">Click the first and last candle on the chart.</div>'}`; };
+  R.cro = () => `<div class="v152-tg">${tog('cro', 'Grade every chart bracket order A–F before it is placed')}</div><div class="note">A Chief-Risk-Officer agent checks stop, R:R, risk %, trend, RSI, upcoming events, open positions and losing streaks. You can always place anyway.</div>`;
+  R.impact = () => { const I = typeof Grok !== 'undefined' && Grok.intel ? Grok.intel.items || [] : [], rows = I.map((x) => ({ x, tags: V152.impactTags((x.title || '') + ' ' + (x.summary || '')) })).filter((r) => r.tags.length).slice(0, 10);
+    return `<div class="row v151-row"><button type="button" class="btn sm" data-a="loadIntel">Refresh World Monitor</button></div>${rows.length ? rows.map((r) => `<div class="v152-imp"><span>${esc(String(r.x.title || '').slice(0, 110))}</span><span>${r.tags.map((t) => `<button type="button" class="btn xs" data-impact="${esc(t.sym)}" title="Trade impact: open ${esc(t.sym)}">${esc(t.tag)}</button>`).join(' ')}</span></div>`).join('') : '<div class="note">No tagged headlines yet (World Monitor intel needs the launcher).</div>'}`; };
+  R.card = () => `<div class="note">Sends a rich card with entry / stop / target, R:R and a chart snapshot to the Telegram / Discord you set in Settings → Background alerts (through the local launcher only).</div><div class="row v151-row"><button type="button" class="btn sm pri" data-a="sendCard">Send card for this chart</button></div><div class="note" id="v152CardMsg"></div>`;
+  R.brief = () => `<div class="v152-tg">${tog('autoBrief', 'Show the pre-market brief on the first launch each day and the recap after 16:05')}</div><div class="row v151-row"><button type="button" class="btn sm pri" data-a="brief">☀ Pre-market levels brief</button><button type="button" class="btn sm" data-a="recap">🌙 End-of-day recap</button></div>`;
+  R.share = () => `<div class="row v151-row"><button type="button" class="btn sm pri" data-a="shareWs">Export workspace code</button><button type="button" class="btn sm" data-a="shareSt">Export composer strategy</button></div><textarea class="in mono" id="v152Code" rows="3" placeholder="Paste an EXT1… code to import" aria-label="Share code"></textarea><div class="row v151-row"><button type="button" class="btn sm" data-a="importCode">Verify & import</button><button type="button" class="btn sm" data-a="dlCode">Download .exterm</button></div><div class="note" id="v152CodeMsg">Codes are ECDSA P-256 signed: any edit breaks the signature. The signer's fingerprint is shown before anything is applied; a valid signature proves integrity, not identity, so compare it with the fingerprint the author published.</div>`;
+  R.perf = () => { let n = 0, bars = 0; for (const [, set] of StoresBySym) for (const s of set) if (s.sec < 60) { n++; bars += s.candles.length; } return `${kpis([['Frame rate', U.fps ? U.fps + ' fps' : '–'], ['Sub-minute stores', n], ['Buffered 1s–15s bars', bars], ['Trimmed', U.trimmed || 0]])}<div class="note">The chart draws on requestAnimationFrame (your display's refresh rate: 60 / 120 / 144 / 240 Hz). The governor trims off-screen 1s / 5s / 15s stores to their newest 3,600 bars every 30 s.</div>`; };
+  R.theme = () => { const t = cfg().tokens; return `<div class="v152-tok">${V152.TOKENS.map(([k, l]) => `<label class="note">${esc(l)} <input type="color" data-tok="${esc(k)}" value="${esc(t[k] || (/^#[0-9a-f]{6}$/i.test(cssv(k, '')) ? cssv(k, '') : '#d4af37'))}"></label>`).join('')}</div><div class="row v151-row"><button type="button" class="btn sm" data-a="tokReset">Reset to theme</button></div><div class="note">Applied on top of the current theme (Obsidian & Gold by default) and saved.</div>`; };
+  R.cachem = () => { const rows = []; for (const [sym, set] of StoresBySym) for (const s of set) rows.push({ sym, tf: s.tf || s.sec + 's', n: s.candles.length, ok: s.loaded }); rows.sort((a, b) => b.n - a.n);
+    return `<div class="row v151-row"><button type="button" class="btn sm" data-a="precache">Pre-cache watchlist (${esc(ST.tf)})</button><button type="button" class="btn sm" data-a="purgeAll">Purge other markets</button></div><table class="v152-t"><tr><th>Market</th><th>TF</th><th>Bars</th><th></th></tr>${rows.slice(0, 20).map((r) => `<tr><td>${esc(baseOf(r.sym))}</td><td>${esc(r.tf)}</td><td class="mono">${esc(r.n)}</td><td><button type="button" class="btn xs" data-purge="${esc(r.sym)}">Purge</button></td></tr>`).join('')}</table>`; };
+  R.verify = () => `<div class="row v151-row"><button type="button" class="btn sm pri" data-a="verify">Verify build integrity</button></div><div id="v152VerOut"><div class="note">Hashes exterm.html and serve.py on disk against the SHA256SUMS.txt next to them (launcher) and checks the live Content-Security-Policy. This catches accidental corruption; to rule out tampering, also check SHA256SUMS.txt against the published release.</div></div>`;
+
+  const drawerRefresh = (id, quiet) => { const b = document.querySelector(`#v152Drawer [data-sec="${id}"] .v152-sb`); if (b && b.closest('details').open && !(quiet && b.contains(document.activeElement))) b.innerHTML = R[id](); };
+  U.open = (sec) => {
+    let d = $('#v152Drawer');
+    if (!d) {
+      d = document.createElement('aside'); d.id = 'v152Drawer'; d.className = 'v152-drawer'; d.setAttribute('role', 'dialog'); d.setAttribute('aria-label', 'Workstation');
+      d.innerHTML = `<div class="v152-dh"><b data-i18n="ws.title">${esc(I18N.t('ws.title'))}</b><input class="in" id="v152Q" type="search" placeholder="Filter tools…" aria-label="Filter tools"><button type="button" class="x" data-a="close" aria-label="Close">×</button></div>
+        <div class="v152-db">${SECTIONS.map(([pid, title, items]) => `<section class="v152-ph" data-ph="${pid}"><h4>${esc(title)}</h4>${items.map(([id, t]) => `<details data-sec="${id}"><summary>${esc(t)}</summary><div class="v152-sb"></div></details>`).join('')}</section>`).join('')}</div>`;
+      document.body.appendChild(d); bindDrawer(d);
+    }
+    d.classList.add('on'); if (sec) { const x = d.querySelector(`[data-sec="${sec}"]`); if (x) { if (!x.open) x._fresh = true; x.open = true; x.querySelector('.v152-sb').innerHTML = R[sec](); x.scrollIntoView({ block: 'nearest' }); } /* _fresh: the async toggle event must not re-render (it would wipe inputs) */ }
+    return d;
+  };
+  U.close = () => { const d = $('#v152Drawer'); if (d) d.classList.remove('on'); };
+
+  /* actions */
+  const A = {};
+  A.close = U.close; A.hud = () => U.hud();
+  A.addEv = () => { const e = V152.parseEvent($('#v152Ev').value); if (!e) { toast('Use: NAME YYYY-MM-DD HH:MM (UTC)', 'amb'); return; } cfg().userEv.push(e); save(); inv(); drawerRefresh('chart'); };
+  A.ladder = U.attachLadder; A.ladderOff = () => { U.ladder = null; inv(); drawerRefresh('ladder'); };
+  A.pickAv = () => { U.pick = 'avwap'; showTab('markets'); chart.cv.style.cursor = 'crosshair'; toast('Click the candle to anchor VWAP from'); };
+  A.avMacro = () => { const p = (V151UI.pins || []).filter((x) => x.kind === 'MACRO').pop(); if (!p) { toast('No ⚠️ MACRO pin on this chart', 'amb'); return; } cfg().anchor = p.t; save(); inv(); drawerRefresh('avwap'); };
+  A.avOff = () => { cfg().anchor = null; save(); inv(); drawerRefresh('avwap'); };
+  A.loadChain = async () => { if (typeof P5UI === 'undefined') return; await P5UI.loadChain(); U.cache.gKey = null; inv(); drawerRefresh('gamma'); };
+  A.routeUn = () => { const ch = P5UI.chain; if (!ch) return; const un = V152.unusual(ch, ch.spot, { minPrem: 100000 }); for (const x of un.slice(0, 3)) V151UI.badge(ch.sym, 'signal', `🧨 ${x.tags[0]} ${x.type} ${fp(x.strike)} · ${NT.fmtUSD(x.prem, 0)}`); toast(`${un.length} unusual strikes routed to the ${esc(ch.sym)} watchlist badge`); };
+  const scanRows = () => (ST.watch || []).slice(0, 40).map((sym) => {
+    let D = []; try { D = getStore(sym, ST.tf).candles || []; } catch (e) { /* no store */ }
+    const p = px(sym), last = D.slice(-21), vol = last.length ? last[last.length - 1].v || 0 : 0, avg = last.length > 1 ? last.slice(0, -1).reduce((s, c) => s + (c.v || 0), 0) / (last.length - 1) : 0;
+    const ser = (k) => (D.length > 30 ? V152.seriesOf(D.slice(-300), k).pop() : null);
+    return { sym, price: p, chg: chg24(sym), vol, rvol: avg > 0 ? vol / avg : null, vwap: ser('vwap'), rsi: ser('rsi14'), ema20: ser('ema20'), ema50: ser('ema50'), atr: ser('atr14'), liq: isOnchain(sym) && OC.stats[sym] ? OC.stats[sym].liq : null, mcap: isOnchain(sym) && OC.stats[sym] ? OC.stats[sym].mcap : null };
+  });
+  const runF = (f) => { const P = V152.parseFormula(f), out = $('#v152ScanOut'); U.lastF = f; if (P.error) { out.innerHTML = `<div class="note dn">${esc(P.error)}</div>`; return; } const hits = scanRows().filter((r) => V152.evalFormula(P.ast, r)); out.innerHTML = hits.length ? `<table class="v152-t">${hits.map((r) => `<tr data-open="${esc(r.sym)}" tabindex="0"><td>${esc(baseOf(r.sym))}</td><td class="mono">${esc(fp(r.price))}</td><td class="${cls(r.chg)}">${esc(NT.fmtPct(r.chg))}</td><td class="mono">RVOL ${esc(r.rvol == null ? '–' : r.rvol.toFixed(1))}</td></tr>`).join('')}</table>` : '<div class="note">No watchlist market matches right now (only loaded charts have RVOL / VWAP / RSI).</div>'; };
+  A.runF = () => runF($('#v152F').value);
+  A.saveF = () => { const f = $('#v152F').value, n = ($('#v152Fn').value || '').trim().slice(0, 18) || 'Scan ' + (cfg().scanners.length + 1); if (V152.parseFormula(f).error) return runF(f); cfg().scanners.push({ name: n, f }); save(); drawerRefresh('scan'); };
+  A.saveNote = () => { const v = $('#v152Note').value.slice(0, 300); if (v.trim()) cfg().notes[ST.sel] = v; else delete cfg().notes[ST.sel]; save(); decorateWatch(); toast('Note saved'); };
+  A.flowHeat = () => { cfg().flowMode = true; save(); showTab('heat'); };
+  const readRules = () => {
+    const r = U.rules(), d = $('#v152Drawer'); for (const row of d.querySelectorAll('.v152-cond')) { const c = r[row.dataset.side].conds[+row.dataset.i]; if (!c) continue; c.a = row.querySelector('[data-k="a"]').value; c.op = row.querySelector('[data-k="op"]').value; const b = row.querySelector('[data-k="b"]').value.trim(); c.b = V152.isSeries(b) ? b : +b; }
+    for (const s of d.querySelectorAll('.v152-logic')) r[s.dataset.logic].logic = s.value; const sl = +$('#v152Sl').value, tp = +$('#v152Tp').value; r.sl = sl > 0 ? sl : null; r.tp = tp > 0 ? tp : null; return r;
+  };
+  A.addCond = (b) => { readRules(); const r = U.rules(); if (r[b.dataset.side].conds.length < 8) r[b.dataset.side].conds.push({ a: 'close', op: '>', b: 'ema50' }); drawerRefresh('compose'); };
+  A.delCond = (b) => { readRules(); const row = b.closest('.v152-cond'), L = U.rules()[row.dataset.side].conds; if (L.length > 1) L.splice(+row.dataset.i, 1); drawerRefresh('compose'); };
+  A.compBt = () => { const r = readRules(), e = V152.validRules(r), out = $('#v152CompOut'); if (e) { out.innerHTML = `<div class="note dn">${esc(e)}</div>`; return; } const D = candles(); if (D.length < 60) { out.innerHTML = '<div class="note">Need 60+ candles on the chart.</div>'; return; } const res = V152.simRules(D, r), s = V152.stats(res.eq, (365 * 86400) / (chart.tfSec || 3600)); out.innerHTML = kpis([['Return', s.ret + '%', s.ret >= 0 ? 'up' : 'dn'], ['Max DD', s.maxDD + '%'], ['Sharpe', s.sharpe], ['Trades', res.trades.length]]) + svgLine([res.eq]); };
+  A.compPine = () => { const p = V152.toPine(readRules(), 'ExTerm composer'), out = $('#v152CompOut'); out.innerHTML = p.error ? `<div class="note dn">${esc(p.error)}</div>` : `<textarea class="in mono" rows="9" readonly aria-label="Pine Script">${esc(p.pine)}</textarea>`; };
+  A.compJson = () => { const r = readRules(), e = V152.validRules(r), out = $('#v152CompOut'); out.innerHTML = e ? `<div class="note dn">${esc(e)}</div>` : `<textarea class="in mono" rows="7" readonly aria-label="Strategy JSON">${esc(JSON.stringify({ v: 1, kind: 'exterm-rules', rules: r }, null, 1))}</textarea>`; };
+  const btEq = (c, id, o = {}) => NT.backtest(c, NT.strategies[id], NT.defaultParams(id), Object.assign({ cash: 10000 }, o));
+  A.portRun = async () => {
+    const id = $('#v152PS').value, out = $('#v152PortOut'); U.ps = id; U.basket = $('#v152Basket').value; const syms = U.basket.split(/[\s,]+/).map((s) => resolveSym(s) || s.toUpperCase()).filter((s) => /^[A-Za-z0-9:._^\-]{1,40}$/.test(s)).slice(0, 8);
+    await busy(out, 'Loading 1h history for ' + syms.length + ' markets…'); const curves = {};
+    await Promise.all(syms.map(async (s) => { const c = await hist(s, 3600, 600); if (c.length > 120) curves[baseOf(s)] = btEq(c, id).eq; }));
+    const P = V152.portfolio(curves, 8760); if (!P) { out.innerHTML = '<div class="note dn">No history for that basket.</div>'; return; }
+    out.innerHTML = kpis([['Basket return', P.ret + '%', P.ret >= 0 ? 'up' : 'dn'], ['Max DD', P.maxDD + '%'], ['Sharpe', P.sharpe]]) + `<table class="v152-t"><tr><th></th>${P.keys.map((k) => `<th>${esc(k)}</th>`).join('')}<th>Return</th><th>Sharpe</th></tr>${P.keys.map((k, i) => `<tr><th>${esc(k)}</th>${P.corr[i].map((v) => `<td class="mono">${v == null ? '–' : esc(v.toFixed(2))}</td>`).join('')}<td class="${P.each[i].ret >= 0 ? 'up' : 'dn'}">${esc(P.each[i].ret)}%</td><td>${esc(P.each[i].sharpe)}</td></tr>`).join('')}</table>` + svgLine([P.eq]);
+  };
+  A.sensRun = async () => {
+    const id = $('#v152SS').value, out = $('#v152SensOut'), S = NT.strategies[id], ps = (S.params || []).filter((q) => q.max > q.min).slice(0, 2); U.ss = id;
+    if (ps.length < 2) { out.innerHTML = '<div class="note dn">This strategy has fewer than two tunable parameters.</div>'; return; }
+    await busy(out); const c = await hist(isOnchain(ST.sel) ? 'BTC-USD' : ST.sel, 3600, 600); if (c.length < 150) { out.innerHTML = '<div class="note dn">Not enough history.</div>'; return; }
+    const base = NT.defaultParams(id), axis = (q) => [0.6, 0.8, 1, 1.2, 1.4].map((m) => { let v = base[q.k] * m; if ((q.step || 1) >= 1) v = Math.round(v); return Math.min(q.max, Math.max(q.min, v)); });
+    const xs = axis(ps[0]), ys = axis(ps[1]), M = V152.grid(xs, ys, (x, y) => NT.backtest(c, S, Object.assign({}, base, { [ps[0].k]: x, [ps[1].k]: y }), { cash: 10000 }).stats.ret), pl = V152.plateau(M), mx = Math.max(1, ...M.flat().filter(isFinite).map(Math.abs));
+    out.innerHTML = `<table class="v152-t v152-heat"><tr><th>${esc(ps[1].label)} ↓ / ${esc(ps[0].label)} →</th>${xs.map((x) => `<th>${esc(x)}</th>`).join('')}</tr>${ys.map((y, i) => `<tr><th>${esc(y)}</th>${M[i].map((v) => `<td class="${v >= 0 ? 'pos' : 'neg'}" style="--c:${v == null ? 0 : Math.round((Math.abs(v) / mx) * 70)}%">${v == null ? '–' : esc(v.toFixed(1))}</td>`).join('')}</tr>`).join('')}</table>` + (pl ? `<div class="note">Verdict: <b>${esc(pl.verdict)}</b> · ${esc(pl.profitable)}% of cells profitable · neighbours keep ${esc(pl.neighbour)}% of the best result</div>` : '');
+  };
+  A.gateRun = async () => {
+    const id = $('#v152GS').value, out = $('#v152GateOut'); U.gs = id; await busy(out, 'Running the 17-test Validation Lab…');
+    const c = await hist(isOnchain(ST.sel) ? 'BTC-USD' : ST.sel, 3600, 800); if (c.length < 300) { out.innerHTML = '<div class="note dn">Need 300+ hourly candles.</div>'; return; }
+    const S = NT.strategies[id], p = NT.defaultParams(id), v0 = NT.validate(c, S, p, { tfSec: 3600 }), fx = V152.fixGate(v0.checks, {}), cnt = (v) => v.checks.filter((x) => x.status === 'pass').length;
+    U.gateCtx = { c, id, fx, v0 };
+    out.innerHTML = `<div class="note">${cnt(v0)} / ${v0.checks.length} gates pass.</div><table class="v152-t">${v0.checks.filter((x) => x.status !== 'pass').map((x) => `<tr><td class="${x.status === 'fail' ? 'dn' : ''}">${esc(x.status)}</td><td>${esc(x.name)}</td><td class="note">${esc(x.value)}</td></tr>`).join('')}</table>${fx.applied.length ? `<button type="button" class="btn sm pri" data-a="gateFix">🔧 Fix weak gate (${esc(fx.applied.join(', '))})</button>` : '<div class="note">No automatic fix for the failed gates.</div>'}<div id="v152GateFix"></div>`;
+  };
+  A.gateFix = async () => { const g = U.gateCtx, el = $('#v152GateFix'); if (!g) return; await busy(el, 'Re-running with filters…'); const v1 = NT.validate(g.c, NT.strategies[g.id], NT.defaultParams(g.id), Object.assign({ tfSec: 3600 }, g.fx.o)), p0 = g.v0.checks.filter((x) => x.status === 'pass').length, p1 = v1.checks.filter((x) => x.status === 'pass').length; el.innerHTML = kpis([['Gates before', p0 + '/' + g.v0.checks.length], ['Gates after', p1 + '/' + v1.checks.length, p1 > p0 ? 'up' : p1 < p0 ? 'dn' : '']]) + `<div class="note">Filters: ${esc(g.fx.applied.join(', '))}. Apply them in Bots & Backtest → enhancers if the result holds.</div>`; };
+  A.propRun = async () => {
+    const k = U.propK || 'apex', out = $('#v152PropOut'), id = $('#v152PrS').value; U.prs = id;
+    let rules = V152.PROP[k]; if (k === 'custom') { rules = { name: 'Custom', target: +$('#v152PT').value, dailyDD: $('#v152PD').value === '' ? null : +$('#v152PD').value, maxDD: +$('#v152PM').value, trail: $('#v152PTr').checked }; if (!V152.ruleOk(rules)) { out.innerHTML = '<div class="note dn">Target and max drawdown must be 0–100 %.</div>'; return; } cfg().propCustom = rules; save(); }
+    await busy(out); const c = await hist(isOnchain(ST.sel) ? 'BTC-USD' : ST.sel, 3600, 540); if (c.length < 300) { out.innerHTML = '<div class="note dn">Not enough 1h history.</div>'; return; }
+    const bt = btEq(c, id, { fromT: c[c.length - 240].t }), eq = bt.eq.slice(-240), r = V152.propRun(eq, rules, 24);
+    out.innerHTML = r.ok ? kpis([['Result', r.passed ? 'PASSED' : 'FAILED', r.passed ? 'up' : 'dn'], ['Return', r.ret + '%'], ['Max DD', r.maxDD + '%'], ['Worst day', r.worstDay + '%']]) + `<div class="note">${esc(rules.name)}${r.fail ? ' · ' + esc(r.fail) : ''} · last 240 × 1h bars</div>` : `<div class="note dn">${esc(r.error)}</div>`;
+  };
+  A.blind = async () => { if (Replay.on) Replay.exit(); showTab('markets'); await Replay.enter(); if (!Replay.on) return; U.blindReal = { sym: Replay.sym, tf: Replay.tf }; Replay.data = V152.blind(Replay.data); Replay.sym = 'BLIND'; document.body.classList.add('blind'); Replay.draw(); toast('🙈 Blind Drill: ticker and dates hidden. Space plays, B / S trade, 1 / 2 / 5 / 0 set the speed.', 'acc', 7000); drawerRefresh('drill'); };
+  A.blindOff = () => { document.body.classList.remove('blind'); const r = U.blindReal; toast(r ? 'It was ' + esc(baseOf(r.sym)) + ' · ' + esc(r.tf) : 'Blind Drill ended', 'acc'); if (Replay.on) Replay.exit(); U.blindReal = null; drawerRefresh('drill'); };
+  A.mfeRun = async () => {
+    const out = $('#v152MfeOut'), C = typeof Journal !== 'undefined' ? Journal.closed(Journal.entries || []).filter((x) => x.entry && x.openTs).slice(-30) : []; if (!C.length) { out.innerHTML = '<div class="note">No closed trades with an entry yet.</div>'; return; }
+    await busy(out, 'Loading candles…'); const bySym = {}; for (const s of [...new Set(C.map((x) => x.sym))].slice(0, 6)) bySym[s] = await hist(s, 300, 1000);
+    const rows = C.map((x) => { const tr = { entry: x.entry.price, exit: x.exit.price, t0: Math.floor(x.openTs / 1000), t1: Math.floor(x.ts / 1000), stop: x.stop }, e = bySym[x.sym] ? V152.excursion(tr, bySym[x.sym]) : null; return { x, e, tags: V152.autoTag(tr, e) }; }).reverse();
+    out.innerHTML = `<table class="v152-t"><tr><th>Market</th><th>P&L</th><th>MFE</th><th>MAE</th><th>Capture</th><th>Tags</th></tr>${rows.map((r) => `<tr><td>${esc(baseOf(r.x.sym))}</td><td class="${cls(r.x.pnl)}">${esc(NT.fmtUSD(r.x.pnl, 0))}</td><td class="up">${r.e ? esc(r.e.mfe + '%') : '–'}</td><td class="dn">${r.e ? esc(r.e.mae + '%') : '–'}</td><td>${r.e ? esc(r.e.eff + '%') : '–'}</td><td>${esc(r.tags.join(' · '))}</td></tr>`).join('')}</table>`;
+  };
+  A.battleRun = async () => { const ids = [...$('#v152BS').selectedOptions].map((o) => o.value).slice(0, 4), out = $('#v152BattleOut'); if (ids.length < 2) { out.innerHTML = '<div class="note dn">Pick at least two strategies.</div>'; return; } await busy(out); const c = await hist(isOnchain(ST.sel) ? 'BTC-USD' : ST.sel, 3600, 600); if (c.length < 150) { out.innerHTML = '<div class="note dn">Not enough history.</div>'; return; }
+    const B = V152.battle(ids.map((id) => ({ name: String(NT.strategies[id].name || id).replace(/^★ /, ''), eq: btEq(c, id).eq }))); const cols = ['var(--acc)', 'var(--up)', '#38bdf8', '#f472b6'];
+    out.innerHTML = `<table class="v152-t"><tr><th>#</th><th>Strategy</th><th>Return</th><th>Max DD</th><th>Sharpe</th></tr>${B.map((r, i) => `<tr><td><i class="v152-sw" style="background:${cols[i]}"></i>${r.rank}</td><td>${esc(r.name)}</td><td class="${r.ret >= 0 ? 'up' : 'dn'}">${esc(r.ret)}%</td><td>${esc(r.maxDD)}%</td><td>${esc(r.sharpe)}</td></tr>`).join('')}</table>` + svgLine(B.map((r) => r.eq), 360, 120, cols) + `<div class="note">Identical data: ${esc(baseOf(isOnchain(ST.sel) ? 'BTC-USD' : ST.sel))} 1h, ${c.length} bars.</div>`; };
+  A.pickRange = () => { showTab('markets'); U.pick = 'range0'; U.range = null; chart.cv.style.cursor = 'crosshair'; toast('Click the first candle of the range'); inv(); };
+  A.clrRange = () => { U.range = null; inv(); drawerRefresh('copilot'); };
+  A.askRange = () => { const D = candles(), i0 = D.findIndex((c) => c.t >= U.range.t0), i1 = D.findIndex((c) => c.t >= U.range.t1), st = V152.rangeStats(D, i0, i1); if (!st) return; showTab('ai'); aiSend(V152.rangePrompt(ST.sel, ST.tf, st)); };
+  A.loadIntel = async () => { try { await Grok.loadIntel(); } catch (e) { toast('World Monitor: ' + esc(e.message), 'amb'); } drawerRefresh('impact'); };
+  A.sendCard = async () => {
+    const m = $('#v152CardMsg'), d = ChartTrade.draft && ChartTrade.draft.sym === ST.sel ? ChartTrade.draft : null, pos = ACC.pos[ST.sel], card = V152.alertCard({ side: 'buy', sym: baseOf(ST.sel), tf: ST.tf, entry: d ? d.entry : pos ? pos.cost / pos.qty : px(ST.sel), sl: d ? d.sl : pos && pos.sl, tp: d ? d.tp : pos && pos.tp, setup: 'ExTerm chart setup' });
+    let png = ''; try { const cv = chart.cv, k = Math.min(1, 640 / cv.width), t = document.createElement('canvas'); t.width = Math.round(cv.width * k); t.height = Math.round(cv.height * k); t.getContext('2d').drawImage(cv, 0, 0, t.width, t.height); png = t.toDataURL('image/png').split(',')[1]; } catch (e) { /* tainted or no chart */ }
+    m.textContent = 'Sending…'; try { const r = await J.req('/api/notify', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text: card.text, png }) }, 25000); m.textContent = r.ok ? 'Sent to ' + (r.sent || []).join(' + ') + ' ✓' : 'Nothing sent: set up Telegram / Discord in Settings → Background alerts.'; } catch (e) { m.textContent = 'Needs the launcher with alerts on: ' + e.message; }
+  };
+  A.brief = async () => {
+    const sym = isOnchain(ST.sel) ? 'BTC-USD' : ST.sel, c = await hist(sym, 3600, 72), lv = V152.levels(c, Date.now() / 1000), ev = U.eventList().slice(0, 6), wm = typeof Grok !== 'undefined' && Grok.intel ? (Grok.intel.items || []).filter((x) => /critical|high/i.test(x.level || x.severity || '')).slice(0, 4) : [];
+    p2modal('☀ Pre-market brief · ' + baseOf(sym), (lv ? kpis([['PDH', fp(lv.pdh)], ['PDL', fp(lv.pdl)], ['PDC', fp(lv.pdc)], ['Overnight high', fp(lv.onh)], ['Overnight low', fp(lv.onl)]]) : '<div class="note">No prior-day candles.</div>') + `<div class="note"><b>Events</b><br>${ev.map((e) => esc(e.l + ' · in ' + V151.fmtDur(e.inSec))).join('<br>') || 'None scheduled in 3 weeks.'}</div><div class="note"><b>World</b><br>${wm.map((x) => esc(String(x.title || '').slice(0, 120))).join('<br>') || 'No high-impact headlines loaded.'}</div><div class="note">Levels are UTC-day based. Not financial advice.</div>`, 'v152Brief');
+  };
+  A.recap = () => { const d0 = new Date(); d0.setHours(0, 0, 0, 0); const C = typeof Journal !== 'undefined' ? Journal.closed(Journal.entries || []).filter((x) => x.ts >= d0.getTime()) : [], r = V152.recap(C);
+    p2modal('🌙 End-of-day recap', kpis([['Trades', r.n], ['Win rate', r.wr == null ? '–' : r.wr + '%'], ['P&L', NT.fmtUSD(r.pnl, 0), r.pnl >= 0 ? 'up' : 'dn'], ['Best', r.best ? baseOf(r.best.sym) + ' ' + NT.fmtUSD(r.best.pnl, 0) : '–'], ['Worst', r.worst ? baseOf(r.worst.sym) + ' ' + NT.fmtUSD(r.worst.pnl, 0) : '–']]) + '<div class="note">Journal → insights has the full breakdown.</div>', 'v152Recap'); };
+  /* the signing key lives in IndexedDB as a non-extractable CryptoKey: never in ST, saved state, /api/state or backups */
+  const idb = (val) => new Promise((res, rej) => { const o = indexedDB.open('exterm-v152', 1); o.onupgradeneeded = () => o.result.createObjectStore('k'); o.onerror = () => rej(o.error); o.onsuccess = () => { const st = o.result.transaction('k', val ? 'readwrite' : 'readonly').objectStore('k'), q = val ? st.put(val, 'sign') : st.get('sign'); q.onsuccess = () => res(q.result); q.onerror = () => rej(q.error); }; });
+  const key = async () => { const c = cfg(); if (c.signKey) { delete c.signKey; save(); } let kp = null; try { kp = await idb(); } catch (e) { /* storage blocked */ } if (kp && kp.privateKey && kp.publicKey) return kp; kp = await V152.newKey(crypto.subtle, false); try { await idb(kp); } catch (e) { /* this session only */ } return kp; };
+  const shareOut = async (kind, data) => { const m = $('#v152CodeMsg'); try { const kp = await key(), code = await V152.signCode(crypto.subtle, kp, kind, data); $('#v152Code').value = code; m.textContent = `Signed ${kind} code ready · publish your fingerprint ${await V152.fingerprint(crypto.subtle, await crypto.subtle.exportKey('jwk', kp.publicKey))} with it so others can check it is yours`; } catch (e) { m.textContent = 'Could not sign: ' + e.message; } };
+  A.shareWs = () => shareOut('workspace', V152.cleanWorkspace({ theme: Themes.cur(), tf: ST.tf, lang: I18N.cur(), ind: ST.ind || {}, tokens: cfg().tokens }));
+  A.shareSt = () => { const r = readRulesSafe(); const e = V152.validRules(r); if (e) { $('#v152CodeMsg').textContent = e; return; } shareOut('strategy', r); };
+  const readRulesSafe = () => (document.querySelector('#v152Drawer .v152-cond') ? readRules() : U.rules());
+  /* import: verify the signature, show the signer (known / new) and what will change, apply only after a click */
+  A.importCode = async () => {
+    const m = $('#v152CodeMsg'), v = await V152.verifyCode(crypto.subtle, $('#v152Code').value); U.pendingCode = null; if (!v.ok) { m.textContent = v.error; return; }
+    const data = v.kind === 'workspace' ? V152.cleanWorkspace(v.data) : V152.cleanRules(v.data); if (!data) { m.textContent = v.kind === 'workspace' ? 'Empty workspace' : 'Strategy rejected: ' + V152.validRules(v.data); return; }
+    const known = (cfg().signers || []).includes(v.signer); U.pendingCode = { kind: v.kind, data, signer: v.signer };
+    m.innerHTML = `Signature valid: the code was not altered after signing. Signer <b class="mono">${esc(v.signer)}</b> ${known ? '(trusted before)' : '<b class="dn">(new signer: compare with the fingerprint the author published)</b>'} · ${esc(v.kind === 'workspace' ? 'changes: ' + Object.keys(data).join(', ') : 'loads a ' + data.entry.conds.length + ' + ' + data.exit.conds.length + ' condition strategy into the composer')} <button type="button" class="btn xs pri" data-a="applyCode">Apply</button>`;
+  };
+  A.applyCode = () => {
+    const p = U.pendingCode, m = $('#v152CodeMsg'); if (!p) return; U.pendingCode = null; const c = cfg(); c.signers = [p.signer].concat((c.signers || []).filter((x) => x !== p.signer)).slice(0, 50);
+    if (p.kind === 'workspace') { const w = p.data; if (w.theme) Themes.set(w.theme); if (w.lang) I18N.set(w.lang); if (w.ind) { ST.ind = Object.assign(ST.ind || {}, w.ind); if (chart) Object.assign(chart.o, w.ind); } if (w.tokens) { c.tokens = w.tokens; applyTokens(); } if (w.tf) { const b = [...$$('#tfBtns button')].find((x) => x.textContent.trim() === w.tf); if (b) b.click(); } save(); inv(); m.textContent = `Workspace applied ✓ · signed by ${p.signer}`; }
+    else { U.comp = p.data; save(); m.textContent = `Strategy loaded into the composer ✓ · signed by ${p.signer}`; const s = document.querySelector('#v152Drawer [data-sec="compose"]'); if (s) s.open = true; drawerRefresh('compose'); }
+  };
+  A.dlCode = () => { const v = $('#v152Code').value.trim(); if (!/^EXT1\./.test(v)) { $('#v152CodeMsg').textContent = 'Export a code first'; return; } const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([v], { type: 'text/plain' })); a.download = 'preset.exterm'; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500); };
+  const applyTokens = () => { const t = cfg().tokens; for (const [k] of V152.TOKENS) { if (t[k]) document.body.style.setProperty(k, t[k]); else document.body.style.removeProperty(k); } inv(); };
+  A.tokReset = () => { cfg().tokens = {}; save(); applyTokens(); drawerRefresh('theme'); };
+  A.precache = () => { let n = 0; for (const s of (ST.watch || []).slice(0, 20)) { const st = getStore(s, ST.tf); if (!st.loaded && !st.loading) { st.load(1000); n++; } } toast(`Pre-caching ${n} markets on ${esc(ST.tf)}`); setTimeout(() => drawerRefresh('cachem'), 2500); };
+  const purge = (sym) => { const set = StoresBySym.get(sym); if (!set || sym === ST.sel) return 0; let n = 0; for (const s of set) { n += s.candles.length; s.candles.length = 0; s.loaded = false; } return n; };
+  A.purgeAll = () => { let n = 0; for (const [sym] of StoresBySym) if (!(ST.watch || []).includes(sym)) n += purge(sym); toast(`Purged ${n} cached bars`); drawerRefresh('cachem'); };
+  A.verify = async () => {
+    const out = $('#v152VerOut'); await busy(out, 'Hashing…'); const meta = document.querySelector('meta[http-equiv="Content-Security-Policy"]'), csp = meta ? meta.content : '', inl = [...document.querySelectorAll('*')].filter((el) => [...el.attributes].some((a) => /^on/i.test(a.name))).length;
+    let files = null, err = ''; try { files = await J.req('/api/integrity', undefined, 15000); } catch (e) { err = e.message; }
+    const rows = files && Array.isArray(files.files) ? files.files : [];
+    out.innerHTML = kpis([['CSP default-src none', V152.cspOk(csp) ? 'PASS' : 'FAIL', V152.cspOk(csp) ? 'up' : 'dn'], ['Inline handlers', inl ? inl + ' found' : 'none', inl ? 'dn' : 'up'], ['File hashes', rows.length ? (rows.every((r) => r.ok) ? 'MATCH' : 'MISMATCH') : 'n/a', rows.length ? (rows.every((r) => r.ok) ? 'up' : 'dn') : '']]) + (rows.length ? `<table class="v152-t">${rows.map((r) => `<tr><td>${esc(r.name)}</td><td class="mono">${esc(String(r.sha || '').slice(0, 16))}…</td><td class="${r.ok ? 'up' : 'dn'}">${r.ok ? '✓ matches SHA256SUMS' : esc(r.why || 'mismatch')}</td></tr>`).join('')}</table>` : `<div class="note">${esc(err || 'File hashes need the launcher (python serve.py).')}</div>`);
+  };
+
+  const bindDrawer = (d) => {
+    d.addEventListener('toggle', (e) => { const det = e.target; if (det.tagName !== 'DETAILS') return; if (det._fresh) { det._fresh = false; return; } if (det.open) det.querySelector('.v152-sb').innerHTML = R[det.dataset.sec](); }, true);
+    d.addEventListener('click', (e) => {
+      const t = e.target;
+      const a = t.closest('[data-a]'); if (a && A[a.dataset.a]) { e.preventDefault(); Promise.resolve(A[a.dataset.a](a)).catch((x) => toast('⚠ ' + esc(x.message), 'amb')); return; }
+      const g = t.closest('[data-grp]'); if (g) { cfg().group = g.dataset.grp === 'off' ? null : g.dataset.grp; save(); syncBadge(); drawerRefresh('sync'); return; }
+      const pt = t.closest('[data-piptf]'); if (pt) { cfg().pipTf = pt.dataset.piptf; save(); pip(); drawerRefresh('sync'); return; }
+      const f = t.closest('[data-fee]'); if (f) { cfg().fee = f.dataset.fee; save(); drawerRefresh('dex'); return; }
+      const pk = t.closest('[data-propk]'); if (pk) { U.propK = pk.dataset.propk; drawerRefresh('prop'); return; }
+      const sc = t.closest('[data-scan]'); if (sc) { const s = cfg().scanners[+sc.dataset.scan]; if (s) { $('#v152F').value = s.f; runF(s.f); } return; }
+      const im = t.closest('[data-impact]'); if (im) { const s = im.dataset.impact; if (/^[A-Za-z0-9:._^\-]{1,40}$/.test(s)) { openSym(s); toast('Trade impact: ' + esc(s)); } return; }
+      const op = t.closest('[data-open]'); if (op) { openSym(op.dataset.open); return; }
+      const pu = t.closest('[data-purge]'); if (pu) { toast(`Purged ${purge(pu.dataset.purge)} bars`); drawerRefresh('cachem'); }
+    });
+    d.addEventListener('change', (e) => {
+      const t = e.target;
+      if (t.dataset.c) { const [a, b] = t.dataset.c.split('.'), c = cfg(); if (b) c[a][b] = t.checked; else c[a] = t.checked; save(); U.cache = {}; inv(); pip(); dexStrip(); decorateWatch(); if (a === 'walls' && !t.checked) U.walls = []; return; }
+      if (t.dataset.split != null) { const c = cfg(); c.splits[+t.dataset.split] = Math.max(0, Math.min(100, +t.value || 0)); save(); return; }
+      if (t.dataset.leg) { const [i, k] = t.dataset.leg.split('.'), g = U.payoff.legs[+i]; const v = +t.value; if (g && isFinite(v) && (k !== 'strike' || v > 0)) g[k] = v; drawerRefresh('payoff'); return; }
+      if (t.id === 'v152Pre') { U.payoff = { kind: t.value, legs: null }; drawerRefresh('payoff'); return; }
+      if (t.id === 'v152DexUsd') { U.dexUsd = Math.max(1, +t.value || 500); drawerRefresh('dex'); return; }
+      if (t.dataset.tok) { cfg().tokens[t.dataset.tok] = t.value; cfg().tokens = V152.cleanTokens(cfg().tokens); save(); applyTokens(); }
+    });
+    d.addEventListener('input', (e) => { if (e.target.id === 'v152Q') { const q = e.target.value.trim().toLowerCase(); for (const det of d.querySelectorAll('details')) det.hidden = !!q && !det.textContent.toLowerCase().includes(q) && !det.dataset.sec.includes(q); for (const s of d.querySelectorAll('.v152-ph')) s.hidden = ![...s.querySelectorAll('details')].some((x) => !x.hidden); } });
+    d.addEventListener('keydown', (e) => { if (e.key === 'Escape') { e.stopPropagation(); U.close(); } const r = e.target.closest && e.target.closest('[data-open]'); if (r && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); openSym(r.dataset.open); } });
+  };
+
+  /* ══ Grok tab: telemetry strip + rule compiler with dry-run shadow mode ══ */
+  const shadowTick = (sym, p, ts) => {
+    const W = U.flowRules; if (!W) return; const D = candles(); if (D.length < 60 || ST.sel !== sym) return;
+    const t = D[D.length - 1].t; if (W.lastT === t) return; W.lastT = t;
+    const en = V152.signals(D.slice(-300), W.rules.entry), ex = V152.signals(D.slice(-300), W.rules.exit), i = en.length - 2;
+    const side = !W.inPos && en[i] ? 'buy' : W.inPos && ex[i] ? 'sell' : null; if (!side) return;
+    const f = V152.shadowFill({ side, usd: 1000, sym, bot: W.name }, { price: p, ts: Date.now() }, 5); if (!f) return; W.inPos = side === 'buy';
+    V151.pushCapped(U.shadow, f, 200); renderGrokCard(); toast(`👻 Dry-run ${esc(side)} ${esc(baseOf(sym))} @ ${esc(fp(f.price))} (no balance touched)`);
+  };
+  const renderGrokCard = () => {
+    const out = $('#v152ShadowLog'); if (!out) return; const s = V152.shadowStats(U.shadow);
+    out.innerHTML = `<div class="note">${s.n} hypothetical fills · ${s.buys} buys / ${s.sells} sells · simulated slippage ${esc(NT.fmtUSD(s.slipUsd, 2))}</div>${U.shadow.slice(-6).reverse().map((f) => `<div class="note mono">${esc(new Date(f.ts).toLocaleTimeString())} ${esc(f.side)} ${esc(baseOf(f.sym))} mid ${esc(fp(f.mid))} → ${esc(fp(f.price))}</div>`).join('')}`;
+  };
+  const mountGrok = () => {
+    const host = $('#tab-grok'); if (!host || $('#v152Tele')) return;
+    const tele = document.createElement('div'); tele.id = 'v152Tele'; tele.className = 'v152-tele'; tele.setAttribute('aria-live', 'polite'); tele.innerHTML = '<span class="note">Daemon health: connecting…</span>'; host.prepend(tele);
+    const det = document.createElement('details'); det.className = 'panel v152-grok'; det.id = 'v152Nl';
+    det.innerHTML = `<summary>🧠 Plain-English bot rules → backtestable workflow</summary><div class="pb"><textarea class="in" id="v152NlIn" rows="2" maxlength="600" aria-label="Rules in plain English">Buy SOL when RSI below 30 and price above EMA 200, sell when RSI above 70, stop 2%, take profit 6%</textarea>
+      <div class="row v151-row"><button type="button" class="btn sm pri" data-nl="compile">Compile</button><button type="button" class="btn sm" data-nl="bt">Backtest</button><button type="button" class="btn sm" data-nl="compose">Open in composer</button><label class="chk"><input type="checkbox" id="v152Shadow" ${cfg().shadow ? 'checked' : ''}> 👻 Dry-run shadow mode on live ticks</label></div><div id="v152NlOut"></div><div id="v152ShadowLog"></div></div>`;
+    tele.after(det);
+    const compile = () => { const r = V152.nlCompile($('#v152NlIn').value), out = $('#v152NlOut'); if (!r.ok) { out.innerHTML = `<div class="note dn">${esc(r.error)}</div>`; return null; } out.innerHTML = `<textarea class="in mono" rows="6" readonly aria-label="Workflow JSON">${esc(JSON.stringify(r.workflow, null, 1))}</textarea>`; return r.workflow; };
+    det.addEventListener('click', (e) => {
+      const b = e.target.closest('[data-nl]'); if (!b) return; const w = compile(); if (!w) return;
+      if (b.dataset.nl === 'bt') { const go = () => { const D = candles(), res = V152.simRules(D, w.rules), s = V152.stats(res.eq, (365 * 86400) / (chart.tfSec || 3600)); $('#v152NlOut').insertAdjacentHTML('beforeend', kpis([['Return', s.ret + '%', s.ret >= 0 ? 'up' : 'dn'], ['Max DD', s.maxDD + '%'], ['Trades', res.trades.length], ['On', baseOf(ST.sel) + ' ' + ST.tf]])); }; const sym = w.sym ? resolveSym(w.sym) : null; if (sym && sym !== ST.sel) { openSym(sym); setTimeout(go, 1500); } else go(); }
+      if (b.dataset.nl === 'compose') { U.comp = w.rules; U.open('compose'); }
+      U.flowRules = cfg().shadow ? { rules: w.rules, sym: ST.sel, name: w.name } : U.flowRules;
+    });
+    det.addEventListener('change', (e) => { if (e.target.id === 'v152Shadow') { cfg().shadow = e.target.checked; save(); if (e.target.checked) { const w = compile(); if (w) { U.flowRules = { rules: w.rules, sym: ST.sel, name: w.name }; toast('👻 Dry-run on ' + esc(baseOf(ST.sel)) + ': hypothetical fills are logged, balances are never touched.', 'acc'); } } else U.flowRules = null; renderGrokCard(); } });
+  };
+  const tele = async () => {
+    const el = $('#v152Tele'); if (!el || (curTab !== 'grok') || document.hidden) return;
+    let h = null; try { h = await J.req('/api/health', undefined, 4000); } catch (e) { /* no launcher */ }
+    const lat = V152.pctl(U.lat, 50), p95 = V152.pctl(U.lat, 95);
+    el.innerHTML = [['Daemon', h ? 'up ' + V152.fmtUptime(h.uptime) : 'offline', h ? 'up' : 'dn'], ['Tick latency', lat == null ? '–' : `${Math.max(0, Math.round(lat))} ms (p95 ${Math.max(0, Math.round(p95))})`], ['RAM cache hits', h && h.cache && h.cache.total ? Math.round((h.cache.hits / h.cache.total) * 100) + '%' : '–'], ['Bot heartbeats', h ? `${h.bots.active}/${h.bots.total}` : '–']].map(([k, v, c]) => `<span class="v152-tk"><span class="k">${esc(k)}</span><b class="${c || ''}">${esc(v)}</b></span>`).join('');
+  };
+
+  /* ══ watchlist sparklines, RS badges, notes ══ */
+  const decorateWatch = () => {
+    const c = cfg(), wl = $('#watchList'); if (!wl) return;
+    for (const row of wl.querySelectorAll('.wl-row[data-s]')) {
+      const sym = row.dataset.s; let sp = row.querySelector('.v152-spark'); const note = c.notes[sym];
+      if (note) row.title = 'Plan: ' + note; else if (row.title && row.title.startsWith('Plan: ')) row.removeAttribute('title');
+      if (!c.sparks) { if (sp) sp.remove(); continue; }
+      let D = []; try { D = (getStore(sym, '1h').candles || []).slice(-24); } catch (e) { /* none */ }
+      if (D.length < 2) { const st = getStore(sym, '1h'); if (!st.loaded && !st.loading && !(U.sparkLoad || (U.sparkLoad = new Set())).has(sym)) { U.sparkLoad.add(sym); st.load(48); } continue; }
+      const bench = isStock(sym) ? 'SPY' : 'BTC-USD', B = sym === bench ? null : (getStore(bench, '1h').candles || []).slice(-24), rs = B && B.length > 1 ? V152.relStrength(D.map((x) => x.c), B.map((x) => x.c)) : null;
+      if (!sp) { sp = document.createElement('span'); sp.className = 'v152-spark'; row.appendChild(sp); }
+      const up = D[D.length - 1].c >= D[0].c; sp.innerHTML = `<svg viewBox="0 0 60 16" width="60" height="16" aria-hidden="true"><polyline fill="none" stroke="${up ? 'var(--up)' : 'var(--dn)'}" stroke-width="1.3" points="${V152.spark(D.map((x) => x.c))}"/></svg>${rs == null ? '' : `<b class="${rs >= 0 ? 'up' : 'dn'}" title="24h relative strength vs ${esc(baseOf(bench))}">${rs >= 0 ? '+' : ''}${esc(rs.toFixed(1))} vs ${esc(baseOf(bench))}</b>`}`;
+    }
+  };
+
+  /* ══ settings: language + integrity panel ══ */
+  const mountSettings = () => {
+    const host = $('#setBody'); if (!host || $('#v152Set')) return; const p = document.createElement('div'); p.className = 'panel'; p.id = 'v152Set';
+    p.innerHTML = `<h3>🌐 <span data-i18n="lang.label">${esc(I18N.t('lang.label'))}</span> &amp; 🛡 build integrity</h3><div class="pb"><div class="row v151-row"><span class="note">${esc(I18N.label(I18N.cur()))}</span><button type="button" class="btn sm" id="v152SetLang">🌐 Change language</button><button type="button" class="btn sm pri" id="v152SetVer">Verify build integrity</button></div><div id="v152SetOut"></div></div>`;
+    host.appendChild(p); p.querySelector('#v152SetLang').addEventListener('click', () => I18N.gate(false));
+    p.querySelector('#v152SetVer').addEventListener('click', () => { U.open('verify'); A.verify(); });
+  };
+
+  /* ══ Ctrl+K: calculator, language, theme, workstation commands ══ */
+  const palWrap = () => {
+    if (typeof palRender !== 'function') return; const _pr = palRender;
+    palRender = function () {
+      _pr.apply(this, arguments); const raw = ($('#palIn').value || '').trim(), q = raw.toLowerCase(), add = [];
+      if (V152.isCalc(raw)) { const v = V152.calc(raw); if (v != null) add.push({ l: `= ${+v.toPrecision(12)}`, r: 'calculator · copy', f: () => { try { navigator.clipboard.writeText(String(+v.toPrecision(12))); toast('Copied ' + esc(String(+v.toPrecision(12)))); } catch (e) { /* clipboard blocked */ } } }); }
+      if (/^(lang|language|idioma|langue|sprache|🌐)/.test(q) || (q.length >= 3 && I18N.search(q, false).length && !V152.isCalc(raw))) { const L = /^(lang|language)\s*/.test(q) ? I18N.search(q.replace(/^(lang|language)\s*/, ''), false) : I18N.search(q, false); for (const l of L.slice(0, 4)) add.push({ l: `🌐 Language: ${l.native}`, r: l.english, f: () => I18N.set(l.code) }); }
+      if (q.startsWith('theme') || q.length >= 3) for (const t of Themes.LIST) if (('theme ' + t.name).toLowerCase().includes(q) || (q.startsWith('theme') && q.length <= 6)) add.push({ l: `🎨 Theme: ${t.name}`, r: 'theme', f: () => Themes.set(t.id) });
+      const cmds = [['🧭 Workstation drawer', 'workstation tools drawer advanced', () => U.open()], ['⌧ HUD clean mode (H)', 'hud clean record screen recording hide', () => U.hud()], ['🎯 TP ladder on this chart', 'tp ladder take profit partial break even', U.attachLadder], ['⚓ Anchored VWAP', 'avwap anchored vwap sigma', () => A.pickAv()], ['🔎 Formula scanner', 'scanner formula rvol vwap filter', () => U.open('scan')], ['📐 Options payoff builder', 'options payoff straddle condor vertical', () => U.open('payoff')], ['🧪 Strategy composer → Pine', 'composer pine script no code strategy', () => U.open('compose')], ['⚔ Strategy battle', 'battle compare strategies leaderboard', () => U.open('battle')], ['🙈 Blind drill', 'blind drill replay training', () => A.blind()], ['☀ Pre-market brief', 'brief pre market pdh pdl levels', () => A.brief()], ['🛡 Verify build integrity', 'verify integrity sha256 csp security', () => { U.open('verify'); A.verify(); }], ['🔐 Share code (signed)', 'share export import code exterm', () => U.open('share')], ['🌐 Choose language', 'language lang translate', () => I18N.gate(false)]];
+      for (const [l, k, f] of cmds) if (!q || l.toLowerCase().includes(q) || k.includes(q)) add.push({ l, r: 'v15.2', f });
+      palItems.unshift(...add.filter((x) => x.r.startsWith('calculator'))); palItems.push(...add.filter((x) => !x.r.startsWith('calculator')));
+      $('#palList').innerHTML = palItems.map((x, i) => `<div class="it ${i === palIdx ? 'on' : ''}" data-i="${i}"><span>${esc(x.l)}</span><span class="note">${esc(x.r)}</span></div>`).join('');
+    };
+  };
+
+  /* ══ start ══ */
+  U.start = () => {
+    cfg(); applyTokens();
+    const th = $('#btnTheme'); if (th && !$('#btnWs')) { const b = document.createElement('button'); b.id = 'btnWs'; b.className = 'ghost'; b.textContent = '🧭'; b.dataset.i18nTitle = 'ws.title'; b.title = I18N.t('ws.title'); b.setAttribute('aria-label', I18N.t('ws.title')); th.before(b); b.addEventListener('click', () => ($('#v152Drawer.on') ? U.close() : U.open())); }
+    palWrap();
+    if (typeof V14 !== 'undefined' && Array.isArray(V14.SHORTCUTS)) V14.SHORTCUTS.push(['H', 'HUD clean mode (hide panels for recordings)'], ['Ctrl (hold)', 'Magnet: snap drawings to candle OHLC'], ['1 / 2 / 5 / 0 (replay)', 'Replay speed 1× / 2× / 5× / 10×'], ['Ctrl+K → 10000*0.015/12.5', 'Inline calculator']);
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Control') U.ctrl = true;
+      if (typeof Replay !== 'undefined' && Replay.on && !e.ctrlKey && !e.altKey && !p2typing() && V152.REPLAY_KEYS[e.code]) { const sp = V152.REPLAY_KEYS[e.code], b = $(`#rpSpeed button[data-sp="${sp}"]`); if (b) { e.preventDefault(); e.stopPropagation(); b.click(); toast('Replay ' + sp + '×'); } return; }
+      if ((e.key === 'h' || e.key === 'H') && !e.ctrlKey && !e.metaKey && !e.altKey && !p2typing() && !document.querySelector('.v13-modal, #langGate, #tourOv')) { e.preventDefault(); const on = U.hud(); toast(on ? 'HUD clean mode on · press H to exit' : 'HUD clean mode off'); }
+    }, true);
+    document.addEventListener('keyup', (e) => { if (e.key === 'Control') U.ctrl = false; }); window.addEventListener('blur', () => { U.ctrl = false; });
+    Feed.tradeL.push((sym, p, q, side, ts) => { try { onTrade(sym, p, q, side, ts); } catch (e) { /* never break the feed */ } });
+    if (typeof Sol !== 'undefined' && Array.isArray(Sol.listeners)) Sol.listeners.push((ev) => { try { const t = ev && (ev.trade || ev); if (!t || t.side !== 'buy' || !t.sym) return; const w = Sol.byAddr ? Sol.byAddr(t.wallet || t.who) : null; V151.pushCapped(U.buys, { sym: t.sym, who: (w && w.name) || String(t.wallet || t.who || '').slice(0, 8), side: 'buy', t: (t.ts > 1e11 ? t.ts / 1000 : t.ts) || Date.now() / 1000, usd: t.usd, winRate: w && w.stats ? w.stats.winRate : null }, 400); const hits = V152.confluence(U.buys); const fresh = hits.filter((h) => !U.conf.some((x) => x.sym === h.sym && Math.abs(x.t - h.t) < 300)); for (const h of fresh) { U.conf.push(h); V151UI.badge(h.sym, 'smart', `🎯 confluence: ${h.wallets.length} wallets`); toast(`🎯 Smart-money confluence on ${esc(baseOf(h.sym))}: ${esc(h.wallets.join(', '))}`, 'acc', 8000); } } catch (e) { /* never break the feed */ } });
+    if (typeof setMode === 'function') { const _sm = setMode; setMode = function (m) { const t0 = performance.now(), from = ST.mode; try { V152.memo(cfg().mem, from, { tf: ST.tf, risk: (ST.v151 || {}).risk, ind: ST.ind || {} }); } catch (e) { /* memory is best effort */ } const r = _sm.apply(this, arguments); if (ST.mode !== from) { const rec = V152.recall(cfg().mem, ST.mode); if (rec) { if (ST.v151) ST.v151.risk = rec.risk; if (rec.ind && Object.keys(rec.ind).length) { ST.ind = Object.assign(ST.ind || {}, rec.ind); if (typeof chart !== 'undefined' && chart) { Object.assign(chart.o, rec.ind); chart.invalidate(); } } } U.lastSwapMs = performance.now() - t0; save(); } return r; }; }
+    if (typeof ChartTrade !== 'undefined') { const _pl = ChartTrade.place; ChartTrade.place = function () { if (!cfg().cro || U.croOk) { U.croOk = false; return _pl.apply(this, arguments); } const d = ChartTrade.draft; if (!d) return _pl.apply(this, arguments); const D = candles(), c = D.map((x) => x.c), e200 = V152.seriesOf(D, 'ema200').pop(), rsi = V152.seriesOf(D.slice(-200), 'rsi14').pop(), eq = (() => { try { return ACC.equity(priceMap()); } catch (x) { return ACC.cash; } })(); const C = typeof Journal !== 'undefined' ? Journal.closed(Journal.entries || []) : []; let streak = 0; for (let i = C.length - 1; i >= 0 && !C[i].win; i--) streak++;
+      const g = V152.critique({ side: 'buy', entry: d.entry, sl: d.sl, tp: d.tp, riskPct: d.sl > 0 && eq > 0 ? ((d.usd / d.entry) * Math.abs(d.entry - d.sl) / eq) * 100 : null, trendUp: c.length > 200 ? c[c.length - 1] > e200 : null, rsi, eventSoon: U.eventList().some((x) => x.inSec < 6 * 3600), openPositions: Object.keys(ACC.pos || {}).length, lossStreak: streak });
+      const ov2 = p2modal(`😈 Devil's advocate · grade ${g.grade}`, `<div class="v152-grade g-${g.grade.toLowerCase()}">${esc(g.grade)}<span>${esc(g.score)}/100</span></div><ul class="v152-notes">${g.notes.map((n) => `<li>${esc(n)}</li>`).join('')}</ul><div class="row" style="justify-content:flex-end;gap:6px"><button type="button" class="btn sm" data-cro="go">Place anyway</button></div>`, 'v152Cro');
+      ov2.querySelector('[data-cro="go"]').addEventListener('click', () => { ov2.remove(); U.croOk = true; ChartTrade.place(); }); return null; }; }
+    if (typeof renderWatch === 'function') { const _rw = renderWatch; renderWatch = function () { const r = _rw.apply(this, arguments); try { decorateWatch(); } catch (e) { /* decoration only */ } return r; }; }
+    if (typeof P4UI !== 'undefined' && P4UI.Bubbles) { const _b = P4UI.Bubbles; P4UI.Bubbles = function (host, o) { const B = _b.apply(this, arguments), _set = B.set; B.set = function (items) { if (Array.isArray(items)) items = items.map((it) => (it && it._flowRaw) || it); if (cfg().flowMode && Array.isArray(items)) { const now = Date.now() / 1000, win = U.flowWin || 300; items = items.map((it) => { const f = V152.netFlow(U.flow.get(it.id) || [], now, win)[it.id] || 0; return Object.assign({}, it, { _flowRaw: it, ch: Math.sign(f) * Math.min(12, Math.log10(1 + Math.abs(f) / 100) * 3), name: 'net ' + NT.fmtUSD(f, 0) + ' / ' + (win / 60) + 'm · ' + (it.name || '') }); }); } return _set.call(this, items); }; /* resize re-sets the mapped items: always map from the raw copy */ return B; }; }
+    if (typeof renderHeat === 'function') { const _rh = renderHeat; renderHeat = function () { const r = _rh.apply(this, arguments); try { const bar = $('#p4HeatBar'); if (bar && ST.heat.asset !== 'onchain' && !$('#v152FlowSeg')) { const s = document.createElement('div'); s.className = 'seg'; s.id = 'v152FlowSeg'; bar.appendChild(s); s.addEventListener('click', (e) => { const b = e.target.closest('button[data-flow]'); if (!b) return; const v = b.dataset.flow; if (v === 'pct') cfg().flowMode = false; else { cfg().flowMode = true; U.flowWin = +v; } save(); renderHeat(); }); } const s = $('#v152FlowSeg'); if (s) s.innerHTML = [['pct', '% chg'], ['60', '$ 1m'], ['300', '$ 5m'], ['900', '$ 15m']].map(([v, l]) => `<button type="button" data-flow="${v}" class="${(cfg().flowMode ? String(U.flowWin || 300) : 'pct') === v ? 'on' : ''}" title="${v === 'pct' ? 'Colour by % change' : 'Colour by net buy − sell dollar flow'}">${l}</button>`).join(''); } catch (e) { /* heat bar optional */ } return r; }; }
+    if (typeof TABS !== 'undefined' && TABS.set) { const _s = TABS.set.show; TABS.set.show = function () { const r = _s.apply(this, arguments); try { mountSettings(); } catch (e) { /* panel optional */ } return r; }; }
+    setInterval(() => { // attach overlay + pointer hooks to the Markets chart, keep chrome in sync
+      if (typeof chart === 'undefined' || !chart) return; if (!chart.overlays.includes(U.overlay)) { chart.overlays.push(U.overlay); inv(); } ptHook(chart.cv);
+      syncBadge(); pip(); dexStrip(); mountGrok();
+      const c = cfg(); if (c.group && !U.applying) { const last = U.last || {}; if (last.sel !== ST.sel && last.sel != null && c.sync.sym) post('sym', ST.sel); if (last.tf !== ST.tf && last.tf != null && c.sync.tf) post('tf', ST.tf); U.last = { sel: ST.sel, tf: ST.tf }; chan(); }
+    }, 1000);
+    setInterval(() => { if (cfg().timer && typeof chart !== 'undefined' && chart && chart.tfSec > 0 && chart.tfSec <= 60 && curTab === 'markets' && !document.hidden) chart.invalidate(); }, 250);
+    document.addEventListener('mousemove', () => { if (Date.now() - (U._xT || 0) < 60 || !cfg().group || !cfg().sync.cross || typeof chart === 'undefined' || !chart || !chart.mouse || !chart.L || !chart.L.D) return; const pt = chart.toTP(chart.mouse.x, chart.mouse.y); if (!pt) return; U._xT = Date.now(); post('cross', pt.t); }, { passive: true });
+    setInterval(pollWalls, 2000); setInterval(tele, 5000); setTimeout(tele, 1500);
+    setInterval(() => { let n = 0; for (const [sym, set] of StoresBySym) { if (sym === ST.sel) continue; for (const s of set) if (s.sec < 60) n += V152.trim(s.candles, 3600); } U.trimmed = (U.trimmed || 0) + n; }, 30000); // memory governor
+    const fr = () => { U.frames++; requestAnimationFrame(fr); }; requestAnimationFrame(fr); setInterval(() => { U.fps = U.frames; U.frames = 0; }, 1000);
+    setInterval(() => { if (cfg().sparks) decorateWatch(); }, 20000);
+    const day = new Date().toDateString(); setTimeout(() => { const c = cfg(); if (c.autoBrief && c.briefDay !== day && !navigator.webdriver) { c.briefDay = day; save(); A.brief(); } }, 9000);
+    setInterval(() => { const c = cfg(), d = new Date(); if (c.autoBrief && c.recapDay !== d.toDateString() && d.getHours() * 60 + d.getMinutes() >= 16 * 60 + 5) { c.recapDay = d.toDateString(); save(); A.recap(); } }, 60000);
+  };
+  U.cfg = cfg; U.A = A; U.R = R; U.decorateWatch = decorateWatch;
+  return U;
+})();
+// wire up after boot (ST is loaded, the Markets chart and the palette exist)
+if (typeof window !== 'undefined' && typeof document !== 'undefined' && typeof boot === 'function') { const _b152 = boot; boot = async function () { await _b152.apply(this, arguments); try { V152UI.start(); } catch (e) { console.warn('v152 init', e); } }; }
 
 /* ===== boot.js ===== */
 /* Copyright (c) 2026 ExTerm Labs (@exterm.labs) · Licensed under GNU AGPL-3.0 · https://github.com/uexxx/ExTerm */

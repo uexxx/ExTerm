@@ -1,20 +1,20 @@
 <div align="center">
 
-# ExTerm v15.1
+# ExTerm v15.2
 
 ### Local-first trading workstation for US stocks, crypto spot & perps and on-chain DEX tokens, in one browser tab.
 
 **Paper trading only.** Nothing in ExTerm signs or sends a real order.
 
-<img src="docs/screenshots/hero-obsidian-gold.png" alt="ExTerm v15.1 in the Obsidian & Gold theme: Candle X logo, BTC-USD on live 1-second candles, order ticket and perps panel" width="100%">
+<img src="docs/screenshots/v15.2-hero-chart.png" alt="ExTerm v15.2 in the Obsidian & Gold theme: BTC-USD chart with a draggable TP1–TP3 ladder, anchored VWAP bands, future event markers and the bar-timer ring" width="100%">
 
-**[Quickstart](#-2-second-quickstart)** · **[Features](#-whats-in-v151)** · **[Security](#-security)** · **[Verify a build](#-how-to-verify-official-builds)** · **[License](#-license)** · **[Brand policy](#-brand--logo-policy)**
+**[Quickstart](#-2-second-quickstart)** · **[What's new](#-whats-new-in-v152)** · **[Features](#-whats-in-v151)** · **[Security](#-security)** · **[Verify a build](#-how-to-verify-official-builds)** · **[License](#-license)** · **[Brand policy](#-brand--logo-policy)**
 
 <p>
-  <a href="https://github.com/uexxx/ExTerm/releases/latest"><img src="https://img.shields.io/badge/download-v15.1-D4AF37?style=for-the-badge" alt="Download v15.1"></a>
-  <img src="https://img.shields.io/badge/license-AGPL--3.0-CBD5E1?style=for-the-badge" alt="GNU AGPL-3.0">
+  <a href="https://github.com/uexxx/ExTerm/releases/latest"><img src="https://img.shields.io/badge/download-v15.2-D4AF37?style=for-the-badge" alt="Download v15.2"></a>
   <img src="https://img.shields.io/badge/indicators-137-D4AF37?style=for-the-badge" alt="137 indicators">
   <img src="https://img.shields.io/badge/backtestable%20strategies-128-CBD5E1?style=for-the-badge" alt="128 backtestable strategies">
+  <img src="https://img.shields.io/badge/languages-32%20%2B%20ISO--639-CBD5E1?style=for-the-badge" alt="32 languages plus ISO-639 fallback">
   <img src="https://img.shields.io/badge/money%20at%20risk-%240%20(paper)-2fd08a?style=for-the-badge" alt="paper trading only">
 </p>
 <p>
@@ -49,6 +49,76 @@ Useful flags: `python3 serve.py 9000` (other port) · `--no-browser` · `--docto
 
 ---
 
+## 🌐 What's new in v15.2
+
+**Powerful without overwhelm.** v15.2 adds 44 workstation upgrades, but the default screen only gains three things: a
+🌐 language pill, a 🧭 **Workstation** button and a subtle bar-timer ring next to the price. Everything else sits in
+collapsed drawer sections (rendered only when you open them), `Ctrl+K` commands, opt-in chart overlays and **H** for
+HUD clean mode.
+
+### 🌍 First-launch language gate
+
+<img src="docs/screenshots/v15.2-language-gate.png" alt="First launch: the Obsidian & Gold Choose Your Language modal with fuzzy search and flag cards" width="100%">
+
+The very first screen asks for your language, pre-selected from your browser. 32 languages are fully translated in the
+app shell (English, Español, 中文 简体 / 繁體, 日本語, 한국어, हिन्दी, العربية, Português, Français, Deutsch, Русский, Italiano,
+Türkçe, Tiếng Việt, ไทย, Bahasa Indonesia / Melayu, Polski, Nederlands, Svenska, Українська, বাংলা, اردو, فارسی, עברית,
+Ελληνικά, Čeština, Română, Magyar, Filipino, Kiswahili), and every other ISO-639-1 locale is selectable with English
+text. Arabic, Hebrew, Persian and Urdu switch the layout to right-to-left. The 🌐 pill switches live, any time.
+
+### 📈 Charting & execution
+Bar-timer countdown ring · crosshair / timeframe / symbol **sync groups A / B / C** across pop-out windows · draggable
+**TP1 / TP2 / TP3 ladder** with % splits and automatic break-even after TP1 · optional FVG, order-block, engulfing and
+liquidity-sweep labels (off by default) · **Ctrl-hold magnet** snap to candle OHLC · future FOMC / CPI / earnings markers
+(add your own) · **H** HUD clean mode with a Candle X watermark · higher-timeframe picture-in-picture on 1s / 5s / 15s.
+
+### 🌊 Order flow & options
+
+<img src="docs/screenshots/v15.2-orderflow-options.png" alt="Workstation drawer: multi-leg options payoff builder with breakevens and theta decay next to the chart" width="100%">
+
+Iceberg / spoof wall detector on crypto order books · CVD divergence markers · **click-to-anchor VWAP** with ±1σ / ±2σ
+bands (or anchor to a ⚠️ MACRO pin) · Asia / London / NY session volume profiles · zero-gamma, gamma-flip and call / put
+walls on the stock chart · unusual options filter with watchlist badge routing · **multi-leg payoff builder** (verticals,
+straddles, strangles, iron condors) with live breakevens and a theta-decay curve.
+
+### 🔀 Markets, scanners & DEX
+
+<img src="docs/screenshots/v15.2-dex.png" alt="On-chain DEX mode with simulated demo pools: 1h candles, watchlist, token card and the paper order ticket" width="100%">
+
+Market-swap memory (timeframe, indicators and risk % per market) · **formula scanner** (`RVOL > 3 AND Price > VWAP`,
+parsed, never `eval`'d) saved as tabs · DEX safety strip (mint, freeze, top-10 holders, LP lock) · smart-money leaderboard
+and **multi-wallet confluence alerts** · bubble heat map in **$ net-inflow** mode (1m / 5m / 15m) · watchlist sparklines,
+relative strength vs BTC / SPY and hover trade-plan notes · DEX priority-fee & slippage presets (Normal / Fast / Turbo).
+
+### 🧪 Quant lab
+
+<img src="docs/screenshots/v15.2-quant-lab.png" alt="Quant lab: strategy battle with overlaid equity curves and the no-code composer" width="100%">
+
+No-code **IF / AND / OR composer** → Pine Script v5 or JSON · multi-asset portfolio backtester (combined Sharpe +
+correlation) · parameter sensitivity heatmap (robust plateau vs overfit spike) · one-click **Fix Weak Gate** for the
+17-test Validation Lab · Apex / Topstep / FTMO / custom prop rulebooks · replay speed keys **1 / 2 / 5 / 0** and a
+**Blind Drill** that hides ticker and dates · journal MFE / MAE with auto-tags · 4-way strategy battle.
+
+### ⚡ Grok, copilot & World
+
+<img src="docs/screenshots/v15.2-grok.png" alt="Grok tab: daemon health and latency strip above the plain-English rule compiler with dry-run shadow mode" width="100%">
+
+<img src="docs/screenshots/v15.2-world.png" alt="World tab: breaking-news and macro feed with severity counts, filters and the Macro Shield level (demo headlines)" width="100%">
+
+Plain-English **rule compiler** → backtestable workflow JSON · ask the 3-agent Copilot about a selected candle range ·
+optional **devil's advocate** A–F grade before a bracket order · World headlines tagged by impact (OIL/XLE, NVDA/SMH,
+BTC/DXY…) with a 1-click trade-impact switch · Discord / Telegram **alert cards with a chart snapshot** · daemon health
+strip (uptime, tick latency, RAM cache hit rate, bot heartbeats) · pre-market levels brief and end-of-day recap ·
+**dry-run shadow mode** that logs hypothetical fills on live ticks without touching balances.
+
+### 🛡 Platform
+ECDSA-signed **`.exterm` share codes** (tampering breaks the signature; the signer fingerprint is shown) · 1s-bar
+memory governor · theme token editor on top of Obsidian & Gold · `Ctrl+K` calculator (`10000 * 0.015 / 12.5`), language
+and theme switching · local data cache manager · **Settings → Verify build integrity** (on-disk hashes vs
+`SHA256SUMS.txt`, live `default-src 'none'` CSP check, inline-handler scan).
+
+---
+
 ## ✨ What's in v15.1
 
 ### 🔁 1-Click Universal Market Swap
@@ -56,13 +126,11 @@ Useful flags: `python3 serve.py 9000` (other port) · `--no-browser` · `--docto
 <img src="docs/screenshots/universal-market-swap.png" alt="The same workspace switched to US stocks: SPY 1h chart, stocks watchlist and order ticket" width="100%">
 
 Switch between **Crypto** (Coinbase, Kraken, Binance spot plus a paper **perps** ticket), **Stocks** (US equities and ETFs
-via Yahoo Finance) and **On-chain** (Solana DEX pools via DexScreener and GeckoTerminal) from the header. Each mode keeps
+via Yahoo Finance) and **On-chain** (DEX pools via DexScreener and GeckoTerminal) from the header. Each mode keeps
 its own watchlist, selected symbol and timeframe, and the same chart, ticket, indicators and tools follow you across.
 
-<img src="docs/screenshots/onchain-dex.png" alt="On-chain mode: a Solana DEX pool on 5m candles with token links and the paper order ticket" width="100%">
-
 Charts draw at your display's refresh rate (an adaptive governor targets 60 – 240 Hz and steps down when frames get expensive).
-One-click **workspace presets** (Alt+1…4): Scalper, Solana Trench, Quant Lab, Macro War Room.
+One-click **workspace presets** (Alt+1…4): Scalper, On-chain Trench, Quant Lab, Macro War Room.
 
 ### 🕯 Live 1s & 5s candles
 
@@ -91,15 +159,11 @@ that didn't trade. Sub-minute charts scale to the candles on screen, with a 3 px
 
 ### ⚡ Dedicated Grok & World tabs
 
-<img src="docs/screenshots/grok-world-shield.png" alt="World tab: global breaking-news and macro feed with severity filters and the Macro Shield level" width="100%">
-
 - **World** — the World Monitor feed: global breaking and macro headlines with severity counts and filters, and the live
   **Macro Shield** level. Every headline is escaped; links are limited to http(s).
 - **Grok** — a tool-calling bot & workflow console: backtest, run the Validation Lab, tune, detect the regime, build an
   auto-workflow, run a journal autopsy, read macro intel and start / pause launcher bots. Works with a local quant engine
   (no key) or your own xAI key.
-
-<img src="docs/screenshots/grok-tab.png" alt="Grok tab: Grok Bot & Workflow Engine console, auto-workflow, macro shield and bot controls" width="100%">
 
 ### 🏆 Prop-firm & Black Swan challenges
 
@@ -134,7 +198,9 @@ that didn't trade. Sub-minute charts scale to the candles on screen, with a 3 px
 ## ✅ How to verify official builds
 
 Official releases are published only at **<https://github.com/uexxx/ExTerm/releases>**. Each ships a `SHA256SUMS.txt`
-with relative file names.
+with relative file names. Inside the app, **Settings → Verify build integrity** does the same check through the launcher
+and also confirms the live `default-src 'none'` Content-Security-Policy. That in-app check catches accidental corruption;
+to rule out tampering, compare `SHA256SUMS.txt` itself with the one on the release page.
 
 ```bash
 # macOS / Linux, from the ExTerm folder
@@ -153,7 +219,7 @@ Get-Content SHA256SUMS.txt | ForEach-Object {
 
 ---
 
-## 🔧 Build from source
+## 🔧 Build
 
 ```bash
 python3 build.py             # dist/exterm.html (readable) + exterm.html
@@ -168,17 +234,15 @@ needs Node 18+, Playwright and Chrome).
 
 ## 📜 License
 
-ExTerm's source code is licensed under the **[GNU Affero General Public License v3.0](LICENSE)**. You may run, inspect
-and modify it under the terms of that license. If you distribute a modified version, or let people use one over a network
-(for example a hosted web wrapper), you must release its complete source under AGPL-3.0 and keep the copyright and
-license notices. The ExTerm name and logo are **not** licensed; see the brand policy below.
+Use of ExTerm is governed by the terms in **[`LICENSE`](LICENSE)**. The ExTerm name and logo are **not** licensed; see
+the brand policy below.
 
-Copyright (c) 2026 ExTerm Labs (@exterm.labs) · Licensed under GNU AGPL-3.0 · https://github.com/uexxx/ExTerm
+Copyright (c) 2026 ExTerm Labs (@exterm.labs) · https://github.com/uexxx/ExTerm
 
 ## 🏷 Brand & Logo Policy
 
 The names **ExTerm**, **ExTerm.labs**, **@exterm.labs** and the **Candle X** candlestick-and-diamond mark are reserved and
-are not covered by the AGPL. Forks must use their own name and logo and credit <https://github.com/uexxx/ExTerm>.
+are not covered by the license. Modified versions must use their own name and logo and credit <https://github.com/uexxx/ExTerm>.
 Details: **[`BRAND_GUIDELINES.md`](BRAND_GUIDELINES.md)**.
 
 ## 📣 Follow ExTerm Labs

@@ -125,7 +125,7 @@ def req(path, method="GET", body=None, headers=None, token=True):
 
 ok("/api/caps needs the session token", req("/api/caps", token=False)[0] == 403)
 st, body = req("/api/caps"); caps = json.loads(body)
-ok("/api/caps reports features", st == 200 and caps["version"] in ("12.0", "13.0", "14.0", "15.0") and caps["alerts"] is True)
+ok("/api/caps reports features", st == 200 and caps["version"] == serve.VERSION and caps["alerts"] is True)
 ok("foreign Origin blocked on /api", req("/api/alerts", headers={"Origin": "https://evil.example"})[0] == 403)
 ok("DNS-rebinding Host blocked on /api", req("/api/alerts", headers={"Host": "evil.example:%d" % PORT})[0] == 421)
 ok("/api/alerts POST needs JSON content type", req("/api/alerts", "POST", b'{"alerts":[]}', headers={"Content-Type": "text/plain"})[0] == 400)
