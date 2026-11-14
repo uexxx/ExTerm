@@ -1,0 +1,25 @@
+const { chromium } = require('/opt/npm-tools/node_modules/playwright');
+(async () => {
+  const browser = await chromium.launch({ executablePath: process.env.CHROME_PATH || '/usr/bin/google-chrome', args: ['--no-sandbox'] });
+  const page = await browser.newPage({ viewport: { width: 1600, height: 950 } }); const errs = [];
+  page.on('pageerror', (e) => errs.push(e.message));
+  await page.route('**/*', (r) => { const u = r.request().url(); (u.startsWith('http://localhost:8765') || u.startsWith('http://localhost:8899')) ? r.continue() : r.abort(); });
+  await page.goto('http://localhost:8765/'); await page.evaluate(() => localStorage.clear()); await page.reload();
+  await page.waitForFunction(() => window.__exterm_ready === true, null, { timeout: 60000 });
+  const ev = (f) => page.evaluate(f), sleep = (ms) => page.waitForTimeout(ms);
+  const pick = async (sel, q) => { await page.click(sel); await page.waitForSelector('#symPop.on', { timeout: 3000 }); await page.fill('#spQ', q); await sleep(120); await page.press('#spQ', 'Enter'); await sleep(350); };
+  await sleep(1200); console.log('wallets', await ev(() => Sol.wallets.length));
+  await pick('#symInput', 'AAPL'); console.log('AAPL →', await ev(() => ST.mode + ' ' + ST.sel)); await pick('#symInput', 'SOL'); console.log('SOL →', await ev(() => ST.mode + ' ' + ST.sel));
+  await page.click('#symInput'); await sleep(250); await page.screenshot({ path: 'test/s_picker.png' }); await page.keyboard.press('Escape');
+  await page.click('nav button[data-tab="bots"]'); await sleep(300); await pick('[data-symfield="suSym"]', 'NVDA');
+  await page.selectOption('#suStrat', 'pro_trendpb'); await sleep(150); await page.selectOption('#btBars', '5000').catch(() => {});
+  await page.click('#btRun'); await page.waitForFunction(() => !btBusy, null, { timeout: 60000 }); console.log('NVDA bt (crypto mode', await ev(() => ST.mode), '):', (await page.textContent('#btResult')).replace(/\s+/g, ' ').slice(0, 110));
+  await page.screenshot({ path: 'test/s_bots.png' });
+  await page.click('nav button[data-tab="lab"]'); await sleep(300); await page.click('#scrUni button[data-v="mixed"]'); await page.waitForFunction(() => !scr.busy && scr.rows.length, null, { timeout: 40000 }).catch(() => {}); console.log('screener:', await ev(() => scr.rows.map((r) => baseOf(r.s)).join(',')));
+  await page.click('#labNav button[data-v="forecast"]'); await sleep(600); await pick('[data-symfield="fcSym"]', 'TSLA'); await sleep(900); console.log('forecast hdr:', await ev(() => document.querySelector('#labBody .ph').textContent));
+  await page.click('nav button[data-tab="whales"]');
+  await ev(() => { Sol.stop(); Sol.custom = 'http://localhost:8899'; Sol.DEXS = 'http://localhost:8899'; Sol.speed = 'fast'; Sol.solPx = 200; Sol.wallets.forEach((w) => { w.lastSig = null; w.lastCheck = 0; }); Sol.start({ sim: false }); tr.dirty = tr.wdirty = true; }); await sleep(9000);
+  console.log('radar:', (await page.textContent('#trHero')).replace(/\s+/g, ' ').slice(0, 200)); console.log('cards', await ev(() => document.querySelectorAll('.wcard').length));
+  await page.screenshot({ path: 'test/s_tracker.png' });
+  console.log('ERRORS:', errs.length ? errs.slice(0, 6) : 'none'); await browser.close();
+})();

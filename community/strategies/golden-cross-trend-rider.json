@@ -1,0 +1,43 @@
+{
+  "v": 1,
+  "name": "Golden cross trend rider",
+  "desc": "Classic long-term trend filter: the 50 SMA crosses above the 200 SMA. Exits on the death cross.",
+  "author": "ExTerm",
+  "tags": [
+    "trend",
+    "slow"
+  ],
+  "entry": {
+    "all": [
+      {
+        "a": {
+          "k": "sma",
+          "n": 50
+        },
+        "op": "crossAbove",
+        "b": {
+          "k": "sma",
+          "n": 200
+        }
+      }
+    ]
+  },
+  "exit": {
+    "any": [
+      {
+        "a": {
+          "k": "sma",
+          "n": 50
+        },
+        "op": "crossBelow",
+        "b": {
+          "k": "sma",
+          "n": 200
+        }
+      }
+    ]
+  },
+  "risk": {
+    "sl": 12
+  }
+}

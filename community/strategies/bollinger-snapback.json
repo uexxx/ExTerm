@@ -1,0 +1,51 @@
+{
+  "v": 1,
+  "name": "Bollinger snapback",
+  "desc": "Buys a close below the lower Bollinger band while RSI is washed out, sells back at the middle band.",
+  "author": "ExTerm",
+  "tags": [
+    "mean reversion"
+  ],
+  "entry": {
+    "all": [
+      {
+        "a": {
+          "k": "price"
+        },
+        "op": "<",
+        "b": {
+          "k": "bbLower",
+          "n": 20
+        }
+      },
+      {
+        "a": {
+          "k": "rsi",
+          "n": 14
+        },
+        "op": "<",
+        "b": {
+          "k": "const",
+          "v": 35
+        }
+      }
+    ]
+  },
+  "exit": {
+    "any": [
+      {
+        "a": {
+          "k": "price"
+        },
+        "op": ">",
+        "b": {
+          "k": "bbMid",
+          "n": 20
+        }
+      }
+    ]
+  },
+  "risk": {
+    "sl": 6
+  }
+}

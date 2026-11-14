@@ -1,0 +1,63 @@
+{
+  "v": 1,
+  "name": "Volume surge breakout",
+  "desc": "Price breaks the 20-bar high on more than twice-average volume, confirmed by above-average volume and a 3% move.",
+  "author": "ExTerm",
+  "tags": [
+    "breakout",
+    "volume"
+  ],
+  "entry": {
+    "all": [
+      {
+        "a": {
+          "k": "price"
+        },
+        "op": ">",
+        "b": {
+          "k": "highest",
+          "n": 20
+        }
+      },
+      {
+        "a": {
+          "k": "volume"
+        },
+        "op": ">",
+        "b": {
+          "k": "volSma",
+          "n": 20
+        }
+      },
+      {
+        "a": {
+          "k": "change",
+          "n": 3
+        },
+        "op": ">",
+        "b": {
+          "k": "const",
+          "v": 3
+        }
+      }
+    ]
+  },
+  "exit": {
+    "any": [
+      {
+        "a": {
+          "k": "price"
+        },
+        "op": "<",
+        "b": {
+          "k": "ema",
+          "n": 20
+        }
+      }
+    ]
+  },
+  "risk": {
+    "sl": 7,
+    "trail": 8
+  }
+}

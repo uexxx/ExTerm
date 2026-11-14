@@ -1,0 +1,1716 @@
+[
+ {
+  "verdict": "rejected",
+  "fingerprint": "ai:copilot-output-injection",
+  "title": "AI Copilot output rendering and model-suggested actions",
+  "description": "Model output, and prompt-injected market text (token names, headlines) in the Copilot context, could reach the DOM or trigger paper-trading actions.",
+  "claimed_root_cause": "LLM text rendered into the chat view; v9 lets the model suggest [[cmd: …]] actions.",
+  "trace": [
+   {
+    "kind": "entrypoint",
+    "file": "src/app_c.js",
+    "line": 139,
+    "scope": "callLLM",
+    "description": "Model response text (the model may be steered by token names or headlines in the context)."
+   },
+   {
+    "kind": "propagation",
+    "file": "src/copilot.js",
+    "line": 1,
+    "scope": "Pilot.handle",
+    "description": "[[cmd: …]] lines are stripped from the text and turned into buttons; nothing runs until the user clicks one."
+   },
+   {
+    "kind": "sink",
+    "file": "src/app_a.js",
+    "line": 117,
+    "scope": "md",
+    "description": "md() escapes the full string before applying bold and code formatting."
+   }
+  ],
+  "evidence": [
+   {
+    "file": "src/copilot.js",
+    "line": 1,
+    "description": "Suggested commands starting with '__' (internal setup/bot actions) are dropped, at most 4 buttons are created, and each button label shows the exact command."
+   },
+   {
+    "file": "test/pro.js",
+    "line": 1,
+    "description": "'LLM action lines become buttons only (not auto-run)' check: a __bot suggestion is discarded and a buy suggestion only becomes a button."
+   }
+  ],
+  "reason": "Output is HTML-escaped, model suggestions require an explicit user click on a button that shows the exact command, internal commands are blocked, and every action is paper-only. No boundary is crossed."
+ },
+ {
+  "verdict": "rejected",
+  "fingerprint": "ai:local-sentiment-prompt-injection",
+  "title": "Prompt injection through social posts sent to the local model for sentiment",
+  "description": "Post text (attacker-written) is sent to the user's local model.",
+  "claimed_root_cause": "Post text (attacker-written) is sent to the user's local model.",
+  "trace": [
+   {
+    "kind": "entrypoint",
+    "file": "src/socialpro.js",
+    "line": 1,
+    "scope": "aiSentiment",
+    "description": "Up to 20 non-spam posts, 220 characters each."
+   },
+   {
+    "kind": "sink",
+    "file": "src/socialpro.js",
+    "line": 1,
+    "scope": "aiSentiment",
+    "description": "Only a JSON array of numbers is read; each is clamped to −1…1."
+   }
+  ],
+  "evidence": [
+   {
+    "file": "test/v13_e2e.js",
+    "line": 1,
+    "description": "Scores applied through the launcher bridge; spam posts never sent."
+   }
+  ],
+  "reason": "The model can at most skew a sentiment number; its text is never rendered or executed; the bridge still allows only its 3 fixed routes."
+ },
+ {
+  "verdict": "confirmed",
+  "fingerprint": "backup:api-keys-in-export",
+  "title": "Exported backups contained most API keys",
+  "description": "Settings → Copy / Download backup removed only fields literally named 'key' or 'hfToken'. The Solana Tracker key, Helius key, Solana RPC URL (often carrying a key), X bearer token and SEC contact were written into the backup, which people paste into chats or upload when asking for help.",
+  "root_cause": "The export replacer filtered by field name instead of using the SECRET_PATHS list that saveState already uses.",
+  "intended_behavior": "Exported and imported backups never carry any secret.",
+  "trace": [
+   {
+    "kind": "entrypoint",
+    "file": "src/app_c.js",
+    "line": 1,
+    "scope": "renderSettings · backup()",
+    "description": "User copies or downloads a backup."
+   },
+   {
+    "kind": "sink",
+    "file": "src/app_c.js",
+    "line": 1,
+    "scope": "backup()",
+    "description": "JSON with settings.stKey / heliusKey / solRpc / social.xToken in clear text."
+   }
+  ],
+  "evidence": [
+   {
+    "file": "test/v13_e2e.js",
+    "line": 1,
+    "description": "Sets every key, copies the backup through the real button and reads the clipboard: no secret appears."
+   }
+  ],
+  "conditions": [
+   {
+    "kind": "user_interaction",
+    "description": "User shares a backup file publicly (support chat, forum, GitHub issue)."
+   }
+  ],
+  "execution": {
+   "attacker_perspective": "User shares a backup file publicly (support chat, forum, GitHub issue).",
+   "payloads": [
+    "Settings → Copy backup with a Solana Tracker key set"
+   ],
+   "instructions": [
+    "node test/v13_e2e.js"
+   ],
+   "observed_result": "Before: keys present in the copied JSON. After: every SECRET_PATHS field is blanked; imports are blanked too."
+  },
+  "severity": {
+   "likelihood": {
+    "score": "medium",
+    "reason": "Users commonly share backups when asking for help."
+   },
+   "impact": {
+    "score": "medium",
+    "reason": "Keys for paid/free API accounts exposed; no trading keys exist in NovaTerm."
+   },
+   "overall_severity": "medium"
+  },
+  "confidence": {
+   "score": "high",
+   "reason": "Reproduced through the real button and clipboard."
+  },
+  "remediation": {
+   "strategy": "backup() now deep-copies state and blanks every SECRET_PATHS field; import blanks them as well and requires an object with a settings object.",
+   "code_changes": [
+    {
+     "file_name": "src/app_c.js",
+     "fixed_code": "const backup = () => { const o = JSON.parse(JSON.stringify(ST, ...)); for (const [a, b] of SECRET_PATHS) if (o[a] && o[a][b]) o[a][b] = ''; return JSON.stringify(o); };"
+    }
+   ]
+  }
+ },
+ {
+  "verdict": "confirmed",
+  "fingerprint": "client-nav:news-link-executable-scheme",
+  "title": "News headline links accepted executable URL schemes",
+  "description": "News items from CryptoCompare and Yahoo RSS (routed through public relays when the local server is absent) were rendered as <a href> with HTML escaping only. Escaping stops attribute breakout but not a javascript: URL, which executes in the app origin when clicked.",
+  "root_cause": "The news renderer used esc(x.url) without validating the URL scheme.",
+  "intended_behavior": "Only absolute http(s) URLs may become links.",
+  "trace": [
+   {
+    "kind": "entrypoint",
+    "file": "src/sec.js",
+    "line": 115,
+    "scope": "StockExt.news",
+    "description": "RSS <link> values parsed from Yahoo Finance."
+   },
+   {
+    "kind": "sink",
+    "file": "src/app_c.js",
+    "line": 1,
+    "scope": "renderLab news",
+    "description": "URL placed in href (fixed: safeUrl())."
+   }
+  ],
+  "evidence": [
+   {
+    "file": "test/sec_xss.js",
+    "line": 1,
+    "description": "PoC rendered href='javascript:...' unchanged before the fix; safeUrl('javascript:alert(1)') now returns '#'."
+   }
+  ],
+  "conditions": [
+   {
+    "kind": "third_party_dependency",
+    "description": "A feed or relay supplying a javascript: link."
+   },
+   {
+    "kind": "user_interaction",
+    "description": "The user clicks the headline."
+   }
+  ],
+  "execution": {
+   "attacker_perspective": "News feed or relay operator.",
+   "payloads": [
+    "javascript:window.__pwn('news')"
+   ],
+   "instructions": [
+    "Return an RSS item whose link is the payload.",
+    "Click the headline in Lab › News."
+   ],
+   "observed_result": "The pre-fix anchor kept the javascript: href; after the fix it renders as '#'."
+  },
+  "remediation": {
+   "strategy": "Route every remote URL through safeUrl() (absolute http/https only, escaped).",
+   "code_changes": [
+    {
+     "file_name": "src/app_c.js",
+     "fixed_code": "<a href=\"${safeUrl(x.url)}\" target=\"_blank\" rel=\"noopener\">"
+    }
+   ]
+  },
+  "severity": {
+   "likelihood": {
+    "score": "low",
+    "reason": "Needs a malicious feed item and a click."
+   },
+   "impact": {
+    "score": "medium",
+    "reason": "Same-origin script on click."
+   },
+   "overall_severity": "low"
+  },
+  "confidence": {
+   "score": "medium",
+   "reason": "Rendering verified locally; click-execution is standard browser behaviour and was not clicked in the harness."
+  }
+ },
+ {
+  "verdict": "rejected",
+  "fingerprint": "client-xss:onchain-token-metadata",
+  "title": "Malicious DEX token names or symbols injecting markup",
+  "description": "Anyone can name a DEX token anything, including HTML. Names flow into the watchlist, picker, heat map, pool stats, swaps tape and Copilot text.",
+  "claimed_root_cause": "Attacker-controlled token metadata rendered into HTML.",
+  "trace": [
+   {
+    "kind": "entrypoint",
+    "file": "src/dex.js",
+    "line": 1,
+    "scope": "txt()/register",
+    "description": "Strips < > \" ' ` & and control/bidi characters and caps length before storing."
+   },
+   {
+    "kind": "sink",
+    "file": "src/app_a.js",
+    "line": 1,
+    "scope": "renderWatch / renderPoolStats",
+    "description": "Values are passed through esc() again at render time."
+   }
+  ],
+  "evidence": [
+   {
+    "file": "test/oc.js",
+    "line": 1,
+    "description": "A mocked token named <img src=x onerror=…> with a <script> name renders as text: no img or script element, window.__pwn stays undefined."
+   },
+   {
+    "file": "test/oc.js",
+    "line": 1,
+    "description": "OC.is() rejects symbols with markup; OC.register('oc:solana:\"><b>') returns null."
+   }
+  ],
+  "reason": "Two independent layers (sanitize on ingest, escape on render) plus a strict symbol pattern; verified by the browser test."
+ },
+ {
+  "verdict": "confirmed",
+  "fingerprint": "client-xss:remote-metadata-in-href-attributes",
+  "title": "Script execution from third-party market data rendered into link attributes",
+  "description": "Token metadata (DexScreener url), Solana transaction signatures and BTC/ETH transaction hashes from remote APIs were interpolated unescaped into href attributes of HTML built with innerHTML. A value containing a quote breaks out of the attribute and injects an element with an event handler, which runs script in the NovaTerm origin, where API keys (OpenRouter/OpenAI, Hugging Face, Helius, Solana Tracker) are stored in localStorage. The public CORS relays used when the app runs without its local server are an additional party able to rewrite these responses.",
+  "root_cause": "tokLink(), the hot-token Chart button, solscan() and the whale-row link builder concatenated remote strings into HTML attributes without escaping or scheme validation.",
+  "intended_behavior": "Remote data must only ever be rendered as inert text; links built from remote data must be HTML-escaped absolute http(s) URLs.",
+  "trace": [
+   {
+    "kind": "entrypoint",
+    "file": "src/solana.js",
+    "line": 293,
+    "scope": "Sol tokens loader",
+    "description": "DexScreener pair object stored into Sol.tokens, including url and imageUrl from the response."
+   },
+   {
+    "kind": "propagation",
+    "file": "src/data.js",
+    "line": 46,
+    "scope": "J.relay",
+    "description": "Without the local server, some responses pass through public CORS relays (third parties)."
+   },
+   {
+    "kind": "sink",
+    "file": "src/app_d.js",
+    "line": 138,
+    "scope": "tokLink",
+    "description": "Remote url interpolated into an href attribute inside innerHTML (fixed: now safeUrl())."
+   }
+  ],
+  "evidence": [
+   {
+    "file": "test/sec_xss.js",
+    "line": 1,
+    "description": "Local Playwright PoC with all non-localhost traffic aborted: injecting url '\"><img src=x onerror=...>' into Sol.tokens and a crafted signature produced 3 script executions before the fix and 0 after."
+   },
+   {
+    "file": "src/app_a.js",
+    "line": 6,
+    "description": "safeUrl() now enforces absolute http(s) and HTML-escapes the result."
+   }
+  ],
+  "conditions": [
+   {
+    "kind": "third_party_dependency",
+    "description": "A malicious or compromised upstream API response, or a public CORS relay rewriting it (relays are only used when the local server is not running)."
+   },
+   {
+    "kind": "user_interaction",
+    "description": "None beyond having the tracker open while the response renders; onerror fires automatically."
+   }
+  ],
+  "execution": {
+   "attacker_perspective": "An operator of a data source or relay that NovaTerm reads from.",
+   "payloads": [
+    "\"><img src=x onerror=\"window.__pwn('token-url')\">"
+   ],
+   "instructions": [
+    "Serve a DexScreener-shaped response whose pair url contains the payload.",
+    "Open the Wallet Tracker so the token renders in the live feed or hot list."
+   ],
+   "observed_result": "In the sandboxed local test, the injected handler executed three times (token link, hot-token link, signature link). After the fix the hrefs render as https://dexscreener.com/... and nothing executes."
+  },
+  "remediation": {
+   "strategy": "Escape every interpolated value and allow only absolute http(s) URLs at each link/image sink (safeUrl); sanitize token metadata at ingestion (S.clean, S.okUrl restricted to dexscreener.com / https); validate tx hashes against a hex pattern; encode path segments; add a CSP that blocks external script and object loads.",
+   "code_changes": [
+    {
+     "file_name": "src/app_d.js",
+     "fixed_code": "return `<a href=\"${safeUrl(t.url, 'https://dexscreener.com/solana/' + m)}\" target=\"_blank\" rel=\"noopener noreferrer\">`"
+    },
+    {
+     "file_name": "src/solana.js",
+     "fixed_code": "url: S.okUrl(p.url, /^https:\\/\\/(www\\.)?dexscreener\\.com\\//), img: S.okUrl(p.info && p.info.imageUrl, /^https:\\/\\//)"
+    }
+   ]
+  },
+  "severity": {
+   "likelihood": {
+    "score": "low",
+    "reason": "Requires a hostile upstream response or a relay operator; DexScreener generates the url field itself."
+   },
+   "impact": {
+    "score": "high",
+    "reason": "Script in the app origin can read every stored API key and act on the paper accounts."
+   },
+   "overall_severity": "medium"
+  },
+  "confidence": {
+   "score": "high",
+   "reason": "Reproduced in a bounded local browser test before the fix; regression test passes after the fix."
+  }
+ },
+ {
+  "verdict": "confirmed",
+  "fingerprint": "csv:trade-export-formula-injection",
+  "title": "Portfolio trade CSV export did not neutralise spreadsheet formulas",
+  "description": "The Portfolio 'Export CSV' quoted cells but kept a leading = + - @. Trade reasons can contain text from outside (copy-trading and on-chain bots put token names into the reason), so a cell like =HYPERLINK(...) would run as a formula when the file is opened in Excel or Google Sheets.",
+  "root_cause": "The journal export used a formula-safe cell writer; the older portfolio export had its own quoting without the prefix.",
+  "intended_behavior": "Every exported cell that starts with = + - @ tab or CR is prefixed with an apostrophe, except plain numbers, so negative P&L stays numeric.",
+  "trace": [
+   {
+    "kind": "entrypoint",
+    "file": "src/core.js",
+    "line": 266,
+    "scope": "Account.sell",
+    "description": "Trade reason comes from strategies, bots and copy-trading (may include token names)."
+   },
+   {
+    "kind": "sink",
+    "file": "src/app_b.js",
+    "line": 719,
+    "scope": "pfCsv.onclick",
+    "description": "Reason written into the CSV cell."
+   }
+  ],
+  "evidence": [
+   {
+    "file": "test/v14_e2e.js",
+    "line": 1,
+    "description": "A trade reason '=HYPERLINK(\"http://evil\")' exports as \"'=HYPERLINK...\"; '-12.3' stays a number."
+   }
+  ],
+  "conditions": [
+   {
+    "kind": "user_interaction",
+    "description": "The user exports trades and opens the file in a spreadsheet app."
+   }
+  ],
+  "execution": {
+   "attacker_perspective": "Token creator picks a token name the copy-trader logs as part of a trade reason.",
+   "payloads": [
+    "=HYPERLINK(\"http://evil\",\"x\")"
+   ],
+   "instructions": [
+    "node test/v14_e2e.js"
+   ],
+   "observed_result": "The cell is text, not a formula."
+  },
+  "severity": {
+   "likelihood": {
+    "score": "low",
+    "reason": "Needs a crafted token name in a copied trade and a manual export."
+   },
+   "impact": {
+    "score": "low",
+    "reason": "Spreadsheet formula (link / data lookup) in the user's own file; modern spreadsheet apps warn before external links."
+   },
+   "overall_severity": "low"
+  },
+  "confidence": {
+   "score": "high",
+   "reason": "Reproduced in the end-to-end test."
+  },
+  "remediation": {
+   "strategy": "Shared formula-safe cell writer with a numeric exception, also applied to the journal CSVs.",
+   "code_changes": [
+    {
+     "file_name": "src/app_b.js",
+     "fixed_code": "const cell = (c) => { let v = String(c == null ? '' : c); if (/^[=+\\-@\\t\\r]/.test(v) && !/^-?\\d+(\\.\\d+)?(e-?\\d+)?$/i.test(v)) v = \"'\" + v; return '\"' + v.replace(/\"/g, '\"\"') + '\"'; };"
+    }
+   ]
+  }
+ },
+ {
+  "verdict": "confirmed",
+  "fingerprint": "disksync:reset-resurrected-from-disk",
+  "title": "'Reset everything' would have been undone by the copy saved on this computer",
+  "description": "With the new disk mirror, Settings → Reset removed the browser's state but the launcher still held it, so the next open restored everything the user had asked to delete.",
+  "root_cause": "Reset only cleared localStorage; restore treats an empty browser as 'new browser' and copies the disk state in.",
+  "intended_behavior": "Reset mirrors the cleared storage to disk before the page reloads, so it stays reset.",
+  "trace": [
+   {
+    "kind": "entrypoint",
+    "file": "src/app_c.js",
+    "line": 536,
+    "scope": "seWipe.onclick",
+    "description": "User resets the terminal."
+   },
+   {
+    "kind": "sink",
+    "file": "src/disksync.js",
+    "line": 19,
+    "scope": "DiskSync.restore",
+    "description": "An empty browser restores from ~/.novaterm/state.json."
+   }
+  ],
+  "evidence": [
+   {
+    "file": "test/v131_e2e.js",
+    "line": 1,
+    "description": "After 'Reset everything' the disk copy has no novaterm.v1 and the next open starts with defaults."
+   }
+  ],
+  "conditions": [
+   {
+    "kind": "user_interaction",
+    "description": "User resets while the launcher is running."
+   }
+  ],
+  "execution": {
+   "attacker_perspective": "Not an attack: a data-lifecycle bug the user would hit.",
+   "payloads": [
+    "Settings → Reset everything, then reopen the terminal"
+   ],
+   "instructions": [
+    "node test/v131_e2e.js"
+   ],
+   "observed_result": "Reset sticks."
+  },
+  "severity": {
+   "likelihood": {
+    "score": "medium",
+    "reason": "Any reset with the launcher running."
+   },
+   "impact": {
+    "score": "low",
+    "reason": "Data the user wanted gone comes back; nothing leaves the computer."
+   },
+   "overall_severity": "low"
+  },
+  "confidence": {
+   "score": "high",
+   "reason": "Found while writing the persistence tests."
+  },
+  "remediation": {
+   "strategy": "DiskSync.forgetMain() pushes a full mirror without the main state and stops further saves before the reload.",
+   "code_changes": [
+    {
+     "file_name": "src/disksync.js",
+     "fixed_code": "D.forgetMain = async () => { if (!D.on) return; D.synced = false; D.stop = false; /* wait for an in-flight save */ await D.push(); D.stop = true; };"
+    }
+   ]
+  }
+ },
+ {
+  "verdict": "rejected",
+  "fingerprint": "disksync:secrets-on-disk",
+  "title": "API keys written to ~/.novaterm/state.json",
+  "description": "Mirroring browser storage to disk could copy secrets.",
+  "claimed_root_cause": "Whole-storage mirror.",
+  "trace": [
+   {
+    "kind": "entrypoint",
+    "file": "src/disksync.js",
+    "line": 1,
+    "scope": "DiskSync.push",
+    "description": "Copies novaterm.* and nt.* storage keys."
+   },
+   {
+    "kind": "sink",
+    "file": "serve.py",
+    "line": 803,
+    "scope": "StateStore.strip_secrets",
+    "description": "Blanks the same SECRET_PATHS the page uses."
+   }
+  ],
+  "evidence": [
+   {
+    "file": "test/v131_server_test.py",
+    "line": 1,
+    "description": "Saved state contains no key values; non-secret settings survive."
+   },
+   {
+    "file": "test/v131_e2e.js",
+    "line": 1,
+    "description": "Keys typed in the page never reach state.json and are not restored in a new browser."
+   }
+  ],
+  "reason": "Keys live in session storage (or the encrypted vault, whose PBKDF2-600k/AES-GCM ciphertext is the only form that can reach disk). The main state is saved with keys blanked by the page, and the launcher blanks the same fields again."
+ },
+ {
+  "verdict": "rejected",
+  "fingerprint": "disksync:state-api-cross-site",
+  "title": "Other websites or DNS rebinding reading or overwriting the saved terminal (/api/state, /api/journal)",
+  "description": "The new endpoints hold the whole terminal state and the full trade log.",
+  "claimed_root_cause": "A local HTTP API with read and write access to user data.",
+  "trace": [
+   {
+    "kind": "entrypoint",
+    "file": "serve.py",
+    "line": 821,
+    "scope": "StateStore.apply",
+    "description": "POST /api/state body."
+   },
+   {
+    "kind": "sink",
+    "file": "serve.py",
+    "line": 854,
+    "scope": "StateStore._write",
+    "description": "~/.novaterm/state.json (0600)."
+   }
+  ],
+  "evidence": [
+   {
+    "file": "test/v131_server_test.py",
+    "line": 1,
+    "description": "Missing/wrong token 403, foreign Origin 403, foreign Host 421, non-JSON and arrays 400, over-size 400/413, bad keys 400, rejected saves change nothing."
+   }
+  ],
+  "reason": "Same guards as every launcher API: per-launch token that only the served page can read, Host and Origin checks, JSON-object bodies, a 20 MB cap, key allow-list and per-entry validation. Files are written atomically with owner-only permissions."
+ },
+ {
+  "verdict": "rejected",
+  "fingerprint": "disksync:tampered-state-file",
+  "title": "A hand-edited or corrupted state.json as an injection vector",
+  "description": "Data restored from disk flows into localStorage and the journal.",
+  "claimed_root_cause": "Restored data treated as trusted.",
+  "trace": [
+   {
+    "kind": "entrypoint",
+    "file": "serve.py",
+    "line": 788,
+    "scope": "StateStore.__init__",
+    "description": "Loads state.json."
+   },
+   {
+    "kind": "propagation",
+    "file": "src/disksync.js",
+    "line": 19,
+    "scope": "DiskSync.restore",
+    "description": "Writes allowed keys to localStorage."
+   },
+   {
+    "kind": "sink",
+    "file": "src/journal.js",
+    "line": 1,
+    "scope": "JN.merge / JN.sanitize",
+    "description": "Journal entries rebuilt field by field."
+   }
+  ],
+  "evidence": [
+   {
+    "file": "test/v131_server_test.py",
+    "line": 1,
+    "description": "Hostile file: disallowed keys, non-string values and bad entries are dropped on load; corrupt JSON starts empty."
+   },
+   {
+    "file": "test/v131_e2e.js",
+    "line": 1,
+    "description": "Markup in a saved journal entry renders as text; bad tags and moods are dropped."
+   }
+  ],
+  "reason": "Re-validated twice (on load by the launcher, on merge by the page); every restored value goes through the same validators as data the app wrote itself. Writing the file already requires the user's own account."
+ },
+ {
+  "verdict": "rejected",
+  "fingerprint": "journal-workspace:stored-xss-csv",
+  "title": "Journal notes, CSV export and saved workspace/theme settings as injection vectors",
+  "description": "Checked journal notes/tags/moods, chart snapshots, CSV export and localStorage-backed workspace and theme settings.",
+  "claimed_root_cause": "Checked journal notes/tags/moods, chart snapshots, CSV export and localStorage-backed workspace and theme settings.",
+  "trace": [
+   {
+    "kind": "entrypoint",
+    "file": "src/journal.js",
+    "line": 1,
+    "scope": "notes / IndexedDB",
+    "description": "User text and stored entries."
+   },
+   {
+    "kind": "sink",
+    "file": "src/journal.js",
+    "line": 1,
+    "scope": "card() / csv()",
+    "description": "Escaped on render; snapshots must match ^data:image/jpeg;base64,…$; CSV cells starting with = + - @ are prefixed with '."
+   }
+  ],
+  "evidence": [
+   {
+    "file": "test/v12.test.js",
+    "line": 1,
+    "description": "CSV formula neutralised; tags/moods allow-listed; notes capped."
+   },
+   {
+    "file": "test/v12_e2e.js",
+    "line": 1,
+    "description": "Script in a note never runs; tampered workspace and theme storage fall back safely."
+   }
+  ],
+  "reason": "Escaped on render; snapshots must match ^data:image/jpeg;base64,…$; CSV cells starting with = + - @ are prefixed with '."
+ },
+ {
+  "verdict": "rejected",
+  "fingerprint": "launcher:bot-candle-ssrf",
+  "title": "Background-bot candle requests as an SSRF vector",
+  "description": "The launcher fetches candles for a user-supplied symbol.",
+  "claimed_root_cause": "The launcher fetches candles for a user-supplied symbol.",
+  "trace": [
+   {
+    "kind": "entrypoint",
+    "file": "serve.py",
+    "line": 1,
+    "scope": "BgBots.clean_bot",
+    "description": "Symbol must match SYM_RX; timeframe from a fixed set."
+   },
+   {
+    "kind": "sink",
+    "file": "serve.py",
+    "line": 1,
+    "scope": "BgBots._get_json",
+    "description": "https only, allow-listed host, path parts URL-quoted, SafeRedirect opener re-checks every redirect."
+   }
+  ],
+  "evidence": [
+   {
+    "file": "test/v13_server_test.py",
+    "line": 1,
+    "description": "'../../etc/passwd' and other symbols rejected."
+   }
+  ],
+  "reason": "Fixed hosts and URL templates; redirects re-validated."
+ },
+ {
+  "verdict": "rejected",
+  "fingerprint": "launcher:bots-notify-cross-site",
+  "title": "Other websites or DNS rebinding driving /api/bots or /api/notify",
+  "description": "New launcher endpoints that create paper bots and send messages.",
+  "claimed_root_cause": "New launcher endpoints that create paper bots and send messages.",
+  "trace": [
+   {
+    "kind": "entrypoint",
+    "file": "serve.py",
+    "line": 1,
+    "scope": "H._api",
+    "description": "Requests to 127.0.0.1:8765."
+   },
+   {
+    "kind": "sink",
+    "file": "serve.py",
+    "line": 1,
+    "scope": "BgBots.upsert / Alerts.send",
+    "description": "Bot storage, outbound messages."
+   }
+  ],
+  "evidence": [
+   {
+    "file": "test/v13_server_test.py",
+    "line": 1,
+    "description": "No token → 403, foreign Origin → 403, foreign Host → 421, non-JSON / non-object / oversized bodies rejected, 21st message in a minute → 429."
+   }
+  ],
+  "reason": "Per-launch token header, Host and Origin checks, JSON-object bodies with size caps, server-side re-validation, rate limit; paper only."
+ },
+ {
+  "verdict": "rejected",
+  "fingerprint": "launcher:strategy-interpreter-rce-dos",
+  "title": "The launcher's Python strategy interpreter as a code-execution or CPU-exhaustion vector",
+  "description": "Bot strategies arrive as JSON and run continuously in the launcher.",
+  "claimed_root_cause": "Bot strategies arrive as JSON and run continuously in the launcher.",
+  "trace": [
+   {
+    "kind": "entrypoint",
+    "file": "serve.py",
+    "line": 1,
+    "scope": "spec_validate",
+    "description": "Strict allow-list: fields, indicators, comparisons, period ranges, ≤8 conditions, ≤20 KB."
+   },
+   {
+    "kind": "sink",
+    "file": "serve.py",
+    "line": 1,
+    "scope": "spec_signals",
+    "description": "Interpreted with fixed functions, never eval'd; ≤300 candles × ≤10 bots every 30 s."
+   }
+  ],
+  "evidence": [
+   {
+    "file": "test/v13_server_test.py",
+    "line": 1,
+    "description": "17 malformed specs rejected, including __proto__, unknown indicators, infinite numbers, oversized files; tampered bots.json entries dropped on load."
+   },
+   {
+    "file": "test/v13_parity.js",
+    "line": 1,
+    "description": "142 random specs give identical signals in Python and JavaScript."
+   }
+  ],
+  "reason": "No eval; bounded inputs and work; invalid stored entries are discarded."
+ },
+ {
+  "verdict": "rejected",
+  "fingerprint": "local-launcher:api-ollama-cross-site",
+  "title": "New launcher endpoints (/api/alerts, /ollama) reachable by other websites",
+  "description": "Checked whether a web page the user visits could read alert settings, change alerts or use the local model through the launcher.",
+  "claimed_root_cause": "Checked whether a web page the user visits could read alert settings, change alerts or use the local model through the launcher.",
+  "trace": [
+   {
+    "kind": "entrypoint",
+    "file": "serve.py",
+    "line": 1,
+    "scope": "do_GET / do_POST",
+    "description": "Requests to /api/* and /ollama/*."
+   },
+   {
+    "kind": "sink",
+    "file": "serve.py",
+    "line": 1,
+    "scope": "_api / _ollama",
+    "description": "Per-launch X-NovaTerm token (custom header forces a CORS preflight that is never approved), Host and Origin checks, rate limit, JSON-only bodies, size caps, three fixed Ollama paths."
+   }
+  ],
+  "evidence": [
+   {
+    "file": "test/v12_server_test.py",
+    "line": 1,
+    "description": "Missing token → 403, foreign Origin → 403, rebinding Host → 421, non-JSON → 400, path traversal / unlisted Ollama routes → 404, oversize → 413/400."
+   }
+  ],
+  "reason": "Per-launch X-NovaTerm token (custom header forces a CORS preflight that is never approved), Host and Origin checks, rate limit, JSON-only bodies, size caps, three fixed Ollama paths."
+ },
+ {
+  "verdict": "rejected",
+  "fingerprint": "local-launcher:notification-secrets-exposure",
+  "title": "Telegram bot token / Discord webhook exposed by the launcher",
+  "description": "Checked storage, API responses, error messages and logs for the notification secrets.",
+  "claimed_root_cause": "Checked storage, API responses, error messages and logs for the notification secrets.",
+  "trace": [
+   {
+    "kind": "entrypoint",
+    "file": "serve.py",
+    "line": 1,
+    "scope": "/api/alerts/config",
+    "description": "User submits secrets."
+   },
+   {
+    "kind": "sink",
+    "file": "serve.py",
+    "line": 1,
+    "scope": "Alerts.save / public / redact",
+    "description": "Strict format checks; stored in ~/.novaterm/alerts.json created 0600; /api responses show only '•••• last4'; error text is redacted; the server does not log requests."
+   }
+  ],
+  "evidence": [
+   {
+    "file": "test/v12_server_test.py",
+    "line": 1,
+    "description": "Public view and HTTP replies never contain the token or webhook; file mode 0600; tampered file is sanitised on load."
+   },
+   {
+    "file": "test/v12_e2e.js",
+    "line": 1,
+    "description": "Settings page only ever shows masked values."
+   }
+  ],
+  "reason": "Strict format checks; stored in ~/.novaterm/alerts.json created 0600; /api responses show only '•••• last4'; error text is redacted; the server does not log requests."
+ },
+ {
+  "verdict": "confirmed",
+  "fingerprint": "local-launcher:notify-ollama-follow-redirects",
+  "title": "Background-alert notifications and the local-model bridge followed HTTP redirects",
+  "description": "The v12 launcher posts alert messages to Telegram/Discord and forwards Copilot calls to Ollama on 127.0.0.1:11434 using urllib's default opener, which follows 301/302/303 redirects (turning them into GET requests). A redirect from those endpoints would have made the launcher fetch an arbitrary URL, including local-network services.",
+  "root_cause": "Default urllib opener includes HTTPRedirectHandler.",
+  "intended_behavior": "Notification and local-model requests go only to their fixed hosts and never follow redirects.",
+  "trace": [
+   {
+    "kind": "entrypoint",
+    "file": "serve.py",
+    "line": 1,
+    "scope": "Alerts._post / H._ollama",
+    "description": "Outbound POST to api.telegram.org, discord.com or 127.0.0.1:11434."
+   },
+   {
+    "kind": "sink",
+    "file": "serve.py",
+    "line": 1,
+    "scope": "urllib redirect handling",
+    "description": "A Location header would have been followed to any host."
+   }
+  ],
+  "evidence": [
+   {
+    "file": "test/v12_server_test.py",
+    "line": 1,
+    "description": "A local server answering 302 is refused by LOCAL_OPENER; NOTIFY_OPENER carries the same NoRedirect handler (49/49)."
+   }
+  ],
+  "conditions": [
+   {
+    "kind": "environmental_dependency",
+    "description": "Requires a compromised or impersonated Telegram/Discord/Ollama endpoint (TLS for the first two)."
+   }
+  ],
+  "execution": {
+   "attacker_perspective": "Network attacker or malicious local service returning a redirect.",
+   "payloads": [
+    "HTTP/1.1 302 Found\\r\\nLocation: http://192.168.1.1/admin"
+   ],
+   "instructions": [
+    "python3 test/v12_server_test.py"
+   ],
+   "observed_result": "HTTPError 'redirects are not followed'; the redirect target is never contacted."
+  },
+  "remediation": {
+   "strategy": "Dedicated openers with a NoRedirect handler for notifications and the Ollama bridge.",
+   "code_changes": [
+    {
+     "file_name": "serve.py",
+     "fixed_code": "NOTIFY_OPENER = build_opener(NoRedirect(), HTTPSHandler(context=CTX)); LOCAL_OPENER = build_opener(NoRedirect(), HTTPHandler())"
+    }
+   ]
+  },
+  "severity": {
+   "likelihood": {
+    "score": "low",
+    "reason": "Needs control of a fixed, TLS-protected upstream or of a local service."
+   },
+   "impact": {
+    "score": "low",
+    "reason": "Blind GET from the user's machine."
+   },
+   "overall_severity": "low"
+  },
+  "confidence": {
+   "score": "high",
+   "reason": "Reproduced and fixed with a local redirecting server."
+  }
+ },
+ {
+  "verdict": "confirmed",
+  "fingerprint": "local-proxy:cross-origin-and-rebinding-acceptance",
+  "title": "Local proxy accepted requests from any website and any Host header",
+  "description": "serve.py (and serve.ps1) proxied requests to allow-listed APIs without checking Origin, Host or a custom header. Any website open in the same browser could make the user's machine send requests through the proxy, and a DNS-rebinding page (foreign Host header) was served the app and proxy.",
+  "root_cause": "The proxy handlers had no same-machine request checks.",
+  "intended_behavior": "Only pages served by NovaTerm itself on localhost may use the proxy.",
+  "trace": [
+   {
+    "kind": "entrypoint",
+    "file": "serve.py",
+    "line": 59,
+    "scope": "H._local_ok",
+    "description": "New Host/Origin gate (previously absent)."
+   },
+   {
+    "kind": "sink",
+    "file": "serve.py",
+    "line": 73,
+    "scope": "H._proxy",
+    "description": "Outbound proxied request; now requires X-NovaTerm: 1 (forces a CORS preflight that is never approved)."
+   }
+  ],
+  "evidence": [
+   {
+    "file": "serve.py",
+    "line": 73,
+    "description": "curl with Origin: https://evil.example returned 200 (request forwarded) before the fix, 403 after; Host: evil.example returned 200 before, 421 after; same-machine requests still return 200."
+   }
+  ],
+  "conditions": [
+   {
+    "kind": "user_interaction",
+    "description": "The user visits a hostile website while NovaTerm's server is running."
+   },
+   {
+    "kind": "network_routing",
+    "description": "The proxy only listens on 127.0.0.1."
+   }
+  ],
+  "execution": {
+   "attacker_perspective": "A website the user visits.",
+   "payloads": [
+    "fetch('http://localhost:8765/proxy?u=https://api.coingecko.com/api/v3/ping')"
+   ],
+   "instructions": [
+    "Start NovaTerm's server.",
+    "Send the request from a foreign origin or with a foreign Host header."
+   ],
+   "observed_result": "Before: forwarded (200) / served (200). After: 403 cross-origin blocked, 403 missing header, 421 misdirected request."
+  },
+  "remediation": {
+   "strategy": "Reject non-localhost Host headers, reject foreign Origin headers, require a custom X-NovaTerm header on /proxy, cap request and response sizes, and send nosniff / frame / referrer / COOP headers.",
+   "code_changes": [
+    {
+     "file_name": "serve.py",
+     "fixed_code": "def _local_ok(self): ... if host not in ('localhost','127.0.0.1','::1'): 421 ... if origin host not local: 403"
+    }
+   ]
+  },
+  "severity": {
+   "likelihood": {
+    "score": "medium",
+    "reason": "Any visited page can issue simple requests to localhost."
+   },
+   "impact": {
+    "score": "low",
+    "reason": "Responses are not readable cross-origin and only allow-listed public APIs are reachable, so impact is limited to using the user's IP and quota."
+   },
+   "overall_severity": "low"
+  },
+  "confidence": {
+   "score": "high",
+   "reason": "Reproduced locally with curl before and after the fix."
+  }
+ },
+ {
+  "verdict": "confirmed",
+  "fingerprint": "local-proxy:ps1-chunked-body-cap",
+  "title": "Windows launcher: chunked request bodies bypassed the size cap",
+  "description": "serve.ps1 checked ContentLength64 but then copied the whole input stream. A chunked request has no length, so its body was read without any limit (memory exhaustion of the local launcher).",
+  "root_cause": "Size check relied on the declared length instead of counting bytes read.",
+  "intended_behavior": "Bodies over 1 MB (proxy) or 64 KB (webhook) are refused however they are sent.",
+  "trace": [
+   {
+    "kind": "entrypoint",
+    "file": "serve.ps1",
+    "line": 79,
+    "scope": "proxy POST",
+    "description": "Request body from the local page."
+   },
+   {
+    "kind": "sink",
+    "file": "serve.ps1",
+    "line": 79,
+    "scope": "MemoryStream",
+    "description": "Now read in 64 KB blocks with a running total; 413 once the cap is passed."
+   }
+  ],
+  "evidence": [
+   {
+    "file": "serve.ps1",
+    "line": 55,
+    "description": "Both body reads (proxy and webhook) use the counted loop; no CopyTo() remains. serve.py was never affected (it reads exactly Content-Length bytes)."
+   }
+  ],
+  "conditions": [
+   {
+    "kind": "user_interaction",
+    "description": "Only code already running in the NovaTerm page (it holds the session token) can reach the endpoint."
+   }
+  ],
+  "execution": {
+   "attacker_perspective": "Script running in the app origin.",
+   "payloads": [
+    "POST /proxy with Transfer-Encoding: chunked and a multi-GB body"
+   ],
+   "instructions": [
+    "Send a chunked POST to the launcher with the session token."
+   ],
+   "observed_result": "Static review: before the fix the body was buffered in full; after it the read stops at 1 MB with 413. Not executed: PowerShell is unavailable in the audit sandbox."
+  },
+  "remediation": {
+   "strategy": "Count bytes while reading.",
+   "code_changes": [
+    {
+     "file_name": "serve.ps1",
+     "fixed_code": "while (($rd = $req.InputStream.Read($buf,0,$buf.Length)) -gt 0) { $tot += $rd; if ($tot -gt 1MB) { SendText 413 ...; return }; $ms.Write($buf,0,$rd) }"
+    }
+   ]
+  },
+  "severity": {
+   "likelihood": {
+    "score": "low",
+    "reason": "Requires the per-launch token, i.e. code already inside the app."
+   },
+   "impact": {
+    "score": "low",
+    "reason": "Local denial of service of the launcher only."
+   },
+   "overall_severity": "low"
+  },
+  "confidence": {
+   "score": "medium",
+   "reason": "Source review; PowerShell runtime not available to execute it."
+  }
+ },
+ {
+  "verdict": "confirmed",
+  "fingerprint": "local-proxy:redirect-follow-ssrf",
+  "title": "Proxy could follow redirects off the allow-list",
+  "description": "An allow-listed API answering with a 3xx could have sent the local proxy to any other host (internal services, cloud metadata) or to plain http, turning the proxy into an SSRF relay.",
+  "root_cause": "urllib's default redirect handling followed any Location header.",
+  "intended_behavior": "Every hop must stay on https and on the allow-list.",
+  "trace": [
+   {
+    "kind": "entrypoint",
+    "file": "serve.py",
+    "line": 96,
+    "scope": "H._proxy",
+    "description": "u= parameter (allow-listed host) fetched through OPENER."
+   },
+   {
+    "kind": "sink",
+    "file": "serve.py",
+    "line": 50,
+    "scope": "SafeRedirect.redirect_request",
+    "description": "Location re-validated: https + allow-list, else 403. serve.ps1 does the same with AllowAutoRedirect=false and a 3-hop loop."
+   }
+  ],
+  "evidence": [
+   {
+    "file": "test/redirect_e2e.py",
+    "line": 1,
+    "description": "Real handler + real SafeRedirect against a local HTTPS server: off-list, http-downgrade, multi-hop and 169.254.169.254 redirects all return 403 and the forbidden upstream is never contacted (11/11)."
+   }
+  ],
+  "conditions": [
+   {
+    "kind": "third_party_dependency",
+    "description": "An allow-listed API (or a compromised one) returns a malicious redirect."
+   }
+  ],
+  "execution": {
+   "attacker_perspective": "Operator of an allow-listed upstream.",
+   "payloads": [
+    "HTTP/1.1 302 Location: https://169.254.169.254/latest/meta-data/"
+   ],
+   "instructions": [
+    "Run python3 test/redirect_e2e.py"
+   ],
+   "observed_result": "403 'redirect to a non-allow-listed host blocked'; upstream hit counter for the forbidden path stays 0."
+  },
+  "remediation": {
+   "strategy": "Re-validate every redirect hop.",
+   "code_changes": [
+    {
+     "file_name": "serve.py",
+     "fixed_code": "if u.scheme != \"https\" or not host_allowed(u.hostname): raise HTTPError(newurl, 403, ...)"
+    }
+   ]
+  },
+  "severity": {
+   "likelihood": {
+    "score": "low",
+    "reason": "Needs a malicious or compromised allow-listed API."
+   },
+   "impact": {
+    "score": "medium",
+    "reason": "Requests to local/internal services from the user's machine."
+   },
+   "overall_severity": "low"
+  },
+  "confidence": {
+   "score": "high",
+   "reason": "Reproduced end to end on loopback with the shipped handler."
+  }
+ },
+ {
+  "verdict": "confirmed",
+  "fingerprint": "notify:clickable-links-from-token-names",
+  "title": "Telegram / Discord messages could contain clickable links chosen by token creators",
+  "description": "Wallet-buy, smart-money cluster and social-spike messages include token symbols from DEX data. A creator can name a token like '[CLAIM](https://x.co)' or 'evil.com'; Discord renders Markdown masked links and both apps auto-link URLs and bare domains, putting a phishing link in the user's own chat.",
+  "root_cause": "Message text was sent as-is.",
+  "intended_behavior": "Untrusted names in notifications are inert text.",
+  "trace": [
+   {
+    "kind": "entrypoint",
+    "file": "src/dex.js",
+    "line": 1,
+    "scope": "register",
+    "description": "Token symbol from DexScreener / GeckoTerminal (≤16 chars)."
+   },
+   {
+    "kind": "propagation",
+    "file": "src/walletpro.js",
+    "line": 1,
+    "scope": "onTrade / checkClusters",
+    "description": "Symbol placed in the message."
+   },
+   {
+    "kind": "sink",
+    "file": "serve.py",
+    "line": 1,
+    "scope": "Alerts.send",
+    "description": "Telegram (auto-links) / Discord (Markdown)."
+   }
+  ],
+  "evidence": [
+   {
+    "file": "test/v13_server_test.py",
+    "line": 1,
+    "description": "neutralize() breaks schemes and bare domains with a zero-width space; discord_escape() shows Markdown literally; bidi/control characters removed."
+   }
+  ],
+  "conditions": [
+   {
+    "kind": "user_interaction",
+    "description": "Token creator naming a token with a link; user has wallet or spike messages switched on."
+   }
+  ],
+  "execution": {
+   "attacker_perspective": "Token creator naming a token with a link; user has wallet or spike messages switched on.",
+   "payloads": [
+    "token symbol: [CLAIM](https://x.co)"
+   ],
+   "instructions": [
+    "python3 test/v13_server_test.py"
+   ],
+   "observed_result": "Links no longer form; Discord link previews are also disabled (flags 4)."
+  },
+  "severity": {
+   "likelihood": {
+    "score": "low",
+    "reason": "Needs a crafted token name and messages switched on."
+   },
+   "impact": {
+    "score": "low",
+    "reason": "A phishing link in the user's own chat; still needs a click."
+   },
+   "overall_severity": "low"
+  },
+  "confidence": {
+   "score": "high",
+   "reason": "Unit-tested on the exact sanitisers used."
+  },
+  "remediation": {
+   "strategy": "/api/notify and bot messages pass through neutralize(); every Discord message through discord_escape(); mentions were already disabled.",
+   "code_changes": [
+    {
+     "file_name": "serve.py",
+     "fixed_code": "sent = ALERTS.send(\"NovaTerm · \" + neutralize(text))  # and discord_escape() + flags 4 for Discord"
+    }
+   ]
+  }
+ },
+ {
+  "verdict": "rejected",
+  "fingerprint": "onchain:persisted-chain-path",
+  "title": "Persisted chain id interpolated into the GeckoTerminal API path",
+  "description": "The heat map's chain choice is saved in localStorage and was placed into /networks/{chain}/… without an allowlist.",
+  "claimed_root_cause": "Unvalidated persisted setting used in a URL path.",
+  "trace": [
+   {
+    "kind": "entrypoint",
+    "file": "src/app_b.js",
+    "line": 1,
+    "scope": "loadOcHeat",
+    "description": "ST.heat.ocChain from saved state."
+   },
+   {
+    "kind": "sink",
+    "file": "src/dex.js",
+    "line": 1,
+    "scope": "OC.discover",
+    "description": "Path segment of a GET to api.geckoterminal.com."
+   }
+  ],
+  "evidence": [
+   {
+    "file": "src/dex.js",
+    "line": 1,
+    "description": "Hardened anyway: unknown chains fall back to 'solana' and kind is limited to trending/new."
+   }
+  ],
+  "reason": "localStorage is controlled only by the local user and the request stays on the same read-only public API host, so no trust boundary is crossed. Kept as defence in depth."
+ },
+ {
+  "verdict": "confirmed",
+  "fingerprint": "privacy:onchain-logo-ip-disclosure",
+  "title": "On-chain token logos load from creator-chosen hosts",
+  "description": "Pool stats showed token logos from image URLs supplied in DEX metadata. The image host, chosen by whoever created the token, learns the viewer's IP address and the time they opened that token.",
+  "root_cause": "Remote token image URLs were loaded directly with no user control.",
+  "intended_behavior": "Third-party requests that reveal the user's IP should be avoidable.",
+  "trace": [
+   {
+    "kind": "entrypoint",
+    "file": "src/dex.js",
+    "line": 1,
+    "scope": "OC.register",
+    "description": "image_url / info.imageUrl from GeckoTerminal and DexScreener (https only after img())."
+   },
+   {
+    "kind": "sink",
+    "file": "src/app_a.js",
+    "line": 1,
+    "scope": "renderPoolStats",
+    "description": "<img src> for the selected token's logo."
+   }
+  ],
+  "evidence": [
+   {
+    "file": "src/app_a.js",
+    "line": 1,
+    "description": "Logo is rendered only when Settings › Privacy › 'Show on-chain token logos' is on; referrerpolicy=no-referrer; https URLs only."
+   }
+  ],
+  "conditions": [
+   {
+    "kind": "third_party_dependency",
+    "description": "A token whose metadata points at an attacker-run image host."
+   },
+   {
+    "kind": "user_interaction",
+    "description": "The user opens that token in On-chain mode."
+   }
+  ],
+  "execution": {
+   "attacker_perspective": "Token creator running the image host.",
+   "payloads": [
+    "https://attacker.example/logo.png"
+   ],
+   "instructions": [
+    "Set the token's image URL to a host you control.",
+    "Wait for a user to open the token's pool stats."
+   ],
+   "observed_result": "Before the fix the logo always loaded; now users can switch logos off and no request is made."
+  },
+  "remediation": {
+   "strategy": "Opt-out setting, https-only URLs and no-referrer.",
+   "code_changes": [
+    {
+     "file_name": "src/app_a.js",
+     "fixed_code": "logo = m.img && ST.settings.ocLogos !== false ? `<img src=\"${safeUrl(m.img, '', true)}\" referrerpolicy=\"no-referrer\">` : ''"
+    }
+   ]
+  },
+  "severity": {
+   "likelihood": {
+    "score": "medium",
+    "reason": "Any token creator controls the URL."
+   },
+   "impact": {
+    "score": "low",
+    "reason": "IP and timing only; no code execution or data access."
+   },
+   "overall_severity": "low"
+  },
+  "confidence": {
+   "score": "high",
+   "reason": "Standard browser image-loading behaviour; setting verified in code."
+  }
+ },
+ {
+  "verdict": "rejected",
+  "fingerprint": "pwa:cached-session-token",
+  "title": "The service worker caching the launcher page (which carries the per-launch token)",
+  "description": "CacheStorage keeps an offline copy of the page.",
+  "claimed_root_cause": "CacheStorage keeps an offline copy of the page.",
+  "trace": [
+   {
+    "kind": "entrypoint",
+    "file": "serve.py",
+    "line": 1,
+    "scope": "SW_JS",
+    "description": "Network-first; the cache is only an offline fallback; API, proxy, Ollama and hook paths are never cached."
+   },
+   {
+    "kind": "sink",
+    "file": "browser",
+    "line": 1,
+    "scope": "CacheStorage",
+    "description": "Same-origin only."
+   }
+  ],
+  "evidence": [
+   {
+    "file": "test/v13_server_test.py",
+    "line": 1,
+    "description": "SW served as JavaScript, skips api|proxy|ollama|hook, parses as valid JS."
+   }
+  ],
+  "reason": "The token changes on every launch and only protects the local launcher from other websites; reading CacheStorage requires the same origin or local disk access, which already exposes the browser profile."
+ },
+ {
+  "verdict": "rejected",
+  "fingerprint": "safety-scanner:untrusted-token-metadata",
+  "title": "Token safety scanner rendering attacker-controlled names and RugCheck text",
+  "description": "Token names, symbols and RugCheck risk text are chosen by token creators or third parties.",
+  "claimed_root_cause": "Token names, symbols and RugCheck risk text are chosen by token creators or third parties.",
+  "trace": [
+   {
+    "kind": "entrypoint",
+    "file": "src/safety.js",
+    "line": 1,
+    "scope": "dexPair / rugcheck / mintInfo",
+    "description": "Third-party JSON."
+   },
+   {
+    "kind": "sink",
+    "file": "src/safety.js",
+    "line": 1,
+    "scope": "card()",
+    "description": "Stripped on ingest (clean()), escaped on render, links built only from validated base58 addresses or a dexscreener.com URL pattern."
+   }
+  ],
+  "evidence": [
+   {
+    "file": "test/v12_e2e.js",
+    "line": 1,
+    "description": "A token whose name, symbol and risk text carry <img onerror> / <script> renders as text; window.__pwn stays unset."
+   }
+  ],
+  "reason": "Stripped on ingest (clean()), escaped on render, links built only from validated base58 addresses or a dexscreener.com URL pattern."
+ },
+ {
+  "verdict": "confirmed",
+  "fingerprint": "storage:api-keys-plaintext-localstorage",
+  "title": "API keys could be saved in plain text in localStorage",
+  "description": "With 'Remember API keys' on (the old default), keys for Solana Tracker, Helius, X and the AI provider were written to localStorage as plain text, readable by malware, a malicious extension or anyone with access to the browser profile.",
+  "root_cause": "Persistence used plain JSON for secrets.",
+  "intended_behavior": "Secrets are never written unencrypted to persistent storage.",
+  "trace": [
+   {
+    "kind": "entrypoint",
+    "file": "src/app_c.js",
+    "line": 1,
+    "scope": "Settings",
+    "description": "User enters API keys."
+   },
+   {
+    "kind": "sink",
+    "file": "src/app_a.js",
+    "line": 1,
+    "scope": "saveState",
+    "description": "Now always strips SECRET_PATHS from the localStorage copy; keys go to sessionStorage and, if chosen, to KeyVault (PBKDF2-SHA256 600k → AES-256-GCM)."
+   }
+  ],
+  "evidence": [
+   {
+    "file": "test/vault.js",
+    "line": 1,
+    "description": "Legacy plain-text keys are moved out on load; default is session-only; the vault holds ciphertext only; wrong passphrase rejected; right passphrase restores keys; Forget wipes vault (15/15)."
+   }
+  ],
+  "conditions": [
+   {
+    "kind": "environmental_dependency",
+    "description": "Malware, a malicious extension or physical access to the browser profile."
+   }
+  ],
+  "execution": {
+   "attacker_perspective": "Local malware reading the browser profile.",
+   "payloads": [
+    "read localStorage['novaterm.v1'].ai.key"
+   ],
+   "instructions": [
+    "Run node test/vault.js"
+   ],
+   "observed_result": "No key text appears in any localStorage entry after the fix."
+  },
+  "remediation": {
+   "strategy": "Session-only by default; optional passphrase vault; migrate old plain-text keys.",
+   "code_changes": [
+    {
+     "file_name": "src/keyvault.js",
+     "fixed_code": "crypto.subtle.deriveKey({name:'PBKDF2',hash:'SHA-256',salt,iterations:600000}, …, {name:'AES-GCM',length:256}, …)"
+    }
+   ]
+  },
+  "severity": {
+   "likelihood": {
+    "score": "low",
+    "reason": "Requires local compromise."
+   },
+   "impact": {
+    "score": "medium",
+    "reason": "Third-party API keys (billing on paid AI/X plans)."
+   },
+   "overall_severity": "low"
+  },
+  "confidence": {
+   "score": "high",
+   "reason": "Verified in Chrome by test/vault.js."
+  }
+ },
+ {
+  "verdict": "rejected",
+  "fingerprint": "strategy-spec:code-execution",
+  "title": "Strategy files (import / community library) as a code-execution vector",
+  "description": "Checked whether a strategy file can run code, call the network or pollute prototypes.",
+  "claimed_root_cause": "Checked whether a strategy file can run code, call the network or pollute prototypes.",
+  "trace": [
+   {
+    "kind": "entrypoint",
+    "file": "src/builder.js",
+    "line": 1,
+    "scope": "importJSON",
+    "description": "JSON.parse of a user-chosen file (≤40 KB)."
+   },
+   {
+    "kind": "sink",
+    "file": "src/stratspec.js",
+    "line": 1,
+    "scope": "validate / compile",
+    "description": "Strict schema: allow-listed fields, indicators (hasOwnProperty), comparisons, numeric ranges; interpreted, never eval'd."
+   }
+  ],
+  "evidence": [
+   {
+    "file": "test/v12.test.js",
+    "line": 1,
+    "description": "__proto__/constructor/unknown fields rejected, no prototype pollution."
+   },
+   {
+    "file": "test/v12_e2e.js",
+    "line": 1,
+    "description": "A malicious file with an 'onBar' code string is refused in the UI."
+   },
+   {
+    "file": "tools/validate-strategies.js",
+    "line": 1,
+    "description": "GitHub Action validates every community file on each pull request."
+   }
+  ],
+  "reason": "Strict schema: allow-listed fields, indicators (hasOwnProperty), comparisons, numeric ranges; interpreted, never eval'd."
+ },
+ {
+  "verdict": "confirmed",
+  "fingerprint": "strategy-spec:cpu-exhaustion-rolling-window",
+  "title": "Shared strategy files could make backtests very slow (CPU exhaustion)",
+  "description": "The no-code strategy interpreter computed 'highest high' / 'lowest low' with a nested loop, O(candles × period). A community or imported strategy using several 400-bar windows on 200,000 candles would pin the backtest worker for a long time.",
+  "root_cause": "Naive rolling max/min.",
+  "intended_behavior": "Every operand is linear-time and bounded by schema limits.",
+  "trace": [
+   {
+    "kind": "entrypoint",
+    "file": "src/builder.js",
+    "line": 1,
+    "scope": "Import JSON / community library",
+    "description": "Untrusted strategy JSON."
+   },
+   {
+    "kind": "sink",
+    "file": "src/stratspec.js",
+    "line": 1,
+    "scope": "OPS.highest/lowest",
+    "description": "Quadratic loop in the worker."
+   }
+  ],
+  "evidence": [
+   {
+    "file": "test/v12.test.js",
+    "line": 1,
+    "description": "Monotonic-deque version matches brute force on every bar and never includes the current bar; 200k × 400 runs in ~30 ms."
+   }
+  ],
+  "conditions": [
+   {
+    "kind": "user_interaction",
+    "description": "User imports or ranks a crafted strategy file."
+   }
+  ],
+  "execution": {
+   "attacker_perspective": "Author of a shared strategy file.",
+   "payloads": [
+    "{\"entry\":{\"all\":[{\"a\":{\"k\":\"price\"},\"op\":\">\",\"b\":{\"k\":\"highest\",\"n\":400}}, …8×]}}"
+   ],
+   "instructions": [
+    "node test/v12.test.js"
+   ],
+   "observed_result": "Linear time; schema also caps 8 conditions per group, periods 2–400 and 20 KB per file."
+  },
+  "remediation": {
+   "strategy": "O(n) monotonic-deque rolling extremes plus schema caps.",
+   "code_changes": [
+    {
+     "file_name": "src/stratspec.js",
+     "fixed_code": "const prior = (a, n, isMax) => { /* deque over the n bars before i */ }"
+    }
+   ]
+  },
+  "severity": {
+   "likelihood": {
+    "score": "low",
+    "reason": "Requires the user to load the file."
+   },
+   "impact": {
+    "score": "low",
+    "reason": "Temporary freeze of the backtest worker; no data exposure."
+   },
+   "overall_severity": "low"
+  },
+  "confidence": {
+   "score": "high",
+   "reason": "Measured before/after."
+  }
+ },
+ {
+  "verdict": "rejected",
+  "fingerprint": "token-card:metadata-injection",
+  "title": "Token descriptions, names, socials and logos as an XSS vector on the token card, Launch Radar and bubble map",
+  "description": "Creator-controlled text and URLs reach new HTML views.",
+  "claimed_root_cause": "Creator-controlled text and URLs reach new HTML views.",
+  "trace": [
+   {
+    "kind": "entrypoint",
+    "file": "src/dex.js",
+    "line": 1,
+    "scope": "register / setSocial",
+    "description": "Names and URLs stripped and length-capped at ingest; https-only URLs."
+   },
+   {
+    "kind": "sink",
+    "file": "src/onchain2.js",
+    "line": 1,
+    "scope": "TokenCard / Radar",
+    "description": "Escaped text, safeUrl links with rel=noopener; bubble labels drawn on canvas."
+   }
+  ],
+  "evidence": [
+   {
+    "file": "test/v13_e2e.js",
+    "line": 1,
+    "description": "A description containing <script> and an onerror image renders as text; window.__pwn never set."
+   }
+  ],
+  "reason": "Escaped on render, stripped on ingest, URLs allow-listed to https; canvas text is not HTML."
+ },
+ {
+  "verdict": "confirmed",
+  "fingerprint": "tokeninfo:handle-repaired-into-link",
+  "title": "A malformed social handle was 'repaired' into a different link",
+  "description": "A Telegram handle like 'zap<script>' had its markup stripped and became https://t.me/zapscript, a real-looking link to an account the project never listed.",
+  "root_cause": "Cleaning ran before validation.",
+  "intended_behavior": "Handles that fail validation are dropped, not repaired.",
+  "trace": [
+   {
+    "kind": "entrypoint",
+    "file": "src/onchain2.js",
+    "line": 1,
+    "scope": "TokenInfo.get",
+    "description": "GeckoTerminal token info."
+   },
+   {
+    "kind": "sink",
+    "file": "src/onchain2.js",
+    "line": 1,
+    "scope": "TokenCard.render",
+    "description": "Social link button."
+   }
+  ],
+  "evidence": [
+   {
+    "file": "test/v13_e2e.js",
+    "line": 1,
+    "description": "A handle with markup produces no Telegram link; javascript: and http: websites are dropped."
+   }
+  ],
+  "conditions": [
+   {
+    "kind": "user_interaction",
+    "description": "Token creator controls the handle text."
+   }
+  ],
+  "execution": {
+   "attacker_perspective": "Token creator controls the handle text.",
+   "payloads": [
+    "telegram_handle: zap<script>"
+   ],
+   "instructions": [
+    "node test/v13_e2e.js"
+   ],
+   "observed_result": "No link is shown."
+  },
+  "severity": {
+   "likelihood": {
+    "score": "low",
+    "reason": "Needs a malformed handle in token info."
+   },
+   "impact": {
+    "score": "low",
+    "reason": "Misleading link to an unrelated account."
+   },
+   "overall_severity": "low"
+  },
+  "confidence": {
+   "score": "high",
+   "reason": "Reproduced in the end-to-end test."
+  },
+  "remediation": {
+   "strategy": "hx() validates the raw handle against ^[A-Za-z0-9_.]{2,64}$ and rejects anything else; only https URLs are kept.",
+   "code_changes": [
+    {
+     "file_name": "src/onchain2.js",
+     "fixed_code": "const hx = (h, base) => { h = String(h ?? '').trim().replace(/^@/, ''); return /^[A-Za-z0-9_.]{2,64}$/.test(h) ? base + h : null; };"
+    }
+   ]
+  }
+ },
+ {
+  "verdict": "rejected",
+  "fingerprint": "update-check:banner-xss-or-phishing",
+  "title": "Update banner as an XSS or phishing channel",
+  "description": "Release tag, link and notes come from GitHub and are shown in the page.",
+  "claimed_root_cause": "Remote text rendered in the app.",
+  "trace": [
+   {
+    "kind": "entrypoint",
+    "file": "serve.py",
+    "line": 885,
+    "scope": "update_info",
+    "description": "GitHub releases API reply."
+   },
+   {
+    "kind": "sink",
+    "file": "src/v14.js",
+    "line": 149,
+    "scope": "V14UI.checkUpdate",
+    "description": "Banner text and link."
+   }
+  ],
+  "evidence": [
+   {
+    "file": "test/v14_server_test.py",
+    "line": 1,
+    "description": "Links off github.com/<project>/, http links and javascript: are dropped; junk tags ignored; notes plain text, 600 chars."
+   },
+   {
+    "file": "test/v14_e2e.js",
+    "line": 1,
+    "description": "Markup in notes shows as text; a non-GitHub link makes no banner."
+   }
+  ],
+  "reason": "The launcher accepts only a numeric tag and an https link under the project's own GitHub releases; the page re-checks the link, escapes all text and opens it with noopener. Nothing is downloaded or run."
+ },
+ {
+  "verdict": "rejected",
+  "fingerprint": "update-check:ssrf",
+  "title": "Update check as SSRF",
+  "description": "The launcher now makes an outbound request on the page's behalf.",
+  "claimed_root_cause": "Server-side fetch triggered by a page request.",
+  "trace": [
+   {
+    "kind": "entrypoint",
+    "file": "serve.py",
+    "line": 885,
+    "scope": "update_info",
+    "description": "Triggered by GET /api/update (token required)."
+   }
+  ],
+  "evidence": [
+   {
+    "file": "test/v14_server_test.py",
+    "line": 1,
+    "description": "Only the fixed GitHub API URL is requested; results are cached for 6 hours."
+   }
+  ],
+  "reason": "The URL is a constant with no page input, redirects are re-validated against the allow-list, the reply is capped at 256 KB and the call is cached, so the page cannot choose a target or cause repeated requests. --no-update-check turns it off."
+ },
+ {
+  "verdict": "rejected",
+  "fingerprint": "v14:new-views-stored-xss",
+  "title": "Stored XSS in the welcome-back card, P&L calendar, chart markers or strategy compare",
+  "description": "New views render saved symbols, journal data and strategy names.",
+  "claimed_root_cause": "New render paths for stored data.",
+  "trace": [
+   {
+    "kind": "entrypoint",
+    "file": "src/v14.js",
+    "line": 26,
+    "scope": "V14UI.welcome",
+    "description": "Last-visit snapshot from storage or disk."
+   },
+   {
+    "kind": "sink",
+    "file": "src/v14.js",
+    "line": 42,
+    "scope": "V14UI.calHtml",
+    "description": "Calendar cells."
+   }
+  ],
+  "evidence": [
+   {
+    "file": "test/v14_e2e.js",
+    "line": 1,
+    "description": "Hostile symbols in the journal and in the saved snapshot render as text; no handler runs."
+   }
+  ],
+  "reason": "Only symbols on the current watchlist are shown (escaped), calendar cells contain dates and numbers, chart markers are canvas text, strategy names are escaped."
+ }
+]

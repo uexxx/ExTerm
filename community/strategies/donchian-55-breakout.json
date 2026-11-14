@@ -1,0 +1,41 @@
+{
+  "v": 1,
+  "name": "Donchian 55 breakout",
+  "desc": "Turtle-style: buy a close above the prior 55-bar high, exit below the prior 20-bar low.",
+  "author": "ExTerm",
+  "tags": [
+    "breakout",
+    "trend"
+  ],
+  "entry": {
+    "all": [
+      {
+        "a": {
+          "k": "price"
+        },
+        "op": ">",
+        "b": {
+          "k": "highest",
+          "n": 55
+        }
+      }
+    ]
+  },
+  "exit": {
+    "any": [
+      {
+        "a": {
+          "k": "price"
+        },
+        "op": "<",
+        "b": {
+          "k": "lowest",
+          "n": 20
+        }
+      }
+    ]
+  },
+  "risk": {
+    "sl": 10
+  }
+}

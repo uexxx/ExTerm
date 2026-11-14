@@ -1,0 +1,48 @@
+{
+  "v": 1,
+  "name": "MACD momentum with trend filter",
+  "desc": "MACD crosses its signal line while price holds above the 100 EMA.",
+  "author": "ExTerm",
+  "tags": [
+    "momentum"
+  ],
+  "entry": {
+    "all": [
+      {
+        "a": {
+          "k": "macd"
+        },
+        "op": "crossAbove",
+        "b": {
+          "k": "macdSignal"
+        }
+      },
+      {
+        "a": {
+          "k": "price"
+        },
+        "op": ">",
+        "b": {
+          "k": "ema",
+          "n": 100
+        }
+      }
+    ]
+  },
+  "exit": {
+    "any": [
+      {
+        "a": {
+          "k": "macd"
+        },
+        "op": "crossBelow",
+        "b": {
+          "k": "macdSignal"
+        }
+      }
+    ]
+  },
+  "risk": {
+    "trail": 7
+  }
+}

@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<!-- Copyright (c) 2026 ExTerm Labs (@exterm.labs) · Licensed under GNU AGPL-3.0 · https://github.com/uexxx/ExTerm -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline'; worker-src 'self' blob:; media-src 'none'; child-src 'none'; manifest-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' https: data: blob:; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https: wss: http://localhost:* http://127.0.0.1:* ws://localhost:*; object-src 'none'; base-uri 'none'; form-action 'none'; frame-src 'none'">
+<meta name="referrer" content="no-referrer">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#05060e">
+<title>ExTerm — crypto & stocks paper trading terminal</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%20width%3D%2264%22%20height%3D%2264%22%20aria-hidden%3D%22true%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22fvR%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23D4AF37%22%2F%3E%3Cstop%20offset%3D%22.45%22%20stop-color%3D%22%23F5E6A8%22%2F%3E%3Cstop%20offset%3D%22.7%22%20stop-color%3D%22%23B8943A%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23D4AF37%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Ccircle%20cx%3D%2232%22%20cy%3D%2232%22%20r%3D%2229.5%22%20fill%3D%22%230B0B0D%22%2F%3E%3Ccircle%20cx%3D%2232%22%20cy%3D%2232%22%20r%3D%2229.5%22%20fill%3D%22none%22%20stroke%3D%22url(%23fvR)%22%20stroke-width%3D%222.6%22%2F%3E%3Ccircle%20cx%3D%2232%22%20cy%3D%2232%22%20r%3D%2226.6%22%20fill%3D%22none%22%20stroke%3D%22%23B8943A%22%20stroke-opacity%3D%22.35%22%20stroke-width%3D%22.6%22%2F%3E%3Cline%20x1%3D%2225.28%22%20y1%3D%2217.58%22%20x2%3D%2225.28%22%20y2%3D%2232.98%22%20stroke%3D%22%23F8FAFC%22%20stroke-width%3D%221.1%22%20stroke-linecap%3D%22round%22%2F%3E%3Crect%20x%3D%2223.38%22%20y%3D%2220.78%22%20width%3D%223.8%22%20height%3D%229%22%20rx%3D%220.9%22%20fill%3D%22%23F8FAFC%22%2F%3E%3Cline%20x1%3D%2219.27%22%20y1%3D%2212.97%22%20x2%3D%2219.27%22%20y2%3D%2225.57%22%20stroke%3D%22%23F8FAFC%22%20stroke-width%3D%221.1%22%20stroke-linecap%3D%22round%22%2F%3E%3Crect%20x%3D%2217.37%22%20y%3D%2215.77%22%20width%3D%223.8%22%20height%3D%227%22%20rx%3D%220.9%22%20fill%3D%22%23F8FAFC%22%2F%3E%3Cline%20x1%3D%2238.72%22%20y1%3D%2217.58%22%20x2%3D%2238.72%22%20y2%3D%2232.98%22%20stroke%3D%22%23F3D06B%22%20stroke-width%3D%221.1%22%20stroke-linecap%3D%22round%22%2F%3E%3Crect%20x%3D%2236.82%22%20y%3D%2220.78%22%20width%3D%223.8%22%20height%3D%229%22%20rx%3D%220.9%22%20fill%3D%22%23F3D06B%22%2F%3E%3Cline%20x1%3D%2244.73%22%20y1%3D%2212.97%22%20x2%3D%2244.73%22%20y2%3D%2225.57%22%20stroke%3D%22%23F3D06B%22%20stroke-width%3D%221.1%22%20stroke-linecap%3D%22round%22%2F%3E%3Crect%20x%3D%2242.83%22%20y%3D%2215.77%22%20width%3D%223.8%22%20height%3D%227%22%20rx%3D%220.9%22%20fill%3D%22%23F3D06B%22%2F%3E%3Cline%20x1%3D%2225.28%22%20y1%3D%2231.02%22%20x2%3D%2225.28%22%20y2%3D%2246.42%22%20stroke%3D%22%23C99A32%22%20stroke-width%3D%221.1%22%20stroke-linecap%3D%22round%22%2F%3E%3Crect%20x%3D%2223.38%22%20y%3D%2234.22%22%20width%3D%223.8%22%20height%3D%229%22%20rx%3D%220.9%22%20fill%3D%22%23C99A32%22%2F%3E%3Cline%20x1%3D%2219.27%22%20y1%3D%2238.43%22%20x2%3D%2219.27%22%20y2%3D%2251.03%22%20stroke%3D%22%23C99A32%22%20stroke-width%3D%221.1%22%20stroke-linecap%3D%22round%22%2F%3E%3Crect%20x%3D%2217.37%22%20y%3D%2241.23%22%20width%3D%223.8%22%20height%3D%227%22%20rx%3D%220.9%22%20fill%3D%22%23C99A32%22%2F%3E%3Cline%20x1%3D%2238.72%22%20y1%3D%2231.02%22%20x2%3D%2238.72%22%20y2%3D%2246.42%22%20stroke%3D%22%23CBD5E1%22%20stroke-width%3D%221.1%22%20stroke-linecap%3D%22round%22%2F%3E%3Crect%20x%3D%2236.82%22%20y%3D%2234.22%22%20width%3D%223.8%22%20height%3D%229%22%20rx%3D%220.9%22%20fill%3D%22%23CBD5E1%22%2F%3E%3Cline%20x1%3D%2244.73%22%20y1%3D%2238.43%22%20x2%3D%2244.73%22%20y2%3D%2251.03%22%20stroke%3D%22%23CBD5E1%22%20stroke-width%3D%221.1%22%20stroke-linecap%3D%22round%22%2F%3E%3Crect%20x%3D%2242.83%22%20y%3D%2241.23%22%20width%3D%223.8%22%20height%3D%227%22%20rx%3D%220.9%22%20fill%3D%22%23CBD5E1%22%2F%3E%3Crect%20x%3D%2229.2%22%20y%3D%2229.2%22%20width%3D%225.6%22%20height%3D%225.6%22%20rx%3D%221.3%22%20transform%3D%22rotate(45%2032%2032)%22%20fill%3D%22%23E5C158%22%2F%3E%3C%2Fsvg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/*__CSS__*/
+</style>
+</head>
+<body class="mode-crypto">
+<div class="bgfx"></div>
+<header id="top">
+  <div class="brand" title="ExTerm · Crypto · Stocks · DEX"><span class="logo"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="30" height="30" aria-hidden="true"><defs><linearGradient id="hdrR" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#D4AF37"/><stop offset=".45" stop-color="#F5E6A8"/><stop offset=".7" stop-color="#B8943A"/><stop offset="1" stop-color="#D4AF37"/></linearGradient></defs><circle cx="32" cy="32" r="29.5" fill="#0B0B0D"/><circle cx="32" cy="32" r="29.5" fill="none" stroke="url(#hdrR)" stroke-width="2.6"/><circle cx="32" cy="32" r="26.6" fill="none" stroke="#B8943A" stroke-opacity=".35" stroke-width=".6"/><line x1="25.28" y1="17.58" x2="25.28" y2="32.98" stroke="#F8FAFC" stroke-width="1.1" stroke-linecap="round"/><rect x="23.38" y="20.78" width="3.8" height="9" rx="0.9" fill="#F8FAFC"/><line x1="19.27" y1="12.97" x2="19.27" y2="25.57" stroke="#F8FAFC" stroke-width="1.1" stroke-linecap="round"/><rect x="17.37" y="15.77" width="3.8" height="7" rx="0.9" fill="#F8FAFC"/><line x1="38.72" y1="17.58" x2="38.72" y2="32.98" stroke="#F3D06B" stroke-width="1.1" stroke-linecap="round"/><rect x="36.82" y="20.78" width="3.8" height="9" rx="0.9" fill="#F3D06B"/><line x1="44.73" y1="12.97" x2="44.73" y2="25.57" stroke="#F3D06B" stroke-width="1.1" stroke-linecap="round"/><rect x="42.83" y="15.77" width="3.8" height="7" rx="0.9" fill="#F3D06B"/><line x1="25.28" y1="31.02" x2="25.28" y2="46.42" stroke="#C99A32" stroke-width="1.1" stroke-linecap="round"/><rect x="23.38" y="34.22" width="3.8" height="9" rx="0.9" fill="#C99A32"/><line x1="19.27" y1="38.43" x2="19.27" y2="51.03" stroke="#C99A32" stroke-width="1.1" stroke-linecap="round"/><rect x="17.37" y="41.23" width="3.8" height="7" rx="0.9" fill="#C99A32"/><line x1="38.72" y1="31.02" x2="38.72" y2="46.42" stroke="#CBD5E1" stroke-width="1.1" stroke-linecap="round"/><rect x="36.82" y="34.22" width="3.8" height="9" rx="0.9" fill="#CBD5E1"/><line x1="44.73" y1="38.43" x2="44.73" y2="51.03" stroke="#CBD5E1" stroke-width="1.1" stroke-linecap="round"/><rect x="42.83" y="41.23" width="3.8" height="7" rx="0.9" fill="#CBD5E1"/><rect x="29.2" y="29.2" width="5.6" height="5.6" rx="1.3" transform="rotate(45 32 32)" fill="#E5C158"/></svg></span><span class="wm"><span class="wtop"><span class="wn">EX</span><span class="wt">TERM</span></span><span class="wcap">CRYPTO · STOCKS · DEX</span></span></div>
+  <div class="mswitch" id="modeSwitch" role="tablist" aria-label="Market">
+    <i class="thumb"></i>
+    <button data-mode="crypto" class="on" title="Crypto markets">◆ Crypto</button>
+    <button data-mode="stocks" title="US stocks & ETFs">▲ Stocks</button>
+    <button data-mode="onchain" title="On-chain DEX tokens: memecoins, new and trending pools">⬡ On-chain</button>
+  </div>
+  <div class="search"><span class="sicon">⌕</span><input id="symInput" list="symList" placeholder="Symbol, e.g. SOL" autocomplete="off" spellcheck="false" aria-label="Symbol"></div>
+  <datalist id="symList"></datalist>
+  <div class="quote"><span id="qSym">BTC-USD</span><b id="qPrice">–</b><span id="qChg" class="chg">–</span></div>
+  <div class="spacer"></div>
+  <div class="pill" id="srcPill" title="Live data source status"><i class="dot" id="srcDot"></i><span id="srcText">connecting…</span></div>
+  <div class="eqbox"><span class="lbl">Paper equity</span><b id="eqVal">–</b><span id="eqPnl" class="chg"></span></div>
+  <button id="btnTheme" class="ghost" title="Change theme">🎨</button>
+  <button id="btnPalette" class="ghost kbd" title="Command palette (Ctrl/⌘+K)">⌘K</button>
+</header>
+<div id="banner" class="banner" hidden></div>
+<div id="ticker" class="ticker"><div class="track" id="tickerTrack"></div></div>
+<nav id="nav">
+  <button data-tab="markets" class="on"><span class="ni">📈</span>Markets</button>
+  <button data-tab="heat"><span class="ni">🟩</span>Heat Map</button>
+  <button data-tab="bots"><span class="ni">🤖</span>Bots &amp; Backtest</button>
+  <button data-tab="port"><span class="ni">💼</span>Portfolio<span class="nbadge" id="pfBadge" hidden></span></button>
+  <button data-tab="whales"><span class="ni">🛰️</span><span id="navTrack">Wallet Tracker</span></button>
+  <button data-tab="social"><span class="ni">📣</span>Social</button>
+  <button data-tab="workspace"><span class="ni">🗔</span>Workspace</button>
+  <button data-tab="journal"><span class="ni">📓</span>Journal</button>
+  <button data-tab="challenge"><span class="ni">🎮</span>Challenges</button>
+  <button data-tab="ai"><span class="ni">✨</span>AI Copilot</button>
+  <button data-tab="grok"><span class="ni">⚡</span>Grok</button>
+  <button data-tab="lab"><span class="ni">🧪</span>Lab</button>
+  <button data-tab="set"><span class="ni">⚙️</span>Settings</button>
+  <span class="navsp"></span><span class="note" id="navMode"></span>
+</nav>
+<main>
+  <!-- MARKETS -->
+  <section id="tab-markets" class="tab on">
+    <div class="mk">
+      <div class="panel">
+        <h3>Watchlist <span class="sp"></span><span class="note" id="wlCount"></span></h3>
+        <div class="scroll" id="watchList" style="flex:1"></div>
+        <div class="pb row" style="border-top:1px solid var(--line)"><input class="in" id="wlAdd" list="symList" placeholder="Add symbol…" style="flex:1"><button class="btn sm" id="wlAddBtn">Add</button></div>
+      </div>
+      <div class="panel" style="min-width:0">
+        <div class="toolbar">
+          <div class="seg" id="tfBtns"></div>
+          <div class="seg" id="ctBtns"></div>
+          <div class="seg" id="drawBtns" title="Drawing tools (Esc to cancel)"></div>
+          <div class="seg" id="indBtns"></div>
+          <button class="btn sm rp-btn" id="replayBtn" title="Bar Replay: rewind the chart and practice trading bar by bar">⏪ Replay</button>
+          <span class="sp" style="flex:1"></span>
+          <span class="tag" id="mkMode"></span>
+          <span class="note" id="chartHint">scroll = zoom · drag = pan · double-click = reset</span>
+        </div>
+        <div id="chartHost"></div>
+        <div class="posstrip" id="posStrip"></div>
+      </div>
+      <div class="side-col">
+        <div class="panel ticket" id="ticket"></div>
+        <div class="panel book"><h3><span id="bookTitle">Order book</span> <span class="seg sm" id="bookView" title="Order book view"><button data-v="list" class="on">List</button><button data-v="3d">3D</button></span><span class="sp"></span><span class="note" id="bookSpread"></span></h3><div id="book" style="padding:6px 0"></div></div>
+        <div class="panel tape"><h3 id="tapeTitle">Live trades</h3><div id="tape" style="padding:6px 0;max-height:210px;overflow:auto"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HEAT MAP -->
+  <section id="tab-heat" class="tab">
+    <div style="display:flex;flex-direction:column;height:100%">
+      <div class="row" style="margin-bottom:10px">
+        <span class="tag acc" id="heatAssetTag"></span>
+        <div class="seg" id="heatAsset" hidden></div>
+        <div class="seg" id="heatPeriod"></div>
+        <div class="seg" id="heatSize"></div>
+        <div class="seg" id="heatTop"></div>
+        <label class="f chk" id="heatHideL"><input type="checkbox" id="heatHide" checked> hide stablecoins &amp; wrapped</label>
+        <button class="btn sm" id="heatRefresh">Refresh</button>
+        <span class="sp" style="flex:1"></span>
+        <span class="note">−</span><div class="legend"></div><span class="note">+</span>
+        <span class="note" id="heatScale"></span>
+      </div>
+      <div class="stats" id="heatStats"></div>
+      <div id="heatHost"></div>
+      <div class="note" id="heatNote" style="padding-top:6px"></div>
+    </div>
+  </section>
+
+  <!-- BOTS -->
+  <section id="tab-bots" class="tab">
+    <div class="botgrid">
+      <div class="panel"><h3>Strategy &amp; bot setup <span class="sp"></span><span class="note" id="stratCount"></span></h3><div class="pb" id="botForm"></div></div>
+      <div style="display:flex;flex-direction:column;gap:12px;min-width:0">
+        <div class="panel"><h3>Backtester <span class="sp"></span><span class="note">fills at next bar's open · fees &amp; slippage included · no look-ahead</span></h3><div class="pb" id="btForm"></div><div id="btResult"></div><div id="btVal"></div></div>
+        <div class="panel"><h3>Strategy leaderboard <span class="sp"></span><span class="note" id="btAllNote">backtest every strategy on the same data</span></h3><div class="pb" id="btAll"></div></div>
+      </div>
+    </div>
+    <div class="panel builder" id="builder"></div>
+    <div class="panel ctl" id="botCtl"></div>
+    <div class="sec" style="display:flex;align-items:center;gap:10px">Your bots <span class="note" id="botNote"></span></div>
+    <div class="bots" id="botList"></div>
+  </section>
+
+  <!-- PORTFOLIO -->
+  <section id="tab-port" class="tab">
+    <div class="row" style="margin-bottom:10px"><div class="seg" id="pfScope"></div><span class="note" id="pfScopeNote"></span><span style="flex:1"></span><button class="btn sm" id="pfCsv">⇩ Export CSV</button><button class="btn sm" id="pfReset">Reset manual account…</button></div>
+    <div class="stats" id="pfStats"></div>
+    <div class="panel" style="margin-top:12px"><h3>Paper accounts <span class="sp"></span><span class="note">every paper trade the app makes lands here: order ticket, AI Copilot, bots and the Solana copy-bot · click a row to filter</span></h3><div class="scroll" id="pfAccts"></div></div>
+    <div class="cols2" style="margin-top:12px">
+      <div class="panel"><h3>P&amp;L over time <span class="sp"></span><div class="seg" id="pfEqRange"></div></h3><div style="height:240px"><canvas id="pfChart" class="cvs" style="height:240px"></canvas></div></div>
+      <div class="panel"><h3>Open positions <span class="sp"></span><span class="note" id="pfHoldNote"></span></h3><div class="scroll" id="pfHold" style="max-height:255px"></div></div>
+    </div>
+    <div class="cols2" style="margin-top:12px">
+      <div class="panel"><h3>Realized P&amp;L by asset <span class="sp"></span><span class="note">top winners &amp; losers</span></h3><div class="pb"><canvas id="pfByAsset" class="cvs" style="height:210px"></canvas></div></div>
+      <div class="panel"><h3>Daily realized P&amp;L <span class="sp"></span><span class="note">last 14 days</span></h3><div class="pb"><canvas id="pfDaily" class="cvs" style="height:150px"></canvas><div id="pfInsights" class="pfins"></div></div></div>
+    </div>
+    <div class="panel" style="margin-top:12px"><h3>Trade journal <span class="sp"></span><span class="note" id="pfTradeSum"></span></h3>
+      <div class="pb row" style="gap:8px;flex-wrap:wrap"><select class="in" id="pfAcct" style="width:auto"></select><div class="seg" id="pfSide"></div><div class="seg" id="pfRange"></div><input class="in" id="pfQ" placeholder="Filter asset / reason…" style="width:200px"></div>
+      <div class="scroll" id="pfTrades" style="max-height:480px"></div></div>
+  </section>
+
+  <!-- TRACKER (crypto: Solana wallets + whales · stocks: SEC insiders) -->
+  <section id="tab-whales" class="tab">
+    <div class="row" style="margin-bottom:10px"><div class="seg" id="whView"></div><span class="note" id="whNote">Paper copy-trading only. Nothing here signs or sends a transaction.</span></div>
+
+    <div id="whTracker">
+      <div class="radar" id="trHero"></div>
+      <div id="trSpot"></div>
+      <div class="stats" id="trStats" hidden></div>
+      <div class="term">
+        <div class="panel tcol">
+          <div class="ph">Wallets <span class="note" id="wCount"></span><span class="sp"></span><button class="btn sm val" id="wDiscover" title="Find top traders with high win rates">🏆 Discover</button><button class="btn sm" id="wScore" title="Score every wallet (win rate, PnL)">📊</button><button class="btn sm" id="wAddToggle" title="Add / import wallets">＋</button><button class="btn sm" id="wExp" title="Export JSON">⇩</button></div>
+          <div class="pb" id="wAddBox" hidden style="border-bottom:1px solid var(--line)">
+            <div class="row"><input class="in" id="wsEmoji" placeholder="🐳" style="width:46px"><input class="in mono" id="wsAddr" placeholder="Solana address" style="flex:1"></div>
+            <div class="row" style="margin-top:6px"><input class="in" id="wsName" placeholder="name" style="flex:1"><label class="f chk"><input type="checkbox" id="wsAlert" checked> 🔔</label><button class="btn sm pri" id="wAddSol">Track</button></div>
+            <div class="sec" style="margin-top:10px">Import JSON (Axiom / GMGN format)</div>
+            <textarea class="in mono" id="wImpText" rows="4" placeholder='[{"trackedWalletAddress":"…","name":"…","emoji":"🐳","alertsOn":true}]'></textarea>
+            <div class="row" style="margin-top:6px"><input type="file" id="wImpFile" accept=".json,.txt,application/json" style="max-width:180px"><label class="f chk"><input type="checkbox" id="wImpReplace"> replace</label><button class="btn sm pri" id="wImpGo">Import</button><button class="btn sm" id="wDefault">Reset to curated top traders</button></div>
+          </div>
+          <div class="pb row" style="padding:8px 10px;border-bottom:1px solid var(--line)"><input class="in" id="wQ" placeholder="Search wallets…" style="flex:1"><select class="in" id="wSort" style="width:auto"><option value="score">Smart score</option><option value="wr">Win rate</option><option value="pnl">PnL</option><option value="active">Last active</option><option value="trades">Trades seen</option><option value="name">Name</option></select><button class="btn sm" id="wAlertsOnly" title="Alert wallets only">🔔</button></div>
+          <div class="pb" style="padding:6px 10px;border-bottom:1px solid var(--line)"><div class="seg tiers" id="wTier"></div></div>
+          <div class="scroll" id="wTable" style="flex:1"></div>
+        </div>
+        <div class="panel tcol" style="min-width:0">
+          <div class="ph">Live trades <span class="livedot"></span><span class="sp"></span><input class="in" id="trQ" placeholder="wallet / token / mint" style="width:150px"><label class="note" style="display:flex;align-items:center;gap:4px">≥◎<input class="in mono" id="trMin" style="width:48px" value="0"></label></div>
+          <div class="pb" style="padding:6px 10px;border-bottom:1px solid var(--line)"><div class="seg" id="trFilter"></div></div>
+          <div class="scroll" id="trFeed" style="flex:1"></div>
+        </div>
+        <div class="tcol side-col">
+          <div class="panel"><div class="ph">🔥 Hot tokens <span class="sp"></span><div class="seg" id="trHotWin"></div></div><div id="trHot" class="scroll" style="max-height:330px"></div></div>
+          <div class="panel"><h3>🧬 Copy-trade bot (paper)</h3><div class="pb" id="trCopy"></div></div>
+          <div class="panel"><div class="ph">📡 Data connection <span class="sp"></span><span class="note" id="trNetNote"></span></div><div class="pb" id="trNet"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="whChain" class="whg" hidden>
+      <div style="display:flex;flex-direction:column;gap:12px;min-height:0;min-width:0">
+        <div class="stats" id="whStats" style="margin:0"></div>
+        <div class="panel" style="flex:1;min-height:320px">
+          <div class="ph">Large on-chain transfers <span class="sp"></span><div class="seg" id="whFilter"></div></div>
+          <div class="scroll" id="whFeed" style="flex:1"></div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:12px;min-height:0;overflow:auto">
+        <div class="panel"><h3>Alert thresholds</h3><div class="pb" id="whThr"></div></div>
+        <div class="panel"><h3>Watched BTC / ETH wallets</h3><div class="pb">
+          <div class="row" style="margin-bottom:6px"><input class="in" id="wAddr" placeholder="0x… or bc1… address" style="flex:1 1 100%"><input class="in" id="wName" placeholder="label (optional)" style="flex:1"><button class="btn sm pri" id="wAdd">Watch</button></div>
+          <div id="wList"></div>
+        </div></div>
+      </div>
+    </div>
+
+    <div id="whInsider" hidden>
+      <div id="inSpot"></div>
+      <div class="stats" id="inStats"></div>
+      <div class="term term2">
+        <div class="panel tcol" style="min-width:0">
+          <div class="ph">Insider transactions (SEC Form 4) <span class="sp"></span><input class="in" id="inQ" placeholder="ticker / insider" style="width:150px"><div class="seg" id="inFilter"></div></div>
+          <div class="scroll" id="inFeed" style="flex:1"></div>
+        </div>
+        <div class="tcol side-col">
+          <div class="panel"><h3>Tickers to scan</h3><div class="pb">
+            <textarea class="in mono" id="inTickers" rows="3"></textarea>
+            <div class="row" style="margin-top:6px"><button class="btn sm pri" id="inScan">Scan Form 4s</button><button class="btn sm" id="inUseWatch">Use my watchlist</button><label class="f chk"><input type="checkbox" id="inLive" checked> live market-wide stream</label></div>
+            <div class="note" id="inProg" style="margin-top:6px"></div>
+          </div></div>
+          <div class="panel"><div class="ph">🧲 Cluster buys <span class="sp"></span><span class="note">2+ insiders buying · 30d</span></div><div class="scroll" id="inClusters" style="max-height:260px"></div></div>
+          <div class="panel"><div class="ph">💰 Biggest open-market buys</div><div class="scroll" id="inBig" style="max-height:260px"></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- AI -->
+  <section id="tab-ai" class="tab">
+    <div id="laBanner"></div>
+    <div class="aig">
+      <div class="panel" style="min-height:0">
+        <div class="ph">Copilot <span class="sp"></span><span class="tag" id="aiMode">local</span><button class="btn sm" id="aiClear">Clear</button></div>
+        <div id="chatLog"></div>
+        <div class="chips" id="aiChips"></div>
+        <form id="chatForm" class="row" style="padding:10px 12px;border-top:1px solid var(--line);flex-wrap:nowrap"><input class="in" id="chatIn" placeholder="Ask anything…" autocomplete="off"><button class="btn pri" type="submit">Send</button></form>
+      </div>
+      <div class="panel"><h3>About the Copilot</h3><div class="pb note" id="aiAbout"></div></div>
+    </div>
+  </section>
+
+  <!-- LAB -->
+  <section id="tab-social" class="tab">
+    <div class="radar" id="soHero"></div>
+    <div class="term soterm">
+      <div class="panel tcol"><div class="ph">🔥 Trending <span class="sp"></span><span class="note">mentions · 1h</span></div><div class="scroll" id="soTrends" style="flex:1"></div></div>
+      <div class="panel tcol" style="min-width:0"><div class="ph">Live feed <span class="livedot"></span><span class="note" id="soCount"></span><span class="sp"></span><input class="in" id="soQ" placeholder="search posts…" style="width:160px"><button class="btn sm" id="soRef">↻</button></div>
+        <div class="pb" style="padding:6px 10px;border-bottom:1px solid var(--line);display:flex;gap:8px;flex-wrap:wrap"><div class="seg" id="soSrc"></div><div class="seg" id="soSent"></div></div>
+        <div class="scroll" id="soFeed" style="flex:1"></div></div>
+      <div class="tcol side-col">
+        <div class="panel"><div class="ph">📡 Sources</div><div class="pb" id="soSrcs"></div></div>
+        <div class="panel"><div class="ph">𝕏 X (Twitter) API</div><div class="pb" id="soX"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="tab-lab" class="tab">
+    <div class="seg labnav" id="labNav"></div>
+    <div id="labBody"></div>
+  </section>
+
+  <section id="tab-workspace" class="tab">
+    <div class="ws-bar" id="wsBar"></div>
+    <div id="wsHost" class="ws-grid g4"></div>
+  </section>
+  <section id="tab-journal" class="tab"><div id="jnHost"></div></section>
+  <section id="tab-challenge" class="tab"><div id="chHost"></div></section>
+  <section id="tab-grok" class="tab"><div id="gkHost"></div></section>
+
+  <!-- SETTINGS -->
+  <section id="tab-set" class="tab"><div id="setBody"></div><p class="note about-notice">ExTerm v15.1 · GNU AGPL-3.0 · Official Release by @exterm.labs · <a href="https://github.com/uexxx/ExTerm" target="_blank" rel="noopener noreferrer">github.com/uexxx/ExTerm</a></p></section>
+</main>
+
+<aside id="drawer" class="drawer" aria-hidden="true"><div class="dhead"><span id="dTitle"></span><span class="sp"></span><button class="ghost" id="dClose">✕</button></div><div class="dbody" id="dBody"></div></aside>
+<div id="tip"></div>
+<div id="toasts"></div>
+<div id="palette"><div class="box"><input id="palIn" placeholder="Jump to a tab, symbol or wallet, or ask the Copilot…" autocomplete="off"><div id="palList" style="max-height:50vh;overflow:auto"></div></div></div>
+
+<script>
+/*__JS__*/
+</script>
+</body>
+</html>

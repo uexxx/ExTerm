@@ -1,0 +1,63 @@
+{
+  "v": 1,
+  "name": "Strong trend pullback",
+  "desc": "ADX shows a strong trend, price dips to the 20 EMA while above the 50 EMA.",
+  "author": "ExTerm",
+  "tags": [
+    "trend",
+    "pullback"
+  ],
+  "entry": {
+    "all": [
+      {
+        "a": {
+          "k": "adx",
+          "n": 14
+        },
+        "op": ">",
+        "b": {
+          "k": "const",
+          "v": 25
+        }
+      },
+      {
+        "a": {
+          "k": "low"
+        },
+        "op": "<=",
+        "b": {
+          "k": "ema",
+          "n": 20
+        }
+      },
+      {
+        "a": {
+          "k": "price"
+        },
+        "op": ">",
+        "b": {
+          "k": "ema",
+          "n": 50
+        }
+      }
+    ]
+  },
+  "exit": {
+    "any": [
+      {
+        "a": {
+          "k": "price"
+        },
+        "op": "<",
+        "b": {
+          "k": "ema",
+          "n": 50
+        }
+      }
+    ]
+  },
+  "risk": {
+    "sl": 5,
+    "tp": 15
+  }
+}
