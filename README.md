@@ -1,17 +1,17 @@
 <div align="center">
 
-# ExTerm v15.2
+# ExTerm v15.3
 
 ### Local-first trading workstation for US stocks, crypto spot & perps and on-chain DEX tokens, in one browser tab.
 
 **Paper trading only.** Nothing in ExTerm signs or sends a real order.
 
-<img src="docs/screenshots/v15.2-hero-chart.png" alt="ExTerm v15.2 in the Obsidian & Gold theme: BTC-USD chart with a draggable TP1–TP3 ladder, anchored VWAP bands, future event markers and the bar-timer ring" width="100%">
+<img src="docs/screenshots/v15.3-hero-chart.png" alt="ExTerm v15.3 in the Obsidian & Gold theme: BTC-USD chart with a draggable TP1–TP3 ladder, anchored VWAP bands, future event markers and the bar-timer ring" width="100%">
 
-**[Quickstart](#-2-second-quickstart)** · **[What's new](#-whats-new-in-v152)** · **[Features](#-whats-in-v151)** · **[Security](#-security)** · **[Verify a build](#-how-to-verify-official-builds)** · **[License](#-license)** · **[Brand policy](#-brand--logo-policy)**
+**[Quickstart](#-2-second-quickstart)** · **[What's new](#-whats-new-in-v153)** · **[v15.2](#-whats-new-in-v152)** · **[Features](#-whats-in-v151)** · **[Security](#-security)** · **[Verify a build](#-how-to-verify-official-builds)** · **[License](#-license)** · **[Brand policy](#-brand--logo-policy)**
 
 <p>
-  <a href="https://github.com/uexxx/ExTerm/releases/latest"><img src="https://img.shields.io/badge/download-v15.2-D4AF37?style=for-the-badge" alt="Download v15.2"></a>
+  <a href="https://github.com/uexxx/ExTerm/releases/latest"><img src="https://img.shields.io/badge/download-v15.3-D4AF37?style=for-the-badge" alt="Download v15.3"></a>
   <img src="https://img.shields.io/badge/indicators-137-D4AF37?style=for-the-badge" alt="137 indicators">
   <img src="https://img.shields.io/badge/backtestable%20strategies-128-CBD5E1?style=for-the-badge" alt="128 backtestable strategies">
   <img src="https://img.shields.io/badge/languages-32%20%2B%20ISO--639-CBD5E1?style=for-the-badge" alt="32 languages plus ISO-639 fallback">
@@ -49,6 +49,32 @@ Useful flags: `python3 serve.py 9000` (other port) · `--no-browser` · `--docto
 
 ---
 
+## 🧬 What's new in v15.3
+
+**Institutional Quant Lab, still uncluttered.** The Lab tab gains one 🧬 **Quant Lab Pro** pill. Inside, you pick a
+strategy (every built-in strategy plus your No-Code specs), run one backtest and get a clickable equity curve. The eight
+institutional tools sit in collapsed accordions and render only when you open them. Heavy runs go to a background Web
+Worker, so the UI stays responsive.
+
+<img src="docs/screenshots/v15.3-quant-lab.png" alt="Quant Lab Pro in the Lab tab: strategy picker, equity curve with drawdown and peak markers, and an Auto-Evolve run on simulated demo prices where every mutation is rejected by the walk-forward gate" width="100%">
+
+| Tool | What it answers |
+|---|---|
+| 🧬 **Auto-Evolve** | Mutates parameters and robustness filters (trend EMA, ATR stop, cooldown, time stop) over several generations. Survivors are ranked by **out-of-sample Sharpe + Calmar**; any mutation that loses money in a walk-forward window or grades D/F in the **17-test Validation Lab** is rejected. |
+| 💧 **Fragility Break-Point** | Widens spreads with volatility, adds square-root market impact for your size and partial fills above a participation cap, then shows the **exact friction multiplier where the strategy flips unprofitable**. |
+| ⏳ **Crisis Time Machine** | One-click replays of the **2020 Liquidity Flush**, **2022 Crypto Deleveraging** and **FOMC rate-shock** windows, plus PnL and drawdown attribution across **Bull Trend, Bear Trend, Low-Vol Chop and High-Vol Panic**. |
+| 🎯 **Feature Kill-Switch** | Scores every entry on session, RVOL, ATR percentile, RSI and VWAP distance, surfaces the **top 3 drivers** of wins vs losses, and lets you toggle filters that recalculate the equity curve instantly. |
+| ⚖ **Dynamic Sizing & Prop-Firm Odds** | Replays the same trades under **Fixed Fractional, Half-Kelly, ATR volatility-targeting and Equity-Curve Trading**, with Monte Carlo odds of passing a **$50k / $100k** evaluation without breaching daily or trailing drawdown limits. |
+| 🌀 **Synthetic Paths** | Hundreds to thousands of block-bootstrap paths that keep fat tails and volatility clustering but reshuffle history (optional adversarial noise), so an edge has to come from market behaviour, not memorised dates. |
+| 🔍 **Equity-Curve Inspector** | Click any point, drawdown dip or peak on the curve to open that trade on its candles with entry / exit pins, **MFE / MAE** and the indicator snapshot, then jump to the same candle on the chart. |
+| 👻 **Promote to Shadow Bot** | Validated strategies (grade A–C) are packaged with their strategy ID, evolved parameters and risk limits and tick in the **Grok dry-run shadow mode** on live bars. Zero capital at risk. |
+
+<img src="docs/screenshots/v15.3-quant-lab-stress.png" alt="Quant Lab Pro stress tools: Fragility Break-Point meter with the friction curve and Crisis Time Machine replays with regime attribution" width="100%">
+
+<img src="docs/screenshots/v15.3-quant-lab-inspector.png" alt="Equity-Curve Inspector: a single trade on its candles with entry and exit pins, MFE, MAE and the indicator snapshot" width="100%">
+
+---
+
 ## 🌐 What's new in v15.2
 
 **Powerful without overwhelm.** v15.2 adds 44 workstation upgrades, but the default screen only gains three things: a
@@ -83,7 +109,7 @@ straddles, strangles, iron condors) with live breakevens and a theta-decay curve
 
 ### 🔀 Markets, scanners & DEX
 
-<img src="docs/screenshots/v15.2-dex.png" alt="On-chain DEX mode with simulated demo pools: 1h candles, watchlist, token card and the paper order ticket" width="100%">
+<img src="docs/screenshots/v15.3-dex.png" alt="On-chain DEX mode with simulated demo pools: candles, watchlist, token card and the paper order ticket" width="100%">
 
 Market-swap memory (timeframe, indicators and risk % per market) · **formula scanner** (`RVOL > 3 AND Price > VWAP`,
 parsed, never `eval`'d) saved as tabs · DEX safety strip (mint, freeze, top-10 holders, LP lock) · smart-money leaderboard
@@ -101,9 +127,9 @@ correlation) · parameter sensitivity heatmap (robust plateau vs overfit spike) 
 
 ### ⚡ Grok, copilot & World
 
-<img src="docs/screenshots/v15.2-grok.png" alt="Grok tab: daemon health and latency strip above the plain-English rule compiler with dry-run shadow mode" width="100%">
+<img src="docs/screenshots/v15.3-grok.png" alt="Grok tab: daemon health strip above the plain-English rule compiler with dry-run shadow mode" width="100%">
 
-<img src="docs/screenshots/v15.2-world.png" alt="World tab: breaking-news and macro feed with severity counts, filters and the Macro Shield level (demo headlines)" width="100%">
+<img src="docs/screenshots/v15.3-world.png" alt="World tab: breaking-news and macro feed with severity counts, filters and the Macro Shield level (demo headlines)" width="100%">
 
 Plain-English **rule compiler** → backtestable workflow JSON · ask the 3-agent Copilot about a selected candle range ·
 optional **devil's advocate** A–F grade before a bracket order · World headlines tagged by impact (OIL/XLE, NVDA/SMH,

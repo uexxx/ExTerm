@@ -2,6 +2,29 @@
 
 ExTerm (formerly NovaTerm) is paper trading only in every version: nothing signs or sends a real order.
 
+## v15.3 — ExTerm — 14 Nov 2026
+
+### Institutional Quant Lab: 🧬 Quant Lab Pro (`src/v153core.js`, `src/v153.js`)
+- Lab tab gains one 🧬 **Quant Lab Pro** pill. The panel shows a strategy picker (every built-in strategy plus your No-Code specs), one backtest and a clickable equity curve; the eight tools below sit in collapsed accordions that render only when opened.
+- **Auto-Evolve**: genetic mutation and crossover of parameters and robustness filters (trend EMA, ATR stop, cooldown, time stop) over several generations in the background Web Worker. Survivors are ranked by out-of-sample Sharpe + Calmar on the newest 50% of history; mutations that lose money in either walk-forward window, or grade D/F in the 17-test Validation Lab, are rejected and counted. Seeded and deterministic.
+- **Fragility Break-Point meter**: spread widening scaled by each trade's ATR regime, square-root market impact for your order size versus bar dollar volume, and partial fills above a bar-participation cap. Reports the exact friction multiplier (and spread in bps) where the strategy flips unprofitable.
+- **Crisis Time Machine**: one-click calibrated replays of the 2020 Liquidity Flush, 2022 Crypto Deleveraging and FOMC Rate-Shock windows (depth, duration and volatility rebuilt from the market's own returns, so it works offline), plus PnL and drawdown attribution across Bull Trend, Bear Trend, Low-Vol Chop and High-Vol Panic.
+- **Feature Kill-Switch**: every trade's entry is scored on session / UTC hour, RVOL, ATR percentile, RSI and VWAP distance; the top 3 drivers separating winners from losers come with one-click filters that recalculate the equity curve instantly.
+- **Dynamic Sizing & Prop-Firm Odds**: the same trade list under Fixed Fractional (1% risk), Half-Kelly, ATR volatility-targeting and Equity-Curve Trading (half size below the 20-trade equity MA), with 2,000-run Monte Carlo pass probabilities for $50k / $100k evaluations (profit target, daily loss limit, trailing drawdown).
+- **Synthetic Paths**: 200–2,000 stationary block-bootstrap paths that keep fat tails and volatility clustering but reshuffle the order of history, with optional Student-t adversarial noise, a market-physics check (volatility, excess kurtosis, clustering) and a verdict on whether the edge survives.
+- **Equity-Curve Inspector**: click any point, the deepest drawdown dip or a peak on the equity curve to open that trade on its candles with entry / exit pins, MFE / MAE, the indicator snapshot at the signal bar and a jump to the same candle on the chart.
+- **Promote to Grok Shadow Bot**: validated strategies (grade A–C) are packaged with the exact strategy ID, evolved parameters, filters and capped risk limits, then tick in the Grok tab's dry-run shadow mode on every new closed bar. Hypothetical fills only; balances are never touched. Packages are whitelisted and re-validated on load.
+
+### Platform
+- Nine new UI strings translated into all 32 named languages (i18n key coverage test included).
+- Launcher version 15.3.
+
+### Tests
+- `test/v153.test.js` (46 unit checks incl. hostile input) and `test/v153_e2e.js` (33 headless-Chrome checks covering all eight tools, the shadow-bot pipeline, XSS, i18n, strict CSP, no inline handlers and phone width), both wired into `test/run-all.ps1` and `test/run-all.sh`.
+
+### Docs
+- Fresh 1440×900 headless-Chrome screenshots: hero chart, Quant Lab Pro (Auto-Evolve, stress tools, trade inspector), DEX mode (simulated demo pools), Grok tab with a promoted shadow bot, and World tab (demo headlines).
+
 ## v15.2 — ExTerm — 14 Nov 2026
 
 ### First-launch language gate + i18n engine

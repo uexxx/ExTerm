@@ -53,7 +53,7 @@ try:
     TOKEN = re.search(r'name="nt-token" content="([^"]+)"', page).group(1); H = {"X-ExTerm": TOKEN}
     ok("/api/health and /api/integrity need the session token", req("/api/health", {})[0] == 403 and req("/api/integrity", {"X-ExTerm": "nope"})[0] == 403)
     c, b = req("/api/health", H); j = json.loads(b)
-    ok("/api/health: version 15.2, uptime, cache counters, bot heartbeats", c == 200 and j["version"] == "15.2" and j["uptime"] >= 0 and set(j["cache"]) == {"hits", "total"} and set(j["bots"]) == {"total", "active", "lastBar"}, j)
+    ok("/api/health: current version, uptime, cache counters, bot heartbeats", c == 200 and j["version"] == serve.VERSION and j["uptime"] >= 0 and set(j["cache"]) == {"hits", "total"} and set(j["bots"]) == {"total", "active", "lastBar"}, j)
     c, b = req("/api/integrity", H); j = json.loads(b)
     ok("/api/integrity: served build matches SHA256SUMS", c == 200 and all(x["ok"] for x in j["files"]), j)
     c, _ = req("/api/notify", H, json.dumps({"text": "card test", "png": base64.b64encode(b"GIF89a" + b"0" * 40).decode()}).encode())

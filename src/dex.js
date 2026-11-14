@@ -178,7 +178,7 @@ const OC = (() => {
     return SIM.map(([s, n, p], i) => {
       const sym = 'oc:sim:' + s + 'SIM' + i; O.simPx[sym] = O.simPx[sym] || p;
       const r = prng(hash(s) ^ Math.floor(Date.now() / 3.6e6));
-      O.register(sym, { s, n: n + ' (simulated)', q: 'SOL', dex: 'simulated' }, { price: O.simPx[sym], ch24: (r() - 0.45) * 60, ch1h: (r() - 0.5) * 12, ch5m: (r() - 0.5) * 3, liq: 40000 + r() * 900000, mcap: 2e5 + r() * 4e7, vol24: 5e4 + r() * 3e6, buys24: 200 + Math.round(r() * 4000), sells24: 150 + Math.round(r() * 3500), created: Date.now() - r() * 30 * 864e5 });
+      O.register(sym, { s, n: n + ' (simulated)', q: 'USDC', dex: 'simulated' }, { price: O.simPx[sym], ch24: (r() - 0.45) * 60, ch1h: (r() - 0.5) * 12, ch5m: (r() - 0.5) * 3, liq: 40000 + r() * 900000, mcap: 2e5 + r() * 4e7, vol24: 5e4 + r() * 3e6, buys24: 200 + Math.round(r() * 4000), sells24: 150 + Math.round(r() * 3500), created: Date.now() - r() * 30 * 864e5 });
       return sym;
     });
   }

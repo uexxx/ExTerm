@@ -44,6 +44,44 @@ const I18N = (() => {
   I.RTL = new Set(['ar', 'he', 'fa', 'ur', 'yi', 'ps', 'sd', 'ug', 'dv', 'ku']);
   I.LANGS = RAW.map(([code, native, english, flag]) => ({ code, native, english, flag, rtl: I.RTL.has(code.split('-')[0]) }));
   I.DICT = Object.fromEntries(RAW.map(([code, , , , s]) => [code, Object.fromEntries(s.split('|').map((v, k) => [I.KEYS[k], v]))]));
+  // v15.3 Quant Lab Pro strings: appended keys, same '|' order as K153 (kept separate so the shell rows stay readable)
+  const K153 = ['lab.q153', 'q153.evolve', 'q153.fragility', 'q153.crisis', 'q153.kill', 'q153.sizing', 'q153.synth', 'q153.inspect', 'q153.promote'];
+  const RAW153 = {
+    en: 'Quant Lab Pro|Auto-Evolve|Fragility Break-Point|Crisis Time Machine|Feature Kill-Switch|Dynamic Sizing & Prop-Firm Odds|Synthetic Paths|Equity-Curve Inspector|Promote to Shadow Bot',
+    es: 'Laboratorio Quant Pro|Auto-Evolución|Punto de quiebre por fragilidad|Máquina del tiempo de crisis|Interruptor de filtros|Tamaño dinámico y probabilidad prop-firm|Trayectorias sintéticas|Inspector de curva de capital|Promover a bot sombra',
+    'zh-CN': '量化实验室 Pro|自动进化|脆弱性临界点|危机时光机|特征熔断过滤|动态仓位与自营考核通过率|合成路径|权益曲线检查器|升级为影子机器人',
+    'zh-TW': '量化實驗室 Pro|自動演化|脆弱性臨界點|危機時光機|特徵熔斷過濾|動態部位與自營考核通過率|合成路徑|權益曲線檢查器|升級為影子機器人',
+    ja: 'クオンツラボ Pro|自動進化|脆弱性ブレークポイント|危機タイムマシン|特徴キルスイッチ|動的サイジングとプロップ合格率|合成パス|資産曲線インスペクター|シャドーボットに昇格',
+    ko: '퀀트 랩 Pro|자동 진화|취약성 임계점|위기 타임머신|피처 킬 스위치|동적 포지션 크기와 프롭 통과 확률|합성 경로|자산 곡선 검사기|섀도 봇으로 승격',
+    hi: 'क्वांट लैब प्रो|ऑटो-इवॉल्व|नाज़ुकता ब्रेक-पॉइंट|संकट टाइम मशीन|फ़ीचर किल-स्विच|डायनेमिक साइज़िंग और प्रॉप-फ़र्म संभावना|सिंथेटिक पथ|इक्विटी-कर्व निरीक्षक|शैडो बॉट में प्रमोट करें',
+    ar: 'مختبر الكمّي برو|التطور التلقائي|نقطة انكسار الهشاشة|آلة زمن الأزمات|مفتاح إيقاف الميزات|التحجيم الديناميكي واحتمال اجتياز شركات التمويل|مسارات اصطناعية|فاحص منحنى رأس المال|ترقية إلى روبوت الظل',
+    pt: 'Laboratório Quant Pro|Autoevolução|Ponto de ruptura de fragilidade|Máquina do tempo de crises|Filtro de desligamento|Dimensionamento dinâmico e chance na mesa proprietária|Trajetórias sintéticas|Inspetor da curva de capital|Promover a bot sombra',
+    fr: 'Labo Quant Pro|Auto-évolution|Point de rupture de fragilité|Machine à remonter les crises|Filtres coupe-circuit|Taille dynamique et chances prop-firm|Trajectoires synthétiques|Inspecteur de courbe de capital|Promouvoir en bot fantôme',
+    de: 'Quant-Labor Pro|Auto-Evolution|Fragilitäts-Bruchpunkt|Krisen-Zeitmaschine|Merkmal-Notschalter|Dynamische Positionsgröße & Prop-Firm-Chance|Synthetische Pfade|Kapitalkurven-Inspektor|Zum Schatten-Bot befördern',
+    ru: 'Квант-лаборатория Pro|Автоэволюция|Точка излома хрупкости|Машина времени кризисов|Стоп-фильтры признаков|Динамический размер позиции и шанс проп-фирмы|Синтетические траектории|Инспектор кривой капитала|Перевести в теневого бота',
+    it: 'Laboratorio Quant Pro|Auto-evoluzione|Punto di rottura della fragilità|Macchina del tempo delle crisi|Filtri kill-switch|Dimensionamento dinamico e probabilità prop-firm|Percorsi sintetici|Ispettore della curva di capitale|Promuovi a bot ombra',
+    tr: 'Kuant Laboratuvarı Pro|Otomatik Evrim|Kırılganlık Kırılma Noktası|Kriz Zaman Makinesi|Özellik Kapatma Anahtarı|Dinamik Pozisyon ve Prop-Firma Olasılığı|Sentetik Yollar|Sermaye Eğrisi Denetçisi|Gölge Bota Yükselt',
+    vi: 'Phòng Quant Pro|Tự tiến hóa|Điểm gãy độ mong manh|Cỗ máy thời gian khủng hoảng|Công tắc lọc đặc trưng|Khối lượng động & xác suất quỹ prop|Đường giá tổng hợp|Trình kiểm tra đường vốn|Nâng thành bot bóng',
+    th: 'แล็บควอนต์ Pro|วิวัฒน์อัตโนมัติ|จุดแตกหักความเปราะบาง|ไทม์แมชชีนวิกฤต|สวิตช์ตัดฟีเจอร์|ขนาดสถานะแบบไดนามิกและโอกาสผ่านพร็อพเฟิร์ม|เส้นทางสังเคราะห์|ตัวตรวจเส้นทุน|เลื่อนเป็นบอทเงา',
+    id: 'Lab Kuant Pro|Evolusi Otomatis|Titik Patah Kerapuhan|Mesin Waktu Krisis|Saklar Pemutus Fitur|Ukuran Dinamis & Peluang Prop-Firm|Jalur Sintetis|Inspektur Kurva Ekuitas|Promosikan ke Bot Bayangan',
+    ms: 'Makmal Kuant Pro|Evolusi Automatik|Titik Patah Kerapuhan|Mesin Masa Krisis|Suis Pemutus Ciri|Saiz Dinamik & Peluang Prop-Firm|Laluan Sintetik|Pemeriksa Lengkung Ekuiti|Naikkan ke Bot Bayang',
+    pl: 'Laboratorium Quant Pro|Auto-ewolucja|Punkt załamania kruchości|Wehikuł czasu kryzysów|Wyłącznik cech|Dynamiczna wielkość pozycji i szansa prop-firmy|Ścieżki syntetyczne|Inspektor krzywej kapitału|Awansuj na bota-cień',
+    nl: 'Quant Lab Pro|Auto-evolutie|Breekpunt van fragiliteit|Crisis-tijdmachine|Kenmerk-noodschakelaar|Dynamische positiegrootte & prop-firm-kans|Synthetische paden|Vermogenscurve-inspecteur|Promoveren tot schaduwbot',
+    sv: 'Kvantlabb Pro|Autoevolution|Bräcklighetens brytpunkt|Kristidsmaskin|Funktionsbrytare|Dynamisk positionsstorlek & prop-firm-chans|Syntetiska banor|Kapitalkurvsinspektör|Befordra till skuggbot',
+    uk: 'Квант-лабораторія Pro|Автоеволюція|Точка зламу крихкості|Машина часу криз|Стоп-фільтри ознак|Динамічний розмір позиції та шанс проп-фірми|Синтетичні траєкторії|Інспектор кривої капіталу|Перевести в тіньового бота',
+    bn: 'কোয়ান্ট ল্যাব প্রো|অটো-ইভলভ|ভঙ্গুরতা ব্রেক-পয়েন্ট|সংকট টাইম মেশিন|ফিচার কিল-সুইচ|ডায়নামিক সাইজিং ও প্রপ-ফার্ম সম্ভাবনা|সিন্থেটিক পথ|ইক্যুইটি-কার্ভ পরিদর্শক|শ্যাডো বটে উন্নীত করুন',
+    ur: 'کوانٹ لیب پرو|خودکار ارتقا|نزاکت بریک پوائنٹ|بحران ٹائم مشین|فیچر کِل سوئچ|متحرک سائزنگ اور پراپ فرم امکان|مصنوعی راستے|ایکویٹی کرو معائنہ کار|شیڈو بوٹ میں ترقی دیں',
+    fa: 'آزمایشگاه کوانت پرو|تکامل خودکار|نقطه شکست شکنندگی|ماشین زمان بحران|کلید قطع ویژگی|اندازه پویا و احتمال قبولی پراپ‌فرم|مسیرهای مصنوعی|بازرس منحنی سرمایه|ارتقا به ربات سایه',
+    he: 'מעבדת קוונט Pro|אבולוציה אוטומטית|נקודת שבירה של שבריריות|מכונת זמן למשברים|מתג ניתוק תכונות|גודל פוזיציה דינמי וסיכוי פרופ-פירם|מסלולים סינתטיים|בודק עקומת הון|קידום לבוט צל',
+    el: 'Εργαστήριο Quant Pro|Αυτο-εξέλιξη|Σημείο θραύσης ευθραυστότητας|Μηχανή του χρόνου κρίσεων|Διακόπτης φίλτρων|Δυναμικό μέγεθος & πιθανότητα prop-firm|Συνθετικές διαδρομές|Επιθεωρητής καμπύλης κεφαλαίου|Προαγωγή σε bot σκιάς',
+    cs: 'Kvantová laboratoř Pro|Autoevoluce|Bod zlomu křehkosti|Stroj času krizí|Vypínač příznaků|Dynamická velikost pozice a šance prop-firmy|Syntetické trajektorie|Inspektor křivky kapitálu|Povýšit na stínového bota',
+    ro: 'Laborator Quant Pro|Auto-evoluție|Punct de rupere al fragilității|Mașina timpului crizelor|Comutator de filtre|Dimensionare dinamică și șanse prop-firm|Traiectorii sintetice|Inspector al curbei de capital|Promovează la bot umbră',
+    hu: 'Kvant labor Pro|Auto-evolúció|Törékenységi töréspont|Válság-időgép|Jellemző-vészkapcsoló|Dinamikus pozícióméret és prop-cég esély|Szintetikus pályák|Tőkegörbe-vizsgáló|Előléptetés árnyékbottá',
+    fil: 'Quant Lab Pro|Auto-Evolve|Break-Point ng Karupukan|Time Machine ng Krisis|Kill-Switch ng Feature|Dynamic Sizing at Tsansa sa Prop-Firm|Mga Sintetikong Landas|Inspektor ng Equity Curve|I-promote sa Shadow Bot',
+    sw: 'Maabara ya Quant Pro|Mageuzi ya Kiotomatiki|Kiwango cha Kuvunjika|Mashine ya Wakati ya Migogoro|Swichi ya Kuzima Vipengele|Ukubwa Unaobadilika na Uwezekano wa Prop-Firm|Njia Bandia|Mkaguzi wa Mkondo wa Mtaji|Pandisha hadi Boti Kivuli',
+  };
+  for (const [code, s] of Object.entries(RAW153)) if (I.DICT[code]) s.split('|').forEach((v, k) => { I.DICT[code][K153[k]] = v; });
+  I.KEYS.push(...K153);
   // every ISO-639-1 code: selectable, English text, native name from Intl.DisplayNames where the runtime has it
   I.ISO = 'aa ab ae af ak am an ar as av ay az ba be bg bi bm bn bo br bs ca ce ch co cr cs cu cv cy da de dv dz ee el en eo es et eu fa ff fi fj fo fr fy ga gd gl gn gu gv ha he hi ho hr ht hu hy hz ia id ie ig ii ik io is it iu ja jv ka kg ki kj kk kl km kn ko kr ks ku kv kw ky la lb lg li ln lo lt lu lv mg mh mi mk ml mn mr ms mt my na nb nd ne ng nl nn no nr nv ny oc oj om or os pa pi pl ps pt qu rm rn ro ru rw sa sc sd se sg si sk sl sm sn so sq sr ss st su sv sw ta te tg th ti tk tl tn to tr ts tt tw ty ug uk ur uz ve vi vo wa wo xh yi yo za zh zu'.split(' ');
   const NAMED = new Map(I.LANGS.map((l) => [l.code, l]));

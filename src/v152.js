@@ -467,7 +467,7 @@ const V152UI = (() => {
     const host = $('#tab-grok'); if (!host || $('#v152Tele')) return;
     const tele = document.createElement('div'); tele.id = 'v152Tele'; tele.className = 'v152-tele'; tele.setAttribute('aria-live', 'polite'); tele.innerHTML = '<span class="note">Daemon health: connecting…</span>'; host.prepend(tele);
     const det = document.createElement('details'); det.className = 'panel v152-grok'; det.id = 'v152Nl';
-    det.innerHTML = `<summary>🧠 Plain-English bot rules → backtestable workflow</summary><div class="pb"><textarea class="in" id="v152NlIn" rows="2" maxlength="600" aria-label="Rules in plain English">Buy SOL when RSI below 30 and price above EMA 200, sell when RSI above 70, stop 2%, take profit 6%</textarea>
+    det.innerHTML = `<summary>🧠 Plain-English bot rules → backtestable workflow</summary><div class="pb"><textarea class="in" id="v152NlIn" rows="2" maxlength="600" aria-label="Rules in plain English">Buy BTC when RSI below 30 and price above EMA 200, sell when RSI above 70, stop 2%, take profit 6%</textarea>
       <div class="row v151-row"><button type="button" class="btn sm pri" data-nl="compile">Compile</button><button type="button" class="btn sm" data-nl="bt">Backtest</button><button type="button" class="btn sm" data-nl="compose">Open in composer</button><label class="chk"><input type="checkbox" id="v152Shadow" ${cfg().shadow ? 'checked' : ''}> 👻 Dry-run shadow mode on live ticks</label></div><div id="v152NlOut"></div><div id="v152ShadowLog"></div></div>`;
     tele.after(det);
     const compile = () => { const r = V152.nlCompile($('#v152NlIn').value), out = $('#v152NlOut'); if (!r.ok) { out.innerHTML = `<div class="note dn">${esc(r.error)}</div>`; return null; } out.innerHTML = `<textarea class="in mono" rows="6" readonly aria-label="Workflow JSON">${esc(JSON.stringify(r.workflow, null, 1))}</textarea>`; return r.workflow; };
@@ -561,7 +561,7 @@ const V152UI = (() => {
     const day = new Date().toDateString(); setTimeout(() => { const c = cfg(); if (c.autoBrief && c.briefDay !== day && !navigator.webdriver) { c.briefDay = day; save(); A.brief(); } }, 9000);
     setInterval(() => { const c = cfg(), d = new Date(); if (c.autoBrief && c.recapDay !== d.toDateString() && d.getHours() * 60 + d.getMinutes() >= 16 * 60 + 5) { c.recapDay = d.toDateString(); save(); A.recap(); } }, 60000);
   };
-  U.cfg = cfg; U.A = A; U.R = R; U.decorateWatch = decorateWatch;
+  U.cfg = cfg; U.A = A; U.R = R; U.decorateWatch = decorateWatch; U.renderGrokCard = renderGrokCard;
   return U;
 })();
 // wire up after boot (ST is loaded, the Markets chart and the palette exist)

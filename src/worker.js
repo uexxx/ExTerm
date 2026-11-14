@@ -32,6 +32,12 @@ self.onmessage = (e) => {
         post({ prog: k + 1, total: ids.length, phase: st.name });
       });
       post({ done: true, rows });
+    } else if (typeof V153 !== 'undefined' && (m.type === 'evolve' || m.type === 'synth' || m.type === 'crisis')) { // v15.3 Quant Lab Pro engines
+      const st = NT.strategies[m.strat], pg = (k, tot, label) => post({ prog: k, total: tot, phase: label });
+      if (!st) throw new Error('unknown strategy');
+      if (m.type === 'evolve') post({ done: true, ev: V153.evolve(m.candles, st, m.params, m.o, pg) });
+      else if (m.type === 'synth') post({ done: true, syn: V153.synthTest(m.candles, st, m.params, m.o, pg) });
+      else post({ done: true, crises: Object.keys(V153.CRISES).map((k) => V153.crisisTest(m.candles, st, m.params, k, m.o)) });
     }
   } catch (err) { post({ done: true, error: err.message || String(err) }); }
 };

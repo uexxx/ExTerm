@@ -1188,3 +1188,16 @@ body.blind #qSym,body.blind .quote,body.blind #watchList,body.blind #ticker,body
 body.rtl .v152-drawer{right:auto;left:0;border-left:0;border-right:1px solid var(--line2);transform:translateX(-102%)}body.rtl .v152-drawer.on{transform:none}
 body.rtl #chartHost,body.rtl canvas{direction:ltr}
 @media (max-width:640px){.lg-card-wrap{padding:16px}.lg-grid{grid-template-columns:repeat(auto-fill,minmax(130px,1fr))}.v152-drawer{top:0}.v152-dex{max-width:calc(100% - 20px);top:34px}}
+
+/* ── v15.3 Quant Lab Pro: collapsed accordions, fragility meter, clickable equity curve, trade inspector ── */
+.q153 details.q153-sec{border:1px solid var(--line);border-radius:12px;margin:8px 0;background:var(--panel2)}
+.q153 details.q153-sec>summary{cursor:pointer;padding:10px 12px;font-weight:650}
+.q153 details.q153-sec>summary .note{font-weight:400;margin-inline-start:6px}
+.q153 details.q153-sec[open]>summary{border-bottom:1px solid var(--line)}
+.q153-curve{height:150px;cursor:crosshair}.q153-curve circle{cursor:pointer}.q153-curve circle:focus{outline:2px solid var(--acc)}
+.q153-meter{position:relative;height:14px;border-radius:7px;margin:12px 0 4px;background:linear-gradient(90deg,var(--dn) 0 10%,var(--amber) 10% 25%,var(--up) 25% 100%)}
+.q153-meter i{position:absolute;top:-5px;width:5px;height:24px;border-radius:3px;background:var(--text);box-shadow:0 0 0 2px var(--bg);transform:translateX(-50%)}
+.q153-scale{display:flex;justify-content:space-between;font-size:10.5px;color:var(--mut)}
+.q153-cnd{width:100%;height:220px;border:1px solid var(--line);border-radius:8px;background:var(--bg)}
+.q153-scroll{overflow-x:auto;max-width:100%}.q153-trades{max-height:260px;overflow-y:auto}
+.q153-drv{display:block;margin:4px 0}
