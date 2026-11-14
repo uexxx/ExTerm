@@ -17,6 +17,10 @@
   <img src="https://img.shields.io/badge/backtestable%20strategies-128-CBD5E1?style=for-the-badge" alt="128 backtestable strategies">
   <img src="https://img.shields.io/badge/money%20at%20risk-%240%20(paper)-2fd08a?style=for-the-badge" alt="paper trading only">
 </p>
+<p>
+  <a href="https://www.instagram.com/exterm.labs"><img src="https://img.shields.io/badge/Instagram-@exterm.labs-E4405F?style=for-the-badge&logo=instagram&logoColor=white" alt="Instagram @exterm.labs"></a>
+  <a href="https://x.com/ExTermLabs"><img src="https://img.shields.io/badge/X%20(Twitter)-@ExTermLabs-000000?style=for-the-badge&logo=x&logoColor=white" alt="X / Twitter @ExTermLabs"></a>
+</p>
 
 </div>
 
@@ -164,9 +168,10 @@ needs Node 18+, Playwright and Chrome).
 
 ## 📜 License
 
-ExTerm is free software under the **[GNU Affero General Public License v3.0](LICENSE)**. You may use, study, modify and
-redistribute it. If you distribute a modified version, or let people use one over a network (for example a hosted web
-wrapper), you must release its complete source under AGPL-3.0 and keep the copyright notices.
+ExTerm's source code is licensed under the **[GNU Affero General Public License v3.0](LICENSE)**. You may run, inspect
+and modify it under the terms of that license. If you distribute a modified version, or let people use one over a network
+(for example a hosted web wrapper), you must release its complete source under AGPL-3.0 and keep the copyright and
+license notices. The ExTerm name and logo are **not** licensed; see the brand policy below.
 
 Copyright (c) 2026 ExTerm Labs (@exterm.labs) · Licensed under GNU AGPL-3.0 · https://github.com/uexxx/ExTerm
 
@@ -175,6 +180,13 @@ Copyright (c) 2026 ExTerm Labs (@exterm.labs) · Licensed under GNU AGPL-3.0 · 
 The names **ExTerm**, **ExTerm.labs**, **@exterm.labs** and the **Candle X** candlestick-and-diamond mark are reserved and
 are not covered by the AGPL. Forks must use their own name and logo and credit <https://github.com/uexxx/ExTerm>.
 Details: **[`BRAND_GUIDELINES.md`](BRAND_GUIDELINES.md)**.
+
+## 📣 Follow ExTerm Labs
+
+- **Instagram:** [@exterm.labs](https://www.instagram.com/exterm.labs): demos, new features and release drops
+- **X (Twitter):** [@ExTermLabs](https://x.com/ExTermLabs): updates and changelogs
+
+Official accounts are only the ones above and <https://github.com/uexxx/ExTerm>.
 
 ---
 
