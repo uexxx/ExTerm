@@ -354,7 +354,7 @@ const V152 = (() => {
     return null;
   };
   V.nlCompile = (text) => {
-    const s = String(text || '').slice(0, 600).replace(/\s+/g, ' ').trim(), lc = s.toLowerCase(); if (s.length < 8) return { ok: false, error: 'Describe a rule, e.g. "buy SOL when RSI below 30 and price above EMA 200, sell when RSI above 70, stop 2%, target 6%"' };
+    const s = String(text || '').slice(0, 600).replace(/\s+/g, ' ').trim(), lc = s.toLowerCase(); if (s.length < 8) return { ok: false, error: 'Describe a rule, e.g. "buy ETH when RSI below 30 and price above EMA 200, sell when RSI above 70, stop 2%, target 6%"' };
     const grab = (rx) => { const m = rx.exec(lc); return m ? m[1] : ''; };
     const entryTxt = grab(/(?:buy|long|enter)[^,;.]*?\bwhen\b(.+?)(?:[,;.]\s*(?:and\s+)?(?:sell|exit|close)|[,;.]\s*(?:stop|sl|take|target|tp)|$)/), exitTxt = grab(/(?:sell|exit|close)[^,;.]*?\bwhen\b(.+?)(?:[,;.]|$)/);
     const split = (t) => { const logic = /\bor\b/.test(t) && !/\band\b/.test(t) ? 'OR' : 'AND'; return { logic, conds: t.split(logic === 'OR' ? /\bor\b/ : /\band\b/).map(condOf).filter(Boolean).slice(0, 8) }; };

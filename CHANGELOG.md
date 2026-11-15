@@ -2,6 +2,42 @@
 
 ExTerm (formerly NovaTerm) is paper trading only in every version: nothing signs or sends a real order.
 
+## v15.4 — ExTerm Unified Master Edition — 14 Nov 2026
+
+### Learn ExTerm: Interactive Academy (`src/learn_academy.js`, logic in `src/v154core.js`)
+- One translated **🎓 Learn ExTerm** button in the top functions bar, right beside Settings, opens the Obsidian & Gold hero **Learn Our Terminal — Interactive ExTerm Academy**. `LEARN_MOUNT_TARGET = 'topbar' | 'settings'` moves it into Settings → Documentation & Academy by changing one constant.
+- 35 lessons across 9 categories: Charting & Visual Execution, Order Flow & 0DTE Derivatives, Scanners & On-Chain DEX, Institutional Quant Lab (Auto-Evolve, Crisis Time Machine, Slippage Fragility, Kelly / ATR Sizing, Visual Trade Inspector, Grok Shadow Bot), Grok Bots & 3-Agent Copilot, World Macro Shield, Prop-Firm Gauntlets & Trade Journal, On-Chain Perp & Smart-Money Leaderboards, and Security & External Execution Bridges. Each card has What It Does, Step-by-Step Workflow, Pro Tip / Risk Guardrail, Keyboard Shortcut and **Try It Live →**, which navigates to the exact tab, Lab section or drawer and pulses a gold spotlight ring.
+- "How do I…" fuzzy search (stop words ignored; prefix, substring and subsequence matching), a 5-Minute Quick-Start track and a live `X / Y Modules Completed` mastery bar saved with your local state.
+- Goal pills (Crypto Perps, US Stocks & 0DTE, On-Chain DEX, No-Code Quant Bots) generate an ordered playlist of lessons and drills that fits in 15 minutes.
+- **Start Drill**: seeded sandbox scenarios (volatile breakout or thin DEX pool, tagged as simulated) take over the chart. The badge is awarded only after ExTerm verifies the live action: dragging a TP rung, anchoring VWAP, sizing by % risk or opening the holder X-ray.
+- **Explain This Metric**: subtle `?` buttons and Alt+hover popovers on 0DTE Gamma Flip, Fragility Break-Point, ExTerm Alpha Score, CVD Divergence and Dealer Charm / Vanna, each with Open Full Lesson →.
+
+### On-Chain Perp & Smart-Money Leaderboards (`serve.py`, `src/leaderboards.js`)
+- Launcher: `/api/hl/leaderboard` and `/api/hl/trader` read public, permissionless Hyperliquid mainnet data (`stats-data.hyperliquid.xyz/Mainnet/leaderboard`, `api.hyperliquid.xyz/info` with `clearinghouseState`, `userFills` and `frontendOpenOrders` only). Both sit behind the session token, use 30-second RAM caching, back off exponentially per upstream host (serving the last good copy as `stale`) and schema-validate every answer down to whitelisted fields. No order endpoint is reachable. `--offline` serves a seeded sample flagged `sample`.
+- **ExTerm Alpha Score (0–100)**: risk-adjusted ROI 35%, drawdown control 25%, consistency across 24h / 7d / 30d / All 25%, liquid non-churning size 15%. The formula is identical in `serve.py` and the page (shared parity fixtures).
+- Crypto → Social gains `Feed | Perp Leaderboard`: ranked traders over 24h / 7d / 30d / All, sortable by Alpha, PnL or ROI. Expandable live positions (asset, side, leverage, entry, unrealized PnL, liquidation), **Chart Setup** (entry and liquidation lines on the chart), **Shadow Mirror** (position deltas logged as Grok dry-run fills, zero custody), **+ Track Wallet** and **Backtest Style** (cadence, hold time, leverage and favoured pair → a Quant Lab strategy with time-stop / cooldown filters, then the 17-test validation gate).
+- On-chain → Wallet Tracker gains a collapsed **Smart-Money Wallet Leaderboard** (public top-25 plus saved wallets by win rate, realised PnL and Alpha Score). **CONFLUENCE** alerts and **TOP TRADER** chart pins fire when 2+ top-25 wallets open the same pair and side within 15 minutes.
+- Position delta radar (`-40% Size Trimmed`, `SL Tightened`, `Full Exit`), Tilted Whale and Liquidation Magnet (≤ 2.5%, plotted as a sweep target) detectors, style tags (Scalper, Swing, Mean-Reversion, News Sniper) next to the World Macro Shield regime, a toggleable Consensus Heatmap strip on the price axis, and an Anti-Rug / Copy-Trap filter (dust win-rate padding, circular wash volume, bundled same-millisecond fills).
+
+### 15 workstation upgrades (`src/v154_core_upgrades.js`)
+- One 🧰 **Pro Tools** drawer with six collapsed sections that render on open; every overlay is off until you switch it on.
+- Charts & Execution: multi-timeframe ghost candles; Auto-Breakeven & trailing step-ladder (right-click a TP rung, enforced on the paper position and sent as a `move_sl` signal through the allow-listed `/hook` gateway); opening-range bands and Asia / London / NY kill-zone boxes.
+- Order Flow & 0DTE: tape-velocity & aggressive-sweep speedometer; dealer charm & vanna intraday drift curve with pin / squeeze windows; absorption footprints.
+- Scanners & DEX: pre-market / overnight gap-fill probability (gap %, RVOL, 90-day fill rate); holder-cluster X-ray bubble graph (labelled *model* when funding tracing is unavailable); correlation, beta and lead-lag decoupling alerts.
+- Grok & 3-Agent Copilot: Alt+click "Why did price just move?" forensics with a hand-off to the Copilot; a plain-English pattern & liquidity hunter that draws matching zones; a bot drawdown cool-off & volatility throttle that wraps every dry-run shadow fill.
+- Macro & Journal: FOMC / CPI / NFP reaction overlay over the last 12 releases (US-DST-aware times); Tilt & Revenge-Trade guard banner; Replay My Worst Loss in bar replay, 30 s before entry.
+
+### Platform
+- CSP: the inline stylesheet is now pinned by SHA-256 too (`style-src-elem 'self' 'sha256-…'`, generated by `build.py` for both normal and `--harden` builds). The script hash, `default-src 'none'` and the no-inline-handlers rule are unchanged.
+- 28 new UI strings translated into all 32 named languages; RTL mirroring via CSS logical properties.
+- Launcher version 15.4.
+
+### Tests
+- `test/v154.test.js` (74 unit checks incl. hostile input, i18n coverage and static CSP / content checks), `test/v154_server_test.py` (34 launcher checks: parity, schema validation, allow-list, cache, backoff, offline sample, HTTP) and `test/v154_e2e.js` (60 headless-Chrome checks in English and Arabic RTL), all wired into `test/run-all.ps1` and `test/run-all.sh`.
+
+### Docs
+- Fresh 1440×900 headless-Chrome screenshots: hero chart (1h ghost candles on 5m bars, NY kill-zone, dealer charm panel), Learn ExTerm academy, search and sandbox drill, Perp Leaderboard and consensus heatmap (offline sample), Quant Lab after Backtest Style, Pro Tools drawer, and the first-launch language gate.
+
 ## v15.3 — ExTerm — 14 Nov 2026
 
 ### Institutional Quant Lab: 🧬 Quant Lab Pro (`src/v153core.js`, `src/v153.js`)

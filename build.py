@@ -6,7 +6,7 @@ root = pathlib.Path(__file__).parent
 src = root / "src"
 html = (src / "index.html").read_text(encoding="utf-8")
 css = (src / "style.css").read_text(encoding="utf-8")
-order = ["disksync.js", "core.js", "strategies2.js", "stratspec.js", "strategies3.js", "strategies4.js", "validate.js", "data.js", "stocks.js", "solana.js", "dex.js", "sec.js", "keyvault.js", "onchain.js", "safety.js", "charts.js","indicators.js","orderflow.js","indpick.js","picker.js","fx3d.js", "themes.js", "app_a.js", "app_b.js", "builder.js", "app_d.js", "app_c.js","social.js","app_e.js","workspace.js","journal.js","challenge.js","copilot.js","replay.js","pro.js","localai.js","v12.js", "v13core.js", "v14core.js", "perps.js", "onchain2.js", "walletpro.js", "socialpro.js", "bgbots.js", "v13.js", "v14.js", "v15core.js", "v15p2core.js", "v15p2.js", "v15p3core.js", "grok.js", "world.js", "v15p4core.js", "v15p4.js", "v15p5core.js", "v15p5.js", "v151core.js", "v151.js", "i18n.js", "v152core.js", "v152.js", "v153core.js", "v153.js", "boot.js"]
+order = ["disksync.js", "core.js", "strategies2.js", "stratspec.js", "strategies3.js", "strategies4.js", "validate.js", "data.js", "stocks.js", "solana.js", "dex.js", "sec.js", "keyvault.js", "onchain.js", "safety.js", "charts.js","indicators.js","orderflow.js","indpick.js","picker.js","fx3d.js", "themes.js", "app_a.js", "app_b.js", "builder.js", "app_d.js", "app_c.js","social.js","app_e.js","workspace.js","journal.js","challenge.js","copilot.js","replay.js","pro.js","localai.js","v12.js", "v13core.js", "v14core.js", "perps.js", "onchain2.js", "walletpro.js", "socialpro.js", "bgbots.js", "v13.js", "v14.js", "v15core.js", "v15p2core.js", "v15p2.js", "v15p3core.js", "grok.js", "world.js", "v15p4core.js", "v15p4.js", "v15p5core.js", "v15p5.js", "v151core.js", "v151.js", "i18n.js", "v152core.js", "v152.js", "v153core.js", "v153.js", "v154core.js", "learn_academy.js", "leaderboards.js", "v154_core_upgrades.js", "boot.js"]
 js = "\n".join(f"/* ===== {n} ===== */\n" + (src / n).read_text(encoding="utf-8") for n in order if (src / n).exists())
 wallets = (src / "wallets.json").read_text(encoding="utf-8")
 import json as _json
@@ -36,6 +36,13 @@ if HARDEN:  # minify + mangle + strip comments with esbuild (raises the cost of 
 digest = base64.b64encode(hashlib.sha256(("\n" + js + "\n").encode("utf-8")).digest()).decode()  # exact text between <script> and </script>
 html = html.replace("script-src 'self' 'unsafe-inline'", "script-src 'sha256-" + digest + "'")
 out = html.replace("/*__CSS__*/", css).replace("/*__JS__*/", js)
+# strict style CSP: the one <style> element is allowed by its exact SHA-256 hash (no injected stylesheets); style="" attributes
+# stay allowed via style-src-attr because the UI positions bars and meters with them (CSSOM writes never need it)
+import re as _re
+_style = _re.search(r"<style>(.*?)</style>", out, _re.S).group(1)
+_sdig = base64.b64encode(hashlib.sha256(_style.encode("utf-8")).digest()).decode()
+out = out.replace("style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;", "style-src 'self' https://fonts.googleapis.com; style-src-elem 'self' 'sha256-" + _sdig + "' https://fonts.googleapis.com; style-src-attr 'unsafe-inline';")
+assert "style-src-elem 'self' 'sha256-" in out, "style CSP not pinned"
 dist = root / "dist"
 dist.mkdir(exist_ok=True)
 (dist / ("exterm.min.html" if HARDEN else "exterm.html")).write_bytes(out.encode("utf-8"))  # bytes: same file on Windows and Linux (no CRLF, no cp1252)

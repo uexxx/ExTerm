@@ -19,7 +19,7 @@ ALLOW = {  # only these public API hosts can be proxied
     "router.huggingface.co", "openrouter.ai", "api.openai.com",
     "query1.finance.yahoo.com", "query2.finance.yahoo.com",
     "api.mainnet-beta.solana.com", "solana-rpc.publicnode.com", "solana.drpc.org", "solana.api.onfinality.io", "api.dexscreener.com", "api.geckoterminal.com", "api.binance.com", "testnet.binance.vision", "api.bybit.com", "api.hyperliquid.xyz", "www.okx.com", "api-testnet.bybit.com", "api.alpaca.markets", "paper-api.alpaca.markets", "data.alpaca.markets", "api.x.com", "api.twitter.com", "api.stocktwits.com", "www.reddit.com",
-    "api.worldmonitor.app", "api.x.ai",
+    "api.worldmonitor.app", "api.x.ai", "stats-data.hyperliquid.xyz",
     "data.solanatracker.io", "api.helius.xyz", "api.rugcheck.xyz", "www.sec.gov", "data.sec.gov", "efts.sec.gov", "feeds.finance.yahoo.com", "production.dataviz.cnn.io",
 }
 # webhook gateway: signals may only be POSTed to these trading-bot services (https only)
@@ -67,7 +67,7 @@ class NoRedirect(urllib.request.HTTPRedirectHandler):
 NOTIFY_OPENER = urllib.request.build_opener(NoRedirect(), urllib.request.HTTPSHandler(context=CTX))
 LOCAL_OPENER = urllib.request.build_opener(NoRedirect(), urllib.request.HTTPHandler())
 
-VERSION = "15.3"
+VERSION = "15.4"
 STARTED = time.time()
 CACHE_STATS = {"hits": 0, "total": 0}  # /api/feed symbols answered from RAM vs asked for (Grok telemetry strip)
 OLD_DATA_DIR = pathlib.Path.home() / ".novaterm"  # pre-v15 name, moved to ~/.exterm on first start
@@ -1122,6 +1122,213 @@ class PriceFeed:
 
 FEED = None
 
+# ───────── v15.4 on-chain Perp / Smart-Money Leaderboards: public, permissionless Hyperliquid mainnet reads ─────────
+# GET stats-data.hyperliquid.xyz/Mainnet/leaderboard and POST api.hyperliquid.xyz/info (three read-only types). Answers are
+# schema-validated and trimmed, cached 30 s in RAM, and upstream failures back off exponentially while the last good copy
+# is served. Nothing is signed, no key exists, no order endpoint is reachable. --offline serves a seeded sample instead.
+HL_BOARD_URL = "https://stats-data.hyperliquid.xyz/Mainnet/leaderboard"
+HL_INFO_URL = "https://api.hyperliquid.xyz/info"
+HL_TYPES = ("clearinghouseState", "userFills", "frontendOpenOrders")
+HL_TTL, HL_KEEP = 30, 600
+HL_ADDR = re.compile(r"^0x[0-9a-fA-F]{40}$")
+HL_COIN = re.compile(r"^[A-Za-z0-9@:._-]{1,24}$")
+HL_WIN = ("day", "week", "month", "allTime")
+
+def _hnum(x, d=0.0):
+    try:
+        v = float(x)
+        return v if v == v and abs(v) != float("inf") else d
+    except Exception: return d
+
+def alpha_score(roi_day, roi_week, roi_month, roi_all, acct, vlm_month):
+    """ExTerm Alpha Score 0-100, same formula as V154.alphaScore in the page: risk-adjusted ROI 35%, drawdown control 25%,
+    consistency across windows 25%, liquid non-churning size 15%."""
+    import math
+    cl = lambda x, a, b: min(b, max(a, x))
+    rd, rw, rm, ra = (_hnum(v) for v in (roi_day, roi_week, roi_month, roi_all)); acct = max(0.0, _hnum(acct)); vlm = max(0.0, _hnum(vlm_month))
+    risk = cl(0.5 + 0.5 * math.tanh(cl(rm / 0.5 + ra / 4, -20, 20)), 0, 1)
+    dd = cl(1 - max(0.0, -min(rd, rw, rm)) * 2.5, 0, 1)
+    cons = sum(1 for x in (rd, rw, rm, ra) if x > 0) / 4
+    turn = vlm / acct if acct > 0 else 0.0
+    size = cl((math.log10(max(1.0, acct)) - 3) / 5, 0, 1)
+    churn = cl(1 - (turn - 400) / 1600, 0, 1) if turn > 400 else 1.0
+    return int(math.floor(100 * (0.35 * risk + 0.25 * dd + 0.25 * cons + 0.15 * size * churn) + 0.5))
+
+def hl_clean_row(x):
+    if not isinstance(x, dict): return None
+    addr = x.get("ethAddress") or x.get("addr")
+    if not isinstance(addr, str) or not HL_ADDR.match(addr): return None
+    name = x.get("displayName") if x.get("displayName") is not None else x.get("name")
+    out = {"addr": addr.lower(), "name": re.sub(r"[<>&\"'`]", "", _CTRL_RX.sub("", str(name or "")))[:32], "acct": max(0.0, _hnum(x.get("accountValue", x.get("acct")))), "pnl": {}, "roi": {}, "vlm": {}}
+    wp = x.get("windowPerformances")
+    perf = {}
+    if isinstance(wp, list):
+        for it in wp:
+            if isinstance(it, list) and len(it) == 2 and it[0] in HL_WIN and isinstance(it[1], dict): perf[it[0]] = it[1]
+    for k in HL_WIN:
+        p = perf.get(k) or {}
+        out["pnl"][k] = _hnum(p.get("pnl")) if perf else _hnum((x.get("pnl") or {}).get(k) if isinstance(x.get("pnl"), dict) else 0)
+        out["roi"][k] = _hnum(p.get("roi")) if perf else _hnum((x.get("roi") or {}).get(k) if isinstance(x.get("roi"), dict) else 0)
+        out["vlm"][k] = max(0.0, _hnum(p.get("vlm")) if perf else _hnum((x.get("vlm") or {}).get(k) if isinstance(x.get("vlm"), dict) else 0))
+    out["alpha"] = alpha_score(out["roi"]["day"], out["roi"]["week"], out["roi"]["month"], out["roi"]["allTime"], out["acct"], out["vlm"]["month"])
+    return out
+
+def hl_clean_info(kind, j):
+    """Trust boundary for /info answers: only the fields the page reads, plain numbers and short strings, capped lists."""
+    s = lambda v, n=24: _CTRL_RX.sub("", str(v if v is not None else ""))[:n]
+    if kind == "clearinghouseState":
+        if not isinstance(j, dict): raise ValueError("bad clearinghouseState")
+        ps = []
+        for a in (j.get("assetPositions") or [])[:200]:
+            p = a.get("position") if isinstance(a, dict) else None
+            if not isinstance(p, dict) or not HL_COIN.match(str(p.get("coin", ""))): continue
+            lev = p.get("leverage"); lev = lev.get("value") if isinstance(lev, dict) else lev
+            ps.append({"position": {"coin": str(p["coin"]), "szi": _hnum(p.get("szi")), "entryPx": _hnum(p.get("entryPx")), "positionValue": _hnum(p.get("positionValue")), "unrealizedPnl": _hnum(p.get("unrealizedPnl")),
+                                    "liquidationPx": _hnum(p.get("liquidationPx"), None) if p.get("liquidationPx") is not None else None, "leverage": {"value": _hnum(lev)}, "returnOnEquity": _hnum(p.get("returnOnEquity"))}})
+        ms = j.get("marginSummary") if isinstance(j.get("marginSummary"), dict) else {}
+        return {"assetPositions": ps, "marginSummary": {"accountValue": _hnum(ms.get("accountValue"))}}
+    if not isinstance(j, list): raise ValueError("bad " + kind)
+    if kind == "userFills":
+        out = []
+        for f in j[:2000]:
+            if not isinstance(f, dict) or not HL_COIN.match(str(f.get("coin", ""))): continue
+            out.append({"coin": str(f["coin"]), "px": _hnum(f.get("px")), "sz": _hnum(f.get("sz")), "side": "A" if f.get("side") == "A" else "B", "time": int(_hnum(f.get("time"))), "dir": s(f.get("dir")), "closedPnl": _hnum(f.get("closedPnl")), "startPosition": _hnum(f.get("startPosition"))})
+        return out
+    out = []
+    for o in j[:500]:
+        if not isinstance(o, dict) or not HL_COIN.match(str(o.get("coin", ""))): continue
+        out.append({"coin": str(o["coin"]), "side": "A" if o.get("side") == "A" else "B", "limitPx": _hnum(o.get("limitPx")), "sz": _hnum(o.get("sz")), "isTrigger": bool(o.get("isTrigger")), "triggerPx": _hnum(o.get("triggerPx")), "reduceOnly": bool(o.get("reduceOnly")), "orderType": s(o.get("orderType"))})
+    return out
+
+class HLCache:
+    def __init__(self, fetch=None, post=None, now=None, offline=False):
+        self.fetch = fetch or self._get; self.post = post or self._post; self.now = now or time.time; self.offline = offline
+        self.lock = threading.Lock(); self.data = {}; self.wait = {}; self.fails = {}; self.calls = 0  # backoff per upstream host
+
+    @staticmethod
+    def _get(url):
+        u = urllib.parse.urlparse(url)
+        if u.scheme != "https" or u.hostname != "stats-data.hyperliquid.xyz": raise ValueError("host not allowed")
+        with OPENER.open(urllib.request.Request(url, headers={"User-Agent": "ExTerm-Leaderboard/1.0", "Accept": "application/json"}), timeout=25) as r:
+            return json.loads(r.read(80_000_000))
+
+    @staticmethod
+    def _post(url, body):
+        u = urllib.parse.urlparse(url)
+        if u.scheme != "https" or u.hostname != "api.hyperliquid.xyz" or u.path != "/info": raise ValueError("host not allowed")
+        if body.get("type") not in HL_TYPES: raise ValueError("type not allowed")
+        req = urllib.request.Request(url, data=json.dumps(body).encode(), headers={"User-Agent": "ExTerm-Leaderboard/1.0", "Content-Type": "application/json", "Accept": "application/json"}, method="POST")
+        with OPENER.open(req, timeout=15) as r:
+            return json.loads(r.read(8_000_000))
+
+    def _cached(self, key, build):
+        t = self.now(); host = "board" if key == "board" else "info"
+        with self.lock:
+            hit = self.data.get(key)
+            if hit and t - hit[0] < HL_TTL: return hit[1]
+            if t < self.wait.get(host, 0.0):
+                if hit: return dict(hit[1], stale=True) if isinstance(hit[1], dict) else hit[1]
+                raise ValueError("upstream rate-limited: retry in %ds" % int(self.wait[host] - t))
+        try:
+            self.calls += 1; v = build()
+        except Exception as e:
+            with self.lock:
+                self.fails[host] = self.fails.get(host, 0) + 1; self.wait[host] = t + min(300, 2 ** min(8, self.fails[host]))
+                if hit: return dict(hit[1], stale=True) if isinstance(hit[1], dict) else hit[1]
+            raise ValueError("on-chain source unavailable: " + str(e)[:80])
+        with self.lock:
+            self.fails[host] = 0; self.wait[host] = 0.0; self.data[key] = (t, v)
+            if len(self.data) > 400:
+                for k in sorted(self.data, key=lambda k: self.data[k][0])[:100]: self.data.pop(k, None)
+        return v
+
+    def board(self):
+        def build():
+            if self.offline: return {"ts": self.now(), "rows": hl_sample_board(), "sample": True}
+            j = self.fetch(HL_BOARD_URL)
+            raw = j.get("leaderboardRows") if isinstance(j, dict) else None
+            if not isinstance(raw, list): raise ValueError("unexpected leaderboard shape")
+            rows, seen = [], set()
+            for x in raw[:200000]:
+                r = hl_clean_row(x)
+                if r and r["addr"] not in seen: seen.add(r["addr"]); rows.append(r)
+            keep = {r["addr"]: r for r in sorted(rows, key=lambda r: -r["pnl"]["month"])[:HL_KEEP]}
+            for k in ("day", "week", "allTime"):
+                for r in sorted(rows, key=lambda r: -r["pnl"][k])[:HL_KEEP // 3]: keep[r["addr"]] = r
+            return {"ts": self.now(), "rows": sorted(keep.values(), key=lambda r: -r["pnl"]["month"]), "sample": False}
+        return self._cached("board", build)
+
+    def trader(self, addr, types, refs=None):
+        if not isinstance(addr, str) or not HL_ADDR.match(addr): raise ValueError("bad address")
+        addr = addr.lower(); out = {"addr": addr, "sample": self.offline}
+        for k in types:
+            if k not in HL_TYPES: raise ValueError("type not allowed")
+            if self.offline: out[k] = hl_sample_info(k, addr, refs or {})
+            else: out[k] = self._cached(k + "|" + addr, lambda k=k: hl_clean_info(k, self.post(HL_INFO_URL, {"type": k, "user": addr})))
+        return out
+
+def hl_refs(q):
+    """?ref=BTC:97000,ETH:3400 price hints so the offline sample sits around the page's simulated prices."""
+    out = {}
+    for part in str(q or "")[:400].split(",")[:12]:
+        k, _, v = part.partition(":")
+        if HL_COIN.match(k) and 0 < _hnum(v) < 1e9: out[k] = _hnum(v)
+    return out
+
+HL_SAMPLE_COINS = (("BTC", 97000.0), ("ETH", 3400.0), ("HYPE", 24.0), ("XRP", 2.2), ("DOGE", 0.18), ("AVAX", 21.0))
+
+def _hl_seed(addr):
+    import random
+    return random.Random(int(hashlib.sha256(addr.encode()).hexdigest()[:12], 16))
+
+def hl_sample_board(n=60):
+    """Seeded offline sample (no network): plausible window performances; every row is flagged sample in the response."""
+    import random
+    R = random.Random(1540); rows = []
+    for i in range(n):
+        addr = "0x" + hashlib.sha256(("exterm-sample-%d" % i).encode()).hexdigest()[:40]
+        acct = 10 ** R.uniform(4.3, 7.6); skill = R.gauss(0.08, 0.25); wp = []
+        for k, sc in (("day", 0.02), ("week", 0.06), ("month", 0.18), ("allTime", 1.4)):
+            roi = skill * sc * 3 + R.gauss(0, sc); wp.append([k, {"pnl": str(round(acct * roi, 2)), "roi": str(round(roi, 4)), "vlm": str(round(acct * R.uniform(2, 60) * (sc * 10), 2))}])
+        if i == 7: wp[2][1]["vlm"] = str(round(acct * 4000, 2))  # a churning wash-volume wallet for the Anti-Rug filter
+        rows.append(hl_clean_row({"ethAddress": addr, "accountValue": str(round(acct, 2)), "displayName": None, "windowPerformances": wp}))
+    return sorted(rows, key=lambda r: -r["pnl"]["month"])
+
+def hl_sample_info(kind, addr, refs):
+    R = _hl_seed(addr); px = dict(HL_SAMPLE_COINS); px.update({k: v for k, v in refs.items() if k in px})
+    now = int(time.time() * 1000); k = int(addr[2:6], 16)
+    coins = [c for c, _ in HL_SAMPLE_COINS]; R.shuffle(coins); held = coins[:R.randint(1, 3)]
+    if k % 3 == 0 and "BTC" not in held: held[0] = "BTC"
+    if kind == "clearinghouseState":
+        acct = 10 ** R.uniform(4.5, 7); ps = []
+        for c in held:
+            p = px[c]; side = 1 if R.random() < 0.62 else -1; lev = R.choice((3, 5, 10, 20, 25)); entry = p * (1 - side * R.uniform(0.002, 0.03)); sz = acct * R.uniform(0.2, 1.2) / p
+            liq = entry * (1 - side * (1 / lev) * 0.92)
+            if k % 5 == 0: liq = p * (1 - side * 0.018)  # sits inside the 2.5% liquidation-magnet band
+            ps.append({"position": {"coin": c, "szi": round(side * sz, 6), "entryPx": round(entry, 6), "positionValue": round(sz * p, 2), "unrealizedPnl": round(side * sz * (p - entry), 2), "liquidationPx": round(liq, 6), "leverage": {"value": lev}, "returnOnEquity": round(side * (p / entry - 1) * lev, 4)}})
+        return {"assetPositions": ps, "marginSummary": {"accountValue": round(acct, 2)}}
+    if kind == "frontendOpenOrders":
+        out = []
+        for c in held:
+            p = px[c]; out.append({"coin": c, "side": "A", "limitPx": round(p * R.uniform(1.01, 1.06), 6), "sz": round(R.uniform(0.1, 2) * 1000 / p, 6), "isTrigger": False, "triggerPx": 0.0, "reduceOnly": True, "orderType": "Limit"})
+            out.append({"coin": c, "side": "A", "limitPx": 0.0, "sz": round(1000 / p, 6), "isTrigger": True, "triggerPx": round(p * (1 - R.uniform(0.01, 0.04)), 6), "reduceOnly": True, "orderType": "Stop Market"})
+        return out
+    fills, t = [], now - 14 * 86400000; scalper = k % 4 == 0; hold = R.uniform(5, 25) if scalper else R.uniform(60, 2000)
+    for j in range(R.randint(14, 30)):
+        c = R.choice(held); p = px[c] * R.uniform(0.95, 1.05); sz = R.uniform(0.2, 1.0) * 5000 / p; t += int(R.uniform(0.2, 1.4) * 86400000 / 3)
+        if (k % 7 == 0) and j in (10, 11): sz *= 0.3
+        if (k % 7 == 0) and j == 12: sz *= 3.5  # a size spike after consecutive losses (tilted whale)
+        long = R.random() < 0.6; win = R.random() < 0.58 and not ((k % 7 == 0) and j in (10, 11))
+        fills.append({"coin": c, "px": round(p, 6), "sz": round(sz, 6), "side": "B" if long else "A", "time": t, "dir": "Open Long" if long else "Open Short", "closedPnl": 0.0, "startPosition": 0.0})
+        t2 = t + int(hold * 60000 * R.uniform(0.5, 1.5)); pnl = (1 if win else -1) * sz * p * R.uniform(0.004, 0.03)
+        fills.append({"coin": c, "px": round(p * (1 + pnl / (sz * p) * (1 if long else -1)), 6), "sz": round(sz, 6), "side": "A" if long else "B", "time": t2, "dir": "Close Long" if long else "Close Short", "closedPnl": round(pnl, 2), "startPosition": round(sz if long else -sz, 6)})
+        t = t2
+    if k % 2 == 0:  # recent fresh entries so top wallets can line up into a CONFLUENCE window
+        fills.append({"coin": "BTC", "px": round(px["BTC"], 2), "sz": round(20000 / px["BTC"], 6), "side": "B", "time": now - 60000 * (3 + k % 9), "dir": "Open Long", "closedPnl": 0.0, "startPosition": 0.0})
+    return sorted(fills, key=lambda f: f["time"])[-2000:]
+
+HL = None
+
 # ───────── World Monitor global intel (koala73/worldmonitor): the key-free public news digest, cached in RAM ─────────
 # GET https://api.worldmonitor.app/api/news/v1/list-feed-digest?public=1&variant=<v>&lang=en is the one anonymous shape
 # the gateway accepts. Items carry threat.level (THREAT_LEVEL_CRITICAL / _HIGH / ...). We add MACRO for market-moving
@@ -1328,6 +1535,14 @@ class H(http.server.BaseHTTPRequestHandler):
                 sym = (urllib.parse.parse_qs(urllib.parse.urlparse(self.path).query).get("sym") or [""])[0][:120]
                 if PriceFeed.kind(sym) is None: raise ValueError("unsupported symbol")
                 return self._send(200, json.dumps({"sym": sym, "ticks": FEED.tick_history(sym)}).encode())
+            if p.startswith("/api/hl/"):  # v15.4 leaderboards: allow-listed, read-only, 30 s RAM cache
+                if HL is None: return self._send(503, b'{"error":"leaderboards are off"}')
+                q = urllib.parse.parse_qs(urllib.parse.urlparse(self.path).query)
+                if p == "/api/hl/leaderboard" and method == "GET": return self._send(200, json.dumps(HL.board()).encode())
+                if p == "/api/hl/trader" and method == "GET":
+                    types = [t for t in (q.get("types") or ["clearinghouseState"])[0][:120].split(",") if t][:3]
+                    return self._send(200, json.dumps(HL.trader((q.get("addr") or [""])[0][:64], types, hl_refs((q.get("ref") or [""])[0]))).encode())
+                return self._send(404, b'{"error":"not found"}')
             if p.startswith("/api/intel"):
                 if INTEL is None: return self._send(503, b'{"error":"World Monitor intel is off"}')
                 if p == "/api/intel" and method == "GET": return self._send(200, json.dumps(INTEL.public()).encode())
@@ -1713,6 +1928,8 @@ if __name__ == "__main__":
     if "--no-intel" not in sys.argv and "--offline" not in sys.argv:
         INTEL = WorldMonitor(on_critical=on_critical)
         threading.Thread(target=INTEL.run, daemon=True, name="intel").start()
+    if "--no-leaderboards" not in sys.argv:
+        HL = HLCache(offline="--offline" in sys.argv)
     if FEED is not None:
         if ALERTS:
             _slow = ALERTS.fetch

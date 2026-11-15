@@ -7,7 +7,7 @@ function fillSymList() {
     ? Object.values(STOCK_INFO).map((s) => `<option value="${s.sym}">${esc(s.name)}</option>`)
     : (Providers.list || []).map((p) => `<option value="${p.base}">${p.id}</option>`);
   $('#symList').innerHTML = opts.join('');
-  $('#symInput').placeholder = ST.mode === 'stocks' ? 'Ticker, e.g. NVDA' : ST.mode === 'onchain' ? 'Token name or contract address' : 'Symbol, e.g. SOL';
+  $('#symInput').placeholder = ST.mode === 'stocks' ? 'Ticker, e.g. NVDA' : ST.mode === 'onchain' ? 'Token name or contract address' : 'Symbol, e.g. ETH';
 }
 function applyModeChrome() {
   const st = ST.mode === 'stocks', oc = ST.mode === 'onchain';

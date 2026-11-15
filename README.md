@@ -1,17 +1,17 @@
 <div align="center">
 
-# ExTerm v15.3
+# ExTerm v15.4
 
 ### Local-first trading workstation for US stocks, crypto spot & perps and on-chain DEX tokens, in one browser tab.
 
 **Paper trading only.** Nothing in ExTerm signs or sends a real order.
 
-<img src="docs/screenshots/v15.3-hero-chart.png" alt="ExTerm v15.3 in the Obsidian & Gold theme: BTC-USD chart with a draggable TP1–TP3 ladder, anchored VWAP bands, future event markers and the bar-timer ring" width="100%">
+<img src="docs/screenshots/v15.4-hero-chart.png" alt="ExTerm v15.4 in the Obsidian & Gold theme: 5-minute SPY chart on simulated prices with 1h ghost candles behind the execution bars, the New York kill-zone box and the dealer charm drift panel pinned at the max-open-interest strike" width="100%">
 
-**[Quickstart](#-2-second-quickstart)** · **[What's new](#-whats-new-in-v153)** · **[v15.2](#-whats-new-in-v152)** · **[Features](#-whats-in-v151)** · **[Security](#-security)** · **[Verify a build](#-how-to-verify-official-builds)** · **[License](#-license)** · **[Brand policy](#-brand--logo-policy)**
+**[Quickstart](#-2-second-quickstart)** · **[What's new](#-whats-new-in-v154)** · **[v15.3](#-whats-new-in-v153)** · **[v15.2](#-whats-new-in-v152)** · **[Features](#-whats-in-v151)** · **[Security](#-security)** · **[Verify a build](#-how-to-verify-official-builds)** · **[License](#-license)** · **[Brand policy](#-brand--logo-policy)**
 
 <p>
-  <a href="https://github.com/uexxx/ExTerm/releases/latest"><img src="https://img.shields.io/badge/download-v15.3-D4AF37?style=for-the-badge" alt="Download v15.3"></a>
+  <a href="https://github.com/uexxx/ExTerm/releases/latest"><img src="https://img.shields.io/badge/download-v15.4-D4AF37?style=for-the-badge" alt="Download v15.4"></a>
   <img src="https://img.shields.io/badge/indicators-137-D4AF37?style=for-the-badge" alt="137 indicators">
   <img src="https://img.shields.io/badge/backtestable%20strategies-128-CBD5E1?style=for-the-badge" alt="128 backtestable strategies">
   <img src="https://img.shields.io/badge/languages-32%20%2B%20ISO--639-CBD5E1?style=for-the-badge" alt="32 languages plus ISO-639 fallback">
@@ -46,6 +46,82 @@ Useful flags: `python3 serve.py 9000` (other port) · `--no-browser` · `--docto
 
 > Opening `exterm.html` directly also works for crypto, but browsers block some stock and on-chain sources. The launcher
 > proxies only an allow-list of public market-data hosts, on `localhost`, behind a fresh per-launch token.
+
+---
+
+## 🎓 What's new in v15.4
+
+**Unified Master Edition: learn every tool, follow on-chain smart money, and 15 workstation upgrades, with the trading
+canvas still clean.** The top bar gains one gold **🎓 Learn ExTerm** button beside Settings and the header one 🧰 icon.
+Leaderboards live inside tabs you already have, and every new overlay is opt-in.
+
+### 🎓 Learn ExTerm: Interactive Academy
+
+<img src="docs/screenshots/v15.4-learn-academy.png" alt="Learn ExTerm academy: Obsidian and Gold hero, goal pills, quick-start and mastery progress bars, a tailored 15-minute learning path and lesson cards" width="100%">
+
+- **Learn Our Terminal — Interactive ExTerm Academy**: every tab and subcategory as lesson cards with *What It Does*,
+  *Step-by-Step Workflow*, *Pro Tip / Risk Guardrail*, *Keyboard Shortcut* and **Try It Live →**. That button jumps to the exact tab,
+  Lab section or drawer and pulses a gold spotlight ring around the control.
+- **"How do I…" fuzzy search** across 35 lessons, shortcuts and categories, plus a **5-Minute Quick-Start** track and a
+  live **X / Y Modules Completed** mastery bar.
+- **Learning paths**: pick *Crypto Perps*, *US Stocks & 0DTE*, *On-Chain DEX* or *No-Code Quant Bots* to get an ordered
+  playlist of lessons and drills that fits in 15 minutes.
+- **Start Drill sandboxes**: a seeded volatile breakout or thin DEX pool loads on the chart (tagged *SANDBOX · simulated*).
+  The badge is awarded only when ExTerm sees you do the action: drag a TP rung, anchor VWAP, size by % risk or open the
+  holder X-ray.
+- **Explain This Metric**: a subtle **?** (or Alt+hover) on 0DTE Gamma Flip, Fragility Break-Point, ExTerm Alpha Score,
+  CVD Divergence and Dealer Charm / Vanna, with *Open Full Lesson →*.
+- Moving the academy into **Settings → Documentation & Academy** later means changing one constant: `LEARN_MOUNT_TARGET`.
+
+<img src="docs/screenshots/v15.4-learn-drill.png" alt="Start Drill: a simulated volatile breakout on the chart with a draggable TP ladder and the sandbox drill banner" width="100%">
+
+### 🏆 On-Chain Perp & Smart-Money Leaderboards
+
+<img src="docs/screenshots/v15.4-perp-leaderboard.png" alt="Social tab, Perp Trader Leaderboard on the offline sample: ExTerm Alpha Score, PnL, ROI, style tags and signals, with one trader expanded to show live positions and the Chart Setup, Shadow Mirror, Track Wallet and Backtest Style actions" width="100%">
+
+- **Crypto → Social → Perp Trader Leaderboard** (`Feed | Perp Leaderboard`): public, permissionless Hyperliquid mainnet
+  traders ranked over **24h / 7d / 30d / All** by PnL, ROI or the **ExTerm Alpha Score (0–100)**. The score blends
+  risk-adjusted ROI 35%, drawdown control 25%, consistency 25% and liquid, non-churning size 15%.
+- Expand any trader to see live positions (asset, side, leverage, entry, unrealized PnL, liquidation), then:
+  **📐 Chart Setup** plots their entry and liquidation on your chart, **🪞 Shadow Mirror** logs their position changes as
+  Grok dry-run fills (no custody, no balance touched), **+ Track Wallet**, and **🧪 Backtest Style** turns their cadence,
+  hold time and favoured pair into a Quant Lab run through the 17-test gate.
+- **On-chain → Wallet Tracker → Smart-Money Wallet Leaderboard**: public top-25 plus your saved wallets, ranked by win
+  rate, realised PnL and Alpha Score. A **CONFLUENCE** alert and **TOP TRADER** chart pin fire when 2+ top-25 wallets
+  enter the same pair and side within 15 minutes.
+- Signals: **-40% Size Trimmed / SL Tightened / Full Exit** badges, **Tilted Whale** (size doubles after a losing
+  streak), **Liquidation Magnet** (within 2.5% of liquidation, drawn on the chart as a sweep target), style tags
+  (Scalper, Swing, Mean-Reversion, News Sniper) next to the World Macro Shield regime, a **Consensus Heatmap** strip on
+  the price axis (top-25 long entries, take-profit clusters, liquidation walls), and an **Anti-Rug / Copy-Trap filter**
+  that screens out dust win-rate padding, circular wash volume and bundled fills.
+- The launcher proxies just two allow-listed hosts (`stats-data.hyperliquid.xyz`, `api.hyperliquid.xyz/info` with three
+  read-only request types). It caches answers for 30 seconds in RAM, schema-validates them and backs off when the
+  upstream rate-limits. `--offline` serves a clearly flagged seeded sample.
+
+<img src="docs/screenshots/v15.4-consensus-heatmap.png" alt="Chart with a leaderboard trader's entry and liquidation lines from Chart Setup and the top-25 consensus heatmap strip on the price axis" width="100%">
+
+### 🧰 15 workstation upgrades (one Pro Tools drawer, all opt-in)
+
+| Area | Upgrades |
+|---|---|
+| 📈 Charts & execution | **Ghost candles** (15m / 1h / 4h shells behind 1s / 1m bars) · **Auto-Breakeven & trailing step-ladder** (right-click a TP rung: *Move SL to Entry +0.1R on TP1 fill*, *Trail SL to TP1*; enforced on the paper position and sent to an allow-listed webhook bridge) · **Opening range (5 / 15 / 30m) + Asia / London / NY kill-zones** |
+| 🌊 Order flow & 0DTE | **Tape velocity & aggressive-sweep speedometer** · **Dealer charm & vanna drift curve** with pin vs squeeze windows · **Absorption footprints** on candle bodies |
+| 🔭 Scanners & DEX | **Gap-fill probability** (gap %, RVOL, 90-day fill rate) · **Holder cluster X-ray** (coordinated fresh-funded clusters vs independent buyers) · **Correlation & lead-lag decoupling** (NVDA / SMH, ETH / BTC, …) |
+| ⚡ Grok & 3-Agent Copilot | **Alt+click "Why did price just move?"** forensics sent to the Copilot · **Plain-English pattern hunter** (*bullish FVG above VWAP with RVOL > 2.5x*) · **Bot cool-off & volatility throttle** (½ size after 2 losses, pause when ATR > 2.5× its 20-day mean) |
+| 🌍 Macro & journal | **FOMC / CPI / NFP reaction overlay** (first-5-minute spike, fakeout, 60-minute follow-through) · **Tilt & revenge-trade guard** · **Replay My Worst Loss** in bar replay, 30 s before entry |
+
+<img src="docs/screenshots/v15.4-quant-lab.png" alt="Quant Lab Pro after Backtest Style: a leaderboard trader's style converted into a strategy run with a time-stop filter and a 17-test validation grade" width="100%">
+
+<img src="docs/screenshots/v15.4-pro-tools.png" alt="Pro Tools drawer with the gap-fill probability scanner results" width="100%">
+
+### 🛡 Platform
+- The CSP now pins the stylesheet as well: `style-src-elem` allows only the inline `<style>` block's SHA-256 hash
+  (alongside the existing script hash under `default-src 'none'`).
+- 28 new UI strings in all 32 named languages, with RTL mirroring for Arabic, Hebrew, Persian and Urdu.
+- New tests: `test/v154.test.js` (74 unit checks), `test/v154_server_test.py` (34 launcher checks) and
+  `test/v154_e2e.js` (60 headless-Chrome checks, English and Arabic RTL).
+
+<img src="docs/screenshots/v15.4-language-gate.png" alt="First-launch language gate with 32 named languages and fuzzy search" width="100%">
 
 ---
 

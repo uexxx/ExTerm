@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-fN93iXD6cF1ITsdJEbwX5Df/k9tTZSeyfQTXlh0dvBA='; worker-src 'self' blob:; media-src 'none'; child-src 'none'; manifest-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' https: data: blob:; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https: wss: http://localhost:* http://127.0.0.1:* ws://localhost:*; object-src 'none'; base-uri 'none'; form-action 'none'; frame-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-YURQVmbr/QVkGeVPWl89Ip4GOn3Opt4+hAMElC4mX+E='; worker-src 'self' blob:; media-src 'none'; child-src 'none'; manifest-src 'self'; style-src 'self' https://fonts.googleapis.com; style-src-elem 'self' 'sha256-B/gA83GZwR4Krd3csbQDggQcP4Cy8PBbFMI3bbWL6eY=' https://fonts.googleapis.com; style-src-attr 'unsafe-inline'; img-src 'self' https: data: blob:; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https: wss: http://localhost:* http://127.0.0.1:* ws://localhost:*; object-src 'none'; base-uri 'none'; form-action 'none'; frame-src 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#05060e">
@@ -1215,6 +1215,45 @@ body.rtl #chartHost,body.rtl canvas{direction:ltr}
 .q153-cnd{width:100%;height:220px;border:1px solid var(--line);border-radius:8px;background:var(--bg)}
 .q153-scroll{overflow-x:auto;max-width:100%}.q153-trades{max-height:260px;overflow-y:auto}
 .q153-drv{display:block;margin:4px 0}
+/* ═══ v15.4 Learn ExTerm Academy · leaderboards · Pro Tools (logical properties: RTL mirrors automatically) ═══ */
+#nav .learn-btn{border:1px solid rgba(212,175,55,.45);background:linear-gradient(135deg,rgba(212,175,55,.16),rgba(212,175,55,.04));color:#f5e6a8;border-radius:999px}
+#nav .learn-btn:hover{border-color:#d4af37;color:#fff7d6}
+.lx-ov{position:fixed;inset:0;z-index:8800;display:grid;place-items:center;padding:16px;background:radial-gradient(1200px 600px at 50% 0%,rgba(212,175,55,.14),transparent 60%),rgba(5,5,6,.88);backdrop-filter:blur(10px)}
+.lx-ov[hidden]{display:none}
+.lx-wrap{width:min(1080px,100%);max-height:calc(100vh - 32px);display:flex;flex-direction:column;gap:10px;background:#0b0b0d;border:1px solid rgba(212,175,55,.35);border-radius:16px;padding:18px;box-shadow:0 30px 80px rgba(0,0,0,.6)}
+.lx-hero{display:flex;align-items:center;gap:14px;padding-block-end:10px;border-block-end:1px solid rgba(212,175,55,.22)}
+.lx-hero h2{margin:0;font-size:20px;background:linear-gradient(90deg,#d4af37,#f5e6a8,#b8943a);-webkit-background-clip:text;background-clip:text;color:transparent}
+.lx-hero .x{margin-inline-start:auto;background:none;border:0;color:var(--mut);font-size:22px;cursor:pointer}
+.lx-mark{font-size:28px;width:46px;height:46px;display:grid;place-items:center;border-radius:50%;border:2px solid #d4af37;background:#0b0b0d}
+.lx-goals{display:flex;flex-wrap:wrap;gap:6px}.lx-goals .pill{cursor:pointer;font-size:12px;padding:5px 12px;border:1px solid var(--line2);background:transparent;color:var(--text)}
+.lx-goals .pill.on{border-color:#d4af37;background:rgba(212,175,55,.16);color:#f5e6a8}
+.lx-q{width:100%;font-size:14px;padding:10px 12px}
+.lx-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px}.lx-stats>div{display:flex;flex-direction:column;gap:4px}
+.lx-prog{height:8px;border-radius:999px;background:var(--line);overflow:hidden}.lx-prog i{display:block;height:100%;background:linear-gradient(90deg,#b8943a,#f5e6a8);transition:width .3s var(--ease)}
+.lx-body{overflow:auto;min-height:0;display:flex;flex-direction:column;gap:12px;padding-inline-end:4px}
+.lx-body h4{margin:4px 0 8px;color:#f5e6a8}
+.lx-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px}
+.lx-card{border:1px solid var(--line2);border-radius:12px;padding:12px;background:rgba(255,255,255,.02);display:flex;flex-direction:column;gap:4px}
+.lx-card.done{border-color:rgba(212,175,55,.45)}.lx-card header{display:flex;align-items:center;gap:6px}.lx-card header .note{margin-inline-start:auto}
+.lx-card h5{margin:6px 0 0;font-size:11px;letter-spacing:.04em;text-transform:uppercase;color:#d4af37}.lx-card p,.lx-card ol{margin:0;font-size:12.5px}.lx-card ol{padding-inline-start:18px}
+.lx-tip{color:#fde68a}.lx-ok{color:var(--up)}.lx-acts{margin-block-start:auto;padding-block-start:8px;gap:6px;flex-wrap:wrap}
+.lx-play{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}.lx-play li{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:10px;padding:6px 10px}
+.lx-play li.done{opacity:.65}.lx-play .n{width:22px;height:22px;display:grid;place-items:center;border-radius:50%;background:rgba(212,175,55,.18);color:#f5e6a8;font-size:11px;font-weight:700}.lx-play li .note{margin-inline-start:auto}
+.lx-cat{border:1px solid var(--line);border-radius:10px;padding:6px 10px}.lx-cat>summary{cursor:pointer;font-weight:600}.lx-cat[open]>summary{margin-block-end:8px}
+@keyframes lxPulse{0%{box-shadow:0 0 0 0 rgba(212,175,55,.85)}70%{box-shadow:0 0 0 14px rgba(212,175,55,0)}100%{box-shadow:0 0 0 0 rgba(212,175,55,0)}}
+.lx-spot{outline:2px solid #d4af37!important;outline-offset:3px;border-radius:8px;animation:lxPulse 1.2s ease-out 3}
+.lx-drill{position:fixed;inset-block-end:16px;inset-inline-start:50%;transform:translateX(-50%);z-index:8700;display:flex;flex-wrap:wrap;align-items:center;gap:8px;max-width:calc(100vw - 32px);padding:10px 14px;border-radius:12px;background:#0b0b0d;border:1px solid #d4af37;box-shadow:0 10px 40px rgba(0,0,0,.5);font-size:12.5px}
+body.rtl .lx-drill{transform:translateX(50%)}.lx-drill[hidden]{display:none}
+.lx-q-btn{margin-inline-start:6px;width:16px;height:16px;padding:0;border-radius:50%;border:1px solid rgba(212,175,55,.6);background:transparent;color:#d4af37;font-size:10px;line-height:14px;cursor:help;vertical-align:middle}
+.lx-pop{position:fixed;z-index:9100;width:280px;padding:10px 12px;border-radius:10px;background:#0b0b0d;border:1px solid #d4af37;box-shadow:0 10px 30px rgba(0,0,0,.5);font-size:12px}.lx-pop p{margin:6px 0}.lx-pop[hidden]{display:none}
+.lb-seg{margin:0 0 10px}.lb-t td,.lb-t th{white-space:nowrap}.lb-x td{background:rgba(212,175,55,.04)}.lb-pos{margin-block:6px}.lb-conf{display:flex;flex-wrap:wrap;gap:6px;margin-block:6px}
+.lb-smart{margin-block-end:12px}.lb-smart>summary{cursor:pointer;padding:10px 12px;font-weight:600}.lb-alpha-h{border-block-end:1px dotted #d4af37}
+.v154-menu{position:fixed;z-index:9200;display:flex;flex-direction:column;min-width:200px;padding:6px;border-radius:10px;background:var(--panel-solid);border:1px solid var(--line2);box-shadow:0 10px 30px rgba(0,0,0,.5)}.v154-menu[hidden]{display:none}
+.v154-menu button{text-align:start;background:none;border:0;color:var(--text);padding:6px 8px;border-radius:6px;cursor:pointer}.v154-menu button:hover{background:var(--accA)}
+.v154-tape{position:absolute;inset-block-start:44px;inset-inline-end:76px;z-index:5;display:flex;align-items:center;gap:6px;padding:4px 8px;border-radius:10px;background:rgba(11,11,13,.82);border:1px solid var(--line2);font-size:11px;pointer-events:none}
+.v154-tape svg{width:40px;height:22px}.v154-tape .burst{font-style:normal;font-weight:700;color:var(--amber)}
+.v154-tilt{margin-block-end:10px;border-color:var(--dn)!important;color:#fecaca}.v154-click{cursor:pointer}.v154-click:hover td{background:var(--accA)}.v154-bub{height:150px}
+@media (max-width:640px){.lx-wrap{padding:12px}.lx-hero h2{font-size:16px}.lx-grid{grid-template-columns:1fr}.v154-tape{inset-inline-end:8px}}
 </style>
 </head>
 <body class="mode-crypto">
@@ -1227,7 +1266,7 @@ body.rtl #chartHost,body.rtl canvas{direction:ltr}
     <button data-mode="stocks" title="US stocks & ETFs">▲ Stocks</button>
     <button data-mode="onchain" title="On-chain DEX tokens: memecoins, new and trending pools">⬡ On-chain</button>
   </div>
-  <div class="search"><span class="sicon">⌕</span><input id="symInput" list="symList" placeholder="Symbol, e.g. SOL" autocomplete="off" spellcheck="false" aria-label="Symbol"></div>
+  <div class="search"><span class="sicon">⌕</span><input id="symInput" list="symList" placeholder="Symbol, e.g. ETH" autocomplete="off" spellcheck="false" aria-label="Symbol"></div>
   <datalist id="symList"></datalist>
   <div class="quote"><span id="qSym">BTC-USD</span><b id="qPrice">–</b><span id="qChg" class="chg">–</span></div>
   <div class="spacer"></div>
@@ -1456,7 +1495,7 @@ body.rtl #chartHost,body.rtl canvas{direction:ltr}
   <section id="tab-grok" class="tab"><div id="gkHost"></div></section>
 
   <!-- SETTINGS -->
-  <section id="tab-set" class="tab"><div id="setBody"></div><p class="note about-notice">ExTerm v15.3 · Official Release by @exterm.labs · <a href="https://github.com/uexxx/ExTerm" target="_blank" rel="noopener noreferrer">github.com/uexxx/ExTerm</a></p></section>
+  <section id="tab-set" class="tab"><div id="setBody"></div><p class="note about-notice">ExTerm v15.4 · Official Release by @exterm.labs · <a href="https://github.com/uexxx/ExTerm" target="_blank" rel="noopener noreferrer">github.com/uexxx/ExTerm</a></p></section>
 </main>
 
 <aside id="drawer" class="drawer" aria-hidden="true"><div class="dhead"><span id="dTitle"></span><span class="sp"></span><button class="ghost" id="dClose">✕</button></div><div class="dbody" id="dBody"></div></aside>
@@ -9109,7 +9148,7 @@ function fillSymList() {
     ? Object.values(STOCK_INFO).map((s) => `<option value="${s.sym}">${esc(s.name)}</option>`)
     : (Providers.list || []).map((p) => `<option value="${p.base}">${p.id}</option>`);
   $('#symList').innerHTML = opts.join('');
-  $('#symInput').placeholder = ST.mode === 'stocks' ? 'Ticker, e.g. NVDA' : ST.mode === 'onchain' ? 'Token name or contract address' : 'Symbol, e.g. SOL';
+  $('#symInput').placeholder = ST.mode === 'stocks' ? 'Ticker, e.g. NVDA' : ST.mode === 'onchain' ? 'Token name or contract address' : 'Symbol, e.g. ETH';
 }
 function applyModeChrome() {
   const st = ST.mode === 'stocks', oc = ST.mode === 'onchain';
@@ -14490,7 +14529,7 @@ const Grok = (() => {
       <input class="in sm mono" id="gkModel" placeholder="${esc((PRESETS[c.preset] || PRESETS.local).model || 'model')}" value="${esc(c.model || '')}" aria-label="Model"${c.preset === 'local' ? ' hidden' : ''}>
       <input class="in sm mono" id="gkKey" type="password" autocomplete="off" placeholder="${keyOf(c) ? '•••• saved (vault)' : 'API key (stored in the AES-256 vault)'}" aria-label="Grok API key"${c.preset === 'local' ? ' hidden' : ''}><button type="button" class="btn sm" data-gk="savecfg">Save</button></div></div>
       <div class="gk-grid">
-      ${sec('gkConsole', '🧠 Grok console <span class="note">tool-calling</span>', `<div class="gk-log" id="gkLog" aria-live="polite">${logH}${G.busy ? '<div class="msg a"><span class="typing"><i></i><i></i><i></i></span></div>' : ''}</div>${pend}<form class="row" id="gkForm" style="gap:6px;margin-top:8px"><input class="in" id="gkIn" maxlength="1000" placeholder="e.g. tune q4_qs_ema513 on ETH 5s · what regime is SOL in? · autopsy my journal" aria-label="Ask Grok"><button class="btn pri" type="submit"${G.busy ? ' disabled' : ''}>Run</button></form>`, true)}
+      ${sec('gkConsole', '🧠 Grok console <span class="note">tool-calling</span>', `<div class="gk-log" id="gkLog" aria-live="polite">${logH}${G.busy ? '<div class="msg a"><span class="typing"><i></i><i></i><i></i></span></div>' : ''}</div>${pend}<form class="row" id="gkForm" style="gap:6px;margin-top:8px"><input class="in" id="gkIn" maxlength="1000" placeholder="e.g. tune q4_qs_ema513 on ETH 5s · what regime is BTC in? · autopsy my journal" aria-label="Ask Grok"><button class="btn pri" type="submit"${G.busy ? ' disabled' : ''}>Run</button></form>`, true)}
       ${sec('gkWf', '🔀 Auto-Workflow', `<div class="row" style="gap:6px;flex-wrap:wrap"><input class="in sm" id="gkWfSym" value="${esc(baseOf(ST.sel))}" aria-label="Market"><select class="in sm" id="gkWfTf" aria-label="Timeframe">${TF_ALL.map((t) => `<option${t === (ST.tf || '1h') ? ' selected' : ''}>${t}</option>`).join('')}</select><button type="button" class="btn sm pri" data-gk="wfgen">✨ Generate Auto-Workflow</button></div><div id="gkWfOut" style="margin-top:8px">${wfHtml(G.wf)}</div>`, true)}
       ${sec('gkShield', `🌐 Global Intel &amp; Macro Shield ${sh ? badge(sh.level === 'CALM' ? 'INFO' : sh.level === 'ELEVATED' ? 'HIGH' : 'CRITICAL').replace('>INFO<', '>CALM<').replace('>HIGH<', '>ELEVATED<') : ''}`, `${sh ? `<div class="note">${esc(sh.advice)} · ${I.items.length} headlines</div>` : ''}<div class="row" style="gap:10px;flex-wrap:wrap;margin:6px 0"><label class="note"><input type="checkbox" data-gkic="notify"${ic.notify ? ' checked' : ''}${I ? '' : ' disabled'}> push CRITICAL to phone</label><label class="note"><input type="checkbox" data-gkic="autoPause"${ic.autoPause ? ' checked' : ''}${I ? '' : ' disabled'}> auto-pause bots on CRITICAL</label><label class="note"><input type="checkbox" data-gkic="tighten"${ic.tighten ? ' checked' : ''}${I ? '' : ' disabled'}> tighten bot stops to 1%</label><button type="button" class="btn xs" data-gk="shieldnow"${L().bots ? '' : ' disabled'}>Shield bots now</button><button type="button" class="btn xs" data-gk="intelref">↻</button></div><div class="gk-feed">${I ? intelRows(I.items.filter((i) => i.sev !== 'INFO').concat(I.items.filter((i) => i.sev === 'INFO')), 25) || '<div class="note">Feed is empty right now.</div>' : `<div class="note">${esc(G.intelErr || 'Loading World Monitor…')}</div>`}</div>`)}
       ${sec('gkBots', '☁ 24/7 bots', `${bots}<div class="row" style="gap:6px;margin-top:8px"><button type="button" class="btn xs" data-gkq="list bots">Refresh</button><button type="button" class="btn xs" data-gkq="pause all bots">Pause all</button><button type="button" class="btn xs" data-gkq="resume all bots">Resume all</button><button type="button" class="btn xs" data-gkq="switch strategy for the regime">Regime switch</button></div>`)}
@@ -16472,7 +16511,7 @@ const V151UI = (() => {
         <div class="row v151-row"><span class="note">Benchmark ghost</span><div class="seg">${gh.map((s) => `<button type="button" data-ghost="${esc(s)}" class="${(c.ghost || '') === s ? 'on' : ''}">${s ? esc(baseOf(s)) : 'Off'}</button>`).join('')}</div>
         <label class="note">Whale ≥ $<input class="in mono xs" id="v151Wu" value="${esc(String(c.whaleUsd))}" inputmode="numeric" aria-label="Whale threshold USD"></label><label class="note">DEX ≥ $<input class="in mono xs" id="v151Du" value="${esc(String(c.dexUsd))}" inputmode="numeric" aria-label="DEX whale threshold USD"></label></div></section>
       <section><h4>Share</h4><div class="row v151-row"><button type="button" class="btn sm" data-v151="autosetup">⚙ Auto-Setup this chart</button><button type="button" class="btn sm" data-v151="share">📸 Share Setup PNG</button><button type="button" class="btn sm" data-v151="recap">📓 Daily Recap PNG</button><button type="button" class="btn sm" data-v151="copy">⧉ Copy Setup JSON</button></div>
-        <textarea class="in mono" id="v151Json" rows="3" spellcheck="false" placeholder='Paste an ExTerm setup JSON, e.g. {"v":1,"app":"ExTerm","sym":"SOL-USD",...}'></textarea><div class="row v151-row"><button type="button" class="btn sm" data-v151="import">⤓ Import Setup JSON</button><span class="note" id="v151JsonMsg"></span></div></section>
+        <textarea class="in mono" id="v151Json" rows="3" spellcheck="false" placeholder='Paste an ExTerm setup JSON, e.g. {"v":1,"app":"ExTerm","sym":"ETH-USD",...}'></textarea><div class="row v151-row"><button type="button" class="btn sm" data-v151="import">⤓ Import Setup JSON</button><span class="note" id="v151JsonMsg"></span></div></section>
       <section><h4>Cross-asset correlation</h4><div id="v151Corr">${corrHtml()}</div></section>
       <section><h4>Strategy → Prop challenge</h4>${propHtml()}</section></div>`;
   };
@@ -16643,6 +16682,44 @@ const I18N = (() => {
   };
   for (const [code, s] of Object.entries(RAW153)) if (I.DICT[code]) s.split('|').forEach((v, k) => { I.DICT[code][K153[k]] = v; });
   I.KEYS.push(...K153);
+  // v15.4 Learn ExTerm Academy, leaderboards and Pro Tools strings: same '|' order as K154
+  const K154 = ['learn.btn', 'learn.hero', 'learn.sub', 'learn.search', 'learn.quick', 'learn.mastery', 'learn.modules', 'learn.path', 'learn.what', 'learn.steps', 'learn.tip', 'learn.key', 'learn.try', 'learn.drill', 'learn.open', 'learn.full', 'learn.explain', 'learn.badge', 'learn.docs', 'lb.feed', 'lb.perp', 'lb.smart', 'lb.antirug', 'lb.heat', 'lb.mirror', 'lb.track', 'lb.backtest', 'up.title'];
+  const RAW154 = {
+    en: 'Learn ExTerm|Learn Our Terminal — Interactive ExTerm Academy|Every tab and tool, step by step, with live drills.|How do I…|5-Minute Quick-Start|Mastery|Modules Completed|Your 15-minute path|What It Does|Step-by-Step Workflow|Pro Tip / Risk Guardrail|Keyboard Shortcut|Try It Live|Start Drill|Open|Open Full Lesson|Explain this metric|Badge earned|Documentation & Academy|Feed|Perp Trader Leaderboard|Smart-Money Wallet Leaderboard|Anti-Rug filter|Consensus heatmap|Shadow Mirror|Track Wallet|Backtest Style|Pro Tools',
+    es: 'Aprende ExTerm|Aprende nuestra terminal — Academia interactiva ExTerm|Cada pestaña y herramienta, paso a paso, con ejercicios en vivo.|¿Cómo hago…?|Inicio rápido de 5 minutos|Dominio|módulos completados|Tu ruta de 15 minutos|Qué hace|Flujo paso a paso|Consejo pro / Control de riesgo|Atajo de teclado|Pruébalo en vivo|Iniciar ejercicio|Abrir|Abrir lección completa|Explicar esta métrica|Insignia obtenida|Documentación y Academia|Feed|Clasificación de traders de perpetuos|Clasificación de carteras smart money|Filtro anti-rug|Mapa de consenso|Espejo sombra|Seguir cartera|Backtest del estilo|Herramientas Pro',
+    'zh-CN': '学习 ExTerm|了解我们的终端 — ExTerm 互动学院|逐步掌握每个标签页和工具，附实时练习。|我该如何…|5 分钟快速入门|掌握度|个模块已完成|你的 15 分钟路径|功能说明|分步流程|专业提示 / 风险护栏|键盘快捷键|实时试用|开始练习|打开|打开完整课程|解释此指标|已获得徽章|文档与学院|动态|永续合约交易员排行榜|聪明钱钱包排行榜|防跑路过滤|共识热力图|影子镜像|跟踪钱包|回测风格|专业工具',
+    'zh-TW': '學習 ExTerm|認識我們的終端 — ExTerm 互動學院|逐步掌握每個分頁與工具，附即時練習。|我該如何…|5 分鐘快速入門|熟練度|個模組已完成|你的 15 分鐘路徑|功能說明|逐步流程|專業提示 / 風險護欄|鍵盤快捷鍵|即時試用|開始練習|開啟|開啟完整課程|解釋此指標|已獲得徽章|文件與學院|動態|永續合約交易員排行榜|聰明錢錢包排行榜|防跑路過濾|共識熱力圖|影子鏡像|追蹤錢包|回測風格|專業工具',
+    ja: 'ExTerm を学ぶ|ターミナルを学ぶ — インタラクティブ ExTerm アカデミー|すべてのタブとツールをライブ演習付きで一歩ずつ。|どうすれば…|5 分クイックスタート|習熟度|モジュール完了|あなたの 15 分コース|機能|ステップごとの手順|プロのヒント / リスク管理|キーボードショートカット|実際に試す|演習を開始|開く|レッスン全体を開く|この指標を説明|バッジ獲得|ドキュメントとアカデミー|フィード|パーペチュアル・トレーダーランキング|スマートマネー・ウォレットランキング|ラグ対策フィルター|コンセンサス・ヒートマップ|シャドーミラー|ウォレットを追跡|スタイルをバックテスト|プロツール',
+    ko: 'ExTerm 배우기|터미널 배우기 — 인터랙티브 ExTerm 아카데미|모든 탭과 도구를 실전 연습과 함께 단계별로.|어떻게 하나요…|5분 빠른 시작|숙련도|개 모듈 완료|나의 15분 경로|기능|단계별 워크플로|프로 팁 / 리스크 가드레일|단축키|실시간으로 해보기|연습 시작|열기|전체 강의 열기|이 지표 설명|배지 획득|문서 및 아카데미|피드|무기한 선물 트레이더 순위|스마트 머니 지갑 순위|러그 방지 필터|컨센서스 히트맵|섀도 미러|지갑 추적|스타일 백테스트|프로 도구',
+    hi: 'ExTerm सीखें|हमारा टर्मिनल सीखें — इंटरैक्टिव ExTerm अकादमी|हर टैब और टूल, चरण-दर-चरण, लाइव अभ्यास के साथ।|मैं कैसे…|5 मिनट क्विक-स्टार्ट|महारत|मॉड्यूल पूरे|आपका 15 मिनट का पथ|यह क्या करता है|चरण-दर-चरण प्रक्रिया|प्रो टिप / जोखिम सुरक्षा|कीबोर्ड शॉर्टकट|लाइव आज़माएँ|अभ्यास शुरू करें|खोलें|पूरा पाठ खोलें|यह मीट्रिक समझाएँ|बैज मिला|दस्तावेज़ और अकादमी|फ़ीड|पर्प ट्रेडर लीडरबोर्ड|स्मार्ट-मनी वॉलेट लीडरबोर्ड|एंटी-रग फ़िल्टर|सहमति हीटमैप|शैडो मिरर|वॉलेट ट्रैक करें|स्टाइल बैकटेस्ट|प्रो टूल्स',
+    ar: 'تعلّم ExTerm|تعرّف على منصتنا — أكاديمية ExTerm التفاعلية|كل تبويب وأداة خطوة بخطوة مع تدريبات حية.|كيف أقوم بـ…|بداية سريعة في 5 دقائق|الإتقان|وحدات مكتملة|مسارك لمدة 15 دقيقة|ماذا يفعل|سير العمل خطوة بخطوة|نصيحة احترافية / حاجز المخاطر|اختصار لوحة المفاتيح|جرّبه مباشرة|ابدأ التدريب|فتح|افتح الدرس كاملاً|اشرح هذا المؤشر|حصلت على شارة|التوثيق والأكاديمية|الموجز|لوحة متداولي العقود الدائمة|لوحة محافظ الأموال الذكية|مرشح مكافحة الاحتيال|خريطة الإجماع الحرارية|مرآة الظل|تتبّع المحفظة|اختبار الأسلوب|أدوات احترافية',
+    pt: 'Aprenda ExTerm|Aprenda nosso terminal — Academia interativa ExTerm|Cada aba e ferramenta, passo a passo, com exercícios ao vivo.|Como eu…|Início rápido de 5 minutos|Domínio|módulos concluídos|Sua trilha de 15 minutos|O que faz|Fluxo passo a passo|Dica pro / Proteção de risco|Atalho de teclado|Experimente ao vivo|Iniciar exercício|Abrir|Abrir aula completa|Explicar esta métrica|Medalha conquistada|Documentação e Academia|Feed|Ranking de traders de perpétuos|Ranking de carteiras smart money|Filtro anti-rug|Mapa de consenso|Espelho sombra|Seguir carteira|Backtest do estilo|Ferramentas Pro',
+    fr: 'Apprendre ExTerm|Découvrez notre terminal — Académie interactive ExTerm|Chaque onglet et outil, pas à pas, avec des exercices en direct.|Comment faire…|Démarrage rapide en 5 minutes|Maîtrise|modules terminés|Votre parcours de 15 minutes|Ce que ça fait|Procédure pas à pas|Astuce pro / Garde-fou de risque|Raccourci clavier|Essayer en direct|Lancer l’exercice|Ouvrir|Ouvrir la leçon complète|Expliquer cet indicateur|Badge obtenu|Documentation et Académie|Fil|Classement des traders de perpétuels|Classement des portefeuilles smart money|Filtre anti-rug|Carte de consensus|Miroir fantôme|Suivre le portefeuille|Backtester le style|Outils Pro',
+    de: 'ExTerm lernen|Unser Terminal lernen — Interaktive ExTerm-Akademie|Jeder Tab und jedes Werkzeug Schritt für Schritt mit Live-Übungen.|Wie mache ich…|5-Minuten-Schnellstart|Beherrschung|Module abgeschlossen|Dein 15-Minuten-Pfad|Was es macht|Schritt-für-Schritt-Ablauf|Profi-Tipp / Risikoleitplanke|Tastenkürzel|Live ausprobieren|Übung starten|Öffnen|Ganze Lektion öffnen|Diese Kennzahl erklären|Abzeichen erhalten|Dokumentation & Akademie|Feed|Perp-Trader-Rangliste|Smart-Money-Wallet-Rangliste|Anti-Rug-Filter|Konsens-Heatmap|Schattenspiegel|Wallet verfolgen|Stil backtesten|Profi-Werkzeuge',
+    ru: 'Изучить ExTerm|Изучите наш терминал — Интерактивная академия ExTerm|Каждая вкладка и инструмент шаг за шагом, с живыми упражнениями.|Как мне…|Быстрый старт за 5 минут|Мастерство|модулей пройдено|Ваш 15-минутный маршрут|Что делает|Пошаговый процесс|Совет профи / Ограничение риска|Сочетание клавиш|Попробовать вживую|Начать упражнение|Открыть|Открыть полный урок|Объяснить метрику|Получен значок|Документация и академия|Лента|Рейтинг трейдеров бессрочных фьючерсов|Рейтинг кошельков умных денег|Фильтр от скама|Тепловая карта консенсуса|Теневое зеркало|Следить за кошельком|Бэктест стиля|Инструменты Pro',
+    it: 'Impara ExTerm|Impara il nostro terminale — Accademia interattiva ExTerm|Ogni scheda e strumento, passo dopo passo, con esercizi dal vivo.|Come faccio a…|Avvio rapido in 5 minuti|Padronanza|moduli completati|Il tuo percorso di 15 minuti|Cosa fa|Procedura passo passo|Consiglio pro / Protezione dal rischio|Scorciatoia da tastiera|Prova dal vivo|Avvia esercizio|Apri|Apri la lezione completa|Spiega questa metrica|Badge ottenuto|Documentazione e Accademia|Feed|Classifica trader di perpetui|Classifica wallet smart money|Filtro anti-rug|Mappa del consenso|Specchio ombra|Segui wallet|Backtest dello stile|Strumenti Pro',
+    tr: 'ExTerm’i öğren|Terminalimizi öğrenin — Etkileşimli ExTerm Akademisi|Her sekme ve araç, adım adım, canlı alıştırmalarla.|Nasıl yaparım…|5 dakikada hızlı başlangıç|Ustalık|modül tamamlandı|15 dakikalık yolunuz|Ne yapar|Adım adım iş akışı|Profesyonel ipucu / Risk korkuluğu|Klavye kısayolu|Canlı dene|Alıştırmayı başlat|Aç|Tam dersi aç|Bu metriği açıkla|Rozet kazanıldı|Belgeler ve Akademi|Akış|Perp yatırımcı sıralaması|Akıllı para cüzdan sıralaması|Rug karşıtı filtre|Konsensüs ısı haritası|Gölge ayna|Cüzdanı takip et|Stili geriye test et|Pro Araçlar',
+    vi: 'Học ExTerm|Học về terminal — Học viện ExTerm tương tác|Mọi tab và công cụ, từng bước, kèm bài tập trực tiếp.|Làm thế nào để…|Bắt đầu nhanh 5 phút|Mức thành thạo|học phần đã xong|Lộ trình 15 phút của bạn|Chức năng|Quy trình từng bước|Mẹo chuyên nghiệp / Rào chắn rủi ro|Phím tắt|Thử trực tiếp|Bắt đầu bài tập|Mở|Mở toàn bộ bài học|Giải thích chỉ số này|Đã nhận huy hiệu|Tài liệu & Học viện|Bảng tin|Bảng xếp hạng trader hợp đồng vĩnh cửu|Bảng xếp hạng ví smart money|Bộ lọc chống rug|Bản đồ nhiệt đồng thuận|Gương bóng|Theo dõi ví|Kiểm thử phong cách|Công cụ Pro',
+    th: 'เรียนรู้ ExTerm|เรียนรู้เทอร์มินัลของเรา — ExTerm Academy แบบโต้ตอบ|ทุกแท็บและเครื่องมือ ทีละขั้น พร้อมแบบฝึกสด|ฉันจะ…ได้อย่างไร|เริ่มต้นใน 5 นาที|ความชำนาญ|โมดูลที่เรียนจบ|เส้นทาง 15 นาทีของคุณ|ใช้ทำอะไร|ขั้นตอนทีละขั้น|เคล็ดลับโปร / การจำกัดความเสี่ยง|คีย์ลัด|ลองใช้จริง|เริ่มแบบฝึก|เปิด|เปิดบทเรียนเต็ม|อธิบายตัวชี้วัดนี้|ได้รับเหรียญตรา|เอกสารและอะคาเดมี|ฟีด|อันดับเทรดเดอร์สัญญาถาวร|อันดับกระเป๋าเงินอัจฉริยะ|ตัวกรองกันรัก|ฮีตแมปฉันทามติ|กระจกเงา|ติดตามกระเป๋า|แบ็กเทสต์สไตล์|เครื่องมือโปร',
+    id: 'Pelajari ExTerm|Pelajari terminal kami — Akademi ExTerm interaktif|Setiap tab dan alat, langkah demi langkah, dengan latihan langsung.|Bagaimana cara…|Mulai cepat 5 menit|Penguasaan|modul selesai|Jalur 15 menit Anda|Fungsinya|Alur langkah demi langkah|Tips pro / Pagar risiko|Pintasan keyboard|Coba langsung|Mulai latihan|Buka|Buka pelajaran lengkap|Jelaskan metrik ini|Lencana diperoleh|Dokumentasi & Akademi|Feed|Papan peringkat trader perp|Papan peringkat dompet smart money|Filter anti-rug|Peta panas konsensus|Cermin bayangan|Lacak dompet|Backtest gaya|Alat Pro',
+    ms: 'Belajar ExTerm|Belajar terminal kami — Akademi ExTerm interaktif|Setiap tab dan alat, langkah demi langkah, dengan latihan langsung.|Bagaimana saya…|Mula pantas 5 minit|Penguasaan|modul selesai|Laluan 15 minit anda|Apa fungsinya|Aliran langkah demi langkah|Tip pro / Pagar risiko|Pintasan papan kekunci|Cuba secara langsung|Mula latihan|Buka|Buka pelajaran penuh|Terangkan metrik ini|Lencana diperoleh|Dokumentasi & Akademi|Suapan|Papan pendahulu pedagang perp|Papan pendahulu dompet wang pintar|Penapis anti-rug|Peta haba konsensus|Cermin bayang|Jejak dompet|Ujian balik gaya|Alat Pro',
+    pl: 'Poznaj ExTerm|Poznaj nasz terminal — Interaktywna Akademia ExTerm|Każda karta i narzędzie krok po kroku, z ćwiczeniami na żywo.|Jak mam…|Szybki start w 5 minut|Opanowanie|ukończonych modułów|Twoja 15-minutowa ścieżka|Co robi|Przebieg krok po kroku|Porada pro / Bariera ryzyka|Skrót klawiszowy|Wypróbuj na żywo|Rozpocznij ćwiczenie|Otwórz|Otwórz pełną lekcję|Wyjaśnij ten wskaźnik|Zdobyto odznakę|Dokumentacja i Akademia|Kanał|Ranking traderów kontraktów perp|Ranking portfeli smart money|Filtr anty-rug|Mapa konsensusu|Lustro cienia|Śledź portfel|Backtest stylu|Narzędzia Pro',
+    nl: 'Leer ExTerm|Leer onze terminal — Interactieve ExTerm Academy|Elk tabblad en hulpmiddel stap voor stap, met live oefeningen.|Hoe doe ik…|Snelstart in 5 minuten|Beheersing|modules voltooid|Jouw pad van 15 minuten|Wat het doet|Stappenplan|Pro-tip / Risicovangrail|Sneltoets|Live proberen|Oefening starten|Openen|Volledige les openen|Leg deze maatstaf uit|Badge verdiend|Documentatie & Academy|Feed|Ranglijst perp-traders|Ranglijst smart-money-wallets|Anti-rugfilter|Consensus-heatmap|Schaduwspiegel|Wallet volgen|Stijl backtesten|Pro-tools',
+    sv: 'Lär dig ExTerm|Lär dig vår terminal — Interaktiv ExTerm-akademi|Varje flik och verktyg steg för steg, med liveövningar.|Hur gör jag…|Snabbstart på 5 minuter|Behärskning|moduler klara|Din 15-minutersväg|Vad det gör|Steg-för-steg-flöde|Proffstips / Riskräcke|Kortkommando|Prova live|Starta övning|Öppna|Öppna hela lektionen|Förklara måttet|Märke erhållet|Dokumentation & akademi|Flöde|Topplista perp-handlare|Topplista smart money-plånböcker|Anti-rug-filter|Konsensus-värmekarta|Skuggspegel|Följ plånbok|Backtesta stilen|Proffsverktyg',
+    uk: 'Вивчити ExTerm|Вивчіть наш термінал — Інтерактивна академія ExTerm|Кожна вкладка та інструмент крок за кроком, із живими вправами.|Як мені…|Швидкий старт за 5 хвилин|Майстерність|модулів пройдено|Ваш 15-хвилинний маршрут|Що робить|Покроковий процес|Порада профі / Обмеження ризику|Комбінація клавіш|Спробувати наживо|Почати вправу|Відкрити|Відкрити повний урок|Пояснити метрику|Отримано значок|Документація та академія|Стрічка|Рейтинг трейдерів безстрокових ф’ючерсів|Рейтинг гаманців розумних грошей|Фільтр від скаму|Теплова карта консенсусу|Тіньове дзеркало|Стежити за гаманцем|Бектест стилю|Інструменти Pro',
+    bn: 'ExTerm শিখুন|আমাদের টার্মিনাল শিখুন — ইন্টারঅ্যাক্টিভ ExTerm একাডেমি|প্রতিটি ট্যাব ও টুল, ধাপে ধাপে, লাইভ অনুশীলনসহ।|আমি কীভাবে…|৫ মিনিটে দ্রুত শুরু|দক্ষতা|মডিউল সম্পন্ন|আপনার ১৫ মিনিটের পথ|এটি কী করে|ধাপে ধাপে প্রক্রিয়া|প্রো টিপ / ঝুঁকি সুরক্ষা|কিবোর্ড শর্টকাট|লাইভ চেষ্টা করুন|অনুশীলন শুরু|খুলুন|পূর্ণ পাঠ খুলুন|এই মেট্রিক ব্যাখ্যা করুন|ব্যাজ অর্জিত|ডকুমেন্টেশন ও একাডেমি|ফিড|পার্প ট্রেডার লিডারবোর্ড|স্মার্ট-মানি ওয়ালেট লিডারবোর্ড|অ্যান্টি-রাগ ফিল্টার|ঐকমত্য হিটম্যাপ|শ্যাডো মিরর|ওয়ালেট ট্র্যাক করুন|স্টাইল ব্যাকটেস্ট|প্রো টুলস',
+    ur: 'ExTerm سیکھیں|ہمارا ٹرمینل سیکھیں — انٹرایکٹو ExTerm اکیڈمی|ہر ٹیب اور ٹول، قدم بہ قدم، براہِ راست مشقوں کے ساتھ۔|میں کیسے…|5 منٹ میں فوری آغاز|مہارت|ماڈیول مکمل|آپ کا 15 منٹ کا راستہ|یہ کیا کرتا ہے|قدم بہ قدم طریقہ|پرو مشورہ / رسک حفاظت|کی بورڈ شارٹ کٹ|براہِ راست آزمائیں|مشق شروع کریں|کھولیں|مکمل سبق کھولیں|اس پیمانے کی وضاحت|بیج حاصل ہوا|دستاویزات اور اکیڈمی|فیڈ|پرپ ٹریڈر لیڈر بورڈ|اسمارٹ منی والیٹ لیڈر بورڈ|اینٹی رگ فلٹر|اتفاقِ رائے ہیٹ میپ|شیڈو مرر|والیٹ ٹریک کریں|اسٹائل بیک ٹیسٹ|پرو ٹولز',
+    fa: 'ExTerm را بیاموزید|ترمینال ما را بیاموزید — آکادمی تعاملی ExTerm|هر زبانه و ابزار، گام‌به‌گام، با تمرین زنده.|چگونه…|شروع سریع ۵ دقیقه‌ای|تسلط|ماژول تکمیل‌شده|مسیر ۱۵ دقیقه‌ای شما|چه کاری انجام می‌دهد|روند گام‌به‌گام|نکته حرفه‌ای / حفاظ ریسک|میانبر صفحه‌کلید|امتحان زنده|شروع تمرین|باز کردن|باز کردن درس کامل|توضیح این شاخص|نشان دریافت شد|مستندات و آکادمی|فید|جدول معامله‌گران قراردادهای دائمی|جدول کیف‌پول‌های پول هوشمند|فیلتر ضد کلاهبرداری|نقشه حرارتی اجماع|آینه سایه|دنبال کردن کیف‌پول|بک‌تست سبک|ابزارهای حرفه‌ای',
+    he: 'למדו את ExTerm|הכירו את המסוף שלנו — אקדמיית ExTerm האינטראקטיבית|כל לשונית וכלי, צעד אחר צעד, עם תרגולים חיים.|איך אני…|התחלה מהירה ב-5 דקות|שליטה|מודולים הושלמו|המסלול שלך ל-15 דקות|מה זה עושה|תהליך צעד אחר צעד|טיפ מקצועי / מעקה סיכון|קיצור מקלדת|נסו בשידור חי|התחלת תרגול|פתיחה|פתיחת השיעור המלא|הסבר על המדד|התקבל תג|תיעוד ואקדמיה|פיד|דירוג סוחרי חוזים עתידיים צמיתים|דירוג ארנקי כסף חכם|מסנן נגד הונאה|מפת חום של קונצנזוס|מראת צל|מעקב אחר ארנק|בקטסט לסגנון|כלים מקצועיים',
+    el: 'Μάθετε το ExTerm|Μάθετε το τερματικό μας — Διαδραστική Ακαδημία ExTerm|Κάθε καρτέλα και εργαλείο, βήμα βήμα, με ζωντανές ασκήσεις.|Πώς μπορώ να…|Γρήγορη εκκίνηση 5 λεπτών|Εξειδίκευση|ενότητες ολοκληρώθηκαν|Η διαδρομή σας 15 λεπτών|Τι κάνει|Ροή βήμα προς βήμα|Συμβουλή / Όριο κινδύνου|Συντόμευση πληκτρολογίου|Δοκιμάστε ζωντανά|Έναρξη άσκησης|Άνοιγμα|Άνοιγμα πλήρους μαθήματος|Εξήγηση δείκτη|Κερδίσατε σήμα|Τεκμηρίωση & Ακαδημία|Ροή|Κατάταξη traders perp|Κατάταξη πορτοφολιών smart money|Φίλτρο anti-rug|Θερμικός χάρτης συναίνεσης|Καθρέφτης σκιάς|Παρακολούθηση πορτοφολιού|Backtest στυλ|Εργαλεία Pro',
+    cs: 'Naučte se ExTerm|Poznejte náš terminál — Interaktivní akademie ExTerm|Každá karta a nástroj krok za krokem, s živými cvičeními.|Jak mám…|Rychlý start za 5 minut|Zvládnutí|modulů dokončeno|Vaše 15minutová cesta|Co dělá|Postup krok za krokem|Profi tip / Riziková zábrana|Klávesová zkratka|Vyzkoušet naživo|Spustit cvičení|Otevřít|Otevřít celou lekci|Vysvětlit metriku|Získán odznak|Dokumentace a akademie|Kanál|Žebříček perp obchodníků|Žebříček peněženek smart money|Filtr proti podvodům|Teplotní mapa konsenzu|Stínové zrcadlo|Sledovat peněženku|Backtest stylu|Profi nástroje',
+    ro: 'Învață ExTerm|Învață terminalul nostru — Academia interactivă ExTerm|Fiecare filă și instrument, pas cu pas, cu exerciții live.|Cum fac…|Pornire rapidă în 5 minute|Măiestrie|module finalizate|Traseul tău de 15 minute|Ce face|Flux pas cu pas|Sfat pro / Parapet de risc|Comandă rapidă|Încearcă live|Începe exercițiul|Deschide|Deschide lecția completă|Explică această metrică|Insignă obținută|Documentație și Academie|Flux|Clasament traderi perp|Clasament portofele smart money|Filtru anti-rug|Hartă de consens|Oglindă umbră|Urmărește portofelul|Backtest stil|Instrumente Pro',
+    hu: 'Ismerd meg az ExTermet|Ismerd meg terminálunkat — Interaktív ExTerm Akadémia|Minden lap és eszköz lépésről lépésre, élő gyakorlatokkal.|Hogyan…|5 perces gyorsindítás|Jártasság|modul kész|A 15 perces utad|Mit csinál|Lépésről lépésre|Profi tipp / Kockázati korlát|Billentyűparancs|Próbáld ki élőben|Gyakorlat indítása|Megnyitás|Teljes lecke megnyitása|Mutató magyarázata|Jelvény megszerezve|Dokumentáció és Akadémia|Hírfolyam|Perp kereskedők ranglistája|Smart money tárcák ranglistája|Rug-szűrő|Konszenzus hőtérkép|Árnyéktükör|Tárca követése|Stílus visszatesztelése|Profi eszközök',
+    fil: 'Matuto ng ExTerm|Kilalanin ang aming terminal — Interactive ExTerm Academy|Bawat tab at tool, hakbang-hakbang, may live na drill.|Paano ko…|5-Minutong Mabilis na Simula|Kahusayan|Modyul na Natapos|Ang iyong 15-minutong landas|Ano ang Ginagawa|Hakbang-hakbang na Proseso|Pro Tip / Bantay sa Panganib|Keyboard Shortcut|Subukan nang Live|Simulan ang Drill|Buksan|Buksan ang Buong Aralin|Ipaliwanag ang sukatang ito|Nakuha ang badge|Dokumentasyon at Academy|Feed|Leaderboard ng Perp Trader|Leaderboard ng Smart-Money Wallet|Anti-Rug na filter|Consensus heatmap|Shadow Mirror|I-track ang Wallet|I-backtest ang Estilo|Pro Tools',
+    sw: 'Jifunze ExTerm|Jifunze terminal yetu — Chuo shirikishi cha ExTerm|Kila kichupo na zana, hatua kwa hatua, pamoja na mazoezi hai.|Nifanyeje…|Kuanza haraka kwa dakika 5|Umahiri|moduli zimekamilika|Njia yako ya dakika 15|Inachofanya|Mtiririko hatua kwa hatua|Kidokezo / Kizuizi cha hatari|Njia ya mkato|Jaribu moja kwa moja|Anza zoezi|Fungua|Fungua somo kamili|Eleza kipimo hiki|Beji imepatikana|Nyaraka na Chuo|Mlisho|Orodha ya wafanyabiashara wa perp|Orodha ya pochi za pesa janja|Kichujio dhidi ya ulaghai|Ramani ya joto ya maafikiano|Kioo kivuli|Fuatilia pochi|Jaribu mtindo|Zana za Pro',
+  };
+  for (const [code, s] of Object.entries(RAW154)) if (I.DICT[code]) s.split('|').forEach((v, k) => { I.DICT[code][K154[k]] = v; });
+  I.KEYS.push(...K154);
   // every ISO-639-1 code: selectable, English text, native name from Intl.DisplayNames where the runtime has it
   I.ISO = 'aa ab ae af ak am an ar as av ay az ba be bg bi bm bn bo br bs ca ce ch co cr cs cu cv cy da de dv dz ee el en eo es et eu fa ff fi fj fo fr fy ga gd gl gn gu gv ha he hi ho hr ht hu hy hz ia id ie ig ii ik io is it iu ja jv ka kg ki kj kk kl km kn ko kr ks ku kv kw ky la lb lg li ln lo lt lu lv mg mh mi mk ml mn mr ms mt my na nb nd ne ng nl nn no nr nv ny oc oj om or os pa pi pl ps pt qu rm rn ro ru rw sa sc sd se sg si sk sl sm sn so sq sr ss st su sv sw ta te tg th ti tk tl tn to tr ts tt tw ty ug uk ur uz ve vi vo wa wo xh yi yo za zh zu'.split(' ');
   const NAMED = new Map(I.LANGS.map((l) => [l.code, l]));
@@ -17085,7 +17162,7 @@ const V152 = (() => {
     return null;
   };
   V.nlCompile = (text) => {
-    const s = String(text || '').slice(0, 600).replace(/\s+/g, ' ').trim(), lc = s.toLowerCase(); if (s.length < 8) return { ok: false, error: 'Describe a rule, e.g. "buy SOL when RSI below 30 and price above EMA 200, sell when RSI above 70, stop 2%, target 6%"' };
+    const s = String(text || '').slice(0, 600).replace(/\s+/g, ' ').trim(), lc = s.toLowerCase(); if (s.length < 8) return { ok: false, error: 'Describe a rule, e.g. "buy ETH when RSI below 30 and price above EMA 200, sell when RSI above 70, stop 2%, target 6%"' };
     const grab = (rx) => { const m = rx.exec(lc); return m ? m[1] : ''; };
     const entryTxt = grab(/(?:buy|long|enter)[^,;.]*?\bwhen\b(.+?)(?:[,;.]\s*(?:and\s+)?(?:sell|exit|close)|[,;.]\s*(?:stop|sl|take|target|tp)|$)/), exitTxt = grab(/(?:sell|exit|close)[^,;.]*?\bwhen\b(.+?)(?:[,;.]|$)/);
     const split = (t) => { const logic = /\bor\b/.test(t) && !/\band\b/.test(t) ? 'OR' : 'AND'; return { logic, conds: t.split(logic === 'OR' ? /\bor\b/ : /\band\b/).map(condOf).filter(Boolean).slice(0, 8) }; };
@@ -17466,7 +17543,7 @@ const V152UI = (() => {
   R.compose = () => { const r = U.rules(); return `<datalist id="v152Ser">${Object.keys(V152.SERIES).map((k) => `<option value="${k}">`).join('')}</datalist>${['entry', 'exit'].map((side) => `<div class="note"><b>${side === 'entry' ? 'Enter long when' : 'Exit when'}</b> <select class="in v152-logic" data-logic="${side}"><option ${r[side].logic === 'AND' ? 'selected' : ''}>AND</option><option ${r[side].logic === 'OR' ? 'selected' : ''}>OR</option></select> <button type="button" class="btn xs" data-a="addCond" data-side="${side}">+ condition</button></div>${r[side].conds.map((c, i) => condRow(side, c, i)).join('')}`).join('')}
     <div class="row v151-row"><label class="note">Stop % <input class="in mono v152-num" id="v152Sl" value="${esc(r.sl || '')}"></label><label class="note">Target % <input class="in mono v152-num" id="v152Tp" value="${esc(r.tp || '')}"></label></div>
     <div class="row v151-row"><button type="button" class="btn sm pri" data-a="compBt">Backtest on this chart</button><button type="button" class="btn sm" data-a="compPine">Pine Script v5</button><button type="button" class="btn sm" data-a="compJson">JSON</button></div><div id="v152CompOut"></div>`; };
-  R.port = () => `<div class="row v151-row">${stratSel('v152PS', U.ps)}<input class="in" id="v152Basket" value="${esc(U.basket || 'NVDA, TSLA, BTC-USD, SOL-USD')}" aria-label="Basket"><button type="button" class="btn sm pri" data-a="portRun">Run</button></div><div id="v152PortOut"><div class="note">Same strategy across a basket on 1h history: combined Sharpe, drawdown and return correlation.</div></div>`;
+  R.port = () => `<div class="row v151-row">${stratSel('v152PS', U.ps)}<input class="in" id="v152Basket" value="${esc(U.basket || 'NVDA, TSLA, BTC-USD, ETH-USD')}" aria-label="Basket"><button type="button" class="btn sm pri" data-a="portRun">Run</button></div><div id="v152PortOut"><div class="note">Same strategy across a basket on 1h history: combined Sharpe, drawdown and return correlation.</div></div>`;
   R.sens = () => `<div class="row v151-row">${stratSel('v152SS', U.ss)}<button type="button" class="btn sm pri" data-a="sensRun">Run 5 × 5 grid</button></div><div id="v152SensOut"><div class="note">Sweeps the first two parameters ±40% on the open market's 1h history.</div></div>`;
   R.gate = () => `<div class="row v151-row">${stratSel('v152GS', U.gs)}<button type="button" class="btn sm pri" data-a="gateRun">Validate</button></div><div id="v152GateOut"><div class="note">Runs the 17-test Validation Lab, then one click adds the ATR / trend / time filters that target each failed gate and re-runs.</div></div>`;
   R.prop = () => { const k = U.propK || 'apex', r = Object.assign({}, V152.PROP[k], k === 'custom' ? cfg().propCustom || {} : {}); return `<div class="row v151-row"><div class="seg" id="v152PropK">${Object.keys(V152.PROP).map((x) => `<button type="button" data-propk="${x}" class="${k === x ? 'on' : ''}">${esc(V152.PROP[x].name)}</button>`).join('')}</div></div>
@@ -18244,6 +18321,750 @@ const V153UI = (() => {
   return U;
 })();
 if (typeof window !== 'undefined' && typeof document !== 'undefined' && typeof boot === 'function') { const _b153 = boot; boot = async function () { await _b153.apply(this, arguments); try { V153UI.start(); } catch (e) { console.warn('v153 init', e); } }; }
+
+/* ===== v154core.js ===== */
+/* ExTerm v15.4 core: pure logic behind the Learn ExTerm Academy, the on-chain Perp / Smart-Money Leaderboards and the
+   15 workstation upgrades. Curriculum + fuzzy search + learning paths + drill checks; ExTerm Alpha Score (mirrors
+   serve.py alpha_score exactly), leaderboard / position / fill parsing at the trust boundary, style + tilt + anti-rug
+   classifiers, confluence, consensus heatmap, Backtest-Style extraction; ghost candles, step-ladder stops, opening
+   ranges, tape velocity, dealer charm / vanna drift, absorption, gap-fill odds, holder clusters, lead-lag, forensic
+   move breakdown, plain-English pattern hunter, bot throttle, macro event reactions, tilt guard. No DOM, no eval. */
+const V154 = (() => {
+  const V = {}, fin = Number.isFinite, clamp = (x, a, b) => Math.min(b, Math.max(a, x));
+  const num = (x) => { const n = typeof x === 'string' && x.trim() !== '' ? +x : typeof x === 'number' ? x : NaN; return fin(n) ? n : null; };
+  const r2 = (x, k = 2) => (fin(x) ? Math.round(x * 10 ** k) / 10 ** k : x);
+  const mean = (a) => (a.length ? a.reduce((s, x) => s + x, 0) / a.length : 0);
+  const med = (a) => { if (!a.length) return 0; const b = a.slice().sort((x, y) => x - y), m = b.length >> 1; return b.length % 2 ? b[m] : (b[m - 1] + b[m]) / 2; };
+  const sd = (a) => { if (a.length < 2) return 0; const m = mean(a); return Math.sqrt(a.reduce((s, x) => s + (x - m) ** 2, 0) / (a.length - 1)); };
+  const STR = (s, n) => String(s == null ? '' : s).replace(/[\u0000-\u001f\u007f‪-‮⁦-⁩]/g, '').slice(0, n);
+  const ADDR = /^0x[0-9a-fA-F]{40}$/, COIN = /^[A-Za-z0-9@:._-]{1,24}$/;
+  V.ADDR = ADDR; V.isAddr = (a) => typeof a === 'string' && ADDR.test(a);
+  V.rng = (seed) => { let s = (seed >>> 0) || 1; return () => { s ^= s << 13; s >>>= 0; s ^= s >> 17; s ^= s << 5; s >>>= 0; return s / 4294967296; }; };
+
+  /* ══════════ Learn ExTerm Academy ══════════ */
+  V.LEARN_MOUNT_TARGETS = ['topbar', 'settings'];
+  V.CATS = [['chart', 'Charting & Visual Execution', '📈'], ['flow', 'Order Flow & 0DTE Derivatives', '🌊'], ['scan', 'Scanners & On-Chain DEX', '🔭'], ['quant', 'Institutional Quant Lab', '🧬'], ['grok', 'Grok Bots & 3-Agent Copilot', '⚡'], ['macro', 'World Macro Shield', '🌍'], ['prop', 'Prop-Firm Gauntlets & Trade Journal', '🏁'], ['lead', 'On-Chain Perp & Smart-Money Leaderboards', '🏆'], ['sec', 'Security & External Execution Bridges', '🛡']];
+  // [id, cat, title, what, steps ('·'-separated), tip, shortcut, go {tab, lab, drawer, sel, mode}, minutes, drill, quick]
+  const M = [
+    ['chart-basics', 'chart', 'Read the 240Hz chart', 'Candles, volume, crosshair and timeframes on the GPU-paced main chart.', 'Pick a symbol in the search box · Switch timeframe with the 1s…1d pills · Scroll to zoom, drag to pan · Hover for OHLC', 'Use 1s/1m bars for execution only; decide direction on 15m+.', '/', { tab: 'markets', sel: '#chartWrap, #chart, canvas' }, 2, null, 1],
+    ['chart-ladder', 'chart', 'Drag SL / TP ladders', 'Three take-profit rungs with a stop-loss that moves to break-even after TP1.', 'Open the Workstation drawer (🧭) · Click TP ladder · Drag TP1–TP3 on the chart · Right-click a rung to arm step rules', 'Size so the stop distance risks ≤ 1% of equity.', 'Ctrl+K → TP ladder', { tab: 'markets', sel: '#v152Btn, #chartWrap' }, 3, 'ladder', 1],
+    ['chart-vwap', 'chart', 'Anchor VWAP', 'Volume-weighted average price from any candle you pick, with ±1/±2σ bands.', 'Open the Workstation drawer · Choose Anchored VWAP · Click the anchor candle', 'Reclaims of an event-anchored VWAP are cleaner than the session VWAP.', 'Ctrl+K → AVWAP', { tab: 'markets', sel: '#chartWrap' }, 2, 'vwap', 0],
+    ['chart-ghost', 'chart', 'Multi-Timeframe Ghost Candles', 'Faint 15m / 1h / 4h candle shells behind your 1s / 1m execution bars.', 'Open 🧭 → Charts & Execution · Toggle Ghost candles · Pick 15m, 1h or 4h', 'Trade 1m entries only in the direction of the ghost candle body.', 'G', { tab: 'markets', sel: '#v154Up' }, 1, null, 0],
+    ['chart-or', 'chart', 'Opening Range & Kill-Zones', '5m / 15m / 30m opening-range bands plus Asia, London and NY liquidity boxes.', 'Open 🧭 → Charts & Execution · Toggle Session bands · Watch sweeps of the box edges', 'A sweep of the Asia high into London open is a classic liquidity grab.', '', { tab: 'markets', sel: '#v154Up' }, 1, null, 0],
+    ['flow-tape', 'flow', 'Tape Velocity Speedometer', 'Market orders per second and bid/ask imbalance bursts on the DOM ladder.', 'Open 🧭 → Order Flow · Toggle the speedometer · Watch the burst lamp', 'Velocity spikes without price progress often mark absorption.', '', { tab: 'markets', sel: '#v154Up' }, 1, null, 0],
+    ['flow-gamma', 'flow', '0DTE Gamma Flip & Walls', 'Where dealer hedging flips from dampening to amplifying moves, with call / put walls.', 'Open Stocks · Load an options chain · Enable the γ overlay', 'Above the flip, fade extremes; below it, respect momentum.', '', { tab: 'markets', mode: 'stocks', sel: '#chartWrap' }, 2, null, 0, 'gamma'],
+    ['flow-charm', 'flow', 'Dealer Charm & Vanna Drift', 'Intraday hedge drift from time decay (charm) and volatility (vanna).', 'Enable the γ overlay · Toggle Charm / Vanna curve · Read pin vs squeeze windows', 'Late-day charm pins price near the largest open-interest strike.', '', { tab: 'markets', mode: 'stocks', sel: '#v154Up' }, 2, null, 0, 'charm'],
+    ['flow-cvd', 'flow', 'CVD Divergence & Absorption', 'Cumulative delta that disagrees with price, and absorption-coloured candle bodies.', 'Open 🧭 → Order Flow · Toggle CVD divergence · Toggle Absorption footprints', 'A higher high on lower CVD is a warning, not an entry by itself.', '', { tab: 'markets', sel: '#v154Up' }, 2, null, 0, 'cvd'],
+    ['scan-gap', 'scan', 'Gap-Fill Probability Scanner', 'Ranks gaps by size, pre-market RVOL and 90-day historical fill rate.', 'Open 🧭 → Scanners · Run Gap-fill scan · Click a row to chart it', 'Gaps on news with RVOL > 3× fill far less often.', '', { tab: 'markets', sel: '#v154Up' }, 2, null, 0],
+    ['scan-dex', 'scan', 'DEX Holder Cluster X-Ray', 'Separates coordinated fresh-funded sniper wallets from independent buyers.', 'Switch to On-chain · Open a token · Open the safety popover · Expand the X-Ray', 'One funder behind many top holders is a coordinated-dump risk.', '', { tab: 'markets', mode: 'onchain', sel: '#v154Up' }, 2, 'pool', 1],
+    ['scan-lag', 'scan', 'Correlation & Lead-Lag', 'Live decoupling alerts between linked markets such as NVDA vs SMH or ETH vs BTC.', 'Open 🧭 → Scanners · Run Lead-lag · Read the lag and decoupling flags', 'Trade the laggard back toward the leader only when correlation is historically high.', '', { tab: 'markets', sel: '#v154Up' }, 1, null, 0],
+    ['quant-lab', 'quant', 'Quant Lab Pro tour', 'Backtest, validate and stress any strategy before it ever touches capital.', 'Open Lab → 🧬 · Pick a strategy · Run backtest · Open any accordion', 'Never trust a backtest that has not passed the 17-test gate.', '', { tab: 'lab', lab: 'q153', sel: '#q153Root' }, 2, null, 1],
+    ['quant-evolve', 'quant', 'Auto-Evolve', 'Genetic search over parameters and filters, gated by walk-forward and the 17-test lab.', 'Lab → 🧬 → Auto-Evolve · Choose generations · Run · Use a survivor', 'No survivors is an honest answer: there is no robust edge here.', '', { tab: 'lab', lab: 'q153', sel: '#q153Root details[data-sec="evolve"]' }, 2, null, 0],
+    ['quant-crisis', 'quant', 'Crisis Time Machine', 'Replays 2020, 2022 and FOMC shocks calibrated to the current market.', 'Lab → 🧬 → Crisis Time Machine · Replay all crises', 'If one crisis wipes out a year of gains, cut size.', '', { tab: 'lab', lab: 'q153', sel: '#q153Root details[data-sec="crisis"]' }, 1, null, 0],
+    ['quant-frag', 'quant', 'Slippage Fragility', 'The friction multiple at which the strategy stops making money.', 'Lab → 🧬 → Fragility Break-Point · Set order size · Stress liquidity', 'Below 2× the edge is fragile: real fills will eat it.', '', { tab: 'lab', lab: 'q153', sel: '#q153Root details[data-sec="frag"]' }, 1, null, 0, 'fragility'],
+    ['quant-size', 'quant', 'Kelly / ATR Sizing', 'Four sizing models and the odds of passing a $50k / $100k prop evaluation.', 'Lab → 🧬 → Dynamic Sizing · Pick account · Compare', 'Half-Kelly is the ceiling, not the target.', '', { tab: 'lab', lab: 'q153', sel: '#q153Root details[data-sec="sizing"]' }, 1, 'risk', 0],
+    ['quant-inspect', 'quant', 'Visual Trade Inspector', 'Click the equity curve to open the exact trade on its candles.', 'Run a backtest · Click the drawdown dip · Step trades with ◀ ▶', 'Inspect the worst trades first: they reveal the hidden rule.', '', { tab: 'lab', lab: 'q153', sel: '#q153Root' }, 1, null, 0],
+    ['quant-shadow', 'quant', 'Grok Shadow Bot', 'Promote a validated strategy to dry-run forward ticks with zero capital at risk.', 'Validate to grade A–C · Click Promote to Shadow Bot · Watch the Grok tab', 'Forward-test at least 30 shadow fills before going live.', '', { tab: 'grok', sel: '#q153Grok, #tab-grok' }, 1, null, 0],
+    ['grok-copilot', 'grok', '3-Agent Copilot', 'Bull, bear and risk agents debate the setup before you act.', 'Open Grok · Ask about a symbol · Read the three stances', 'Act only when the risk agent agrees.', '', { tab: 'grok', sel: '#tab-grok' }, 2, null, 1],
+    ['grok-why', 'grok', 'Explain Why Price Just Moved', 'Alt-click any spike: 60 s of flow, delta and headlines get a root-cause breakdown.', 'Enable Forensic clicks in 🧭 → AI · Alt-click a wick · Read the breakdown', 'A move with no flow and no headline is often a liquidity gap.', 'Alt+Click', { tab: 'markets', sel: '#chartWrap' }, 1, null, 0],
+    ['grok-hunt', 'grok', 'Pattern & Liquidity Hunter', 'Type a plain-English query and matching zones are drawn on the chart.', 'Open 🧭 → AI · Type e.g. bullish FVG above VWAP with RVOL > 2.5x · Hunt', 'Combine a structure (FVG) with a filter (RVOL) for fewer, better zones.', '', { tab: 'markets', sel: '#v154Up' }, 1, null, 0],
+    ['grok-throttle', 'grok', 'Bot Cool-Off & Volatility Throttle', 'Halves size after two straight losses and pauses entries when ATR > 2.5× normal.', 'Open 🧭 → AI · Toggle the throttle · Watch the status lamp', 'Most blow-ups start in a volatility regime the bot never saw.', '', { tab: 'markets', sel: '#v154Up' }, 1, null, 0],
+    ['macro-shield', 'macro', 'World Macro Shield', 'Global headlines graded CRITICAL / HIGH / MACRO with opt-in bot shielding.', 'Open Grok · Read the intel strip · Opt in to auto-pause', 'Flat before CRITICAL headlines beats the best stop-loss.', '', { tab: 'grok', sel: '#tab-grok' }, 1, null, 0],
+    ['macro-react', 'macro', 'FOMC / CPI / NFP Reaction Overlay', 'First-5-minute spike, fakeout wick and follow-through from the last 12 releases.', 'Open 🧭 → Macro · Toggle Event reactions · Read the table', 'The first spike after CPI fakes out more often than it follows through.', '', { tab: 'markets', sel: '#v154Up' }, 2, null, 0],
+    ['prop-gauntlet', 'prop', 'Prop-Firm Gauntlets', 'Timed challenges with profit targets, daily-loss and trailing-drawdown rules.', 'Open Challenges · Pick a gauntlet · Trade the paper account', 'Daily-loss rules fail more evaluations than bad entries.', '', { tab: 'challenge', sel: '#chHost' }, 1, null, 0],
+    ['prop-journal', 'prop', 'Trade Journal & Tilt Guard', 'Every fill is journaled; a banner warns when size doubles right after a stop-out.', 'Open Journal · Tag trades · Review the Tilt Guard', 'Walk away for 15 minutes after a stop-out.', '', { tab: 'journal', sel: '#jnHost' }, 1, 'risk', 1],
+    ['prop-replay', 'prop', 'Replay My Worst Loss', 'Loads your worst losing trade into tick replay 30 s before entry.', 'Open Journal · Click Replay my worst loss · Practise the exit', 'Rehearse the exit you should have taken, three times.', '', { tab: 'journal', sel: '#jnHost' }, 1, null, 0],
+    ['lead-perp', 'lead', 'Perp Trader Leaderboard', 'Ranked public on-chain perp traders with live positions and the ExTerm Alpha Score.', 'Open Social → Perp Leaderboard · Pick 24h / 7d / 30d / All · Expand a trader', 'Rank by Alpha Score, not raw PnL: PnL rewards leverage.', '', { tab: 'social', sel: '#lbPerpBtn' }, 2, null, 1, 'alpha'],
+    ['lead-shadow', 'lead', 'Chart Setup & Shadow Mirror', 'Plot a trader\'s entry and liquidation on your chart or mirror deltas in dry-run.', 'Expand a trader · Click Chart Setup or Shadow Mirror', 'Mirror in dry-run for a week before copying anything.', '', { tab: 'social', sel: '#lbPerpBtn' }, 1, null, 0],
+    ['lead-smart', 'lead', 'Smart-Money Wallet Leaderboard', 'Public and saved wallets ranked by win rate, realised PnL and Alpha Score with CONFLUENCE alerts.', 'Switch to On-chain · Open Wallet Tracker · Expand Smart-Money Leaderboard', '2+ top wallets entering the same side within 15 min is the signal worth watching.', '', { tab: 'whales', mode: 'onchain', sel: '#lbSmart' }, 2, null, 0],
+    ['lead-backtest', 'lead', 'Backtest a Trader\'s Style', 'Turns a trader\'s cadence, hold time and leverage into a Quant Lab run through the 17-test gate.', 'Expand a trader · Click Backtest Style · Read the grade', 'A great trader with an untestable style is luck until proven otherwise.', '', { tab: 'social', sel: '#lbPerpBtn' }, 1, null, 0],
+    ['lead-heat', 'lead', 'Consensus Heatmap & Anti-Rug', 'Where top wallets hold longs, take profits and liquidation walls; filters padded or wash wallets.', 'Social → Perp Leaderboard · Toggle Consensus heatmap · Toggle Anti-Rug filter', 'Liquidation walls within 2.5% act as price magnets.', '', { tab: 'social', sel: '#lbPerpBtn' }, 1, null, 0],
+    ['sec-vault', 'sec', 'Key Vault & Strict CSP', 'AES-256 key vault, strict script-hash CSP and zero inline handlers.', 'Open Settings · Set a vault passphrase · Verify build integrity', 'Never paste withdrawal-enabled API keys anywhere.', '', { tab: 'set', sel: '#setBody' }, 1, null, 1],
+    ['sec-bridge', 'sec', 'External Execution Bridges', 'Signed webhooks to allow-listed bot services; the Auto-Breakeven ladder is enforced there too.', 'Open Settings · Add a webhook bridge · Send a test signal', 'Use trade-only keys with IP allow-lists on the bridge side.', '', { tab: 'set', sel: '#setBody' }, 1, null, 0],
+  ];
+  V.MODULES = M.map(([id, cat, title, what, steps, tip, key, go, min, drill, quick, metric]) => ({ id, cat, title, what, steps: steps.split(' · '), tip, key, go, min, drill, quick: !!quick, metric: metric || null }));
+  V.byId = (id) => V.MODULES.find((m) => m.id === id) || null;
+  V.QUICK = V.MODULES.filter((m) => m.quick).map((m) => m.id);
+  V.METRICS = {
+    gamma: { title: '0DTE Gamma Flip', lesson: 'flow-gamma', text: 'The price where net dealer gamma changes sign. Above it dealers sell rallies and buy dips (moves dampen); below it they chase (moves accelerate).' },
+    fragility: { title: 'Fragility Break-Point', lesson: 'quant-frag', text: 'How many times today\'s spread and impact the strategy survives before it loses money. Under 2× is fragile; 5×+ is robust.' },
+    alpha: { title: 'ExTerm Alpha Score', lesson: 'lead-perp', text: '0–100 blend of risk-adjusted ROI (35%), drawdown control (25%), consistency across 24h/7d/30d/All (25%) and liquid, non-churning size (15%).' },
+    cvd: { title: 'CVD Divergence', lesson: 'flow-cvd', text: 'Cumulative volume delta making a lower high while price makes a higher high (or the reverse): aggressive buyers are fading.' },
+    charm: { title: 'Dealer Charm / Vanna', lesson: 'flow-charm', text: 'Charm is delta decay over time, vanna is delta change with volatility. Into the close, charm hedging can pin price or fuel a squeeze.' },
+  };
+  V.PATHS = { perps: ['chart-basics', 'chart-ladder', 'flow-tape', 'flow-cvd', 'lead-perp', 'lead-heat', 'grok-throttle', 'prop-journal'], stocks: ['chart-basics', 'chart-or', 'flow-gamma', 'flow-charm', 'scan-gap', 'macro-react', 'chart-vwap'], dex: ['chart-basics', 'scan-dex', 'lead-smart', 'scan-lag', 'grok-hunt', 'sec-vault', 'chart-ghost'], quant: ['quant-lab', 'quant-evolve', 'quant-frag', 'quant-size', 'quant-crisis', 'lead-backtest', 'quant-shadow'] };
+  V.GOALS = [['perps', 'Crypto Perps'], ['stocks', 'US Stocks & 0DTE'], ['dex', 'On-Chain DEX'], ['quant', 'No-Code Quant Bots']];
+  /* tailored ≤ 15-minute playlist: the goal's ordered lessons, drills first-class, trimmed to the time budget */
+  V.path = (goal, budget = 15) => { const ids = V.PATHS[goal] || []; let t = 0; const out = []; for (const id of ids) { const m = V.byId(id); if (!m) continue; const cost = m.min + (m.drill ? 1 : 0); if (t + cost > budget) continue; t += cost; out.push({ id, min: cost, drill: m.drill }); } return { goal, minutes: t, items: out }; };
+  V.progress = (done, ids = V.MODULES.map((m) => m.id)) => { const set = new Set(Array.isArray(done) ? done : []), n = ids.filter((i) => set.has(i)).length; return { done: n, total: ids.length, pct: ids.length ? Math.round((n / ids.length) * 100) : 0 }; };
+  V.cleanDone = (d) => [...new Set((Array.isArray(d) ? d : []).filter((x) => typeof x === 'string' && V.byId(x)))];
+  const fold = (s) => String(s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+  const STOP = new Set(['how', 'do', 'i', 'a', 'an', 'the', 'to', 'my', 'on', 'in', 'of', 'what', 'is', 'can', 'use', 'with', 'for', 'and', 'where']);
+  const subseq = (q, s) => { let j = 0; for (let i = 0; i < s.length && j < q.length; i++) if (s[i] === q[j]) j++; return j === q.length; };
+  /* fuzzy search: "How do I …" phrasing ignored; each remaining word must hit title / category / text / shortcut by
+     prefix, substring or ordered subsequence; ranked by where it hit */
+  V.search = (q, list = V.MODULES) => {
+    const words = fold(q).replace(/[^a-z0-9%/+.\s-]/g, ' ').split(/\s+/).filter((w) => w && !STOP.has(w)); if (!words.length) return list.slice();
+    const cat = Object.fromEntries(V.CATS.map(([k, n]) => [k, fold(n)])), out = [];
+    list.forEach((m, idx) => {
+      const T = fold(m.title), B = fold([m.what, m.steps.join(' '), m.tip, m.key, cat[m.cat]].join(' ')); let sc = 0, hits = 0;
+      for (const w of words) { const tw = T.split(/[^a-z0-9%]+/); let s = tw.some((x) => x.startsWith(w)) ? 4 : T.includes(w) ? 3 : B.split(/[^a-z0-9%]+/).some((x) => x.startsWith(w)) ? 2 : B.includes(w) ? 1.5 : w.length >= 4 && subseq(w, T.replace(/\s+/g, '')) ? 1 : 0; if (s) { sc += s; hits++; } }
+      if (hits >= Math.max(1, Math.ceil(words.length * 0.6))) out.push({ m, sc: sc + hits * 2, idx });
+    });
+    return out.sort((a, b) => b.sc - a.sc || a.idx - b.idx).map((x) => x.m);
+  };
+  /* sandbox drill scenarios: seeded, deterministic, tagged so nothing confuses them with live data */
+  V.drillCandles = (kind, seed = 7, n = 160, t0 = 1.7e9, tf = 60) => {
+    const r = V.rng(seed), out = []; let p = kind === 'pool' ? 0.0042 : 100;
+    for (let i = 0; i < n; i++) {
+      const brk = kind !== 'pool' && i > n * 0.7, vol = kind === 'pool' ? 0.035 : brk ? 0.012 : 0.003, drift = brk ? 0.004 : kind === 'pool' && i > n * 0.6 ? -0.006 : 0;
+      const o = p; p = Math.max(1e-9, p * Math.exp(drift + (r() - 0.5) * 2 * vol)); const hi = Math.max(o, p) * (1 + r() * vol * 0.6), lo = Math.min(o, p) * (1 - r() * vol * 0.6);
+      out.push({ t: t0 + i * tf, o, h: hi, l: lo, c: p, v: (brk ? 4000 : 900) * (0.5 + r()) * (kind === 'pool' ? 0.05 : 1), sim: true });
+    }
+    return out;
+  };
+  /* verify the user really performed the drill action (state before vs after) */
+  V.drillCheck = (kind, before, after) => {
+    const b = before || {}, a = after || {};
+    if (kind === 'ladder') return !!(a.ladder && a.ladder.levels && (!b.ladder || a.ladder.moved || JSON.stringify(a.ladder.levels.map((x) => r2(x.p, 6))) !== JSON.stringify((b.ladder.levels || []).map((x) => r2(x.p, 6)))));
+    if (kind === 'risk') { const v = num(a.riskPct); return v != null && v > 0 && v <= 2 && a.sizeMode === 'risk' && (b.sizeMode !== 'risk' || v !== num(b.riskPct)); }
+    if (kind === 'vwap') return a.anchor != null && fin(+a.anchor) && a.anchor !== b.anchor;
+    if (kind === 'pool') return !!a.xray;
+    return false;
+  };
+
+  /* ══════════ ExTerm Alpha Score (identical formula in serve.py: alpha_score) ══════════ */
+  const tanh = (x) => { const e = Math.exp(2 * clamp(x, -20, 20)); return (e - 1) / (e + 1); };
+  V.alphaScore = (w) => {
+    const g = (k) => { const v = num(w && w[k]); return v == null ? 0 : v; };
+    const rd = g('roiDay'), rw = g('roiWeek'), rm = g('roiMonth'), ra = g('roiAll'), acct = Math.max(0, g('acct')), vlm = Math.max(0, g('vlmMonth'));
+    const risk = clamp(0.5 + 0.5 * tanh(rm / 0.5 + ra / 4), 0, 1); // risk-adjusted ROI: 30d dominates, all-time anchors
+    const dd = clamp(1 - Math.max(0, -Math.min(rd, rw, rm)) * 2.5, 0, 1); // drawdown control: worst window loss
+    const cons = [rd, rw, rm, ra].filter((x) => x > 0).length / 4; // consistency across windows
+    const turn = acct > 0 ? vlm / acct : 0, size = clamp((Math.log10(Math.max(1, acct)) - 3) / 5, 0, 1), churn = turn > 400 ? clamp(1 - (turn - 400) / 1600, 0, 1) : 1; // liquid, non-churning
+    return Math.round(100 * (0.35 * risk + 0.25 * dd + 0.25 * cons + 0.15 * size * churn));
+  };
+  /* leaderboard JSON (raw stats-data rows or the launcher's cleaned rows) → validated rows */
+  const WIN = { day: 'day', week: 'week', month: 'month', allTime: 'allTime' };
+  V.WINDOWS = [['day', '24h'], ['week', '7d'], ['month', '30d'], ['allTime', 'All']];
+  V.cleanRow = (x) => {
+    if (!x || typeof x !== 'object') return null; const addr = x.addr || x.ethAddress; if (!V.isAddr(addr)) return null;
+    const out = { addr: addr.toLowerCase(), name: STR(x.name != null ? x.name : x.displayName, 32).replace(/[<>&"'`]/g, ''), acct: Math.max(0, num(x.acct != null ? x.acct : x.accountValue) || 0), pnl: {}, roi: {}, vlm: {} };
+    if (Array.isArray(x.windowPerformances)) { for (const it of x.windowPerformances) if (Array.isArray(it) && WIN[it[0]] && it[1] && typeof it[1] === 'object') { out.pnl[it[0]] = num(it[1].pnl) || 0; out.roi[it[0]] = num(it[1].roi) || 0; out.vlm[it[0]] = Math.max(0, num(it[1].vlm) || 0); } }
+    else for (const k of Object.keys(WIN)) { out.pnl[k] = num(x.pnl && x.pnl[k]) || 0; out.roi[k] = num(x.roi && x.roi[k]) || 0; out.vlm[k] = Math.max(0, num(x.vlm && x.vlm[k]) || 0); }
+    for (const k of Object.keys(WIN)) { if (!fin(out.pnl[k])) out.pnl[k] = 0; if (!fin(out.roi[k])) out.roi[k] = 0; if (!fin(out.vlm[k])) out.vlm[k] = 0; }
+    out.alpha = V.alphaScore({ roiDay: out.roi.day, roiWeek: out.roi.week, roiMonth: out.roi.month, roiAll: out.roi.allTime, acct: out.acct, vlmMonth: out.vlm.month });
+    return out;
+  };
+  V.parseBoard = (j) => { const rows = Array.isArray(j) ? j : j && (Array.isArray(j.rows) ? j.rows : Array.isArray(j.leaderboardRows) ? j.leaderboardRows : []); const seen = new Set(), out = []; for (const x of rows.slice(0, 5000)) { const r = V.cleanRow(x); if (r && !seen.has(r.addr)) { seen.add(r.addr); out.push(r); } } return out; };
+  V.rank = (rows, win = 'month', by = 'pnl', n = 100) => (rows || []).filter((r) => r && WIN[win]).slice().sort((a, b) => (by === 'alpha' ? b.alpha - a.alpha || b.pnl[win] - a.pnl[win] : by === 'roi' ? b.roi[win] - a.roi[win] : b.pnl[win] - a.pnl[win])).slice(0, n);
+  /* clearinghouseState → positions */
+  V.positions = (st) => {
+    const ap = st && Array.isArray(st.assetPositions) ? st.assetPositions : [], out = [];
+    for (const x of ap.slice(0, 200)) { const p = x && x.position; if (!p || !COIN.test(String(p.coin || ''))) continue; const szi = num(p.szi); if (!szi) continue;
+      const entry = num(p.entryPx) || 0, ntl = Math.abs(num(p.positionValue) || Math.abs(szi) * entry), lev = p.leverage && typeof p.leverage === 'object' ? num(p.leverage.value) : num(p.leverage);
+      out.push({ coin: String(p.coin), side: szi > 0 ? 'Long' : 'Short', szi, entry, ntl, lev: lev || null, upnl: num(p.unrealizedPnl) || 0, liq: num(p.liquidationPx), mark: ntl && szi ? ntl / Math.abs(szi) : entry, roe: num(p.returnOnEquity) }); }
+    const acct = st && st.marginSummary ? num(st.marginSummary.accountValue) : null;
+    return { acct: acct || 0, list: out.sort((a, b) => b.ntl - a.ntl) };
+  };
+  /* userFills → clean fills (newest last) */
+  V.fills = (arr) => (Array.isArray(arr) ? arr : []).slice(0, 2000).map((f) => f && COIN.test(String(f.coin || '')) && num(f.px) > 0 && num(f.sz) > 0 && num(f.time) > 0 ? { coin: String(f.coin), px: num(f.px), sz: num(f.sz), t: num(f.time), side: f.side === 'A' ? 'A' : 'B', dir: STR(f.dir, 24), pnl: num(f.closedPnl) || 0, start: num(f.startPosition) || 0 } : null).filter(Boolean).sort((a, b) => a.t - b.t);
+  const isOpen = (f) => /^Open/.test(f.dir) || (!/Close/.test(f.dir) && !f.pnl), isClose = (f) => /Close/.test(f.dir) || (f.pnl !== 0 && !/^Open/.test(f.dir));
+  /* stats from fills: win rate, hold time, cadence, favoured coins, size profile */
+  V.fillStats = (fills) => {
+    const F = fills || [], closes = F.filter(isClose), opens = F.filter(isOpen), wins = closes.filter((f) => f.pnl > 0).length, open = {}, holds = [];
+    for (const f of F) { if (isOpen(f) && open[f.coin] == null) open[f.coin] = f.t; else if (isClose(f) && open[f.coin] != null && Math.abs(f.start) <= f.sz * 1.0001) { holds.push((f.t - open[f.coin]) / 60000); open[f.coin] = null; } }
+    const span = F.length > 1 ? (F[F.length - 1].t - F[0].t) / 86400000 : 0, by = {}; for (const f of opens) by[f.coin] = (by[f.coin] || 0) + f.px * f.sz;
+    return { trades: F.length, closes: closes.length, winRate: closes.length ? r2(wins / closes.length, 3) : null, realized: r2(closes.reduce((s, f) => s + f.pnl, 0), 2), avgHoldMin: holds.length ? r2(med(holds), 1) : null, opensPerDay: span > 0 ? r2(opens.length / span, 2) : opens.length, favored: Object.entries(by).sort((a, b) => b[1] - a[1]).slice(0, 3).map(([k]) => k), medNtl: r2(med(opens.map((f) => f.px * f.sz)), 2) };
+  };
+  /* style tag: hold time + entry burstiness */
+  V.styleTag = (st, fills) => {
+    const h = st && st.avgHoldMin; if (h == null) return 'Unclassified';
+    const opens = (fills || []).filter(isOpen); let bursts = 0; for (let i = 2; i < opens.length; i++) if (opens[i].t - opens[i - 2].t < 120000 && (i < 3 || opens[i - 2].t - opens[i - 3].t > 6 * 3600000)) bursts++;
+    if (h < 30) return 'Scalper'; if (bursts >= 2) return 'News Sniper'; if (h > 720) return 'Swing'; return st.winRate != null && st.winRate >= 0.55 ? 'Mean-Reversion' : 'Swing';
+  };
+  /* tilted whale: ≥ 2 straight losing closes followed by an open ≥ 2× the median earlier open size */
+  V.tilt = (fills) => {
+    const F = fills || []; let streak = 0; const sizes = [];
+    for (const f of F) { if (isClose(f)) { streak = f.pnl < 0 ? streak + 1 : 0; continue; } const n = f.px * f.sz; if (streak >= 2 && sizes.length >= 3 && n >= 2 * med(sizes)) return { tilt: true, why: `${streak} losses in a row, then a ${r2(n / med(sizes), 1)}× size open on ${f.coin}`, t: f.t, coin: f.coin }; sizes.push(n); }
+    return { tilt: false };
+  };
+  /* liquidation magnets: positions sitting within pct% of their liquidation price */
+  V.liqMagnets = (positions, pct = 2.5) => (positions || []).filter((p) => p.liq > 0 && p.mark > 0 && Math.abs(p.mark - p.liq) / p.mark <= pct / 100).map((p) => ({ coin: p.coin, side: p.side, liq: p.liq, dist: r2((Math.abs(p.mark - p.liq) / p.mark) * 100, 2), ntl: p.ntl }));
+  /* position delta radar: prev vs current positions (+ trigger orders for stop changes) */
+  V.delta = (prev, cur, prevOrd, curOrd) => {
+    const P = new Map((prev || []).map((p) => [p.coin, p])), C = new Map((cur || []).map((p) => [p.coin, p])), out = [];
+    for (const [k, p] of P) { const c = C.get(k); if (!c || Math.sign(c.szi) !== Math.sign(p.szi)) out.push({ coin: k, badge: 'Full Exit', kind: 'exit' }); else { const ch = Math.abs(c.szi) / Math.abs(p.szi) - 1; if (ch <= -0.1) out.push({ coin: k, badge: `${Math.round(ch * 100)}% Size Trimmed`, kind: 'trim' }); else if (ch >= 0.1) out.push({ coin: k, badge: `+${Math.round(ch * 100)}% Size Added`, kind: 'add' }); } }
+    for (const [k, c] of C) if (!P.has(k)) out.push({ coin: k, badge: 'New ' + c.side, kind: 'new' });
+    const sl = (ord, coin) => (ord || []).filter((o) => o && o.coin === coin && o.isTrigger && num(o.triggerPx) > 0).map((o) => num(o.triggerPx));
+    for (const [k, c] of C) { const a = sl(prevOrd, k), b = sl(curOrd, k); if (a.length && b.length && c.mark > 0) { const da = Math.min(...a.map((x) => Math.abs(c.mark - x))), db = Math.min(...b.map((x) => Math.abs(c.mark - x))); if (db < da * 0.97) out.push({ coin: k, badge: 'SL Tightened', kind: 'sl' }); } }
+    return out;
+  };
+  /* anti-rug / copy-trap: dust win-rate padding, circular wash volume, bundled same-millisecond fills across wallets */
+  V.antiRug = (row, fills, peers) => {
+    const why = [], closes = (fills || []).filter(isClose), wins = closes.filter((f) => f.pnl > 0);
+    if (wins.length >= 10 && wins.filter((f) => f.pnl < 1).length / wins.length > 0.4) why.push('micro-dust win-rate padding');
+    if (row && row.acct > 0 && row.vlm && row.vlm.month / row.acct > 2000) why.push('circular wash volume');
+    if (peers && fills && fills.length) { const mine = new Set(fills.map((f) => f.coin + '|' + f.t)); for (const [addr, pf] of Object.entries(peers)) { if (row && addr === row.addr) continue; const hit = (pf || []).filter((f) => mine.has(f.coin + '|' + f.t)).length; if (hit >= 3) { why.push('bundled fills with ' + addr.slice(0, 6) + '…'); break; } } }
+    return { flag: why.length > 0, why };
+  };
+  /* confluence: 2+ Top-25 wallets opening the same coin + direction within win seconds */
+  V.confluence = (entries, win = 900, min = 2) => {
+    const by = new Map(), out = [];
+    for (const e of (entries || []).filter((x) => x && V.isAddr(x.addr) && COIN.test(x.coin || '') && (x.side === 'Long' || x.side === 'Short') && fin(x.t)).sort((a, b) => a.t - b.t)) {
+      const k = e.coin + '|' + e.side, L = by.get(k) || []; L.push(e); while (L.length && e.t - L[0].t > win) L.shift(); by.set(k, L);
+      const who = [...new Set(L.map((x) => x.addr))]; if (who.length >= min && !out.some((y) => y.key === k && e.t - y.t < win)) out.push({ key: k, coin: e.coin, side: e.side, t: e.t, wallets: who.slice(0, 8) });
+    }
+    return out;
+  };
+  /* consensus heatmap: price-axis bins of net long / short entry notional, TP clusters and liquidation walls */
+  V.heatmap = (books, coin, lo, hi, bins = 40) => {
+    if (!(hi > lo) || bins < 1) return null; const B = Array.from({ length: bins }, (_, i) => ({ p0: lo + ((hi - lo) * i) / bins, p1: lo + ((hi - lo) * (i + 1)) / bins, long: 0, short: 0, tp: 0, liq: 0 }));
+    const at = (p) => (p >= lo && p < hi ? B[Math.min(bins - 1, Math.floor(((p - lo) / (hi - lo)) * bins))] : null);
+    for (const bk of books || []) { for (const p of (bk && bk.positions) || []) { if (p.coin !== coin) continue; const b = at(p.entry); if (b) b[p.side === 'Long' ? 'long' : 'short'] += p.ntl; const l = at(p.liq); if (l) l.liq += p.ntl; } for (const o of (bk && bk.orders) || []) { if (o.coin !== coin || o.isTrigger || !o.reduceOnly) continue; const b = at(num(o.limitPx)); if (b) b.tp += (num(o.sz) || 0) * (num(o.limitPx) || 0); } }
+    const mx = Math.max(1, ...B.map((b) => Math.max(b.long, b.short, b.tp, b.liq))); for (const b of B) b.w = r2(Math.max(b.long, b.short, b.tp, b.liq) / mx, 3);
+    return B;
+  };
+  /* Backtest Style: trader fills → Quant Lab spec (strategy family, time stop, cooldown, leverage profile) */
+  V.styleSpec = (st, tag, tfSec = 3600) => {
+    const hold = st && st.avgHoldMin ? st.avgHoldMin : 240, perDay = st && st.opensPerDay ? st.opensPerDay : 1, bar = tfSec / 60;
+    const strat = tag === 'Mean-Reversion' ? 'rsi' : tag === 'Scalper' ? 'q4_qs_ema513' : tag === 'News Sniper' ? 'bbbreak' : 'donchian';
+    return { strat, tf: tfSec >= 86400 ? '1d' : tfSec >= 14400 ? '4h' : '1h', filters: { timeStop: clamp(Math.round(hold / bar), 2, 200), cooldown: clamp(Math.round(1440 / Math.max(0.1, perDay) / bar / 2), 0, 50) }, coin: (st && st.favored && st.favored[0]) || 'BTC', hold, perDay, lev: st && st.lev ? st.lev : null };
+  };
+
+  /* ══════════ 15 workstation upgrades ══════════ */
+  // 1. ghost candles: higher-timeframe shells over the visible bars
+  V.ghost = (D, htfSec) => { const out = []; let cur = null; for (let i = 0; i < (D || []).length; i++) { const c = D[i], t0 = Math.floor(c.t / htfSec) * htfSec; if (!cur || cur.t0 !== t0) { cur = { t0, t1: t0 + htfSec, i0: i, i1: i, o: c.o, h: c.h, l: c.l, c: c.c }; out.push(cur); } else { cur.i1 = i; cur.h = Math.max(cur.h, c.h); cur.l = Math.min(cur.l, c.l); cur.c = c.c; } } return out; };
+  // 2. auto-breakeven / trailing step-ladder on top of the v15.2 TP ladder (rules armed per rung)
+  V.STEP_RULES = { be01: 'Move SL to Entry +0.1R', be: 'Move SL to Entry', tp1: 'Trail SL to TP1', none: 'No stop move' };
+  V.stepLadder = (L, rules) => {
+    if (!L || !L.levels) return null; const R = Math.abs(L.entry - (L.sl0 != null ? L.sl0 : L.sl)), dir = L.long ? 1 : -1, ev = []; let sl = L.sl;
+    L.levels.forEach((x, i) => { if (!x.hit) return; const r = (rules || {})['TP' + (i + 1)]; let to = null; if (r === 'be01') to = L.entry + dir * 0.1 * R; else if (r === 'be') to = L.entry; else if (r === 'tp1' && i >= 1) to = L.levels[0].p; if (to != null && (L.long ? to > sl : to < sl)) { sl = to; ev.push(`TP${i + 1} → ${V.STEP_RULES[r]}`); } });
+    return { sl, events: ev };
+  };
+  // 3. opening range + kill-zone boxes for the day of the last bar
+  V.openingRange = (D, startUtcMin, mins = [5, 15, 30]) => {
+    if (!D || !D.length) return null; const last = D[D.length - 1].t, day = Math.floor(last / 86400) * 86400, t0 = day + startUtcMin * 60, out = {};
+    for (const m of mins) { const bs = D.filter((c) => c.t >= t0 && c.t < t0 + m * 60); if (bs.length) out[m] = { hi: Math.max(...bs.map((c) => c.h)), lo: Math.min(...bs.map((c) => c.l)), t0, t1: t0 + m * 60 }; }
+    return out;
+  };
+  V.KILLZONES = { asia: [0, 6], london: [7, 10], ny: [12, 15] };
+  V.killZones = (D) => { if (!D || !D.length) return {}; const day = Math.floor(D[D.length - 1].t / 86400) * 86400, out = {}; for (const [k, [a, b]] of Object.entries(V.KILLZONES)) { const t0 = day + a * 3600, t1 = day + b * 3600, bs = D.filter((c) => c.t >= t0 && c.t < t1); if (bs.length) out[k] = { t0, t1, hi: Math.max(...bs.map((c) => c.h)), lo: Math.min(...bs.map((c) => c.l)) }; } return out; };
+  // 4. tape velocity: market orders / s and imbalance burst over the last window
+  V.tapeVelocity = (trades, nowMs, winMs = 5000) => {
+    const T = (trades || []).filter((x) => x && nowMs - x.t <= winMs && x.t <= nowMs), prev = (trades || []).filter((x) => x && nowMs - x.t > winMs && nowMs - x.t <= winMs * 7);
+    const buy = T.filter((x) => x.side === 'buy').reduce((s, x) => s + (x.q || 1), 0), sell = T.filter((x) => x.side !== 'buy').reduce((s, x) => s + (x.q || 1), 0), perSec = T.length / (winMs / 1000), base = prev.length / ((winMs * 6) / 1000);
+    const imb = buy + sell ? (buy - sell) / (buy + sell) : 0; return { perSec: r2(perSec, 1), base: r2(base, 1), imbalance: r2(imb, 2), burst: perSec >= Math.max(2, base * 2.5) && Math.abs(imb) >= 0.4, side: imb >= 0 ? 'buy' : 'sell' };
+  };
+  // 5. dealer charm / vanna intraday drift curve (Black-Scholes, dealer short the open interest)
+  const npdf = (x) => Math.exp(-x * x / 2) / Math.sqrt(2 * Math.PI);
+  V.greeks2 = (S, K, T, iv, r = 0.04) => { if (!(S > 0 && K > 0 && T > 0 && iv > 0)) return { charm: 0, vanna: 0 }; const v = iv * Math.sqrt(T), d1 = (Math.log(S / K) + (r + iv * iv / 2) * T) / v, d2 = d1 - v; return { charm: -npdf(d1) * (2 * r * T - d2 * v) / (2 * T * v), vanna: -npdf(d1) * d2 / iv }; };
+  V.charmCurve = (chain, spot, hoursLeft = 6.5, steps = 13) => {
+    if (!chain || !(spot > 0)) return null; const legs = [].concat((chain.calls || []).map((c) => [c, 1]), (chain.puts || []).map((p) => [p, -1])).filter(([x]) => x && x.strike > 0 && x.oi > 0); if (!legs.length) return null;
+    const pts = []; for (let k = 0; k <= steps; k++) { const h = hoursLeft * (1 - k / steps), T = Math.max(1 / (365 * 24 * 12), h / (24 * 365)); let ch = 0, va = 0; for (const [x, s] of legs) { const g = V.greeks2(spot, x.strike, T, x.iv || 0.5); ch += -s * g.charm * x.oi * 100 * spot / (24 * 365); va += -s * g.vanna * x.oi * 100 * 0.01; } pts.push({ h: r2(h, 2), charm: r2(ch, 0), vanna: r2(va, 0) }); }
+    const late = pts.slice(-4), drift = late.reduce((s, p) => s + p.charm, 0), mxOi = legs.slice().sort((a, b) => b[0].oi - a[0].oi)[0][0].strike;
+    return { pts, pinStrike: mxOi, window: Math.abs(spot - mxOi) / spot < 0.004 ? 'pin' : Math.abs(drift) > Math.abs(pts[0].charm) * 2 ? 'squeeze' : 'neutral', drift: r2(drift, 0) };
+  };
+  // 6. absorption footprints: high volume + small body relative to range and recent volume
+  V.absorption = (D, look = 20) => (D || []).map((c, i) => { if (i < look) return null; const vs = D.slice(i - look, i).map((x) => x.v), mv = mean(vs) || 1, rng = c.h - c.l || 1e-12, body = Math.abs(c.c - c.o) / rng, delta = ((c.c - c.o) / rng) * c.v, rv = c.v / mv; const a = clamp((rv - 1.3) / 2, 0, 1) * clamp(1 - body * 2, 0, 1); return a > 0.15 ? { i, absorb: r2(a, 2), side: c.c >= (c.h + c.l) / 2 ? 'bid' : 'ask', delta: r2(delta, 0) } : null; }).filter(Boolean);
+  // 7. gap-fill probability from daily candles
+  V.gapStats = (D, look = 90) => {
+    if (!D || D.length < 25) return null; const last = D[D.length - 1], prev = D[D.length - 2], gap = (last.o / prev.c - 1) * 100, vols = D.slice(-21, -1).map((c) => c.v), rvol = (mean(vols) ? last.v / mean(vols) : 0);
+    let n = 0, filled = 0; for (let i = Math.max(1, D.length - 1 - look); i < D.length - 1; i++) { const g = D[i].o / D[i - 1].c - 1; if (Math.abs(g) < 0.003 || Math.sign(g) !== Math.sign(gap || 1)) continue; n++; if (g > 0 ? D[i].l <= D[i - 1].c : D[i].h >= D[i - 1].c) filled++; }
+    return { gap: r2(gap, 2), rvol: r2(rvol, 2), n, fillRate: n ? r2(filled / n, 2) : null };
+  };
+  // 8. holder cluster x-ray: wallets funded by the same source within a short window form a coordinated cluster
+  V.holderClusters = (holders, winSec = 1800) => {
+    const H = (holders || []).filter((h) => h && typeof h.addr === 'string' && num(h.pct) >= 0).slice(0, 50), by = new Map();
+    for (const h of H) { const k = h.funder || ('self:' + h.addr); const L = by.get(k) || []; L.push(h); by.set(k, L); }
+    const out = []; for (const [funder, L] of by) { const ts = L.map((x) => num(x.t)).filter(fin).sort((a, b) => a - b), tight = ts.length > 1 && ts[ts.length - 1] - ts[0] <= winSec, coord = L.length >= 3 && !funder.startsWith('self:') && (tight || L.every((x) => x.fresh)); out.push({ funder: funder.startsWith('self:') ? null : funder, members: L.map((x) => x.addr), pct: r2(L.reduce((s, x) => s + num(x.pct), 0), 2), coordinated: coord }); }
+    out.sort((a, b) => b.pct - a.pct); const coordPct = r2(out.filter((c) => c.coordinated).reduce((s, c) => s + c.pct, 0), 2);
+    return { clusters: out, coordPct, verdict: coordPct >= 20 ? 'high' : coordPct >= 8 ? 'elevated' : 'low' };
+  };
+  // 9. correlation, beta and lead-lag between two close series
+  const rets = (a) => a.slice(1).map((x, i) => (a[i] > 0 ? x / a[i] - 1 : 0));
+  const corr = (a, b) => { const n = Math.min(a.length, b.length); if (n < 5) return null; const x = a.slice(-n), y = b.slice(-n), mx = mean(x), my = mean(y); let sxy = 0, sx = 0, sy = 0; for (let i = 0; i < n; i++) { sxy += (x[i] - mx) * (y[i] - my); sx += (x[i] - mx) ** 2; sy += (y[i] - my) ** 2; } return sx && sy ? sxy / Math.sqrt(sx * sy) : null; };
+  V.leadLag = (A, B, maxLag = 5, recent = 30) => {
+    const a = rets(A || []), b = rets(B || []), n = Math.min(a.length, b.length); if (n < recent + maxLag + 5) return null; const x = a.slice(-n), y = b.slice(-n);
+    let best = { lag: 0, c: corr(x, y) || 0 }; for (let L = 1; L <= maxLag; L++) { const c1 = corr(x.slice(0, n - L), y.slice(L)) || 0, c2 = corr(x.slice(L), y.slice(0, n - L)) || 0; if (Math.abs(c1) > Math.abs(best.c) + 0.02) best = { lag: L, c: c1 }; if (Math.abs(c2) > Math.abs(best.c) + 0.02) best = { lag: -L, c: c2 }; }
+    const full = corr(x, y) || 0, rc = corr(x.slice(-recent), y.slice(-recent)) || 0, vb = sd(y) ** 2, beta = vb ? (corr(x, y) * sd(x) * sd(y)) / vb : 0;
+    return { corr: r2(full, 2), recent: r2(rc, 2), beta: r2(beta, 2), lag: best.lag, decoupled: full >= 0.6 && rc < full - 0.35 };
+  };
+  // 10. forensic breakdown of the last 60 s around a clicked spike
+  V.forensic = (bars, flow, heads) => {
+    const B = (bars || []).filter((c) => c && c.c > 0); if (B.length < 2) return null; const p0 = B[0].o || B[0].c, p1 = B[B.length - 1].c, mv = (p1 / p0 - 1) * 100, hi = Math.max(...B.map((c) => c.h)), lo = Math.min(...B.map((c) => c.l));
+    const vol = B.reduce((s, c) => s + c.v, 0), wick = mv >= 0 ? (hi - Math.max(p0, p1)) / (hi - lo || 1) : (Math.min(p0, p1) - lo) / (hi - lo || 1), why = [];
+    const f = flow || {}; if (f.imbalance != null && Math.abs(f.imbalance) >= 0.4) why.push(`aggressive ${f.imbalance > 0 ? 'buying' : 'selling'} (${Math.round(Math.abs(f.imbalance) * 100)}% imbalance)`);
+    if (f.rvol != null && f.rvol >= 2) why.push(`volume ${r2(f.rvol, 1)}× normal`); if (wick > 0.5) why.push('long rejection wick: liquidity sweep / stop run'); const h = (heads || []).filter(Boolean)[0]; if (h) why.push('headline: ' + STR(h, 140));
+    if (!why.length) why.push('thin liquidity: price moved without unusual flow or news');
+    return { move: r2(mv, 3), range: r2(((hi - lo) / p0) * 100, 3), vol: r2(vol, 2), wick: r2(wick, 2), why };
+  };
+  // 11. plain-English pattern + liquidity hunter
+  V.parseHunt = (q) => {
+    const s = fold(q); if (!s.trim()) return null; const pat = /\bfvg|fair value/.test(s) ? 'fvg' : /order ?block|\bob\b/.test(s) ? 'ob' : /sweep|liquidity grab|stop run/.test(s) ? 'sweep' : /engulf/.test(s) ? 'eng' : null; if (!pat) return null;
+    const dir = /bull|long|demand/.test(s) ? 'bull' : /bear|short|supply/.test(s) ? 'bear' : null, vw = /above (the )?vwap/.test(s) ? 'above' : /below (the )?vwap/.test(s) ? 'below' : null, m = /rvol\s*(?:>|>=|over|above)\s*(\d+(?:\.\d+)?)/.exec(s);
+    return { pattern: pat, dir, vwap: vw, rvol: m ? Math.min(50, +m[1]) : null };
+  };
+  V.hunt = (D, spec, finder) => {
+    if (!spec || !D || D.length < 25 || typeof finder !== 'function') return []; let pv = 0, vv = 0; const vw = D.map((c) => { pv += ((c.h + c.l + c.c) / 3) * c.v; vv += c.v; return vv ? pv / vv : c.c; });
+    return finder(D, spec.pattern).filter((z) => { if (spec.dir && z.dir !== spec.dir) return false; const c = D[z.i]; if (!c) return false; if (spec.vwap === 'above' && !(c.c > vw[z.i])) return false; if (spec.vwap === 'below' && !(c.c < vw[z.i])) return false; if (spec.rvol != null) { const m = mean(D.slice(Math.max(0, z.i - 20), z.i).map((x) => x.v)) || 1; if (c.v / m < spec.rvol) return false; } return true; });
+  };
+  // 12. bot drawdown cool-off + volatility throttle
+  V.throttle = (results, atrNow, atr20) => { const R = (results || []).filter(fin); let streak = 0; for (let i = R.length - 1; i >= 0 && R[i] < 0; i--) streak++; if (atr20 > 0 && atrNow > 2.5 * atr20) return { factor: 0, why: `ATR ${r2(atrNow / atr20, 1)}× its 20-day average: entries paused` }; if (streak >= 2) return { factor: 0.5, why: `${streak} losses in a row: size halved` }; return { factor: 1, why: 'normal' }; };
+  // 13. macro event reactions (past releases; ET → UTC with the US DST rule)
+  const nthSun = (y, m, n) => { const d = new Date(Date.UTC(y, m, 1)); return 1 + ((7 - d.getUTCDay()) % 7) + 7 * (n - 1); };
+  V.etToUtc = (ymd, hh, mm) => { const [y, mo, d] = ymd.split('-').map(Number), dst = (mo > 3 && mo < 11) || (mo === 3 && d >= nthSun(y, 2, 2)) || (mo === 11 && d < nthSun(y, 10, 1)); return Date.UTC(y, mo - 1, d, hh + (dst ? 4 : 5), mm) / 1000; };
+  const FOMC = ['2025-01-29', '2025-03-19', '2025-05-07', '2025-06-18', '2025-07-30', '2025-09-17', '2025-10-29', '2025-12-10', '2026-01-28', '2026-03-18', '2026-04-29', '2026-06-17', '2026-07-29', '2026-09-16', '2026-10-28'];
+  const CPI = ['2025-01-15', '2025-02-12', '2025-03-12', '2025-04-10', '2025-05-13', '2025-06-11', '2025-07-15', '2025-08-12', '2025-09-11'];
+  const NFP = ['2025-01-10', '2025-02-07', '2025-03-07', '2025-04-04', '2025-05-02', '2025-06-06', '2025-07-03', '2025-08-01', '2025-09-05'];
+  V.pastEvents = (nowSec, kinds = ['fomc', 'cpi', 'nfp'], n = 12) => { const all = [].concat(FOMC.map((d) => ({ k: 'fomc', d, t: V.etToUtc(d, 14, 0) })), CPI.map((d) => ({ k: 'cpi', d, t: V.etToUtc(d, 8, 30) })), NFP.map((d) => ({ k: 'nfp', d, t: V.etToUtc(d, 8, 30) }))); return kinds.map((k) => all.filter((e) => e.k === k && e.t < nowSec).sort((a, b) => b.t - a.t).slice(0, n)).flat().sort((a, b) => a.t - b.t); };
+  V.reaction = (D, t) => {
+    const i = (D || []).findIndex((c) => c.t >= t); if (i < 1) return null; const base = D[i - 1].c, sec = D[i].t - D[i - 1].t || 60, w5 = D.slice(i, i + Math.max(1, Math.round(300 / sec))), w60 = D.slice(i, i + Math.max(1, Math.round(3600 / sec))); if (!w5.length || !(base > 0)) return null;
+    const hi = Math.max(...w5.map((c) => c.h)), lo = Math.min(...w5.map((c) => c.l)), up = hi / base - 1, dn = lo / base - 1, spike = Math.abs(up) >= Math.abs(dn) ? up : dn, end5 = w5[w5.length - 1].c / base - 1, end60 = w60[w60.length - 1].c / base - 1;
+    return { spike: r2(spike * 100, 2), close5: r2(end5 * 100, 2), follow60: r2(end60 * 100, 2), fakeout: Math.sign(end60) !== Math.sign(spike) && Math.abs(spike) > 0.0005, t: D[i].t };
+  };
+  // 14. tilt & revenge-trade guard over the journal
+  V.tiltGuard = (entries, winMs = 180000) => {
+    const E = (entries || []).filter((e) => e && fin(e.ts)).slice().sort((a, b) => a.ts - b.ts), out = [];
+    for (let i = 0; i < E.length; i++) { const e = E[i]; if (e.side !== 'sell' || !(e.pnl < 0)) continue; const lastBuy = E.slice(0, i).reverse().find((x) => x.side === 'buy' && x.sym === e.sym), nxt = E.slice(i + 1).find((x) => x.side === 'buy' && x.ts - e.ts <= winMs); if (lastBuy && nxt && nxt.usd >= 2 * lastBuy.usd) out.push({ ts: nxt.ts, sym: nxt.sym, mult: r2(nxt.usd / lastBuy.usd, 1), why: `size ${r2(nxt.usd / lastBuy.usd, 1)}× within ${Math.round((nxt.ts - e.ts) / 1000)} s of a stop-out` }); }
+    const hour = E.filter((e) => E.length && E[E.length - 1].ts - e.ts <= 3600000 && e.side === 'buy').length;
+    return { events: out, warn: out.length > 0 && Date.now() - out[out.length - 1].ts < 6 * 3600000, freq: hour, overtrading: hour >= 12 };
+  };
+  // 15. worst losing trade + replay start (30 s before its entry)
+  V.worstLoss = (entries) => { const L = (entries || []).filter((e) => e && e.side === 'sell' && e.pnl < 0).sort((a, b) => a.pnl - b.pnl)[0]; if (!L) return null; const held = num(L.held) || 0, entryMs = L.ts - held; return { exit: L, entryMs, startMs: entryMs - 30000 }; };
+  return V;
+})();
+if (typeof module === 'object' && module.exports) module.exports = V154;
+
+/* ===== learn_academy.js ===== */
+/* ExTerm v15.4 Learn ExTerm Academy. One translated "Learn ExTerm" button beside Settings in the top functions bar opens
+   an Obsidian & Gold overlay: fuzzy "How do I…" search, goal-based 15-minute learning paths, a 5-Minute Quick-Start
+   track with a mastery bar, and every tab / subcategory as lesson cards (What It Does · Step-by-Step · Pro Tip / Risk
+   Guardrail · Shortcut · Try It Live → with a gold spotlight ring · Start Drill sandbox verified live). Advanced panels
+   gain a subtle "?" / Alt+hover Explain-This-Metric popover. Move the button into Settings → Documentation & Academy by
+   changing LEARN_MOUNT_TARGET only. Strict CSP: listeners in JS, every dynamic string through esc(). Logic: V154. */
+const LEARN_MOUNT_TARGET = 'topbar'; // 'topbar' | 'settings'
+const LearnUI = (() => {
+  const U = { drill: null, target: null };
+  const T = (k) => (typeof I18N !== 'undefined' ? I18N.t(k) : k);
+  const cfg = () => { const c = ST.v154 && typeof ST.v154 === 'object' ? ST.v154 : (ST.v154 = {}); c.done = V154.cleanDone(c.done); c.badges = V154.cleanDone(c.badges); if (!V154.PATHS[c.goal]) c.goal = 'perps'; return c; };
+  const catName = (k) => (V154.CATS.find((c) => c[0] === k) || [k, k])[1];
+  const bar = (p, label) => `<div class="lx-prog" role="progressbar" aria-valuemin="0" aria-valuemax="${p.total}" aria-valuenow="${p.done}" aria-label="${esc(label)}"><i style="width:${p.pct}%"></i></div><span class="note">${esc(p.done)} / ${esc(p.total)} ${esc(T('learn.modules'))}</span>`;
+  const card = (m) => { const done = cfg().done.includes(m.id), badge = cfg().badges.includes(m.id);
+    return `<article class="lx-card${done ? ' done' : ''}" data-mod="${esc(m.id)}"><header><b>${esc(m.title)}</b>${badge ? '<span class="lx-badge" title="Drill badge">🏅</span>' : ''}${done ? '<span class="lx-ok">✓</span>' : ''}<span class="note">${esc(m.min)} min</span></header>
+      <h5>${esc(T('learn.what'))}</h5><p>${esc(m.what)}</p><h5>${esc(T('learn.steps'))}</h5><ol>${m.steps.map((s) => `<li>${esc(s)}</li>`).join('')}</ol>
+      <h5>${esc(T('learn.tip'))}</h5><p class="lx-tip">${esc(m.tip)}</p>${m.key ? `<h5>${esc(T('learn.key'))}</h5><p><kbd>${esc(m.key)}</kbd></p>` : ''}
+      <div class="row lx-acts"><button type="button" class="btn sm pri" data-lx="try" data-id="${esc(m.id)}">${esc(T('learn.try'))} →</button>${m.drill ? `<button type="button" class="btn sm" data-lx="drill" data-id="${esc(m.id)}">🎯 ${esc(T('learn.drill'))}</button>` : ''}<button type="button" class="btn sm ghost" data-lx="done" data-id="${esc(m.id)}">${done ? '↺' : '✓'}</button></div></article>`; };
+  const list = (mods) => (mods.length ? `<div class="lx-grid">${mods.map(card).join('')}</div>` : `<div class="note">–</div>`);
+
+  /* ══ overlay ══ */
+  const paint = (ov) => {
+    const c = cfg(), q = ov.querySelector('#lxQ').value, quick = V154.progress(c.done, V154.QUICK), all = V154.progress(c.done), P = V154.path(c.goal), body = ov.querySelector('#lxBody');
+    ov.querySelector('#lxStats').innerHTML = `<div><b>${esc(T('learn.quick'))}</b>${bar(quick, T('learn.quick'))}</div><div><b>${esc(T('learn.mastery'))}</b>${bar(all, T('learn.mastery'))}</div>`;
+    for (const b of ov.querySelectorAll('[data-goal]')) { b.classList.toggle('on', b.dataset.goal === c.goal); b.setAttribute('aria-pressed', b.dataset.goal === c.goal); }
+    if (q.trim()) { const hits = V154.search(q); body.innerHTML = `<div class="note">${esc(hits.length)} · “${esc(q.slice(0, 60))}”</div>${list(hits)}`; return; }
+    body.innerHTML = `<section class="lx-path"><h4>🧭 ${esc(T('learn.path'))} · ${esc((V154.GOALS.find((g) => g[0] === c.goal) || [])[1])} · ${esc(P.minutes)} min</h4><ol class="lx-play">${P.items.map((it, i) => { const m = V154.byId(it.id); return `<li class="${c.done.includes(it.id) ? 'done' : ''}"><span class="n">${i + 1}</span><b>${esc(m.title)}</b><span class="note">${esc(it.min)} min${it.drill ? ' · 🎯' : ''}</span><button type="button" class="btn xs" data-lx="open" data-id="${esc(it.id)}">${esc(T('learn.open'))}</button>${it.drill ? `<button type="button" class="btn xs pri" data-lx="drill" data-id="${esc(it.id)}">${esc(T('learn.drill'))}</button>` : ''}</li>`; }).join('')}</ol></section>
+      <section><h4>⚡ ${esc(T('learn.quick'))}</h4>${list(V154.QUICK.map(V154.byId))}</section>
+      ${V154.CATS.map(([k, n, ic]) => { const mods = V154.MODULES.filter((m) => m.cat === k), p = V154.progress(c.done, mods.map((m) => m.id)); return `<details class="lx-cat" data-cat="${k}"><summary><span aria-hidden="true">${ic}</span> ${esc(n)} <span class="note">${esc(p.done)}/${esc(p.total)}</span></summary><div data-catbody="${k}"></div></details>`; }).join('')}`;
+  };
+  U.open = (id) => {
+    let ov = $('#learnOv');
+    if (!ov) {
+      ov = document.createElement('div'); ov.id = 'learnOv'; ov.className = 'lx-ov'; ov.setAttribute('role', 'dialog'); ov.setAttribute('aria-modal', 'true'); ov.setAttribute('aria-labelledby', 'lxTitle');
+      ov.innerHTML = `<div class="lx-wrap"><header class="lx-hero"><span class="lx-mark" aria-hidden="true">🎓</span><div><h2 id="lxTitle" data-i18n="learn.hero">${esc(T('learn.hero'))}</h2><div class="note" data-i18n="learn.sub">${esc(T('learn.sub'))}</div></div><button type="button" class="x" data-lx="close" aria-label="Close">×</button></header>
+        <div class="lx-goals" role="group" aria-label="${esc(T('learn.path'))}">${V154.GOALS.map(([k, n]) => `<button type="button" class="pill" data-goal="${k}">${esc(n)}</button>`).join('')}</div>
+        <input class="in lx-q" id="lxQ" type="search" autocomplete="off" spellcheck="false" data-i18n-ph="learn.search" placeholder="${esc(T('learn.search'))}" aria-label="${esc(T('learn.search'))}">
+        <div class="lx-stats" id="lxStats"></div><div class="lx-body" id="lxBody"></div></div>`;
+      document.body.appendChild(ov);
+      ov.addEventListener('click', (e) => {
+        if (e.target === ov) return U.close(); const g = e.target.closest('[data-goal]'); if (g) { cfg().goal = g.dataset.goal; saveState(); paint(ov); return; }
+        const b = e.target.closest('[data-lx]'); if (!b) return; const a = b.dataset.lx, m = V154.byId(b.dataset.id);
+        if (a === 'close') U.close(); else if (a === 'try' && m) U.tryLive(m); else if (a === 'drill' && m) U.startDrill(m); else if (a === 'open' && m) { ov.querySelector('#lxQ').value = m.title; paint(ov); }
+        else if (a === 'done' && m) { const c = cfg(); c.done = c.done.includes(m.id) ? c.done.filter((x) => x !== m.id) : c.done.concat([m.id]); saveState(); paint(ov); }
+      });
+      ov.querySelector('#lxQ').addEventListener('input', () => paint(ov));
+      ov.addEventListener('toggle', (e) => { const d = e.target; if (d.matches && d.matches('details.lx-cat') && d.open) { const k = d.dataset.cat, host = d.querySelector('[data-catbody]'); if (host && !host.innerHTML) host.innerHTML = list(V154.MODULES.filter((m) => m.cat === k)); } }, true);
+      ov.addEventListener('keydown', (e) => { if (e.key === 'Escape') { e.stopPropagation(); U.close(); } });
+    }
+    ov.hidden = false; ov.dir = typeof I18N !== 'undefined' && I18N.isRtl(I18N.cur()) ? 'rtl' : 'ltr'; if (typeof I18N !== 'undefined') I18N.apply();
+    const q = ov.querySelector('#lxQ'); if (id) { const m = V154.byId(id); q.value = m ? m.title : ''; } paint(ov); setTimeout(() => q.focus(), 30); return ov;
+  };
+  U.close = () => { const ov = $('#learnOv'); if (ov) ov.hidden = true; };
+
+  /* ══ Try It Live: navigate to the exact tab / lab section and pulse a gold ring around the control ══ */
+  U.spot = (sel) => { const el = [...document.querySelectorAll(sel)].find((x) => x.offsetParent !== null || x.getClientRects().length); if (!el) return null; for (const o of document.querySelectorAll('.lx-spot')) o.classList.remove('lx-spot'); el.classList.add('lx-spot'); try { el.scrollIntoView({ block: 'center', behavior: 'smooth' }); } catch (e) { /* old browser */ } setTimeout(() => el.classList.remove('lx-spot'), 4200); return el; };
+  U.tryLive = (m) => {
+    U.close(); const g = m.go || {}; if (g.mode && ST.mode !== g.mode && typeof setMode === 'function') setMode(g.mode); if (typeof showTab === 'function') showTab(g.tab || 'markets');
+    if (g.lab && typeof renderLab === 'function') { try { labSec = g.lab; for (const x of document.querySelectorAll('#labNav button')) x.classList.toggle('on', x.dataset.v === g.lab); renderLab(); } catch (e) { /* lab optional */ } }
+    if (m.cat === 'lead' && typeof LeaderUI !== 'undefined') { if (g.tab === 'social') LeaderUI.showPerp(true); }
+    if (g.sel && g.sel.includes('v154Up') && typeof V154UpUI !== 'undefined') V154UpUI.open();
+    let tries = 0; const go = () => { if (!U.spot(g.sel || 'main') && tries++ < 8) setTimeout(go, 250); }; setTimeout(go, 200);
+    const c = cfg(); if (!c.done.includes(m.id)) { c.done.push(m.id); saveState(); }
+  };
+
+  /* ══ Start Drill: a seeded sandbox scenario on the chart; the action is verified live before the badge is awarded ══ */
+  const snap = () => { const L = typeof V152UI !== 'undefined' && V152UI.ladder ? V152UI.ladder.L : null, z = $('#tkSize button.on');
+    return { ladder: L ? { levels: L.levels.map((x) => ({ p: x.p })), moved: !!(U.drill && U.drill.moved) } : null, anchor: ST.v152 ? ST.v152.anchor : null, riskPct: $('#tkRisk') ? $('#tkRisk').value : null, sizeMode: z ? z.dataset.z : null, xray: !!(U.drill && U.drill.xray) }; };
+  const DRILL = { ladder: ['breakout', 'Volatile breakout: drag any TP rung of the ladder to a new level.'], vwap: ['breakout', 'Volatile breakout: anchor VWAP on the breakout candle.'], risk: ['breakout', 'Size the trade by risk: switch the ticket to "Size by risk" and set Risk % between 0.25 and 2.'], pool: ['pool', 'Thin DEX pool: open the Holder Cluster X-Ray and read the coordinated share.'] };
+  U.startDrill = (m) => {
+    U.close(); if (U.drill) U.endDrill(false); if (typeof Replay !== 'undefined' && Replay.on) Replay.exit(); if (typeof showTab === 'function') showTab('markets');
+    const [kind, msg] = DRILL[m.drill] || DRILL.ladder, D = V154.drillCandles(kind, 11);
+    U.drill = { id: m.id, kind: m.drill, D, ts: Date.now() };
+    try { chart.set(D, 60, [], null, ''); } catch (e) { /* chart not ready */ }
+    if (m.drill === 'ladder' && typeof V152UI !== 'undefined') { const last = D[D.length - 1].c, lo = Math.min(...D.slice(-40).map((c) => c.l)), L = V152.tpLadder(last, Math.max(lo, last * 0.994), V152UI.cfg().splits); V152UI.ladder = { sym: ST.sel, L, qty0: 0 }; }
+    U.drill.before = snap(); if (m.drill === 'vwap' && typeof V152UI !== 'undefined') V152UI.A.pickAv();
+    let b = $('#learnDrill'); if (!b) { b = document.createElement('div'); b.id = 'learnDrill'; b.className = 'lx-drill'; b.setAttribute('role', 'status'); document.body.appendChild(b); b.addEventListener('click', (e) => { const a = e.target.closest('[data-dr]'); if (!a) return; if (a.dataset.dr === 'exit') U.endDrill(false); else if (a.dataset.dr === 'xray') { U.drill.xray = true; if (typeof V154UpUI !== 'undefined') V154UpUI.open('dex'); } }); }
+    b.innerHTML = `<b>🎯 ${esc(T('learn.drill'))}: ${esc(m.title)}</b><span>${esc(msg)}</span><span class="tag">SANDBOX · simulated data</span>${m.drill === 'pool' ? '<button type="button" class="btn xs pri" data-dr="xray">Open X-Ray</button>' : ''}<button type="button" class="btn xs" data-dr="exit">Exit</button>`; b.hidden = false;
+    if (typeof chart !== 'undefined' && chart) chart.invalidate();
+    clearInterval(U.poll); U.poll = setInterval(U.checkDrill, 500);
+  };
+  U.checkDrill = () => { const d = U.drill; if (!d) return false; if (d.kind === 'ladder' && typeof V152UI !== 'undefined' && V152UI.ladder && d.before.ladder) d.moved = V152UI.ladder.L.levels.some((x, i) => Math.abs(x.p - d.before.ladder.levels[i].p) > 1e-9); if (V154.drillCheck(d.kind, d.before, snap())) { U.endDrill(true); return true; } return false; };
+  U.endDrill = (won) => {
+    const d = U.drill; clearInterval(U.poll); U.drill = null; const b = $('#learnDrill'); if (b) b.hidden = true; if (!d) return;
+    if (d.kind === 'ladder' && typeof V152UI !== 'undefined') V152UI.ladder = null;
+    if (won) { const c = cfg(); if (!c.badges.includes(d.id)) c.badges.push(d.id); if (!c.done.includes(d.id)) c.done.push(d.id); saveState(); toast('🏅 ' + esc(T('learn.badge')) + ': ' + esc((V154.byId(d.id) || {}).title || d.id), 'up', 5000); }
+    if (typeof chartRefresh === 'function') chartRefresh(true);
+  };
+
+  /* ══ Explain This Metric: "?" buttons on advanced panels + Alt+hover anywhere on a tagged element ══ */
+  const TARGETS = [['#q153Root details[data-sec="frag"] > summary', 'fragility'], ['.lb-alpha-h', 'alpha'], ['#v154Up [data-learn="charm"]', 'charm'], ['#v152Drawer input[data-c="gamma"]', 'gamma'], ['#v152Drawer input[data-c="cvdDiv"]', 'cvd'], ['#v154Up [data-learn="cvd"]', 'cvd'], ['#v154Up [data-learn="gamma"]', 'gamma']];
+  U.decorate = () => { for (const [sel, k] of TARGETS) for (const el of document.querySelectorAll(sel)) { const host = el.tagName === 'INPUT' ? el.parentElement : el; if (!host || host.querySelector(':scope > .lx-q-btn')) continue; host.dataset.learn = k; const b = document.createElement('button'); b.type = 'button'; b.className = 'lx-q-btn'; b.dataset.metric = k; b.textContent = '?'; b.setAttribute('aria-label', T('learn.explain') + ': ' + V154.METRICS[k].title); host.appendChild(b); } };
+  U.explain = (k, at) => {
+    const M = V154.METRICS[k]; if (!M) return null; let p = $('#lxPop'); if (!p) { p = document.createElement('div'); p.id = 'lxPop'; p.className = 'lx-pop'; p.setAttribute('role', 'tooltip'); document.body.appendChild(p); p.addEventListener('click', (e) => { const b = e.target.closest('[data-lesson]'); if (b) { p.hidden = true; U.open(b.dataset.lesson); } }); }
+    p.innerHTML = `<b>${esc(M.title)}</b><p>${esc(M.text)}</p><button type="button" class="btn xs pri" data-lesson="${esc(M.lesson)}">${esc(T('learn.full'))} →</button>`; p.hidden = false;
+    const r = at && at.getBoundingClientRect ? at.getBoundingClientRect() : { left: 40, bottom: 80 }; p.style.left = Math.max(8, Math.min(innerWidth - 300, r.left)) + 'px'; p.style.top = Math.min(innerHeight - 160, r.bottom + 6) + 'px'; return p;
+  };
+
+  /* ══ mounting: one constant decides top bar vs Settings → Documentation & Academy ══ */
+  U.mount = (target = LEARN_MOUNT_TARGET) => {
+    if (!V154.LEARN_MOUNT_TARGETS.includes(target)) target = 'topbar'; U.target = target;
+    for (const x of document.querySelectorAll('#btnLearn, #learnSet')) x.remove();
+    if (target === 'topbar') { const set = $('#nav button[data-tab="set"]'); if (!set) return; const b = document.createElement('button'); b.type = 'button'; b.id = 'btnLearn'; b.className = 'learn-btn'; b.innerHTML = `<span class="ni" aria-hidden="true">🎓</span><span data-i18n="learn.btn">${esc(T('learn.btn'))}</span>`; set.after(b); b.addEventListener('click', () => U.open()); }
+    else U.mountSettings();
+  };
+  U.mountSettings = () => { if (U.target !== 'settings') return; const host = $('#setBody'); if (!host || $('#learnSet')) return; const d = document.createElement('div'); d.id = 'learnSet'; d.className = 'panel lx-set'; d.innerHTML = `<h3>📚 ${esc(T('learn.docs'))}</h3><div class="pb"><button type="button" class="btn pri" data-i18n="learn.btn">${esc(T('learn.btn'))}</button></div>`; host.prepend(d); d.querySelector('button').addEventListener('click', () => U.open()); };
+  U.start = () => {
+    U.mount(LEARN_MOUNT_TARGET);
+    if (typeof chartRefresh === 'function') { const _cr = chartRefresh; chartRefresh = function () { if (U.drill) return; return _cr.apply(this, arguments); }; } // the sandbox owns the chart until the drill ends
+    document.addEventListener('click', (e) => { const q = e.target.closest && e.target.closest('.lx-q-btn'); if (q) { e.preventDefault(); e.stopPropagation(); U.explain(q.dataset.metric, q); return; } const p = $('#lxPop'); if (p && !p.hidden && !e.target.closest('#lxPop')) p.hidden = true; }, true);
+    document.addEventListener('mouseover', (e) => { if (!e.altKey) return; const h = e.target.closest && e.target.closest('[data-learn]'); if (h && V154.METRICS[h.dataset.learn]) U.explain(h.dataset.learn, h); });
+    setInterval(() => { U.decorate(); U.mountSettings(); }, 1200);
+    if (typeof V14 !== 'undefined' && Array.isArray(V14.SHORTCUTS)) V14.SHORTCUTS.push(['🎓 Learn ExTerm', 'Interactive academy: search, learning paths, drills']);
+  };
+  U.cfg = cfg;
+  return U;
+})();
+if (typeof window !== 'undefined' && typeof document !== 'undefined' && typeof boot === 'function') { const _b154l = boot; boot = async function () { await _b154l.apply(this, arguments); try { LearnUI.start(); } catch (e) { console.warn('learn init', e); } }; }
+
+/* ===== leaderboards.js ===== */
+/* ExTerm v15.4 On-Chain Perp & Smart-Money Leaderboards (zero top-bar additions). Crypto → Social gains a Feed | Perp
+   Leaderboard switch; On-chain → Wallet Tracker gains a collapsed Smart-Money Leaderboard. Data: public, permissionless
+   Hyperliquid mainnet reads through the launcher (/api/hl/*: allow-listed, 30 s RAM cache, schema-validated); ranked by
+   the ExTerm Alpha Score. Per trader: live positions, Chart Setup (entry + liquidation on the chart), Shadow Mirror
+   (position deltas → Grok dry-run shadow log, zero custody), + Track Wallet, Backtest Style (→ Quant Lab + 17-test
+   gate), delta / exit badges, tilted-whale + liquidation-magnet flags, style tags × World Macro Shield, consensus heatmap
+   strip on the chart, CONFLUENCE + TOP TRADER pins, Anti-Rug filter. Every external string goes through esc(). */
+const LeaderUI = (() => {
+  const U = { board: null, err: '', det: new Map(), prev: new Map(), conf: [], setup: null, loading: false, open: new Set(), win: 'month', by: 'alpha', page: 25 };
+  const T = (k) => (typeof I18N !== 'undefined' ? I18N.t(k) : k);
+  const cfg = () => { const c = ST.v154 && typeof ST.v154 === 'object' ? ST.v154 : (ST.v154 = {}); c.tracked = (Array.isArray(c.tracked) ? c.tracked : []).filter((w) => w && V154.isAddr(w.addr)).map((w) => ({ addr: w.addr.toLowerCase(), label: String(w.label || '').replace(/[<>&"'`]/g, '').slice(0, 24) })).slice(0, 40); c.mirror = (Array.isArray(c.mirror) ? c.mirror : []).filter(V154.isAddr).slice(0, 5); c.antiRug = c.antiRug !== false; c.heat = !!c.heat; return c; };
+  const short = (a) => a.slice(0, 6) + '…' + a.slice(-4);
+  const usd = (x) => (typeof NT !== 'undefined' ? NT.fmtUSD(x, Math.abs(x) >= 1e4 ? 0 : 2) : '$' + Math.round(x));
+  const pct = (x) => (x >= 0 ? '+' : '') + (x * 100).toFixed(1) + '%';
+  const cls = (x) => (x >= 0 ? 'up' : 'dn');
+  const symOf = (coin) => String(coin).toUpperCase() + '-USD';
+  const refs = () => { const out = []; for (const c of ['BTC', 'ETH', 'HYPE', 'XRP', 'DOGE', 'AVAX']) { let p = null; try { p = typeof px === 'function' ? px(symOf(c)) : null; } catch (e) { /* no price */ } if (p > 0) out.push(c + ':' + (+p).toPrecision(8)); } return out.join(','); };
+  const macro = () => { const I = typeof Grok !== 'undefined' && Grok.intel ? Grok.intel.items || [] : [], now = Date.now() / 1000, fresh = I.filter((x) => x && (!x.ts || now - x.ts < 3600)); return fresh.some((x) => x.sev === 'CRITICAL') ? 'Risk-Off' : fresh.some((x) => x.sev === 'MACRO' || x.sev === 'HIGH') ? 'Event-Driven' : 'Calm'; };
+
+  /* ══ data ══ */
+  U.load = async (force) => {
+    if (U.loading || (!force && U.board && Date.now() - U.board.at < 30000)) return U.board; U.loading = true;
+    try { const j = await J.get('/api/hl/leaderboard', { timeout: 30000 }); U.board = { rows: V154.parseBoard(j), sample: !!j.sample, stale: !!j.stale, at: Date.now() }; U.err = ''; }
+    catch (e) { U.err = String(e.message || e).slice(0, 140); } finally { U.loading = false; }
+    return U.board;
+  };
+  U.trader = async (addr) => {
+    const hit = U.det.get(addr); if (hit && Date.now() - hit.at < 30000) return hit;
+    const j = await J.get(`/api/hl/trader?addr=${encodeURIComponent(addr)}&types=clearinghouseState,userFills,frontendOpenOrders&ref=${encodeURIComponent(refs())}`, { timeout: 20000 });
+    const st = V154.positions(j.clearinghouseState), fills = V154.fills(j.userFills), orders = Array.isArray(j.frontendOpenOrders) ? j.frontendOpenOrders : [], stats = V154.fillStats(fills);
+    const prev = U.det.get(addr), d = { addr, at: Date.now(), acct: st.acct, positions: st.list, orders, fills, stats, tag: V154.styleTag(stats, fills), tilt: V154.tilt(fills), magnets: V154.liqMagnets(st.list), badges: prev ? V154.delta(prev.positions, st.list, prev.orders, orders) : (hit && hit.badges) || [] };
+    if (prev) d.badgeAt = d.badges.length ? Date.now() : prev.badgeAt; if (prev && !d.badges.length && prev.badges && Date.now() - (prev.badgeAt || 0) < 15 * 60000) d.badges = prev.badges;
+    U.det.set(addr, d); if (prev && cfg().mirror.includes(addr)) mirror(addr, prev.positions, st.list); return d;
+  };
+  const pool = async (addrs, n = 4) => { const q = addrs.slice(); await Promise.all(Array.from({ length: n }, async () => { while (q.length) { const a = q.shift(); try { await U.trader(a); } catch (e) { /* one trader failing never blocks the board */ } } })); };
+  U.top = () => { if (!U.board) return []; const rows = V154.rank(U.board.rows, U.win, U.by, 200), c = cfg(); return c.antiRug ? rows.filter((r) => !U.rug(r).flag) : rows; };
+  U.rug = (r) => { const d = U.det.get(r.addr), peers = {}; for (const [a, x] of U.det) peers[a] = x.fills; return V154.antiRug(r, d ? d.fills : [], peers); };
+  U.enrich = async () => {
+    const top = V154.rank((U.board && U.board.rows) || [], U.win, U.by, 25).map((r) => r.addr), tracked = cfg().tracked.map((w) => w.addr); await pool([...new Set(top.concat(tracked))]);
+    const ent = []; for (const a of top) { const d = U.det.get(a); if (!d) continue; for (const f of d.fills) if (/^Open/.test(f.dir)) ent.push({ addr: a, coin: f.coin, side: /Long/.test(f.dir) ? 'Long' : 'Short', t: f.t / 1000 }); }
+    const now = Date.now() / 1000, fresh = V154.confluence(ent, 900).filter((c) => now - c.t < 6 * 3600);
+    for (const c of fresh) if (!U.conf.some((x) => x.key === c.key && Math.abs(x.t - c.t) < 900)) { if (U.conf.length) toast(`🎯 CONFLUENCE · ${c.wallets.length} top wallets ${c.side} ${esc(c.coin)} within 15 min`, 'acc', 7000); }
+    U.conf = fresh; if (typeof chart !== 'undefined' && chart) chart.invalidate();
+  };
+  /* Shadow Mirror: position deltas → dry-run shadow fills (never a real order, never custody) */
+  const mirror = (addr, prev, cur) => {
+    if (typeof V152 === 'undefined' || typeof V152UI === 'undefined') return; const P = new Map(prev.map((p) => [p.coin, p]));
+    for (const c of cur) { const p = P.get(c.coin), d = c.szi - (p ? p.szi : 0); if (Math.abs(d) * c.mark < 10) continue; const f = V152.shadowFill({ side: d > 0 ? 'buy' : 'sell', usd: Math.min(1000, Math.abs(d) * c.mark), sym: symOf(c.coin), bot: '🪞 Mirror ' + short(addr) }, { price: c.mark, ts: Date.now() }, 5); if (f) { V151.pushCapped(V152UI.shadow, f, 200); toast(`🪞 Shadow Mirror ${esc(f.side)} ${esc(c.coin)} (dry-run, no balance touched)`); } }
+    for (const p of prev) if (!cur.some((c) => c.coin === p.coin)) { const f = V152.shadowFill({ side: p.szi > 0 ? 'sell' : 'buy', usd: Math.min(1000, p.ntl), sym: symOf(p.coin), bot: '🪞 Mirror ' + short(addr) }, { price: p.mark, ts: Date.now() }, 5); if (f) V151.pushCapped(V152UI.shadow, f, 200); }
+    if (V152UI.renderGrokCard) V152UI.renderGrokCard();
+  };
+
+  /* ══ actions ══ */
+  const A = {};
+  A.setup = (addr, coin) => { const d = U.det.get(addr), p = d && d.positions.find((x) => x.coin === coin); if (!p) return; const sym = symOf(coin); showTab('markets'); if (ST.mode !== 'crypto') setMode('crypto', sym); else if (ST.sel !== sym) selectSym(sym); U.setup = { sym, entry: p.entry, liq: p.liq, side: p.side, who: short(addr) }; setTimeout(() => chart && chart.invalidate(), 300); toast(`📐 Chart Setup: ${esc(short(addr))} ${esc(p.side)} ${esc(coin)} entry and liquidation plotted`); };
+  A.mirror = (addr) => { const c = cfg(); c.mirror = c.mirror.includes(addr) ? c.mirror.filter((x) => x !== addr) : c.mirror.concat([addr]).slice(-5); saveState(); toast(c.mirror.includes(addr) ? `🪞 Shadow Mirror on for ${esc(short(addr))}: position changes log as dry-run fills in the Grok tab` : 'Shadow Mirror off', 'acc'); renderPerp(); };
+  A.track = (addr) => { const c = cfg(); if (c.tracked.some((w) => w.addr === addr)) c.tracked = c.tracked.filter((w) => w.addr !== addr); else c.tracked.push({ addr, label: '' }); saveState(); toast(c.tracked.some((w) => w.addr === addr) ? '+ Tracking ' + esc(short(addr)) + ' in the Smart-Money Leaderboard' : 'Stopped tracking', 'acc'); renderPerp(); renderSmart(); };
+  A.backtest = async (addr) => {
+    let d = U.det.get(addr); try { d = d || (await U.trader(addr)); } catch (e) { toast('Could not load this trader\'s fills: ' + esc(e.message), 'dn'); return; }
+    const spec = V154.styleSpec(d.stats, d.tag, 3600), sym = symOf(spec.coin); showTab('markets'); if (ST.mode !== 'crypto') setMode('crypto', sym); else selectSym(sym);
+    const c = ST.v153 && typeof ST.v153 === 'object' ? ST.v153 : (ST.v153 = {}); c.strat = spec.strat; c.tf = spec.tf; saveState();
+    if (typeof V153UI !== 'undefined') { V153UI.params = null; V153UI.filters = spec.filters; V153UI.grade = null; }
+    showTab('lab'); try { labSec = 'q153'; for (const x of document.querySelectorAll('#labNav button')) x.classList.toggle('on', x.dataset.v === 'q153'); await renderLab(); } catch (e) { /* lab optional */ }
+    toast(`🧪 Backtest Style · ${esc(short(addr))}: ${esc(d.tag)}, ~${esc(Math.round(spec.hold))} min holds, ${esc(spec.perDay)} entries/day on ${esc(spec.coin)} → ${esc(spec.strat)} with a ${esc(spec.filters.timeStop)}-bar time stop`, 'acc', 8000);
+    if (typeof V153UI !== 'undefined') { await V153UI.A.base(); const det = $('#q153Root details[data-sec="promote"]'); if (det && !det.open) { det.open = true; await new Promise((r) => setTimeout(r, 120)); } if (V153UI.base && $('#q153PrOut')) await V153UI.A.validate(); }
+  };
+  U.A = A;
+
+  /* ══ Social → Perp Leaderboard ══ */
+  const posTable = (d) => (d.positions.length ? `<table class="v152-t lb-pos"><tr><th>Asset</th><th>Side</th><th>Leverage</th><th>Entry</th><th>Unrealized PnL</th><th>Liquidation</th><th></th></tr>${d.positions.map((p) => `<tr><td>${esc(p.coin)}</td><td class="${p.side === 'Long' ? 'up' : 'dn'}">${esc(p.side)}</td><td>${esc(p.lev ? p.lev + '×' : '–')}</td><td class="mono">${esc(NT.fmtPrice(p.entry))}</td><td class="${cls(p.upnl)}">${esc(usd(p.upnl))}</td><td class="mono">${esc(p.liq ? NT.fmtPrice(p.liq) : '–')}</td><td><button type="button" class="btn xs" data-lb="setup" data-a="${esc(d.addr)}" data-c="${esc(p.coin)}">📐 Chart Setup</button></td></tr>`).join('')}</table>` : '<div class="note">No open positions.</div>');
+  const flags = (r, d) => { const out = []; if (d) { if (d.tilt.tilt) out.push(`<span class="tag dn" title="${esc(d.tilt.why)}">Tilted whale</span>`); if (d.magnets.length) out.push(`<span class="tag amb" title="Within 2.5% of liquidation">Liq magnet ${esc(d.magnets[0].coin)} ${esc(d.magnets[0].dist)}%</span>`); for (const b of d.badges.slice(0, 3)) out.push(`<span class="tag ${b.kind === 'exit' || b.kind === 'trim' ? 'dn' : b.kind === 'sl' ? 'amb' : 'up'}">${esc(b.coin)} ${esc(b.badge)}</span>`); } const rg = U.rug(r); if (rg.flag) out.push(`<span class="tag dn" title="${esc(rg.why.join(', '))}">Copy-trap</span>`); return out.join(' '); };
+  const renderPerp = () => {
+    const host = $('#lbPerp'); if (!host || host.hidden) return; const c = cfg(), B = U.board, W = U.win, rows = U.top().slice(0, U.page), mac = macro();
+    host.innerHTML = `<div class="panel"><div class="ph">🏆 <span data-i18n="lb.perp">${esc(T('lb.perp'))}</span> ${B && B.sample ? '<span class="tag amb">SAMPLE · offline</span>' : B ? '<span class="tag up">LIVE · on-chain</span>' : ''}${B && B.stale ? '<span class="tag amb">cached</span>' : ''}<span class="sp"></span>
+      <div class="seg" id="lbWin">${V154.WINDOWS.map(([k, l]) => `<button type="button" data-win="${k}" class="${W === k ? 'on' : ''}">${esc(l)}</button>`).join('')}</div>
+      <div class="seg" id="lbBy"><button type="button" data-by="alpha" class="${U.by === 'alpha' ? 'on' : ''}">Alpha</button><button type="button" data-by="pnl" class="${U.by === 'pnl' ? 'on' : ''}">PnL</button><button type="button" data-by="roi" class="${U.by === 'roi' ? 'on' : ''}">ROI</button></div>
+      <label class="chk"><input type="checkbox" data-lbc="antiRug" ${c.antiRug ? 'checked' : ''}> <span data-i18n="lb.antirug">${esc(T('lb.antirug'))}</span></label><label class="chk"><input type="checkbox" data-lbc="heat" ${c.heat ? 'checked' : ''}> <span data-i18n="lb.heat">${esc(T('lb.heat'))}</span></label><button type="button" class="btn sm" data-lb="refresh">↻</button></div>
+      <div class="pb"><div class="note">World Macro Shield regime: <b>${esc(mac)}</b> · public Hyperliquid mainnet data · ranked by the <span class="lb-alpha-h">ExTerm Alpha Score</span> · nothing here can place an order${U.conf.length ? ` · <span class="up">🎯 ${esc(U.conf.length)} CONFLUENCE signal(s)</span>` : ''}</div>
+      ${U.err && !B ? `<div class="note dn">Leaderboard unavailable: ${esc(U.err)}</div>` : !B ? '<div class="note shimmer">Loading the on-chain leaderboard…</div>' : `<div class="q153-scroll"><table class="v152-t lb-t"><tr><th>#</th><th>Trader</th><th>Alpha</th><th>PnL ${esc((V154.WINDOWS.find((w) => w[0] === W) || [])[1])}</th><th>ROI</th><th>Account</th><th>Style</th><th>Signals</th><th></th></tr>
+      ${rows.map((r, i) => { const d = U.det.get(r.addr), open = U.open.has(r.addr), tag = d ? d.tag : '…'; return `<tr class="lb-row"><td>${i + 1}</td><td class="mono" title="${esc(r.addr)}">${esc(r.name || short(r.addr))}</td><td><b class="${r.alpha >= 70 ? 'up' : r.alpha >= 45 ? '' : 'dn'}">${esc(r.alpha)}</b></td><td class="${cls(r.pnl[W])}">${esc(usd(r.pnl[W]))}</td><td class="${cls(r.roi[W])}">${esc(pct(r.roi[W]))}</td><td>${esc(usd(r.acct))}</td><td><span class="tag">${esc(tag)}</span>${(tag === 'News Sniper' || tag === 'Scalper') && mac === 'Risk-Off' ? ' <span class="tag amb" title="Fast styles misfire in risk-off tape">⚠ macro</span>' : ''}</td><td>${flags(r, d)}</td><td><button type="button" class="btn xs" data-lb="expand" data-a="${esc(r.addr)}" aria-expanded="${open}">${open ? '▾' : '▸'}</button></td></tr>${open ? `<tr class="lb-x"><td colspan="9">${d ? posTable(d) + `<div class="note">Win rate ${esc(d.stats.winRate == null ? '–' : Math.round(d.stats.winRate * 100) + '%')} · realised ${esc(usd(d.stats.realized))} · median hold ${esc(d.stats.avgHoldMin == null ? '–' : d.stats.avgHoldMin + ' min')} · ${esc(d.stats.opensPerDay)} entries/day · favours ${esc(d.stats.favored.join(', ') || '–')}</div>` : '<div class="note shimmer">Loading positions…</div>'}
+        <div class="row v151-row"><button type="button" class="btn sm ${c.mirror.includes(r.addr) ? 'pri' : ''}" data-lb="mirror" data-a="${esc(r.addr)}">🪞 ${esc(T('lb.mirror'))}${c.mirror.includes(r.addr) ? ' ✓' : ''}</button><button type="button" class="btn sm" data-lb="track" data-a="${esc(r.addr)}">${c.tracked.some((w) => w.addr === r.addr) ? '✓ Tracked' : '+ ' + esc(T('lb.track'))}</button><button type="button" class="btn sm pri" data-lb="backtest" data-a="${esc(r.addr)}">🧪 ${esc(T('lb.backtest'))}</button></div></td></tr>` : ''}`; }).join('')}</table></div>
+      ${U.top().length > U.page ? '<button type="button" class="btn sm" data-lb="more">Show 25 more</button>' : ''}`}</div></div>`;
+  };
+  U.showPerp = (on) => {
+    const host = $('#lbPerp'), feed = $('#tab-social .soterm'), hero = $('#soHero'); if (!host) return; host.hidden = !on; if (feed) feed.hidden = on; if (hero) hero.hidden = on;
+    for (const b of document.querySelectorAll('#lbSeg button')) { const sel = (b.id === 'lbPerpBtn') === on; b.classList.toggle('on', sel); b.setAttribute('aria-selected', sel); }
+    if (on) { renderPerp(); U.load().then(() => { renderPerp(); return U.enrich(); }).then(renderPerp).catch(() => renderPerp()); }
+  };
+  const mountSocial = () => {
+    const tab = $('#tab-social'); if (!tab || $('#lbSeg')) return; const seg = document.createElement('div'); seg.className = 'seg lb-seg'; seg.id = 'lbSeg'; seg.setAttribute('role', 'tablist');
+    seg.innerHTML = `<button type="button" id="lbFeedBtn" class="on" role="tab" aria-selected="true">📣 <span data-i18n="lb.feed">${esc(T('lb.feed'))}</span></button><button type="button" id="lbPerpBtn" role="tab" aria-selected="false">🏆 <span data-i18n="lb.perp">${esc(T('lb.perp'))}</span></button>`;
+    const host = document.createElement('div'); host.id = 'lbPerp'; host.hidden = true; tab.prepend(host); tab.prepend(seg);
+    seg.addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) U.showPerp(b.id === 'lbPerpBtn'); });
+    const act = async (e) => {
+      const w = e.target.closest('[data-win]'); if (w) { U.win = w.dataset.win; renderPerp(); U.enrich().then(renderPerp); return; } const by = e.target.closest('[data-by]'); if (by) { U.by = by.dataset.by; renderPerp(); return; }
+      const b = e.target.closest('[data-lb]'); if (!b) return; const a = b.dataset.lb, addr = b.dataset.a;
+      if (a === 'expand') { if (U.open.has(addr)) U.open.delete(addr); else { U.open.add(addr); U.trader(addr).then(renderPerp, (er) => toast('Trader: ' + esc(er.message), 'dn')); } renderPerp(); }
+      else if (a === 'refresh') { await U.load(true); renderPerp(); await U.enrich(); renderPerp(); } else if (a === 'more') { U.page += 25; renderPerp(); }
+      else if (A[a]) A[a](addr, b.dataset.c);
+    };
+    host.addEventListener('click', act); tab.addEventListener('click', (e) => { if (e.target.closest('#lbSmart')) act(e); });
+    host.addEventListener('change', (e) => { const k = e.target.dataset.lbc; if (!k) return; cfg()[k] = e.target.checked; saveState(); if (typeof chart !== 'undefined' && chart) chart.invalidate(); renderPerp(); });
+  };
+
+  /* ══ On-chain → Wallet Tracker → Smart-Money Leaderboard ══ */
+  const renderSmart = () => {
+    const d0 = $('#lbSmart'); if (!d0) return; d0.hidden = ST.mode !== 'onchain'; const body = d0.querySelector('.pb'); if (!d0.open || !body) return; const c = cfg();
+    const pub = U.board ? V154.rank(U.board.rows, 'month', 'alpha', 25) : [], seen = new Set(), rows = [];
+    for (const w of c.tracked) { const r = (U.board && U.board.rows.find((x) => x.addr === w.addr)) || { addr: w.addr, name: w.label, alpha: null, acct: 0 }; rows.push(Object.assign({ mine: true }, r)); seen.add(w.addr); }
+    for (const r of pub) if (!seen.has(r.addr)) rows.push(r);
+    const list = rows.map((r) => ({ r, d: U.det.get(r.addr) })).filter(({ r }) => !c.antiRug || r.mine || !U.rug(r).flag).sort((a, b) => ((b.r.alpha || 0) - (a.r.alpha || 0)) || ((b.d && b.d.stats.winRate) || 0) - ((a.d && a.d.stats.winRate) || 0));
+    body.innerHTML = `<div class="note"><span data-i18n="lb.smart">${esc(T('lb.smart'))}</span>: public top-25 + your saved wallets · win rate and realised PnL from on-chain fills · <span class="lb-alpha-h">ExTerm Alpha Score</span>${U.board && U.board.sample ? ' · <span class="tag amb">SAMPLE · offline</span>' : ''}</div>
+      ${U.conf.length ? `<div class="lb-conf">${U.conf.slice(-4).map((x) => `<span class="tag up">🎯 CONFLUENCE ${esc(x.side)} ${esc(x.coin)} · ${esc(x.wallets.length)} top wallets · ${esc(new Date(x.t * 1000).toISOString().slice(11, 16))} UTC</span>`).join(' ')}</div>` : ''}
+      <div class="row v151-row"><input class="in" id="lbAddr" placeholder="0x… public wallet" aria-label="Wallet address" spellcheck="false"><button type="button" class="btn sm pri" id="lbAddBtn">+ ${esc(T('lb.track'))}</button></div>
+      <div class="q153-scroll"><table class="v152-t"><tr><th>Wallet</th><th>Win rate</th><th>Realised PnL</th><th>Alpha</th><th>Style</th><th>Radar</th><th></th></tr>${list.map(({ r, d }) => `<tr><td class="mono">${r.mine ? '★ ' : ''}${esc(r.name || short(r.addr))}</td><td>${esc(d && d.stats.winRate != null ? Math.round(d.stats.winRate * 100) + '%' : '–')}</td><td class="${d ? cls(d.stats.realized) : ''}">${esc(d ? usd(d.stats.realized) : '–')}</td><td><b>${esc(r.alpha == null ? '–' : r.alpha)}</b></td><td>${esc(d ? d.tag : '…')}</td><td>${d ? flags(r, d) : ''}</td><td><button type="button" class="btn xs" data-lb="backtest" data-a="${esc(r.addr)}">🧪</button> <button type="button" class="btn xs" data-lb="track" data-a="${esc(r.addr)}">${r.mine ? '✕' : '+'}</button></td></tr>`).join('')}</table></div>`;
+    const add = body.querySelector('#lbAddBtn'); if (add) add.addEventListener('click', () => { const v = body.querySelector('#lbAddr').value.trim(); if (!V154.isAddr(v)) { toast('Enter a 0x… public wallet address (40 hex characters)', 'amb'); return; } A.track(v.toLowerCase()); U.trader(v.toLowerCase()).then(renderSmart).catch(() => { /* shown as – */ }); });
+  };
+  const mountSmart = () => { const tab = $('#tab-whales'); if (!tab || $('#lbSmart')) return; const d = document.createElement('details'); d.id = 'lbSmart'; d.className = 'panel lb-smart'; d.innerHTML = `<summary>🧠 <span data-i18n="lb.smart">${esc(T('lb.smart'))}</span> <span class="note">win rate · realised PnL · Alpha Score · CONFLUENCE</span></summary><div class="pb"></div>`; tab.prepend(d);
+    d.addEventListener('toggle', () => { if (d.open) { renderSmart(); U.load().then(() => { renderSmart(); return U.enrich(); }).then(renderSmart).catch(renderSmart); } }); d.hidden = ST.mode !== 'onchain'; };
+
+  /* ══ chart overlay: Chart Setup lines, liquidation magnets, TOP TRADER pins, consensus heatmap strip ══ */
+  U.overlay = (g, L, ch) => {
+    if (typeof chart === 'undefined' || ch !== chart || !L.py || !L.D || !L.D.length) return; const coin = baseOf(ST.sel).toUpperCase(), top = L.y0, bot = L.y0 + L.mainH - (L.volH || 0) - 4, right = L.W - L.Rm;
+    const hline = (p, col, lab, dash) => { const y = L.py(p); if (!(y > top && y < bot)) return; g.strokeStyle = col; g.fillStyle = col; g.globalAlpha = 0.85; g.setLineDash(dash || [6, 4]); g.beginPath(); g.moveTo(L.Lm, y); g.lineTo(right, y); g.stroke(); g.setLineDash([]); g.font = '700 9px Inter, system-ui, sans-serif'; g.textAlign = 'left'; g.fillText(lab, L.Lm + 6, y - 3); };
+    g.save();
+    if (U.setup && U.setup.sym === ST.sel) { hline(U.setup.entry, U.setup.side === 'Long' ? L.col.up : L.col.dn, `${U.setup.who} ${U.setup.side} entry`); if (U.setup.liq > 0) hline(U.setup.liq, '#e879f9', `${U.setup.who} liquidation`, [2, 3]); }
+    const books = []; for (const [, d] of U.det) { books.push(d); for (const m of d.magnets) if (m.coin === coin) hline(m.liq, '#e879f9', `LIQ MAGNET ${m.dist}% · sweep target`, [3, 3]); }
+    for (const c of U.conf) if (c.coin === coin) { const x = ch.tToX(c.t); if (x >= L.Lm && x <= right) { g.globalAlpha = 0.95; g.fillStyle = c.side === 'Long' ? L.col.up : L.col.dn; g.font = '700 9px Inter, system-ui, sans-serif'; g.textAlign = 'center'; g.fillText(`TOP TRADER ×${c.wallets.length}`, x, top + 12); g.beginPath(); g.moveTo(x - 4, top + 16); g.lineTo(x + 4, top + 16); g.lineTo(x, top + 22); g.fill(); } }
+    if (cfg().heat && books.length) {
+      const vis = L.D.slice(Math.max(0, L.start), L.end); if (vis.length) { const lo = Math.min(...vis.map((c) => c.l)), hi = Math.max(...vis.map((c) => c.h)), B = V154.heatmap(books, coin, lo, hi, 48);
+        if (B) { const x = right - 16; for (const b of B) { if (!b.w) continue; const y1 = L.py(b.p1), y2 = L.py(b.p0), k = b.liq >= Math.max(b.long, b.short, b.tp) ? '#e879f9' : b.tp >= Math.max(b.long, b.short) ? L.col.amb : b.long >= b.short ? L.col.up : L.col.dn; g.fillStyle = k; g.globalAlpha = 0.25 + 0.6 * b.w; g.fillRect(x, y1, 12, Math.max(1, y2 - y1 - 0.5)); } g.globalAlpha = 0.7; g.fillStyle = L.col.fg; g.font = '700 8px Inter, system-ui, sans-serif'; g.textAlign = 'right'; g.fillText('TOP-25', right - 2, top + 10); } }
+    }
+    g.restore();
+  };
+  U.start = () => {
+    mountSocial(); mountSmart();
+    if (typeof setMode === 'function') { const _sm = setMode; setMode = function () { const r = _sm.apply(this, arguments); try { const s = $('#lbSmart'); if (s) s.hidden = ST.mode !== 'onchain'; } catch (e) { /* tab optional */ } return r; }; }
+    setInterval(() => { if (typeof chart !== 'undefined' && chart && !chart.overlays.includes(U.overlay)) { chart.overlays.push(U.overlay); chart.invalidate(); } const s = $('#lbSmart'); if (s) s.hidden = ST.mode !== 'onchain'; }, 1000);
+    setInterval(() => { const vis = ($('#lbPerp') && !$('#lbPerp').hidden) || ($('#lbSmart') && $('#lbSmart').open) || cfg().mirror.length || cfg().heat; if (!vis || document.hidden) return; U.load().then(() => U.enrich()).then(() => { renderPerp(); renderSmart(); }).catch(() => { /* next tick */ }); }, 60000);
+  };
+  U.renderPerp = renderPerp; U.renderSmart = renderSmart; U.cfg = cfg;
+  return U;
+})();
+if (typeof window !== 'undefined' && typeof document !== 'undefined' && typeof boot === 'function') { const _b154b = boot; boot = async function () { await _b154b.apply(this, arguments); try { LeaderUI.start(); } catch (e) { console.warn('leaderboards init', e); } }; }
+
+/* ===== v154_core_upgrades.js ===== */
+/* ExTerm v15.4 UI: 15 core workstation upgrades behind one 🧰 Pro Tools drawer (collapsed sections rendered on open,
+   every overlay opt-in). Charts & Execution: ghost HTF candles, Auto-Breakeven / trailing step-ladder (right-click a TP
+   rung), opening-range + kill-zone bands. Order Flow & 0DTE: tape-velocity speedometer, dealer charm / vanna drift,
+   absorption footprints. Scanners & DEX: gap-fill odds, holder-cluster X-ray, lead-lag decoupling. AI: Alt+click
+   "explain why price moved" forensics → 3-Agent Copilot, plain-English pattern hunter, bot cool-off / volatility
+   throttle. Macro & Journal: FOMC / CPI / NFP reaction pins, tilt & revenge-trade guard, Replay My Worst Loss.
+   Strict CSP: listeners in JS, every dynamic string through esc(). Maths in V154 (v154core.js). */
+const V154UpUI = (() => {
+  const U = { cache: {}, hunt: [], tape: null, guard: { factor: 1, why: 'normal' }, gap: null, lag: null, xray: null, react: null };
+  const T = (k) => (typeof I18N !== 'undefined' ? I18N.t(k) : k);
+  const cfg = () => { const c = ST.v154 && typeof ST.v154 === 'object' ? ST.v154 : (ST.v154 = {}); const u = c.up && typeof c.up === 'object' ? c.up : (c.up = {});
+    for (const k of ['ghost', 'sess', 'tape', 'charm', 'absorb', 'forensic', 'throttle', 'react']) u[k] = !!u[k]; if (![900, 3600, 14400].includes(u.ghostTf)) u.ghostTf = 3600; if (![5, 15, 30].includes(u.orMin)) u.orMin = 15;
+    u.hookUrl = typeof u.hookUrl === 'string' && /^https:\/\/[A-Za-z0-9.-]+(\/[^\s"'<>]*)?$/.test(u.hookUrl) ? u.hookUrl.slice(0, 300) : '';
+    u.rules = Object.assign({ TP1: 'be01', TP2: 'tp1', TP3: 'none' }, u.rules || {}); for (const k of Object.keys(u.rules)) if (!V154.STEP_RULES[u.rules[k]]) u.rules[k] = 'none'; return u; };
+  const inv = () => { if (typeof chart !== 'undefined' && chart) chart.invalidate(); };
+  const kpis = (rows) => `<div class="v151-kpis">${rows.map(([k, v, c]) => `<div><span class="k">${esc(k)}</span><b class="${c || ''}">${esc(v)}</b></div>`).join('')}</div>`;
+  const note = (t, c = '') => `<div class="note ${c}">${esc(t)}</div>`;
+  const tog = (k, label, learn) => `<label class="chk"${learn ? ` data-learn="${learn}"` : ''}><input type="checkbox" data-u="${k}" ${cfg()[k] ? 'checked' : ''}> ${esc(label)}</label>`;
+  const candles = () => { try { const st = getStore(ST.sel, ST.tf); return st && st.candles && st.candles.length ? st.candles : (typeof chart !== 'undefined' && chart ? chart.data : []); } catch (e) { return []; } };
+  const hist = async (sym, sec, n) => { try { return await History.get(sym, sec, n); } catch (e) { return []; } };
+  const fp = (p) => (p == null || !isFinite(p) ? '–' : NT.fmtPrice(p));
+
+  /* ══ chart overlays ══ */
+  const ov = {};
+  ov.ghost = (g, L, ch) => {
+    const c = cfg(); if (!c.ghost || !(ch.tfSec > 0) || ch.tfSec >= c.ghostTf) return; const D = L.D, key = ST.sel + '|' + c.ghostTf + '|' + D.length + '|' + (D[D.length - 1] || {}).c;
+    if (U.cache.ghKey !== key) { U.cache.ghKey = key; U.cache.gh = V154.ghost(D, c.ghostTf); }
+    for (const b of U.cache.gh) { if (b.i1 < L.start || b.i0 >= L.end) continue; const x1 = L.kx(Math.max(b.i0, L.start)) - L.bw / 2, x2 = L.kx(Math.min(b.i1, L.end - 1)) + L.bw / 2, yo = L.py(b.o), yc = L.py(b.c), col = b.c >= b.o ? L.col.up : L.col.dn;
+      g.globalAlpha = 0.09; g.fillStyle = col; g.fillRect(x1, Math.min(yo, yc), x2 - x1, Math.max(1, Math.abs(yc - yo))); g.globalAlpha = 0.35; g.strokeStyle = col; g.strokeRect(x1, L.py(b.h), x2 - x1, L.py(b.l) - L.py(b.h)); }
+  };
+  ov.sess = (g, L, ch) => {
+    const c = cfg(); if (!c.sess) return; const D = L.D, stock = typeof isStock === 'function' && isStock(ST.sel), key = ST.sel + '|' + D.length + '|' + c.orMin;
+    if (U.cache.sKey !== key) { U.cache.sKey = key; U.cache.or = V154.openingRange(D, stock ? 13 * 60 + 30 : 0, [c.orMin]); U.cache.kz = V154.killZones(D); }
+    const top = L.y0, bot = L.y0 + L.mainH - (L.volH || 0) - 4, cols = { asia: '#a78bfa', london: '#38bdf8', ny: '#f59e0b' }; g.font = '700 9px Inter, system-ui, sans-serif';
+    for (const [k, b] of Object.entries(U.cache.kz || {})) { const x1 = Math.max(L.Lm, ch.tToX(b.t0)), x2 = Math.min(L.W - L.Rm, ch.tToX(b.t1)); if (x2 <= x1) continue; const y1 = Math.max(top, L.py(b.hi)), y2 = Math.min(bot, L.py(b.lo)); g.globalAlpha = 0.07; g.fillStyle = cols[k]; g.fillRect(x1, y1, x2 - x1, y2 - y1); g.globalAlpha = 0.6; g.strokeStyle = cols[k]; g.strokeRect(x1, y1, x2 - x1, y2 - y1); g.fillText(k.toUpperCase(), x1 + 3, y1 + 10); }
+    const o = (U.cache.or || {})[c.orMin]; if (o) for (const [p, lab] of [[o.hi, 'ORH ' + c.orMin + 'm'], [o.lo, 'ORL ' + c.orMin + 'm']]) { const y = L.py(p); if (!(y > top && y < bot)) continue; g.globalAlpha = 0.8; g.strokeStyle = L.col.acc; g.fillStyle = L.col.acc; g.setLineDash([5, 3]); g.beginPath(); g.moveTo(Math.max(L.Lm, ch.tToX(o.t0)), y); g.lineTo(L.W - L.Rm, y); g.stroke(); g.setLineDash([]); g.textAlign = 'right'; g.fillText(lab, L.W - L.Rm - 4, y - 3); }
+  };
+  ov.absorb = (g, L) => {
+    if (!cfg().absorb) return; const D = L.D, key = ST.sel + '|' + D.length + '|' + (D[D.length - 1] || {}).c; if (U.cache.abKey !== key) { U.cache.abKey = key; const off = Math.max(0, D.length - 600); U.cache.ab = V154.absorption(D.slice(off)).map((x) => Object.assign(x, { i: x.i + off })); }
+    for (const a of U.cache.ab) { if (a.i < L.start || a.i >= L.end) continue; const c = D[a.i], x = L.kx(a.i); g.globalAlpha = 0.25 + 0.6 * a.absorb; g.fillStyle = a.side === 'bid' ? '#22d3ee' : '#f472b6'; g.fillRect(x - L.bw * 0.4, L.py(Math.max(c.o, c.c)), L.bw * 0.8, Math.max(2, Math.abs(L.py(c.o) - L.py(c.c)))); }
+  };
+  ov.charm = (g, L) => {
+    if (!cfg().charm || typeof P5UI === 'undefined') return; const ch = P5UI.chain; if (!ch || ch.sym !== ST.sel) return; if (U.cache.chKey !== ch) { U.cache.chKey = ch; U.cache.ch = V154.charmCurve(ch, ch.spot); } const C = U.cache.ch; if (!C) return;
+    const w = 150, h = 54, x0 = L.Lm + 8, y0 = L.y0 + L.mainH - (L.volH || 0) - h - 10, slog = (v) => Math.sign(v) * Math.log10(1 + Math.abs(v)), vals = C.pts.map((p) => slog(p.charm)), mx = Math.max(...vals.map(Math.abs)) || 1;
+    g.globalAlpha = 0.85; g.fillStyle = L.col.bg || '#0b0b0d'; g.fillRect(x0, y0, w, h); g.strokeStyle = L.col.acc; g.globalAlpha = 0.5; g.strokeRect(x0, y0, w, h); g.globalAlpha = 0.95; g.lineWidth = 1.6; g.strokeStyle = C.window === 'squeeze' ? L.col.dn : L.col.amb; g.beginPath();
+    C.pts.forEach((p, i) => { const x = x0 + 4 + (i / (C.pts.length - 1)) * (w - 8), y = y0 + h / 2 + 4 - (vals[i] / mx) * (h / 2 - 10); if (!i) g.moveTo(x, y); else g.lineTo(x, y); }); g.stroke();
+    g.font = '700 9px Inter, system-ui, sans-serif'; g.fillStyle = C.window === 'pin' ? L.col.amb : C.window === 'squeeze' ? L.col.dn : L.col.fg; g.textAlign = 'left'; g.fillText(`Charm drift · ${C.window.toUpperCase()} · pin ${fp(C.pinStrike)}`, x0 + 4, y0 + 10);
+  };
+  ov.hunt = (g, L) => { if (!U.hunt.length || U.huntSym !== ST.sel) return; g.font = '700 9px Inter, system-ui, sans-serif'; for (const z of U.hunt) { if (z.i < L.start || z.i >= L.end) continue; const x = L.kx(z.i), col = z.dir === 'bull' ? L.col.up : L.col.dn; if (z.top != null) { const y1 = L.py(z.top), y2 = L.py(z.bot); g.globalAlpha = 0.18; g.fillStyle = col; g.fillRect(x, y1, L.W - L.Rm - x, y2 - y1); g.globalAlpha = 0.9; g.strokeStyle = L.col.acc; g.strokeRect(x, y1, L.W - L.Rm - x, y2 - y1); g.fillStyle = L.col.acc; g.fillText('HUNT ' + z.kind, x + 4, y1 - 2); } } };
+  ov.react = (g, L, ch) => { if (!cfg().react || !U.react || U.react.sym !== ST.sel) return; const top = L.y0 + 30; g.font = '700 9px Inter, system-ui, sans-serif'; g.textAlign = 'center'; for (const r of U.react.rows) { const x = ch.tToX(r.t); if (x < L.Lm || x > L.W - L.Rm) continue; const col = r.k === 'fomc' ? L.col.amb : r.k === 'cpi' ? '#f472b6' : '#38bdf8'; g.globalAlpha = 0.9; g.fillStyle = col; g.strokeStyle = col; g.setLineDash([2, 3]); g.beginPath(); g.moveTo(x, top); g.lineTo(x, L.y0 + L.mainH - (L.volH || 0) - 4); g.stroke(); g.setLineDash([]); g.fillText(`${r.k.toUpperCase()} ${r.spike > 0 ? '+' : ''}${r.spike}%${r.fakeout ? ' ⚠ fake' : ''}`, x, top - 4); } };
+  ov.ladder = (g, L) => { const Ld = typeof V152UI !== 'undefined' ? V152UI.ladder : null; if (!Ld || Ld.sym !== ST.sel || !Ld.armed) return; g.font = '700 9px Inter, system-ui, sans-serif'; g.textAlign = 'right'; Ld.L.levels.forEach((x, i) => { const r = Ld.armed['TP' + (i + 1)]; if (!r || r === 'none') return; const y = L.py(x.p); if (!(y > L.y0 && y < L.y0 + L.mainH)) return; g.globalAlpha = 0.9; g.fillStyle = L.col.acc; g.fillText('⛓ ' + V154.STEP_RULES[r], L.W - L.Rm - 6, y + 11); }); };
+  U.overlay = (g, L, ch) => { if (typeof chart === 'undefined' || ch !== chart || !L.py || !L.D || !L.D.length) return; for (const k of ['ghost', 'sess', 'absorb', 'charm', 'hunt', 'react', 'ladder']) { g.save(); try { ov[k](g, L, ch); } catch (e) { /* an overlay must never break the chart */ } g.restore(); } };
+
+  /* ══ 2. step-ladder: right-click a TP rung → arm a rule; enforced on every tick (paper) and sent to the webhook bridge ══ */
+  const ladderMenu = (e) => {
+    const Ld = typeof V152UI !== 'undefined' ? V152UI.ladder : null, L = chart && chart.L; if (!Ld || Ld.sym !== ST.sel || !L || !L.py) return; const r = chart.cv.getBoundingClientRect(), y = e.clientY - r.top, i = Ld.L.levels.findIndex((v) => Math.abs(L.py(v.p) - y) < 7); if (i < 0) return;
+    e.preventDefault(); e.stopPropagation(); let m = $('#v154Menu'); if (!m) { m = document.createElement('div'); m.id = 'v154Menu'; m.className = 'v154-menu'; m.setAttribute('role', 'menu'); document.body.appendChild(m); m.addEventListener('click', (ev) => { const b = ev.target.closest('[data-rule]'); if (!b) return; arm(b.dataset.tp, b.dataset.rule); m.hidden = true; }); document.addEventListener('click', (ev) => { if (!ev.target.closest('#v154Menu')) m.hidden = true; }); }
+    const tp = 'TP' + (i + 1); m.innerHTML = `<div class="note">${esc(tp)} fill →</div>${Object.entries(V154.STEP_RULES).filter(([k]) => k !== 'tp1' || i >= 1).map(([k, l]) => `<button type="button" role="menuitem" data-tp="${tp}" data-rule="${k}">${esc(l)}${((Ld.armed || {})[tp] || '') === k ? ' ✓' : ''}</button>`).join('')}`;
+    m.style.left = Math.min(innerWidth - 220, e.clientX) + 'px'; m.style.top = Math.min(innerHeight - 160, e.clientY) + 'px'; m.hidden = false;
+  };
+  const arm = (tp, rule) => { const Ld = V152UI.ladder; if (!Ld) return; if (Ld.L.sl0 == null) Ld.L.sl0 = Ld.L.sl; Ld.armed = Object.assign({}, Ld.armed || cfg().rules, { [tp]: rule }); cfg().rules[tp] = rule; saveState(); inv(); toast(`⛓ ${esc(tp)} fill → ${esc(V154.STEP_RULES[rule])} (paper + webhook bridge)`, 'acc'); };
+  const stepTick = () => {
+    const Ld = typeof V152UI !== 'undefined' ? V152UI.ladder : null; if (!Ld || !Ld.armed) return; if (Ld.L.sl0 == null) Ld.L.sl0 = Ld.L.sl; const r = V154.stepLadder(Ld.L, Ld.armed); if (!r || !r.events.length || r.sl === Ld.L.sl) return;
+    Ld.L.sl = r.sl; const pos = ACC.pos && ACC.pos[Ld.sym]; if (pos) pos.sl = r.sl; inv(); toast('⛓ ' + esc(baseOf(Ld.sym)) + ': ' + esc(r.events.join(' · ')) + ' → SL ' + esc(fp(r.sl)), 'acc');
+    const url = cfg().hookUrl; if (url) J.req('/hook?u=' + encodeURIComponent(url), { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ action: 'move_sl', symbol: baseOf(Ld.sym), stop: +r.sl.toPrecision(8), reason: r.events.join('; '), source: 'ExTerm step-ladder' }) }, 12000).then(() => toast('⛓ Move-stop signal sent to your webhook bridge'), (er) => toast('Webhook bridge: ' + esc(er.message), 'dn'));
+  };
+
+  /* ══ 4. tape velocity speedometer (tick rule on the live trade ring) ══ */
+  const tapeTick = () => {
+    const el = $('#v154Tape'); if (!cfg().tape) { if (el) el.remove(); return; } const ring = (typeof TFX !== 'undefined' && TFX.ring.get(ST.sel)) || []; let last = 0;
+    const trades = ring.slice(-600).map((x) => { const side = x.p >= last ? 'buy' : 'sell'; last = x.p; return { t: x.t * (x.t < 1e12 ? 1000 : 1), side, q: x.q || 1 }; }); const v = (U.tape = V154.tapeVelocity(trades, Date.now(), 5000));
+    let w = el; if (!w) { const host = $('#chartWrap') || $('#chartHost') || document.body; w = document.createElement('div'); w.id = 'v154Tape'; w.className = 'v154-tape'; w.setAttribute('role', 'meter'); host.appendChild(w); }
+    const ang = Math.min(180, (v.perSec / Math.max(5, v.base * 4)) * 180); w.setAttribute('aria-label', `Tape velocity ${v.perSec} orders per second`); w.setAttribute('aria-valuenow', v.perSec);
+    w.innerHTML = `<svg viewBox="0 0 60 34" aria-hidden="true"><path d="M5 30 A25 25 0 0 1 55 30" fill="none" stroke="var(--line)" stroke-width="4"/><path d="M5 30 A25 25 0 0 1 55 30" fill="none" stroke="${v.burst ? 'var(--amber)' : 'var(--acc)'}" stroke-width="4" stroke-dasharray="${(ang / 180 * 78.5).toFixed(1)} 200"/></svg><b>${esc(v.perSec)}/s</b><span class="${v.imbalance >= 0 ? 'up' : 'dn'}">${esc(Math.round(v.imbalance * 100))}%</span>${v.burst ? `<i class="burst">${esc(v.side.toUpperCase())} SWEEP</i>` : ''}`;
+  };
+
+  /* ══ 12. throttle: wraps the dry-run shadow fill path (Grok shadow bots + Quant Lab shadow + Shadow Mirror) ══ */
+  const guardTick = async () => {
+    if (!cfg().throttle) { U.guard = { factor: 1, why: 'off' }; return; } const D = await hist(ST.sel.startsWith('oc:') ? 'BTC-USD' : ST.sel, 86400, 60), atr = (a) => (a.length > 1 ? a.slice(1).reduce((s, c, i) => s + Math.max(c.h - c.l, Math.abs(c.h - a[i].c), Math.abs(c.l - a[i].c)), 0) / (a.length - 1) : 0);
+    const res = []; for (const k of (ST.v153 && ST.v153.shadow) || []) if (k.lastRes) res.push(...k.lastRes); for (const t of (ACC.trades || []).slice(-10)) if (t.side === 'sell' && isFinite(t.pnl)) res.push(t.pnl);
+    U.guard = V154.throttle(res, atr(D.slice(-2)), atr(D.slice(-21, -1)));
+  };
+  const wrapShadow = () => { if (typeof V152 === 'undefined' || V152._v154) return; const f0 = V152.shadowFill; V152._v154 = true; V152.shadowFill = (o, tick, bps) => { if (cfg().throttle && o && o.side === 'buy') { if (U.guard.factor === 0) { toast('🧯 Throttle: ' + esc(U.guard.why), 'amb'); return null; } if (U.guard.factor < 1) o = Object.assign({}, o, { usd: o.usd * U.guard.factor }); } return f0(o, tick, bps); }; };
+
+  /* ══ 10. Alt+click forensic → 3-Agent Copilot ══ */
+  const forensic = async (e) => {
+    if (!cfg().forensic || !e.altKey) return; const r = chart.cv.getBoundingClientRect(), pt = chart.toTP(e.clientX - r.left, e.clientY - r.top); if (!pt) return; e.preventDefault(); e.stopPropagation();
+    const D = candles(), i = D.findIndex((c) => c.t >= pt.t); if (i < 0) return; const sec = chart.tfSec || 60, n = Math.max(2, Math.ceil(60 / sec)), win = D.slice(Math.max(0, i - n + 1), i + 1), vm = D.slice(Math.max(0, i - 40), i).reduce((s, c) => s + c.v, 0) / 40 || 1;
+    const heads = typeof Grok !== 'undefined' && Grok.intel ? (Grok.intel.items || []).filter((x) => x && Math.abs((x.ts || 0) - pt.t) < 900).map((x) => x.title) : [];
+    const f = V154.forensic(win, { imbalance: U.tape ? U.tape.imbalance : null, rvol: win[win.length - 1].v / vm }, heads); if (!f) return;
+    const txt = `Explain why ${baseOf(ST.sel)} moved ${f.move}% around ${new Date(pt.t * 1000).toISOString().slice(0, 16).replace('T', ' ')} UTC. Local forensics: range ${f.range}%, wick ratio ${f.wick}; signals: ${f.why.join('; ')}.`;
+    const ov2 = typeof p2modal === 'function' ? p2modal('🔎 Why did price just move?', kpis([['Move', f.move + '%', f.move >= 0 ? 'up' : 'dn'], ['Range', f.range + '%'], ['Wick ratio', f.wick]]) + `<ul>${f.why.map((w) => `<li>${esc(w)}</li>`).join('')}</ul><div class="row v151-row"><button type="button" class="btn sm pri" data-fx="ask">✨ Ask the 3-Agent Copilot</button></div>`, 'v154Fx') : null;
+    if (ov2) ov2.addEventListener('click', (ev) => { if (!ev.target.closest('[data-fx]')) return; ov2.remove(); try { if (typeof Grok !== 'undefined' && Grok.toCopilot) Grok.toCopilot({ text: txt }); else { showTab('ai'); const inp = $('#chatIn'); if (inp) { inp.value = txt; $('#chatForm').requestSubmit(); } } } catch (er) { showTab('ai'); } });
+  };
+
+  /* ══ drawer sections ══ */
+  const R = {};
+  R.chart = () => `${tog('ghost', 'Multi-timeframe ghost candles')} <div class="seg" id="v154GhTf">${[[900, '15m'], [3600, '1h'], [14400, '4h']].map(([s, l]) => `<button type="button" data-ghtf="${s}" class="${cfg().ghostTf === s ? 'on' : ''}">${l}</button>`).join('')}</div>
+    <div class="note">Shells of the higher-timeframe candles behind your 1s / 1m execution bars.</div><hr>
+    <b>⛓ Auto-Breakeven & trailing step-ladder</b><div class="v151-row">${['TP1', 'TP2', 'TP3'].map((tp, i) => `<label class="note">${tp} fill → <select class="in xs" data-rule="${tp}">${Object.entries(V154.STEP_RULES).filter(([k]) => k !== 'tp1' || i >= 1).map(([k, l]) => `<option value="${k}" ${cfg().rules[tp] === k ? 'selected' : ''}>${esc(l)}</option>`).join('')}</select></label>`).join('')}<button type="button" class="btn sm pri" data-v="armLadder">Arm on the TP ladder</button></div><div class="note">Or right-click any TP rung on the chart. Enforced on the paper position and sent as a move-stop signal to your webhook bridge.</div><label class="note">Webhook bridge (https, allow-listed bot services only) <input class="in" id="v154Hook" value="${esc(cfg().hookUrl)}" placeholder="https://…" spellcheck="false"></label><hr>
+    ${tog('sess', 'Session kill-zones + opening range')} <div class="seg" id="v154Or">${[5, 15, 30].map((m) => `<button type="button" data-or="${m}" class="${cfg().orMin === m ? 'on' : ''}">${m}m</button>`).join('')}</div>`;
+  R.flow = () => `${tog('tape', 'Tape velocity & aggressive-sweep speedometer')}${tog('charm', 'Dealer charm & vanna drift curve (0DTE)', 'charm')}${tog('absorb', 'Cumulative-delta absorption footprints', 'cvd')}
+    ${U.cache.ch ? kpis([['Charm window', U.cache.ch.window], ['Pin strike', fp(U.cache.ch.pinStrike)], ['Late-day drift', U.cache.ch.drift]]) : note('The charm curve needs an options chain: open Pro Desk → Options on a stock first.')}`;
+  R.scan = () => `<div class="v151-row"><button type="button" class="btn sm pri" data-v="gap">Run gap-fill scan</button><button type="button" class="btn sm" data-v="lag">Run lead-lag</button></div><div id="v154ScanOut">${U.gap ? gapTable() : ''}${U.lag ? lagTable() : note('Gap %, pre-market RVOL and 90-day fill rate across your watchlist; correlation, beta and lead-lag decoupling for linked markets.')}</div>`;
+  R.dex = () => `<div class="v151-row"><button type="button" class="btn sm pri" data-v="xray">🩻 Holder Cluster X-Ray</button></div><div id="v154XrOut">${U.xray ? xrayHtml() : note('Groups the largest holders by funding source and timing: coordinated fresh-funded sniper clusters vs independent buyers.')}</div>`;
+  R.ai = () => `${tog('forensic', 'Alt+click a spike: explain why price just moved')}<hr><div class="v151-row"><input class="in" id="v154Hunt" placeholder="Highlight every bullish FVG above VWAP with RVOL > 2.5x" aria-label="Pattern hunter query" value="${esc(U.huntQ || '')}"><button type="button" class="btn sm pri" data-v="hunt">Hunt</button><button type="button" class="btn sm" data-v="huntClr">Clear</button></div>${note(U.hunt.length ? `${U.hunt.length} matching zone(s) drawn on ${baseOf(ST.sel)}.` : 'Patterns: FVG, order block, sweep, engulfing · filters: bullish / bearish, above / below VWAP, RVOL > x.')}<hr>
+    ${tog('throttle', 'Grok bot drawdown cool-off & volatility throttle')}${kpis([['Throttle', U.guard.factor === 1 ? 'normal size' : U.guard.factor === 0 ? 'entries paused' : '½ size', U.guard.factor === 1 ? 'up' : 'dn'], ['Why', U.guard.why]])}`;
+  R.macro = () => `${tog('react', 'Historical FOMC / CPI / NFP reaction overlay')}<div class="v151-row"><button type="button" class="btn sm" data-v="react">Measure last 12 releases</button></div><div id="v154ReOut">${U.react ? reactTable() : ''}</div><hr>
+    <b>🧠 Tilt & revenge-trade guard</b>${tiltHtml()}<div class="v151-row"><button type="button" class="btn sm pri" data-v="worst">⏪ Replay my worst loss</button></div>`;
+  const SECS = [['chart', '📈 Charts & Execution'], ['flow', '🌊 Order Flow & 0DTE'], ['scan', '🔭 Scanners'], ['dex', '⬡ On-Chain DEX'], ['ai', '⚡ Grok & 3-Agent Copilot'], ['macro', '🌍 Macro Shield & Journal']];
+  const gapTable = () => `<table class="v152-t"><tr><th>Market</th><th>Gap</th><th>RVOL</th><th>90d fill rate</th><th>Samples</th></tr>${U.gap.map((r) => `<tr data-sym="${esc(r.sym)}" class="v154-click"><td>${esc(baseOf(r.sym))}</td><td class="${r.gap >= 0 ? 'up' : 'dn'}">${esc((r.gap >= 0 ? '+' : '') + r.gap + '%')}</td><td>${esc(r.rvol + '×')}</td><td><b>${esc(r.fillRate == null ? '–' : Math.round(r.fillRate * 100) + '%')}</b></td><td>${esc(r.n)}</td></tr>`).join('')}</table>`;
+  const lagTable = () => `<table class="v152-t"><tr><th>Pair</th><th>Corr</th><th>Recent</th><th>Beta</th><th>Lead-lag</th><th></th></tr>${U.lag.map((r) => `<tr><td>${esc(baseOf(r.a))} / ${esc(baseOf(r.b))}</td><td>${esc(r.corr)}</td><td>${esc(r.recent)}</td><td>${esc(r.beta)}</td><td>${esc(r.lag === 0 ? 'in sync' : r.lag > 0 ? baseOf(r.a) + ' leads ' + r.lag + ' bars' : baseOf(r.b) + ' leads ' + -r.lag + ' bars')}</td><td>${r.decoupled ? '<span class="tag amb">DECOUPLED</span>' : ''}</td></tr>`).join('')}</table>`;
+  const xrayHtml = () => { const X = U.xray, mx = Math.max(1, ...X.clusters.map((c) => c.pct)); return `${kpis([['Coordinated share', X.coordPct + '%', X.verdict === 'low' ? 'up' : 'dn'], ['Verdict', X.verdict], ['Clusters', X.clusters.length], ['Source', X.src]])}<svg class="v152-svg v154-bub" viewBox="0 0 600 150" role="img" aria-label="Holder cluster bubble graph: red bubbles are coordinated clusters">${X.clusters.slice(0, 14).map((c, i) => { const r = 8 + 34 * Math.sqrt(c.pct / mx), x = 40 + (i % 7) * 80, y = 40 + Math.floor(i / 7) * 70; return `<circle cx="${x}" cy="${y}" r="${r.toFixed(1)}" fill="${c.coordinated ? 'var(--dn)' : 'var(--acc)'}" opacity=".55"><title>${esc((c.coordinated ? 'Coordinated: ' : 'Independent: ') + c.members.length + ' wallet(s), ' + c.pct + '%')}</title></circle><text x="${x}" y="${y + 3}" text-anchor="middle" font-size="10" fill="var(--fg)">${esc(c.pct)}%</text>`; }).join('')}</svg>${note(X.src === 'model' ? 'Funding-source tracing needs an RPC key: this view uses the seeded model for the open token.' : 'From the largest-holder list and first-funding transfers.')}`; };
+  const reactTable = () => `<table class="v152-t"><tr><th>Release</th><th>Date</th><th>First 5 min spike</th><th>5 min close</th><th>60 min follow-through</th><th></th></tr>${U.react.rows.map((r) => `<tr><td>${esc(r.k.toUpperCase())}</td><td>${esc(r.d)}</td><td class="${r.spike >= 0 ? 'up' : 'dn'}">${esc(r.spike + '%')}</td><td>${esc(r.close5 + '%')}</td><td class="${r.follow60 >= 0 ? 'up' : 'dn'}">${esc(r.follow60 + '%')}</td><td>${r.fakeout ? '<span class="tag amb">fakeout</span>' : ''}</td></tr>`).join('')}</table>${note(U.react.rows.length ? `Fakeout rate: ${Math.round((U.react.rows.filter((r) => r.fakeout).length / U.react.rows.length) * 100)}% of ${U.react.rows.length} releases in the loaded history.` : 'No releases inside the loaded 5-minute history for this market.')}`;
+  const tiltHtml = () => { const G = V154.tiltGuard(typeof Journal !== 'undefined' ? Journal.entries : []); return G.events.length ? `<div class="note dn">⚠ ${esc(G.events.length)} revenge-size event(s): ${esc(G.events.slice(-3).map((x) => baseOf(x.sym) + ' ' + x.why).join(' · '))}</div>` : note(G.overtrading ? `${G.freq} entries in the last hour: slow down.` : 'No revenge sizing found in your journal.'); };
+
+  const A = {};
+  A.armLadder = () => { if (typeof V152UI === 'undefined' || !V152UI.ladder) { toast('Attach a TP ladder first (🧭 → TP ladder)', 'amb'); return; } for (const tp of ['TP1', 'TP2', 'TP3']) arm(tp, cfg().rules[tp]); };
+  A.gap = async () => {
+    const out = $('#v154ScanOut'); if (out) out.innerHTML = note('Scanning daily history…', 'shimmer'); const syms = [...new Set([].concat((ST.watch && ST.watch.stocks) || [], (ST.watch && ST.watch.crypto) || [], ['AAPL', 'NVDA', 'TSLA', 'SPY', 'BTC-USD', 'ETH-USD']))].filter((s) => typeof s === 'string' && !s.startsWith('oc:')).slice(0, 16), rows = [];
+    for (const s of syms) { const D = await hist(s, 86400, 120), g = V154.gapStats(D); if (g) rows.push(Object.assign({ sym: s }, g)); }
+    U.gap = rows.sort((a, b) => Math.abs(b.gap) * (b.rvol || 1) - Math.abs(a.gap) * (a.rvol || 1)); if (out) out.innerHTML = gapTable() + (U.lag ? lagTable() : '');
+  };
+  A.lag = async () => { const out = $('#v154ScanOut'); if (out) out.innerHTML = note('Measuring correlation and lead-lag…', 'shimmer'); const P = [['NVDA', 'SMH'], ['ETH-USD', 'BTC-USD'], ['TSLA', 'QQQ'], ['COIN', 'BTC-USD']], rows = []; for (const [a, b] of P) { const [A1, B1] = await Promise.all([hist(a, 300, 400), hist(b, 300, 400)]), m = new Map(B1.map((c) => [c.t, c.c])), xa = [], xb = []; for (const c of A1) if (m.has(c.t)) { xa.push(c.c); xb.push(m.get(c.t)); } const r = V154.leadLag(xa, xb); if (r) rows.push(Object.assign({ a, b }, r)); } U.lag = rows; if (out) out.innerHTML = (U.gap ? gapTable() : '') + (rows.length ? lagTable() : note('Not enough overlapping 5-minute history.', 'dn')); for (const r of rows) if (r.decoupled) toast(`🔗 ${esc(baseOf(r.a))} decoupled from ${esc(baseOf(r.b))}`, 'amb'); };
+  A.xray = () => {
+    const sym = ST.sel, seed = [...String(sym)].reduce((s, ch) => (s * 31 + ch.charCodeAt(0)) >>> 0, 7), R0 = V154.rng(seed), live = typeof Safety !== 'undefined' && Safety.last && Safety.last.holders, hs = [];
+    if (live && Array.isArray(live)) live.slice(0, 20).forEach((h) => hs.push({ addr: String(h.addr || h.address || ''), pct: +h.pct || 0, funder: h.funder || null, t: h.t || null }));
+    else { const f = ['F1', 'F2', 'F3']; for (let i = 0; i < 18; i++) { const coord = R0() < 0.4; hs.push({ addr: 'w' + i, pct: +(R0() * (coord ? 4 : 2.5)).toFixed(2), funder: coord ? f[Math.floor(R0() * 2)] : null, t: coord ? 1e9 + Math.floor(R0() * 900) : 1e9 + Math.floor(R0() * 864000), fresh: coord }); } }
+    U.xray = Object.assign(V154.holderClusters(hs), { src: live ? 'live' : 'model' }); const out = $('#v154XrOut'); if (out) out.innerHTML = xrayHtml(); if (typeof LearnUI !== 'undefined' && LearnUI.drill) LearnUI.drill.xray = true;
+  };
+  A.hunt = () => { const q = ($('#v154Hunt') || {}).value || ''; U.huntQ = q; const spec = V154.parseHunt(q); if (!spec) { toast('Try: bullish FVG above VWAP with RVOL > 2.5x', 'amb'); return; } const D = candles(); U.hunt = V154.hunt(D, spec, (Dd, p) => (p === 'fvg' ? V152.fvg(Dd) : p === 'ob' ? V152.orderBlocks(Dd) : p === 'sweep' ? V152.sweeps(Dd) : V152.engulf(Dd))).slice(-25); U.huntSym = ST.sel; inv(); toast(`🎯 ${U.hunt.length} zone(s): ${esc(spec.dir || 'any')} ${esc(spec.pattern.toUpperCase())}${spec.vwap ? ' ' + spec.vwap + ' VWAP' : ''}${spec.rvol ? ' RVOL > ' + spec.rvol + '×' : ''}`, U.hunt.length ? 'acc' : 'amb'); refresh('ai'); };
+  A.huntClr = () => { U.hunt = []; inv(); refresh('ai'); };
+  A.react = async () => { const out = $('#v154ReOut'); if (out) out.innerHTML = note('Loading 5-minute history around each release…', 'shimmer'); const D = await hist(ST.sel, 300, 5000), ev = V154.pastEvents(Date.now() / 1000), rows = []; for (const e of ev) { const r = V154.reaction(D, e.t); if (r) rows.push(Object.assign({ k: e.k, d: e.d }, r)); } U.react = { sym: ST.sel, rows }; cfg().react = true; saveState(); inv(); if (out) out.innerHTML = reactTable(); };
+  A.worst = async () => { const W = V154.worstLoss(typeof Journal !== 'undefined' ? Journal.entries : []); if (!W) { toast('No losing trades in your journal yet', 'amb'); return; } const sym = W.exit.sym; showTab('markets'); if (ST.sel !== sym) { const m = modeOf(sym); if (m !== ST.mode) setMode(m, sym); else selectSym(sym); } await new Promise((r) => setTimeout(r, 600)); if (typeof Replay === 'undefined') return; await Replay.enter(); if (!Replay.on) return; const i = Replay.data.findIndex((c) => c.t * 1000 >= W.startMs); if (i < 0) { toast('Your worst loss is older than the loaded history for this timeframe: switch to a higher timeframe', 'amb'); return; } Replay.jump(Math.max(60, i)); toast(`⏪ Worst loss ${esc(baseOf(sym))} (${esc(NT.fmtUSD(W.exit.pnl, 2))}) loaded 30 s before entry: practise the clean exit`, 'acc', 7000); };
+
+  const refresh = (k) => { const b = document.querySelector(`#v154Up details[data-sec="${k}"] [data-body]`); if (b && b.closest('details').open) b.innerHTML = R[k](); };
+  U.open = (sec) => {
+    let d = $('#v154Up');
+    if (!d) {
+      d = document.createElement('aside'); d.id = 'v154Up'; d.className = 'v152-drawer v154-drawer'; d.setAttribute('role', 'dialog'); d.setAttribute('aria-label', T('up.title'));
+      d.innerHTML = `<div class="v152-dh"><b data-i18n="up.title">${esc(T('up.title'))}</b><span class="note">opt-in · nothing draws until you switch it on</span><button type="button" class="x" data-v="close" aria-label="Close">×</button></div><div class="v152-db">${SECS.map(([k, t]) => `<details data-sec="${k}"><summary>${esc(t)}</summary><div class="v152-sb" data-body="${k}"></div></details>`).join('')}</div>`;
+      document.body.appendChild(d);
+      d.addEventListener('toggle', (e) => { const x = e.target; if (x.matches && x.matches('details[data-sec]') && x.open) x.querySelector('[data-body]').innerHTML = R[x.dataset.sec](); }, true);
+      d.addEventListener('click', (e) => { const b = e.target.closest('[data-v]'); if (b) { if (b.dataset.v === 'close') { d.classList.remove('on'); return; } if (A[b.dataset.v]) A[b.dataset.v](b); return; } const gt = e.target.closest('[data-ghtf]'); if (gt) { cfg().ghostTf = +gt.dataset.ghtf; saveState(); inv(); refresh('chart'); return; } const o = e.target.closest('[data-or]'); if (o) { cfg().orMin = +o.dataset.or; saveState(); U.cache.sKey = null; inv(); refresh('chart'); return; } const s = e.target.closest('tr[data-sym]'); if (s) { const sym = s.dataset.sym; showTab('markets'); const m = modeOf(sym); if (m !== ST.mode) setMode(m, sym); else selectSym(sym); } });
+      d.addEventListener('change', (e) => { const k = e.target.dataset.u; if (k) { cfg()[k] = e.target.checked; saveState(); inv(); if (k === 'tape') tapeTick(); if (k === 'throttle') guardTick().then(() => refresh('ai')); return; } const r = e.target.dataset.rule; if (r) { cfg().rules[r] = e.target.value; saveState(); } if (e.target.id === 'v154Hook') { const v = e.target.value.trim(); cfg().hookUrl = v; cfg(); if (v && !cfg().hookUrl) toast('Webhook must be an https URL', 'amb'); saveState(); } });
+      d.addEventListener('keydown', (e) => { if (e.key === 'Enter' && e.target.id === 'v154Hunt') A.hunt(); if (e.key === 'Escape') d.classList.remove('on'); });
+    }
+    d.classList.add('on'); if (sec) { const x = d.querySelector(`details[data-sec="${sec}"]`); if (x) { x.open = true; x.querySelector('[data-body]').innerHTML = R[sec](); } }
+    if (typeof I18N !== 'undefined') I18N.apply(); return d;
+  };
+  U.start = () => {
+    const th = $('#btnTheme'); if (th && !$('#btnPro')) { const b = document.createElement('button'); b.id = 'btnPro'; b.className = 'ghost'; b.type = 'button'; b.textContent = '🧰'; b.dataset.i18nTitle = 'up.title'; b.title = T('up.title'); b.setAttribute('aria-label', T('up.title')); th.before(b); b.addEventListener('click', () => ($('#v154Up.on') ? $('#v154Up').classList.remove('on') : U.open())); }
+    wrapShadow();
+    setInterval(() => { if (typeof chart === 'undefined' || !chart) return; if (!chart.overlays.includes(U.overlay)) { chart.overlays.push(U.overlay); inv(); } if (!chart.cv._v154) { chart.cv._v154 = true; chart.cv.addEventListener('contextmenu', ladderMenu, true); chart.cv.addEventListener('pointerdown', forensic, true); } stepTick(); }, 1000);
+    setInterval(tapeTick, 1000); setInterval(guardTick, 60000); setTimeout(guardTick, 5000);
+    setInterval(() => { const G = V154.tiltGuard(typeof Journal !== 'undefined' ? Journal.entries : []), host = $('#jnHost'); if (!host) return; let b = $('#v154Tilt'); if (G.warn) { if (!b) { b = document.createElement('div'); b.id = 'v154Tilt'; b.className = 'banner v154-tilt'; b.setAttribute('role', 'alert'); host.prepend(b); } b.textContent = '⚠ Tilt & Revenge-Trade Guard: ' + G.events[G.events.length - 1].why + '. Step away for 15 minutes.'; } else if (b) b.remove(); }, 5000);
+    if (typeof V14 !== 'undefined' && Array.isArray(V14.SHORTCUTS)) V14.SHORTCUTS.push(['🧰 Pro Tools', 'ghost candles, step-ladder, kill-zones, tape speedometer, charm, absorption, gap-fill, X-ray, lead-lag, forensics, hunter, throttle, macro reactions, tilt guard, worst-loss replay']);
+  };
+  U.A = A; U.R = R; U.cfg = cfg; U.refresh = refresh;
+  return U;
+})();
+if (typeof window !== 'undefined' && typeof document !== 'undefined' && typeof boot === 'function') { const _b154u = boot; boot = async function () { await _b154u.apply(this, arguments); try { V154UpUI.start(); } catch (e) { console.warn('v154 upgrades init', e); } }; }
 
 /* ===== boot.js ===== */
 /* Copyright (c) 2026 ExTerm Labs (@exterm.labs) · Licensed under GNU AGPL-3.0 · https://github.com/uexxx/ExTerm */
