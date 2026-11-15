@@ -32,17 +32,17 @@ const PORT = 8784, BASE = 'http://localhost:' + PORT, DATA = fs.mkdtempSync(path
   await ev(() => { showTab('markets'); selectSym('DOGE-USD'); }); await sleep(400);
   const gaps = () => ev(() => { const d = chart.data.slice(-200); let g = 0; for (let i = 1; i < d.length; i++) if (d[i].o !== d[i - 1].c) g++; return [g, d.length]; });
   for (const tf of ['1s', '5s', '15s']) {
-    await page.click(`#tfBtns button:text-is("${tf}")`);
+    await page.locator(`#tfBtns button:text-is("${tf}")`).dispatchEvent('click');
     await waitFor((s) => chart.data.length > 30 && chart.data[chart.data.length - 1].t - chart.data[chart.data.length - 2].t === s, { '1s': 1, '5s': 5, '15s': 15 }[tf], 15000);
     const [g, n] = await gaps();
     ok(`DOGE ${tf}: every bar opens at the prior close`, n > 30 && g === 0, `${g} gaps in ${n} bars`);
   }
-  await page.click('#tfBtns button:text-is("1s")'); await sleep(3500);
+  await page.locator('#tfBtns button:text-is("1s")').dispatchEvent('click'); await sleep(3500);
   const [g2, n2] = await gaps();
   ok('1s: still gap-free after live ticks open new bars', n2 > 30 && g2 === 0, `${g2} gaps in ${n2}`);
   ok('flat ticks render as ≥2 px bodies (bodyRect contract)', await ev(() => { const r = NT.bodyRect(200, 200, 33.3, 6); return r.h >= 2 && Number.isInteger(r.y); }));
   await ev(() => { setMode('stocks'); }); await sleep(500);
-  await page.click('#tfBtns button:text-is("5s")');
+  await page.locator('#tfBtns button:text-is("5s")').dispatchEvent('click');
   ok('NVDA/SPY stocks: 5s bars are gap-free too', await waitFor(() => chart.data.length >= 2 && chart.data.slice(-50).every((k, i, a) => !i || k.o === a[i - 1].c), null, 15000));
   await ev(() => { setMode('crypto'); ST.tf = '15m'; selectSym('BTC-USD'); chartRefresh(true); }); await sleep(500);
 
@@ -98,7 +98,7 @@ const PORT = 8784, BASE = 'http://localhost:' + PORT, DATA = fs.mkdtempSync(path
 
   /* ── sidebar: unified watchlist + scanner ── */
   await ev(() => { showTab('markets'); ST.mk.stocks.watch = ['NVDA', 'SPY']; ST.mk.onchain.watch = [window.__p4rows[0]]; });
-  await page.click('#btnSide');
+  await page.click('#btnMore'); await page.click('#btnSide');
   ok('sidebar opens with every watchlist (crypto + stocks + on-chain)', await waitFor(() => !$('#p4Side').hidden && $$('#p4Side .p4-wr').length === P4.unifiedWatch(ST.mk).length && $$('#p4Side .p4-wr').some((r) => r.dataset.sym === 'NVDA') && $$('#p4Side .p4-wr').some((r) => /^oc:/.test(r.dataset.sym)), null, 8000));
   ok('desktop: the sidebar docks beside the page', await ev(() => document.body.classList.contains('lay-full') && getComputedStyle($('main')).paddingRight === '300px'));
   await sleep(1600);

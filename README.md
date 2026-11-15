@@ -1,17 +1,17 @@
 <div align="center">
 
-# ExTerm v15.4
+# ExTerm v15.5
 
 ### Local-first trading workstation for US stocks, crypto spot & perps and on-chain DEX tokens, in one browser tab.
 
 **Paper trading only.** Nothing in ExTerm signs or sends a real order.
 
-<img src="docs/screenshots/v15.4-hero-chart.png" alt="ExTerm v15.4 in the Obsidian & Gold theme: 5-minute SPY chart on simulated prices with 1h ghost candles behind the execution bars, the New York kill-zone box and the dealer charm drift panel pinned at the max-open-interest strike" width="100%">
+<img src="docs/screenshots/v15.5-markets.png" alt="ExTerm v15.5 Markets screen at 1440×900: one-row header with the Ctrl+K search pill, grouped nav with Trade, Intelligence, Quant & Bots and Academy & Settings captions, a single-row chart toolbar with four timeframe pills, Overlays and AI Lens dropdowns, the drawing rail beside the chart and quiet status dots in the chart corner" width="100%">
 
-**[Quickstart](#-2-second-quickstart)** · **[What's new](#-whats-new-in-v154)** · **[v15.3](#-whats-new-in-v153)** · **[v15.2](#-whats-new-in-v152)** · **[Features](#-whats-in-v151)** · **[Security](#-security)** · **[Verify a build](#-how-to-verify-official-builds)** · **[License](#-license)** · **[Brand policy](#-brand--logo-policy)**
+**[Quickstart](#-2-second-quickstart)** · **[What's new](#-whats-new-in-v155)** · **[v15.4](#-whats-new-in-v154)** · **[v15.3](#-whats-new-in-v153)** · **[v15.2](#-whats-new-in-v152)** · **[Features](#-whats-in-v151)** · **[Security](#-security)** · **[Verify a build](#-how-to-verify-official-builds)** · **[License](#-license)** · **[Brand policy](#-brand--logo-policy)**
 
 <p>
-  <a href="https://github.com/uexxx/ExTerm/releases/latest"><img src="https://img.shields.io/badge/download-v15.4-D4AF37?style=for-the-badge" alt="Download v15.4"></a>
+  <a href="https://github.com/uexxx/ExTerm/releases/latest"><img src="https://img.shields.io/badge/download-v15.5-D4AF37?style=for-the-badge" alt="Download v15.5"></a>
   <img src="https://img.shields.io/badge/indicators-137-D4AF37?style=for-the-badge" alt="137 indicators">
   <img src="https://img.shields.io/badge/backtestable%20strategies-128-CBD5E1?style=for-the-badge" alt="128 backtestable strategies">
   <img src="https://img.shields.io/badge/languages-32%20%2B%20ISO--639-CBD5E1?style=for-the-badge" alt="32 languages plus ISO-639 fallback">
@@ -46,6 +46,56 @@ Useful flags: `python3 serve.py 9000` (other port) · `--no-browser` · `--docto
 
 > Opening `exterm.html` directly also works for crypto, but browsers block some stock and on-chain sources. The launcher
 > proxies only an allow-list of public market-data hosts, on `localhost`, behind a fresh per-launch token.
+
+---
+
+## ✨ What's new in v15.5
+
+**Zero-clutter visual polish, a dollar profit card on every backtest, and a smoother workspace.** Every v15.4
+capability is still here; the screens are just calmer. Each view now has one gold primary action, single hairlines
+replace nested boxes, figures use tabular digits, and loud banners became quiet status dots.
+
+### 💵 Bot Net Profit hero card
+
+<img src="docs/screenshots/v15.5-backtest-hero.png" alt="Backtester with the Net Bot Profit hero card: starting capital to ending balance, net profit in dollars and percent, win rate, gross profit, gross loss, fees and slippage deducted, average win, average loss, expectancy per trade, live capital and position-size controls and a What Changed? delta with the previous run as a ghost curve" width="100%">
+
+- **Net Bot Profit (+$X,XXX.XX / +XX.XX%)** above every backtest: Starting Capital → Ending Balance, Win rate, Gross Profit,
+  Gross Loss, Fees & Slippage Deducted, Avg Win, Avg Loss and Expectancy ($/trade).
+- Change **Starting Capital** and every dollar figure and the equity curve rescale instantly. Drag **Position Size** and the run is re-simulated.
+- **What Changed?** Re-run with new parameters or Kill-Switch filters to see the previous run as a ghost curve plus the exact dollar delta (`+$1,240.00 vs. previous run`).
+
+### 🧪 Quant Lab as a 4-step wizard
+
+<img src="docs/screenshots/v15.5-quant-lab.png" alt="Quant Lab Pro organised as four steps: Pick or Build Strategy, Run Stress Tests, Set Capital and Risk Sizing, Review Bot Profit and Deploy, with the Bot Net Profit card above the equity curve" width="100%">
+
+**1. Pick or Build Strategy → 2. Run Stress Tests → 3. Set Capital & Risk Sizing → 4. Review Bot Profit & Deploy.**
+Every institutional tool sits inside its step, and empty states offer a 1-click **Run Starter Backtest**.
+
+### 🔎 Ctrl+K: search everything
+
+<img src="docs/screenshots/v15.5-command-palette.png" alt="Ctrl+K command palette listing matches across tabs, Quant Lab tools, overlays, Learn ExTerm lessons, indicators and strategies" width="100%">
+
+The header pill **Search features, tickers, tools… Ctrl+K** covers every tab, overlay, Quant Lab section, leaderboard,
+Learn ExTerm lesson, all 137 indicators, every strategy and the workspace commands. Search is typo-tolerant and matches
+labels in your language. Picking a result jumps straight there with a gold spotlight pulse.
+
+### 🧘 Simple | Pro, Zen Chart Focus and Reset Clean View
+
+<img src="docs/screenshots/v15.5-simple-mode.png" alt="Simple workspace: only the chart, watchlist, a clean order ticket, Learn ExTerm and Settings" width="100%">
+
+- **Simple** shows only the chart, watchlist, a clean order ticket, Learn ExTerm and Settings. **Pro** (default) shows every tab
+  under four captions: Trade · Intelligence · Quant & Bots · Academy & Settings.
+- **Zen Chart Focus**: press `F` or use the slim `«` / `»` chevrons to run the chart edge to edge.
+- **↺ Reset Clean View** closes every drawer, switches overlays off and restores the default layout.
+- The chart toolbar is one row (`1s | 1m | 15m | 1h`, Indicators, **Overlays ▾**, **AI Lens ▾**, Replay). Overlays highlight
+  what fits the asset class (0DTE Gamma & Gap-Fill on stocks, Safety Score & Holder X-Ray on-chain), and you can star up to
+  **4 favourites** into a quick bar beside the order ticket.
+- The order ticket keeps the essentials; Auto-Breakeven step-ladders and the Webhook Bridge live in one collapsed
+  **Smart Order Rules ▸** accordion, with an inline **Risk: 1.0%** slider.
+
+### 🏆 Leaderboards on the calmer layout
+
+<img src="docs/screenshots/v15.5-leaderboard.png" alt="Perp Trader Leaderboard on the offline sample with hairline rows, tabular figures and dimmed metadata" width="100%">
 
 ---
 

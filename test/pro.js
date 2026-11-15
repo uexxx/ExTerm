@@ -14,17 +14,17 @@ const res = []; process.on('unhandledRejection', (e) => { console.log(res.join('
   // timeframes
   ok('13 timeframes in crypto mode (1s and 5s added in v15 p3)', await ev(() => document.querySelectorAll('#tfBtns button').length === 13));
   for (const tf of ['15s', '30s', '3m', '30m', '2h']) {
-    await page.click(`#tfBtns button:has-text("${tf}")`); await page.waitForFunction((t) => chart.data.length > 50 && chart.tfSec === NT.TF[t], tf, { timeout: 15000 }).catch(() => {});
+    await page.locator(`#tfBtns button:has-text("${tf}")`).dispatchEvent('click'); await page.waitForFunction((t) => chart.data.length > 50 && chart.tfSec === NT.TF[t], tf, { timeout: 15000 }).catch(() => {});
     ok(`${tf} chart loads with ${tf} spacing`, await ev((t) => chart.data.length > 50 && chart.data[5].t - chart.data[4].t === NT.TF[t], tf), await ev(() => chart.data.length + ' bars, step ' + (chart.data[5] ? chart.data[5].t - chart.data[4].t : '?')));
   }
-  await page.click('#tfBtns button:has-text("15s")'); await sleep(600);
+  await page.locator('#tfBtns button:has-text("15s")').dispatchEvent('click'); await sleep(600);
   ok('15s axis shows seconds', await ev(() => /\d\d:\d\d:\d\d/.test(fmtTime(chart.data[3].t, 15))));
   const h = await ev(async () => (await History.get(ST.sel, 1800, 500)).length);
   ok('30m history aggregates from 5m', h >= 400, String(h));
   await page.click('#modeSwitch button[data-mode="stocks"]'); await sleep(1500);
   ok('stocks mode offers 1s / 5s / 15s like every market (v15 p3)', await ev(() => ['1s', '5s', '15s'].every((t) => [...document.querySelectorAll('#tfBtns button')].some((x) => x.textContent.trim() === t))));
   await page.click('#modeSwitch button[data-mode="crypto"]'); await sleep(1500);
-  await page.click('#tfBtns button:has-text("1h")'); await sleep(800);
+  await page.locator('#tfBtns button:has-text("1h")').dispatchEvent('click'); await sleep(800);
   // ticket: risk sizing, quick ATR, R:R
   await page.click('#tkSize button[data-z="risk"]'); await sleep(200);
   ok('risk sizing auto-fills a 2 ATR stop', await ev(() => parseFloat($('#tkSl').value) > 0 && !$('#tkRiskRow').hidden));

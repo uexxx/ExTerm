@@ -110,6 +110,7 @@ const PORT = 8782, BASE = 'http://localhost:' + PORT, DATA = fs.mkdtempSync(path
   await page.waitForFunction(() => BTArrows.last && BTArrows.last._arrPts && BTArrows.last._arrPts.length > 0, null, { timeout: 10000 }).catch(() => {});
   r = await ev(() => ({ trips: BTArrows.last && BTArrows.last._trips.length, pts: BTArrows.last && BTArrows.last._arrPts.length, cb: !!$('#btArr') && $('#btArr').checked, lbl: ($('.bt-arr') || {}).textContent, tri: BTArrows.last && BTArrows.last.o.trades }));
   ok('a backtest draws entry/exit arrows for its round trips', r.trips > 0 && r.pts > 0 && r.cb && r.tri === false && /wins/.test(r.lbl || ''), JSON.stringify(r));
+  await ev(() => BTArrows.last.cv.scrollIntoView({ block: 'center' })); await sleep(150); // v15.5: the Bot Net Profit card sits above the chart
   g = await ev(() => { const pc = BTArrows.last, rr = pc.cv.getBoundingClientRect(), p = pc._arrPts.find((q) => q.x > 20 && q.x < pc.L.W - pc.L.Rm - 20) || pc._arrPts[0]; return { x: rr.left + p.x, y: rr.top + p.y }; });
   await page.mouse.move(g.x - 30, g.y); await page.mouse.move(g.x, g.y, { steps: 4 });
   r = await ev(() => ({ vis: !$('.bt-tip').hidden, txt: $('.bt-tip').textContent }));
@@ -169,11 +170,11 @@ const PORT = 8782, BASE = 'http://localhost:' + PORT, DATA = fs.mkdtempSync(path
   ok('Show me does the step and the walkthrough advances by itself', await ev(() => /Step 2 of 5/.test($('#walkCard').textContent)));
   await page.click('#walkCard [data-w="skip"]'); ok('skip closes it and remembers', await ev(() => !$('#walkCard') && ST.settings.walkDone === true));
   await ev(() => { ChartTrade.draft = null; selectSym('ETH-USD'); ST.settings.realExec = false; }); await sleep(400);
-  await page.click('#btnDemo');
+  await page.click('#btnMore'); await page.click('#btnDemo');
   await page.waitForFunction(() => ST.sel === 'BTC-USD' && ChartTrade.draft && $('#walkCard'), null, { timeout: 15000 }).catch(() => {});
   ok('▶ Demo: BTC, realistic fills on, a draft bracket and the walkthrough at the drag step', await ev(() => ST.sel === 'BTC-USD' && ST.settings.realExec === true && !!ChartTrade.draft && /Step 3 of 5/.test(($('#walkCard') || {}).textContent || '')));
   await ev(() => Walk.end(false));
-  await page.click('#btnBrief');
+  await page.click('#btnMore'); await page.click('#btnBrief');
   r = await ev(() => ({ open: !!$('#p2Brief'), txt: ($('#p2Brief') || {}).textContent || '' }));
   ok('☀ opens the Morning Brief with movers, account and the command overview', r.open && /Market pulse/.test(r.txt) && /Paper account/.test(r.txt) && /Command overview/.test(r.txt) && /Ctrl\+Z/.test(r.txt), r.txt.slice(0, 200));
   await page.click('#briefAuto'); ok('the daily brief can be switched off from the brief', await ev(() => ST.settings.brief === false));

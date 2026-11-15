@@ -45,9 +45,9 @@ const { chromium } = require('/opt/npm-tools/node_modules/playwright');
   await page.click('#pfSide button[data-v="buy"]'); await sleep(200); ok('journal filter: buys only', await ev(() => [...document.querySelectorAll('#pfTrades td:nth-child(4)')].every((t) => /buy/.test(t.textContent))));
   // ── palette, themes, mode switch
   await page.keyboard.press('Control+k'); await sleep(200); await page.fill('#palIn', 'heat'); await sleep(200); await page.keyboard.press('Enter'); await sleep(400); ok('⌘K palette navigates', await ev(() => curTab === 'heat'));
-  await page.click('#btnTheme'); await page.waitForSelector('#thPop'); await page.click('#thPop [data-theme-pick="cyber"]'); await page.waitForTimeout(300);
+  await page.click('#btnMore'); await page.click('#btnTheme'); await page.waitForSelector('#thPop'); await page.click('#thPop [data-theme-pick="cyber"]'); await page.waitForTimeout(300);
   ok('theme picker switches theme (v12)', await ev(() => document.body.dataset.theme === 'cyber' && ST.theme === 'cyber'));
-  await page.click('#btnTheme'); await page.click('#thPop [data-theme-pick="nova"]'); await page.waitForTimeout(300);
+  await page.click('#btnMore'); await page.click('#btnTheme'); await page.click('#thPop [data-theme-pick="nova"]'); await page.waitForTimeout(300);
   ok('themes switch back to the default', await ev(() => document.body.dataset.theme === 'nova'));
   await page.click('#modeSwitch button[data-mode="stocks"]').catch(() => ev(() => setMode('stocks'))); await sleep(600); ok('mode switch → stocks', await ev(() => ST.mode === 'stocks'));
   await ev(() => setMode('crypto')); await sleep(400);

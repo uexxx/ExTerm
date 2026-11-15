@@ -123,7 +123,7 @@ const PORT = 8798, BASE = 'http://localhost:' + PORT, DATA = fs.mkdtempSync(path
     await page.keyboard.press('Escape');
 
     // 11. Trader Tools
-    await page.click('#btnTools');
+    await page.click('#btnMore'); await page.click('#btnTools');
     ok('Trader Tools modal: presets, alerts, share, correlation, prop runner', await ev(() => $$('#v151Body section').length === 5 && $$('#v151Body [data-preset]').length === 4));
     await page.fill('#v151Json', JSON.stringify({ v: 1, app: 'ExTerm', sym: '<img src=x onerror=alert(1)>', entry: 1 }));
     await page.click('[data-v151="import"]');

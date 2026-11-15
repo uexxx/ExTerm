@@ -231,7 +231,7 @@ const ollama = http.createServer((q, r) => {
   ok('colour-blind palette toggle', await ev(() => document.body.classList.contains('cb') && getComputedStyle(document.body).getPropertyValue('--up').trim() === '#3b8bff'));
   await page.reload(); await page.waitForFunction(() => window.__exterm_ready === true, null, { timeout: 60000 });
   ok('theme + colour-blind setting persist', await ev(() => document.body.dataset.theme === 'synth' && document.body.classList.contains('cb')));
-  await page.click('#btnTheme'); await page.click('#thPop [data-theme-pick="classic"]'); await sleep(300);
+  await page.click('#btnMore'); await page.click('#btnTheme'); await page.click('#thPop [data-theme-pick="classic"]'); await sleep(300);
   ok('header popover switches to Classic (old colours, per-market accents)', await ev(() => document.body.dataset.theme === 'classic' && getComputedStyle(document.body).getPropertyValue('--acc').trim() === '#7b61ff'));
   await ev(() => { localStorage.setItem('nt.state', localStorage.getItem('nt.state')); ST.theme = 'evil"><img src=x>'; Themes.apply(ST.theme); });
   ok('unknown theme names fall back safely', await ev(() => document.body.dataset.theme === 'nova'));

@@ -31,15 +31,15 @@ const PORT = 8783, BASE = 'http://localhost:' + PORT, DATA = fs.mkdtempSync(path
   /* ── 1s / 5s timeframes ── */
   await ev(() => { showTab('markets'); selectSym('BTC-USD'); }); await sleep(400);
   ok('crypto: 1s and 5s buttons sit before 15s', await ev(() => { const t = $$('#tfBtns button').map((x) => x.textContent.trim()); return t[0] === '1s' && t[1] === '5s' && t[2] === '15s'; }));
-  await page.click('#tfBtns button:text-is("1s")');
+  await page.locator('#tfBtns button:text-is("1s")').dispatchEvent('click');
   ok('crypto: the 1s chart renders immediately with 1-second spacing', await waitFor(() => chart.data.length > 30 && chart.data[chart.data.length - 1].t - chart.data[chart.data.length - 2].t === 1, null, 15000), await ev(() => [chart.data.length, chart.err || '']));
-  await page.click('#tfBtns button:text-is("5s")');
+  await page.locator('#tfBtns button:text-is("5s")').dispatchEvent('click');
   ok('crypto: 5s chart with 5-second spacing', await waitFor(() => chart.data.length > 30 && chart.data[chart.data.length - 1].t - chart.data[chart.data.length - 2].t === 5, null, 15000));
   const v0 = await ev(() => getStore(ST.sel, ST.tf).version); await sleep(2500);
   ok('crypto: live ticks keep moving the 5s store', await ev((v) => getStore(ST.sel, ST.tf).version > v, v0));
   await ev(() => setMode('stocks')); await sleep(800);
   ok('stocks: 1s / 5s / 15s are offered too (no 1m floor)', await ev(() => ['1s', '5s', '15s'].every((t) => $$('#tfBtns button').some((x) => x.textContent.trim() === t))));
-  await page.click('#tfBtns button:text-is("1s")');
+  await page.locator('#tfBtns button:text-is("1s")').dispatchEvent('click');
   // offline there is no stock tick history: the chart seeds from the last quote and grows a bar per second
   ok('stocks: the 1s chart renders', await waitFor(() => chart.data.length >= 2 && chart.data[chart.data.length - 1].t - chart.data[chart.data.length - 2].t === 1, null, 15000), await ev(() => [ST.sel, chart.data.length, chart.err || '']));
   ok('strategies backtest on 1s bars', await ev(async () => { const c = await History.get('BTC-USD', 1, 600); const r = NT.backtest(c, NT.strategies.q4_qs_rsi2, {}, { cash: 10000, fee: 0.001, slip: 0, tfSec: 1 }); return c.length > 100 && Array.isArray(r.trades); }));

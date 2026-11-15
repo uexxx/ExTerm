@@ -31,7 +31,7 @@ const PORT = 8804, BASE = 'http://localhost:' + PORT, DATA = fs.mkdtempSync(path
     const cash0 = await ev(() => JSON.stringify({ c: ACC.cash, p: Object.keys(ACC.pos || {}).length }));
 
     // ── Learn ExTerm: mount, overlay, search, paths
-    ok('top bar: Learn ExTerm sits right after Settings, translated, nothing else added to the nav', await ev(() => { const s = $('#nav button[data-tab="set"]'); return s.nextElementSibling && s.nextElementSibling.id === 'btnLearn' && $('#btnLearn [data-i18n="learn.btn"]').textContent === I18N.t('learn.btn') && $$('#nav #btnLearn').length === 1 && $$('#nav > button').length === 16; }));
+    ok('top bar: Learn ExTerm sits right after Settings, translated, nothing else added to the nav', await ev(() => { const s = $('#nav button[data-tab="set"]'); return s.nextElementSibling && s.nextElementSibling.id === 'btnLearn' && $('#btnLearn [data-i18n="learn.btn"]').textContent === I18N.t('learn.btn') && $$('#nav #btnLearn').length === 1 && $$('#nav > button:not(#v155How)').length === 16; }));
     await page.click('#btnLearn'); await sleep(300);
     ok('academy: Obsidian & Gold hero "Learn Our Terminal — Interactive ExTerm Academy"', await ev(() => !$('#learnOv').hidden && $('#lxTitle').textContent === 'Learn Our Terminal — Interactive ExTerm Academy'));
     ok('academy: 4 goal pills, quick-start + mastery bars ("X / Y Modules Completed"), 9 collapsed categories rendered lazily', await ev(() => $$('#learnOv [data-goal]').length === 4 && /\d+ \/ \d+ Modules Completed/.test($('#lxStats').textContent) && $$('#learnOv details.lx-cat').length === 9 && $$('#learnOv [data-catbody]').every((x) => !x.innerHTML)));
@@ -117,7 +117,7 @@ const PORT = 8804, BASE = 'http://localhost:' + PORT, DATA = fs.mkdtempSync(path
     await ev(() => { setMode('crypto', 'BTC-USD'); showTab('markets'); }); await sleep(800);
 
     // ── 15 Pro Tools upgrades
-    await ev(() => { const d = $('#v154Up'); if (d) d.remove(); }); await page.click('#btnPro'); await sleep(200);
+    await ev(() => { const d = $('#v154Up'); if (d) d.remove(); }); await page.click('#btnMore'); await page.click('#btnPro'); await sleep(200);
     ok('Pro Tools: one 🧰 drawer, six collapsed sections, nothing rendered or drawn until opened', await ev(() => $('#v154Up').classList.contains('on') && $$('#v154Up details[data-sec]').length === 6 && $$('#v154Up details[open]').length === 0 && $$('#v154Up [data-body]').every((x) => !x.innerHTML)));
     await page.click('#v154Up details[data-sec="chart"] > summary'); await sleep(150);
     for (const k of ['ghost', 'sess']) await page.click(`#v154Up input[data-u="${k}"]`);

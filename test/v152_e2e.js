@@ -55,7 +55,7 @@ const PORT = 8799, BASE = 'http://localhost:' + PORT, DATA = fs.mkdtempSync(path
 
     // ── 2. progressive disclosure: clean default
     ok('clean default: drawer closed, labels / walls / gamma / PiP / sync / DEX strip off, bar timer on', await ev(() => { const c = V152UI.cfg(); return !$('#v152Drawer.on') && !c.labels.fvg && !c.labels.ob && !c.walls && !c.gamma && !c.pip && !c.group && !c.dexStrip && c.timer && !$('#v152Pip') && !$('#v152Sync'); }));
-    await page.click('#btnWs'); await sleep(300);
+    await page.click('#btnMore'); await page.click('#btnWs'); await sleep(300);
     ok('drawer: 6 phases, 30 tool sections, all collapsed', await ev(() => $$('#v152Drawer .v152-ph').length === 6 && $$('#v152Drawer details').length === 30 && ![...$$('#v152Drawer details')].some((d) => d.open)));
     const secErr = await ev(async () => { const bad = []; for (const d of $$('#v152Drawer details')) { d.open = true; await new Promise((r) => setTimeout(r, 15)); const b = d.querySelector('.v152-sb'); if (!b.innerHTML.trim()) bad.push(d.dataset.sec); d.open = false; } return bad; });
     ok('drawer: every section renders when opened', secErr.length === 0, secErr.join(','));

@@ -2,6 +2,47 @@
 
 ExTerm (formerly NovaTerm) is paper trading only in every version: nothing signs or sends a real order.
 
+## v15.5 — Zero-Clutter Visual Polish & Bot $ Profit — 15 Nov 2026
+
+### Calmer screens (`src/v155.js`, `src/style.css` v15.5 layer)
+- No more box-inside-a-box: nested panels, stat tiles and KPI rows drop their outlines for single 1px hairlines and more breathing room; the Obsidian & Gold theme uses `#0B0E14` surfaces.
+- One gold button per screen: `#F5B841` is reserved for the primary action (Run backtest, Start Drill…); every other button is a quiet ghost pill until hovered. On the Backtester, the other "primary" buttons become gold outlines. Buy / Sell keep their green / red so the two sides can never be confused.
+- Tabular figures everywhere (`font-variant-numeric: tabular-nums`) so prices, P&L and leaderboards never jitter; timestamps, fees and IDs are dimmed to 55% slate.
+- Loud banners become a quiet top-corner pill with a 6px amber dot (click to expand). The chart gets a status corner with 6px glowing dots, **Live Feed · Auto-BE Armed · Shadow Bot Ready**, that expand on click.
+- The header fits on one row at 1280 px and wider with no horizontal page scroll: the symbol box, a **Search features, tickers, tools… Ctrl+K** pill, the quote, quiet status dots, equity, **Simple | Pro**, **↺ Reset Clean View**, language and a **⋯ More** menu (Pro Tools, theme, workstation, side panel, demo, brief, trader tools).
+- The nav drops emoji noise and groups every tab under four small captions: **Trade · Intelligence · Quant & Bots · Academy & Settings**. A uniform **? How It Works** pill opens Learn ExTerm on a lesson for the screen you are on.
+
+### Markets
+- The chart toolbar is one row: timeframe pills `1s | 1m | 15m | 1h` (+ `⋯` for the rest), ƒx Indicators with their chips, **Overlays ▾**, **AI Lens ▾** and Replay. Chart type and drawing tools move to a slim rail beside the chart, and the multi-timeframe strip moves into the status corner.
+- **Overlays ▾** is a single dropdown with toggle switches and one-line descriptions: MTF Ghost Candles, Session Kill-Zones / ORB, Consensus Heatmap, Macro Pins, Delta Absorption, 0DTE Gamma Flip & Charm, Gap-Fill Odds, Safety Score and Holder Cluster X-Ray. **AI Lens ▾** holds Explain Why Price Moved and the NL Pattern Hunter.
+- Smart context defaults: switching asset class highlights the tools that matter (0DTE Gamma Flip & Gap-Fill on US stocks, Safety Score & Holder X-Ray on on-chain DEX) with a gold "Suggested" tag and a 6px dot on Overlays. Nothing is switched on for you.
+- **Favorite 4**: star up to four tools into a compact quick bar beside the order ticket for one-click daily use.
+- **Zen Chart Focus**: `F` (which still fits the zoom) or slim `«` / `»` chevrons collapse the watchlist and/or the order ticket so the chart runs edge to edge. Mirrored in right-to-left languages.
+- Order ticket: Auto-Breakeven / trailing step-ladder rules (TP1–TP3) and the Paper / Webhook Bridge (https only) live in one collapsed **Smart Order Rules ▸** accordion; sizing by risk gets a compact inline **Risk: 1.0%** slider.
+
+### Backtester & Quant Lab: Bot Net Profit hero card (`src/v155core.js`)
+- A bold **Net Bot Profit (+$X,XXX.XX / +XX.XX%)** card above every backtest's results: Starting Capital → Ending Balance, Win rate, Gross Profit, Gross Loss, Fees & Slippage Deducted, Avg Win ($), Avg Loss ($) and Expectancy ($/trade). Slippage is costed per fill by direction (long and short).
+- Live what-ifs: change Starting Capital and every dollar figure and the equity curve rescale instantly (exact, because position size is a % of equity). Drag Position Size and the run is re-simulated (debounced).
+- **What Changed?**: re-run with new parameters or Kill-Switch filters and the card shows a ghosted previous-run curve plus the exact dollar delta (`+$1,240.00 vs. previous run`). The Backtester's equity chart draws the previous run too.
+- The trade log keeps dollar P&L on every closing row.
+- Quant Lab Pro becomes a 4-step wizard: **1. Pick or Build Strategy → 2. Run Stress Tests → 3. Set Capital & Risk Sizing → 4. Review Bot Profit & Deploy**. Every institutional tool sits inside its step, with a 1-click **Run Starter Backtest** on empty states (Quant Lab and Backtester).
+
+### Navigation & workspaces
+- `Ctrl+K` now indexes every tab, overlay and AI Lens tool, the eight Quant Lab sections, both leaderboards, all Learn ExTerm lessons, 137 indicators, every strategy and the workspace commands. Search is typo-tolerant, multi-word, folds accents and matches translated labels; picking a result jumps there with a gold spotlight pulse.
+- **Simple | Pro** (saved): Simple shows only the chart, watchlist, a clean order ticket, Learn ExTerm and Settings; Pro (default) shows every tab in its four groups.
+- **↺ Reset Clean View** closes every drawer and popover, switches overlays off, leaves Zen and returns to the default Markets layout in one click.
+- Journal: a 4-metric summary strip (trades, win rate, net P&L, profit factor) with **Replay My Worst Loss**.
+
+### Smoothness
+- Palette search, sliders and hero what-ifs are debounced (16–60 ms); the new status and badge polling pauses while the window is hidden. The chart was already redrawn on demand behind an FPS governor, so it needed no change.
+
+### Platform
+- 40 new UI strings translated into all 32 named languages; RTL mirroring via CSS logical properties.
+- Launcher version 15.5.
+
+### Tests
+- `test/v155.test.js` (23 unit checks: hero maths on a hand-checked fixture and a real backtest, capital linearity versus a real re-run, What Changed?, Favorite-4, search, groups, i18n coverage, static CSP / privacy checks) and `test/v155_e2e.js` (41 headless-Chrome checks in English and Arabic RTL at 1440×900 and 1280×720: no page scroll or overlapping header controls, single-row toolbar, Ctrl+K, Simple | Pro, Zen, Overlays, Favorite 4, Smart Order Rules, hero $ / % accuracy, What Changed?, Quant Lab wizard, Reset Clean View, strict CSP, zero page errors). Existing suites that clicked header buttons now open ⋯ More first.
+
 ## v15.4 — ExTerm Unified Master Edition — 14 Nov 2026
 
 ### Learn ExTerm: Interactive Academy (`src/learn_academy.js`, logic in `src/v154core.js`)

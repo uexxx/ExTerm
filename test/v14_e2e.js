@@ -59,6 +59,7 @@ const MOCK = { update: null, ds429: false };
   ok('shortcuts are ignored while typing in a box', await ev(() => ST.tf === tfList()[0]));
   await ev(() => { chart.view = { bars: 40, off: 20 }; }); await page.keyboard.press('f');
   ok('F resets the chart zoom', await ev(() => chart.view.bars === 110 && chart.view.off === 0));
+  await page.keyboard.press('f'); // v15.5: F also toggles Zen Chart Focus — press again to bring the side rails back
   await page.keyboard.press('r'); await page.waitForFunction(() => Replay.on, null, { timeout: 8000 }).catch(() => {});
   ok('R starts bar replay', await ev(() => Replay.on));
   const tfBefore = await ev(() => ST.tf); await page.keyboard.press('b'); await page.keyboard.press('4');
