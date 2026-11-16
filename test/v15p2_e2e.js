@@ -53,7 +53,7 @@ const PORT = 8782, BASE = 'http://localhost:' + PORT, DATA = fs.mkdtempSync(path
   await page.mouse.move(g.x + g.W * 0.3, g.y + g.sl); await page.mouse.down(); await page.mouse.move(g.x + g.W * 0.3, g.y + g.sl + 30, { steps: 6 }); await page.mouse.up();
   r = await ev(() => ({ sl: ChartTrade.draft.sl, off: chart.view.off, undo: ChartTrade.hist.canUndo, box: $('.ct-box [data-f="sl"]').textContent }));
   ok('dragging the SL line moves the stop down (and does not pan the chart)', r.sl < g.sl0 && r.off === g.off && r.undo, JSON.stringify(r));
-  ok('the box updates live while you drag', r.box.includes(await ev(() => NT.fmtPrice(ChartTrade.draft.sl))), r.box);
+  ok('the box updates live while you drag', await page.waitForFunction(() => { const b = $('.ct-box [data-f="sl"]'); return b && b.textContent.includes(NT.fmtPrice(ChartTrade.draft.sl)); }, null, { timeout: 3000 }).then(() => true, () => false), r.box); // the box re-renders on its own frame
   await page.mouse.move(g.x + g.W * 0.3, g.y + g.tp); await page.mouse.down(); await page.mouse.move(g.x + g.W * 0.3, g.y + g.tp + 400, { steps: 6 }); await page.mouse.up();
   ok('a target dragged below the entry stays above it', await ev(() => ChartTrade.draft.tp > ChartTrade.draft.entry));
   await blur(); await page.keyboard.press('Control+z');
@@ -89,9 +89,15 @@ const PORT = 8782, BASE = 'http://localhost:' + PORT, DATA = fs.mkdtempSync(path
   ok('Partial TP 50% sells half at market', await ev((q) => Math.abs(ACC.qty(ST.sel) - q / 2) < q * 1e-9, q0));
   await ev((k) => { chart.draw(); const L = chart.L, y = (ChartTrade.ys.entry + ChartTrade.ys.sl) / 2; const pt = chart.toTP(L.Lm + 10, y); if (pt) ChartTrade.set(k, 'sl', pt.p); chart.draw(); }, 'pos:' + (await ev(() => ST.sel))); // keep the stop inside the visible range: a 2% stop can sit below it at some prices
   await page.waitForFunction((k) => { const b = ChartTrade.find(k); return b && Math.abs(ChartTrade.ys.sl - (chart.L.py(b.sl) + 0.5)) < 2; }, 'pos:' + (await ev(() => ST.sel)), { timeout: 5000 }).catch(() => {});
-  g = await ev(() => { const r = chart.cv.getBoundingClientRect(); chart.draw(); return { x: r.left, y: r.top, W: chart.L.W, sl: ChartTrade.ys.sl, e: ChartTrade.ys.entry, sl0: ACC.pos[ST.sel].sl }; });
-  await page.mouse.move(g.x + g.W * 0.3, g.y + g.sl); await page.mouse.down(); await page.mouse.move(g.x + g.W * 0.3, g.y + g.sl + 20, { steps: 4 }); await page.mouse.up();
-  ok('a position’s stop line can be dragged too', await ev((s) => ACC.pos[ST.sel].sl < s, g.sl0));
+  // a live tick can rescale the price axis between measuring the line and grabbing it: re-measure and retry (up to 3 grabs)
+  let slMoved = false, sl00 = null;
+  for (let k = 0; k < 3 && !slMoved; k++) {
+    // grab the line where the canvas is on top (the floating trade box can cover part of it, depending on chart width)
+    g = await ev(() => { const r = chart.cv.getBoundingClientRect(); chart.draw(); const y = r.top + ChartTrade.ys.sl; let fx = 0.3; for (const f of [0.3, 0.2, 0.45, 0.6, 0.12, 0.7]) { if (document.elementFromPoint(r.left + chart.L.W * f, y) === chart.cv) { fx = f; break; } } return { x: r.left, y: r.top, W: chart.L.W, fx, sl: ChartTrade.ys.sl, e: ChartTrade.ys.entry, sl0: ACC.pos[ST.sel].sl }; }); if (sl00 == null) sl00 = g.sl0;
+    await page.mouse.move(g.x + g.W * g.fx, g.y + g.sl); await page.mouse.down(); await page.mouse.move(g.x + g.W * g.fx, g.y + g.sl + 20, { steps: 4 }); await page.mouse.up();
+    slMoved = await ev((s) => ACC.pos[ST.sel].sl < s, sl00);
+  }
+  ok('a position’s stop line can be dragged too', slMoved);
   ok('the entry line of a filled position is fixed (not a drag target)', await ev((y) => ChartTrade.hit(y) !== 'entry', g.e));
 
   /* ── realistic paper fills ── */

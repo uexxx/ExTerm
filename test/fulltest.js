@@ -63,6 +63,7 @@ const { chromium } = require('/opt/npm-tools/node_modules/playwright');
   await page.click('nav button[data-tab="lab"]'); for (const s of ['screener', 'corr', 'forecast', 'season', 'risk', 'alerts', 'fng', 'news']) { await page.click(`#labNav button[data-v="${s}"]`); await sleep(700); }
   ok('all 8 lab sections render', errs.length === 0, errs.slice(0, 2).join(' | '));
   // settings privacy
+  await page.evaluate((s) => typeof V155S === 'undefined' || V155S.reveal(s), '#seKeyMode'); // v15.5: Settings tabs
   await page.click('nav button[data-tab="set"]'); await sleep(300); await page.selectOption('#seKeyMode', 'session'); await page.click('#sePrivSave'); await sleep(200);
   ok('session-only keys keep secrets out of localStorage', await ev(() => { ST.ai.key = 'sk-test-secret'; saveState(); return !localStorage.getItem(LS_KEY).includes('sk-test-secret'); }));
   // equity tween

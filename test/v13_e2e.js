@@ -82,7 +82,7 @@ const ollama = http.createServer((q, r) => {
   const b = await chromium.launch({ executablePath: process.env.CHROME_PATH || '/usr/bin/google-chrome', args: ['--no-sandbox'] });
   const ctx = await b.newContext({ viewport: { width: 1600, height: 950 }, acceptDownloads: true });
   await ctx.grantPermissions(['clipboard-read', 'clipboard-write'], { origin: 'http://localhost:8765' });
-  const page = await ctx.newPage(), errs = []; page.setDefaultTimeout(8000);
+  const page = require('./_reveal')(await ctx.newPage()), errs = []; page.setDefaultTimeout(8000);
   page.on('pageerror', (e) => errs.push(e.message + ' @ ' + String(e.stack || '').split('\n').slice(1, 4).join(' '))); page.on('dialog', (d) => { errs.push('DIALOG ' + d.message()); d.dismiss(); });
   await page.route('**/*', async (r) => {
     const url = r.request().url(); let target = url;
@@ -100,6 +100,7 @@ const ollama = http.createServer((q, r) => {
   /* ───────── 1. storage safety + backups ───────── */
   await page.click('#nav button[data-tab="set"]'); await sleep(500);
   ok('Settings shows Data status, Backups, API keys and Time zone panels', await ev(() => ['#v13Data', '#v13Store', '#v13Keys', '#v13Tz'].every((s) => document.querySelector(s))));
+  await page.evaluate((s) => typeof V155S === 'undefined' || V155S.reveal(s), '#v13Snap'); // v15.5: Settings tabs
   await page.click('#v13Snap'); await page.waitForFunction(() => SafeStore.snaps.length >= 1, null, { timeout: 5000 }).catch(() => {});
   ok('"Back up now" saves a snapshot to IndexedDB', await ev(() => SafeStore.snaps.length >= 1 && SafeStore.snaps[0].size > 100), await ev(() => JSON.stringify(SafeStore.snaps)));
   await ev(() => SafeStore.snapshot(true)); await ev(() => SafeStore.snapshot(true));
@@ -113,6 +114,7 @@ const ollama = http.createServer((q, r) => {
   ok('the warning disappears once saving works again', await ev(() => !document.querySelector('#storeWarn') && SafeStore.failing === false));
   // backups never contain API keys (v13 audit finding)
   await ev(() => { ST.settings.stKey = 'ST-SECRET-123'; ST.settings.heliusKey = 'HEL-SECRET'; ST.social = ST.social || {}; ST.social.xToken = 'X-SECRET'; ST.ai.key = 'AI-SECRET'; });
+  await page.evaluate((s) => typeof V155S === 'undefined' || V155S.reveal(s), '#seCopy'); // v15.5: Settings tabs
   await page.click('#seCopy'); await sleep(300);
   const clip = await ev(() => navigator.clipboard.readText());
   ok('exported backup strips EVERY API key (ST, Helius, X, AI)', clip.length > 200 && !/SECRET/.test(clip), clip.match(/.{20}SECRET.{10}/));
@@ -167,7 +169,7 @@ const ollama = http.createServer((q, r) => {
 
   /* ───────── 4. Launch Radar ───────── */
   await ev(() => setMode('onchain')); await page.click('#nav button[data-tab="heat"]'); await sleep(1200);
-  ok('on-chain heat map has Tiles / Radar / Bubbles views', await ev(() => document.querySelectorAll('#rdView button').length === 3));
+  ok('on-chain heat map has Tiles / Radar / Bubbles views', await ev(() => ['tiles', 'list', 'bubbles'].every((v) => document.querySelector(`#rdView button[data-v="${v}"]`)))); // v15.5 added a 4th ☰ Table view
   await page.click('#rdView button[data-v="list"]'); await page.waitForFunction(() => document.querySelectorAll('.rd-row').length > 5, null, { timeout: 15000 }).catch(() => {});
   ok('Radar lists new pairs from 2 pages (min $5K liquidity filters the tiny one)', await ev(() => document.querySelectorAll('.rd-row').length === 13), await ev(() => document.querySelectorAll('.rd-row').length));
   ok('rows show age ring, MC, liquidity, 1h volume, 5m change, buy/sell bar', await ev(() => { const r = document.querySelector('.rd-row'); return !!r.querySelector('.rd-age') && r.querySelectorAll('.rd-num').length === 4 && !!r.querySelector('.rd-bs .tc-bar i'); }));

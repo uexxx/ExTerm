@@ -106,6 +106,8 @@ const PORT = 8785, BASE = 'http://localhost:' + PORT, DATA = fs.mkdtempSync(path
   for (const k of ['fib', 'pd', 'vp', 'ev', 'mtf']) await page.check(`[data-ov="${k}"]`);
   ok('overlay toggles persist', await ev(() => ['fib', 'pd', 'vp', 'ev', 'mtf'].every((k) => ST.p5.ov[k] === true)));
   await ev(() => { showTab('markets'); ST.tf = '1h'; chartRefresh(true); }); await sleep(1200);
+  // show the 300 bars the volume profile is built from: on some simulated days the POC sits above the default 110-bar view
+  await ev(() => { chart.view.bars = Math.min(chart.data.length, 300); chart.view.off = 0; chart.invalidate(); }); await sleep(300);
   ok('overlays draw on the main chart (POC / fib / PDH labels painted)', await ev(() => { const cv = $('#chartHost canvas'), g = cv.getContext('2d'), d = g.getImageData(0, 0, cv.width, cv.height).data; let amber = 0; for (let i = 0; i < d.length; i += 4) if (d[i] > 230 && d[i + 1] > 140 && d[i + 1] < 175 && d[i + 2] < 30) amber++; return amber > 40; }) /* every pixel: a 1px dashed POC line is thin */, await ev(() => { const cv = $('#chartHost canvas'), g = cv.getContext('2d'), d = g.getImageData(0, 0, cv.width, cv.height).data; let amber = 0; for (let i = 0; i < d.length; i += 4) if (d[i] > 230 && d[i + 1] > 140 && d[i + 1] < 175 && d[i + 2] < 30) amber++; const L = chart.L || {}; return JSON.stringify({ amber, sel: ST.sel, tf: ST.tf, tfSec: chart.tfSec, n: chart.data.length, theme: document.body.dataset.theme, mode: ST.mode, hi: L.hi, lo: L.lo, ov: ST.p5.ov }); }));
   await ev(() => { for (const k of ['fib', 'pd', 'vp', 'ev', 'mtf']) ST.p5.ov[k] = false; chart.invalidate(); showTab('desk'); });
 

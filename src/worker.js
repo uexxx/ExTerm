@@ -32,6 +32,12 @@ self.onmessage = (e) => {
         post({ prog: k + 1, total: ids.length, phase: st.name });
       });
       post({ done: true, rows });
+    } else if (m.type === 'quant' && typeof P5 !== 'undefined') { // v15.6: walk-forward + Monte Carlo off the UI thread
+      const st = NT.strategies[m.strat]; if (!st) throw new Error('unknown strategy');
+      const wf = P5.walkForward(m.candles, st, m.grid, m.wfo);
+      const bt = NT.backtest(m.candles, st, NT.defaultParams(m.strat), m.o);
+      const rets = bt.trades.filter((t) => t.side === 'sell' && Number.isFinite(t.pnl)).map((t) => t.pnl / Math.max(1, (t.cost || t.usd || (t.price * t.qty) || 10000)));
+      post({ done: true, wf, mc: P5.monteCarlo(rets, 1000, 7), n: rets.length });
     } else if (typeof V153 !== 'undefined' && (m.type === 'evolve' || m.type === 'synth' || m.type === 'crisis')) { // v15.3 Quant Lab Pro engines
       const st = NT.strategies[m.strat], pg = (k, tot, label) => post({ prog: k, total: tot, phase: label });
       if (!st) throw new Error('unknown strategy');

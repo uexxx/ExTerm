@@ -65,7 +65,7 @@ const P5UI = (() => {
     if (!bk) pollBook();
     const p = px(s), tick = tickFor(p || 1), L = bk ? P5.ladder(bk, tick, 22) : { rows: [] }, ords = (A.a.orders || []).filter((o) => o.sym === s), stops = (ST.stops || []).filter((o) => o.sym === s);
     const mark = (pp) => { const o = ords.filter((x) => Math.abs(x.price - pp) < tick / 2), st2 = stops.filter((x) => Math.abs(x.trigger - pp) < tick / 2); return o.map((x) => `<span class="tag ${x.side === 'buy' ? 'up' : 'dn'}">L ${x.side === 'buy' ? 'buy' : 'sell'}</span>`).join('') + st2.map((x) => `<span class="tag amb">STP ${x.side === 'buy' ? 'buy' : 'sell'}</span>`).join(''); };
-    const ladder = isStock(s) || isOnchain(s) ? `<div class="empty">${isOnchain(s) ? 'DEX pools are AMMs: there is no order book to ladder.' : 'Stock order books are not available from free feeds.'} Pick a crypto market (e.g. BTC, SOL, DOGE).</div>`
+    const ladder = isStock(s) || isOnchain(s) ? `<div class="empty">${isOnchain(s) ? 'DEX pools are AMMs: there is no order book to ladder.' : 'Stock order books are not available from free feeds.'} Pick a crypto market (e.g. BTC, ETH, DOGE).</div>`
       : !L.rows.length ? `<div class="empty">${U.bookErr ? 'Order book unavailable: ' + esc(U.bookErr) : 'Loading the order book…'}</div>`
       : `<table class="p5-lad"><thead><tr><th>Buy (bid)</th><th>Price</th><th>Sell (ask)</th><th></th></tr></thead><tbody>${L.rows.map((r) => `<tr class="${r.p <= L.bb && r.p + tick > L.bb ? 'bb' : ''}${r.p >= L.ba && r.p - tick < L.ba ? ' ba' : ''}"><td><button type="button" class="p5-lb" data-lad="buy" data-p="${r.p}" title="Buy ${esc(NT.fmtUSD(c.usd))} at ${esc(fmtP(r.p))}"><i style="width:${(r.bw * 100).toFixed(0)}%"></i><span>${r.bid ? esc(NT.fmtQty(r.bid)) : ''}</span></button></td><td class="mono">${esc(fmtP(r.p))}</td><td><button type="button" class="p5-la" data-lad="sell" data-p="${r.p}" title="Sell at ${esc(fmtP(r.p))}"><i style="width:${(r.aw * 100).toFixed(0)}%"></i><span>${r.ask ? esc(NT.fmtQty(r.ask)) : ''}</span></button></td><td>${mark(r.p)}</td></tr>`).join('')}</tbody></table>`;
     const tr = (typeof TFX !== 'undefined' && TFX.ring.get(s)) || [], last = tr.length ? Math.floor(tr[tr.length - 1].t / 60) * 60 : 0;
@@ -77,7 +77,7 @@ const P5UI = (() => {
   };
   AFTER.dom = () => {
     const s = sel(), st = typeof Stores !== 'undefined' && (Stores.get(s + '|1m') || Stores.get(s + '|' + ST.tf)), cvd = st ? P5.cvd((TFX.ring.get(s) || []), st.candles.slice(-120), st.sec) : [];
-    const cv = $('#p5Cvd'); if (cv) drawLines(cv, [{ values: cvd.map((x) => x.cvd), color: '#38bdf8', label: 'CVD' }], { empty: 'CVD builds from live trades' });
+    const cv = $('#p5Cvd'); if (cv) drawLines(cv, [{ values: cvd.map((x) => x.cvd), color: '#38bdf8', name: 'CVD' }], { empty: 'CVD builds from live trades' });
     const n = $('#p5CvdN'); if (n && cvd.length) { const l = cvd[cvd.length - 1]; n.textContent = `Session CVD ${NT.fmtQty(l.cvd)} · last bar Δ ${NT.fmtQty(l.delta)}`; }
   };
   const acctSel = () => { const c = cfg(); return `<select class="in" id="p5Acct" aria-label="Account">${[['main', 'Main paper account']].concat(c.subs.map((x) => [x.id, '🗂 ' + x.name])).map(([v, l]) => `<option value="${esc(v)}" ${c.acct === v ? 'selected' : ''}>${esc(l)}</option>`).join('')}</select>`; };
@@ -278,10 +278,17 @@ const P5UI = (() => {
     try {
       let cs = (Stores.get(s + '|' + ST.tf) || { candles: [] }).candles.slice(); if (cs.length < 800) { try { const h = await History.get(s, sec, 1500); if (h.length > cs.length) cs = h; } catch (e) { /* use the chart */ } }
       if (cs.length < 300) throw new Error('Need 300+ bars for walk-forward (pick a lower timeframe or wait for history)');
-      const wf = P5.walkForward(cs, NT.strategies[id], gridFor(id), { folds: 4, tfSec: sec, fee: ST.settings.fee / 100 });
-      const bt = NT.backtest(cs, NT.strategies[id], NT.defaultParams(id), { cash: 10000, fee: ST.settings.fee / 100, slip: ST.settings.slip / 100, tfSec: sec });
-      const rets = bt.trades.filter((t) => t.side === 'sell' && Number.isFinite(t.pnl)).map((t) => t.pnl / Math.max(1, (t.cost || t.usd || (t.price * t.qty) || 10000)));
-      U.quant = { id, sym: s, wf, mc: P5.monteCarlo(rets, 1000, 7), n: rets.length };
+      const wfo = { folds: 4, tfSec: sec, fee: ST.settings.fee / 100 }, o = { cash: 10000, fee: ST.settings.fee / 100, slip: ST.settings.slip / 100, tfSec: sec };
+      // v15.6: the walk-forward grid + 1,000 Monte Carlo reshuffles run in the backtest Web Worker, so the chart keeps its frame rate
+      const w = typeof BTW !== 'undefined' ? BTW.get() : null;
+      if (w) { const r = await BTW.run({ type: 'quant', strat: id, candles: cs, grid: gridFor(id), wfo, o }); U.quant = { id, sym: s, wf: r.wf, mc: r.mc, n: r.n }; }
+      else {
+        const wf = P5.walkForward(cs, NT.strategies[id], gridFor(id), wfo), bt = NT.backtest(cs, NT.strategies[id], NT.defaultParams(id), o);
+        const rets = bt.trades.filter((t) => t.side === 'sell' && Number.isFinite(t.pnl)).map((t) => t.pnl / Math.max(1, (t.cost || t.usd || (t.price * t.qty) || 10000)));
+        U.quant = { id, sym: s, wf, mc: typeof V156 !== 'undefined' ? await V156.monteCarloAsync(rets, 1000, 7) : P5.monteCarlo(rets, 1000, 7), n: rets.length };
+      }
+      // fewer than 2 out-of-sample folds is not a walk-forward: say so instead of showing an empty efficiency table
+      if (!U.quant.err && (!U.quant.wf || U.quant.wf.folds.length < 2)) U.quant = { id, sym: s, err: `Walk-forward needs more history: only ${cs.length} bars, so fewer than 2 folds clear the 60-bar in-sample minimum (pick a lower timeframe or wait for history)` };
     } catch (e) { U.quant = { id, sym: s, err: e.message }; }
     U.qBusy = false; render(true);
   };

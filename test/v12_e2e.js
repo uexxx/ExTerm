@@ -46,7 +46,7 @@ const ollama = http.createServer((q, r) => {
   const ollamaUp = await new Promise((resolve) => { ollama.once('error', () => resolve(false)); ollama.listen(11434, '127.0.0.1', () => resolve(true)); });
   const b = await chromium.launch({ executablePath: process.env.CHROME_PATH || '/usr/bin/google-chrome', args: ['--no-sandbox'] });
   const ctx = await b.newContext({ viewport: { width: 1600, height: 950 }, acceptDownloads: true });
-  const page = await ctx.newPage(), errs = [];
+  const page = require('./_reveal')(await ctx.newPage()), errs = [];
   page.on('pageerror', (e) => errs.push(e.message)); page.on('dialog', (d) => { errs.push('DIALOG ' + d.message()); d.dismiss(); });
   await page.route('**/*', async (r) => {
     const url = r.request().url(); let target = url;

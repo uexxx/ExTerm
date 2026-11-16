@@ -1,17 +1,17 @@
 <div align="center">
 
-# ExTerm v15.5
+# ExTerm v15.6
 
 ### Local-first trading workstation for US stocks, crypto spot & perps and on-chain DEX tokens, in one browser tab.
 
 **Paper trading only.** Nothing in ExTerm signs or sends a real order.
 
-<img src="docs/screenshots/v15.5-markets.png" alt="ExTerm v15.5 Markets screen at 1440×900: one-row header with the Ctrl+K search pill, grouped nav with Trade, Intelligence, Quant & Bots and Academy & Settings captions, a single-row chart toolbar with four timeframe pills, Overlays and AI Lens dropdowns, the drawing rail beside the chart and quiet status dots in the chart corner" width="100%">
+<img src="docs/screenshots/v15.6-markets.png" alt="ExTerm v15.6 Markets screen at 1440×900: tonal obsidian panels without outlines, one-word top tabs, a watchlist with 44px sparklines, and the watchlist and order ticket gently dimmed while the cursor is over the price chart" width="100%">
 
-**[Quickstart](#-2-second-quickstart)** · **[What's new](#-whats-new-in-v155)** · **[v15.4](#-whats-new-in-v154)** · **[v15.3](#-whats-new-in-v153)** · **[v15.2](#-whats-new-in-v152)** · **[Features](#-whats-in-v151)** · **[Security](#-security)** · **[Verify a build](#-how-to-verify-official-builds)** · **[License](#-license)** · **[Brand policy](#-brand--logo-policy)**
+**[Quickstart](#-2-second-quickstart)** · **[What's new](#-whats-new-in-v156)** · **[v15.5](#-whats-new-in-v155)** · **[v15.4](#-whats-new-in-v154)** · **[v15.3](#-whats-new-in-v153)** · **[v15.2](#-whats-new-in-v152)** · **[Features](#-whats-in-v151)** · **[Security](#-security)** · **[Verify a build](#-how-to-verify-official-builds)** · **[License](#-license)** · **[Brand policy](#-brand--logo-policy)**
 
 <p>
-  <a href="https://github.com/uexxx/ExTerm/releases/latest"><img src="https://img.shields.io/badge/download-v15.5-D4AF37?style=for-the-badge" alt="Download v15.5"></a>
+  <a href="https://github.com/uexxx/ExTerm/releases/latest"><img src="https://img.shields.io/badge/download-v15.6-D4AF37?style=for-the-badge" alt="Download v15.6"></a>
   <img src="https://img.shields.io/badge/indicators-137-D4AF37?style=for-the-badge" alt="137 indicators">
   <img src="https://img.shields.io/badge/backtestable%20strategies-128-CBD5E1?style=for-the-badge" alt="128 backtestable strategies">
   <img src="https://img.shields.io/badge/languages-32%20%2B%20ISO--639-CBD5E1?style=for-the-badge" alt="32 languages plus ISO-639 fallback">
@@ -46,6 +46,51 @@ Useful flags: `python3 serve.py 9000` (other port) · `--no-browser` · `--docto
 
 > Opening `exterm.html` directly also works for crypto, but browsers block some stock and on-chain sources. The launcher
 > proxies only an allow-list of public market-data hosts, on `localhost`, behind a fresh per-launch token.
+
+---
+
+## 🪶 What's new in v15.6
+
+**Visual minimalism and a smoother engine.** Every v15.5 capability is still here. The screens read in half a second,
+and the chart keeps its frame rate while the heavy maths runs elsewhere.
+
+### 🌑 Calmer surfaces
+- **Tonal elevation instead of outlines**: the canvas is `#0B0E14`, panels `#111620` and active cards `#181F2E`. Most 1px
+  borders are gone and the market columns get 20px of breathing room.
+- **Three text sizes**: 18px bold for primary figures, 13px for active labels, 11px for muted metadata.
+- **One-word tabs**: Markets · Flow · DEX · Whales · Lab · Grok · Journal · Learn (full names stay in the tooltip; translated
+  languages keep their own labels).
+- **4px scrollbars** that stay invisible until you hover the scroll area.
+- **Chart-first dimming**: with the cursor over the price chart, the watchlist and order ticket fade to 78%. Hover a panel
+  and it snaps back to 100%.
+
+### 📉 Lighter rows
+- **44px sparklines** replace the % column in the Watchlist and sit beside the price in the DEX table.
+- **Shorthand figures** (`$1.43M`, `+48.2%`, `$0.0₅48`) with the exact value in the hover tooltip.
+- **One badge per row**: the leaderboard shows the Alpha pill, the DEX table the safety grade. Everything else is in the inspector.
+- **Hover-only row actions**: row buttons appear when you hover or keyboard-focus that row.
+
+### 🔎 One inspector rail
+
+<img src="docs/screenshots/v15.6-inspector.png" alt="Pro Desk order flow on US stocks with the right-hand inspector rail open on a 0DTE strike: Delta, Gamma, Theta per day, Vega, IV and open interest for the call and the put" width="100%">
+
+DEX Token Audit, Whale Trader Detail and 0DTE strike Greeks share one right-hand rail with the same width, surface and
+motion. Opening one replaces the other. Leaderboard rows open the trader on a whole-row click, and the leaderboard
+reflows beside the rail instead of hiding under it. Clicking a 0DTE gamma bar shows Delta, Gamma, Theta/day, Vega, IV
+and open interest for that strike's call and put.
+
+### ⚡ Zero-lag engine
+- **O(1) latest-bar indicators**: on every tick only the forming bar is recomputed for EMA 20/50, SMA 200, Bollinger,
+  RSI and MACD. The result matches a full recompute to double precision, which is unit- and browser-tested. Heavier
+  overlays and picker indicators refresh on each new bar and at most 4× a second while a bar forms.
+- **Off-thread quant runs**: Pro Desk walk-forward and the 1,000-run Monte Carlo run in the backtest Web Worker. The
+  fallback without workers yields between chunks and gives the same numbers.
+- **Windowed trade logs**: every backtest trade is scrollable (not just the newest 300), with only the visible rows in
+  the page.
+
+<img src="docs/screenshots/v15.6-quant-lab.png" alt="Quant Lab four-step wizard with the Bot Net Profit hero card on the new tonal surfaces" width="100%">
+
+<img src="docs/screenshots/v15.6-simple-mode.png" alt="Simple workspace with one-word tabs: chart, watchlist with sparklines and a clean order ticket" width="100%">
 
 ---
 
@@ -93,9 +138,33 @@ labels in your language. Picking a result jumps straight there with a gold spotl
 - The order ticket keeps the essentials; Auto-Breakeven step-ladders and the Webhook Bridge live in one collapsed
   **Smart Order Rules ▸** accordion, with an inline **Risk: 1.0%** slider.
 
-### 🏆 Leaderboards on the calmer layout
+### 🏆 Leaderboards: 4 columns + Trader Detail & Mirror drawer
 
-<img src="docs/screenshots/v15.5-leaderboard.png" alt="Perp Trader Leaderboard on the offline sample with hairline rows, tabular figures and dimmed metadata" width="100%">
+<img src="docs/screenshots/v15.5-leaderboard.png" alt="Perp Trader Leaderboard on the offline sample with four columns (rank and wallet, Alpha Score, ROI and net PnL, open positions), a Style filter in the filter strip and the Trader Detail and Mirror drawer open on the right" width="100%">
+
+One filter strip (timeframe, Alpha / PnL / ROI, **Style**, Anti-Rug, chart heatmap) and 4 columns. Opening a trader slides out
+**Trader Detail & Mirror** with Plot on Chart, Backtest Style, Shadow Mirror, Track Wallet, Exit Alerts and Liquidation Magnet.
+
+### 🌊 Order Flow: a clean 2-column split
+
+<img src="docs/screenshots/v15.5-order-flow.png" alt="Pro Desk order flow: tape velocity bar and DOM ladder on the left, tabbed card with CVD and Absorption, Anchored VWAP and VPVR, and 0DTE Gamma Flip and Charm on the right" width="100%">
+
+The DOM ladder and a compact **Tape Velocity** bar sit on the left. On the right, one tabbed card switches between
+**CVD & Absorption**, **Anchored VWAP & VPVR** and **0DTE Gamma Flip & Charm**.
+
+### ⬡ DEX table + Inspect Token drawer
+
+
+Four columns (Token / Pair, Price & 24h %, Safety Score, Signal). Click a row to slide out **Inspect Token** with the
+Dev-Wallet Cluster X-Ray, LP Lock Details, Gap-Fill Scanner and Lead-Lag Divergences.
+
+### ⚡ Grok intelligence rail and 4-tab Settings
+
+<img src="docs/screenshots/v15.5-grok-rail.png" alt="Grok tab with the console on the left and a three-tab intelligence rail on the right: Grok Bot starter chips, Drawdown Cool-Off pill and active rules" width="100%">
+
+A 3-tab rail (**Grok Bot**, **3-Agent Copilot**, **Macro Shield**) with one-click starter prompts, active-rule cards and a
+plain-English Drawdown Cool-Off pill. Settings is organised into **General & Language**, **Chart & Hotkeys**,
+**Execution & Webhooks** and **Security & Vault**.
 
 ---
 

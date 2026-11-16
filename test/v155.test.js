@@ -58,7 +58,12 @@ ok('smart context: 0DTE gamma + gap-fill on stocks, safety + X-ray on-chain', V.
 
 // ── i18n
 const K155 = I.KEYS.filter((k) => k.startsWith('v155.'));
-ok('i18n: 40 v15.5 keys, every one in all 32 named languages (non-empty, no "|" leaks)', K155.length === 40 && I.LANGS.length === 32 && I.LANGS.every((l) => K155.every((k) => I.DICT[l.code][k] && I.DICT[l.code][k].length > 1)), K155.length);
+ok('i18n: 68 v15.5 keys (40 workspace + 28 screen restructures), every one in all 32 named languages (non-empty, no "|" leaks)', K155.length === 68 && new Set(K155).size === 68 && I.LANGS.length === 32 && I.LANGS.every((l) => K155.every((k) => I.DICT[l.code][k] && I.DICT[l.code][k].trim().length > 0)), K155.length); // ja / ko "Table" is one character
+ok('i18n: screen-restructure labels translated (Settings tabs, drawers, rail) in 31 languages', ['v155.st.sec', 'v155.dx.inspect', 'v155.lb.detail', 'v155.ir.macro'].every((k) => I.LANGS.filter((l) => l.code !== 'en' && I.DICT[l.code][k] !== I.DICT.en[k]).length >= 28));
+
+// ── screen restructures: Settings classifier (pure)
+const S = require('../src/v155s.js');
+ok('settings tabs: panels land in General & Language / Chart & Hotkeys / Execution & Webhooks / Security & Vault', S.classify('Market data') === 'gen' && S.classify('🌐 Language & 🛡 build integrity') === 'gen' && S.classify('🎨 Appearance') === 'chart' && S.classify('⌨ Keyboard shortcuts') === 'chart' && S.classify('Paper trading') === 'exec' && S.classify('🔔 Background alerts') === 'exec' && S.classify('AI Copilot') === 'exec' && S.classify('🔒 Privacy & security') === 'sec' && S.classify('🔑 API keys & connections') === 'sec' && S.classify('Your data') === 'sec' && S.classify('Diagnostics') === 'gen');
 ok('i18n: non-English rows are translated (hero label differs from English in 31 languages)', I.LANGS.filter((l) => l.code !== 'en' && I.DICT[l.code]['v155.hero'] !== I.DICT.en['v155.hero']).length === 31);
 ok('i18n: RTL languages carry the new strings in their own script', ['ar', 'he', 'fa', 'ur'].every((c) => I.isRtl(c) && /[\u0590-\u06ff]/.test(I.tr(c, 'v155.reset'))));
 

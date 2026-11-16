@@ -1257,7 +1257,7 @@ body[data-theme="obsidian"]{--bg:var(--obs);--panel:#0F131B;--panel-solid:#0F131
 .btn.pri{background:var(--gold)!important;color:var(--gold-ink)!important;border-color:transparent!important;box-shadow:0 6px 18px -10px var(--gold)!important;font-weight:700}
 .btn.pri:hover{filter:brightness(1.06)}
 /* secondary "primary" buttons in views that already own a gold action become gold-outline ghosts */
-#tab-bots .btn.pri:not(#btRun){background:transparent!important;color:var(--gold)!important;border:1px solid rgba(245,184,65,.5)!important;box-shadow:none!important}
+#tab-bots .btn.pri:not(#btRun),#tab-grok .btn.pri:not(#gkForm .btn){background:transparent!important;color:var(--gold)!important;border:1px solid rgba(245,184,65,.5)!important;box-shadow:none!important}
 .btn:not(.pri):not(.buy):not(.sell):not(.on):not(.val){background:transparent;border-color:var(--hair);box-shadow:none}
 .btn:not(.pri):not(.buy):not(.sell):not(.on):not(.val):hover{background:rgba(148,163,184,.08);border-color:var(--line2)}
 :focus-visible{outline:2px solid var(--gold);outline-offset:2px}
@@ -1417,3 +1417,124 @@ body.v155-hideL.v155-hideR #tab-markets .mk{grid-template-columns:minmax(0,1fr)}
 @media (max-width:1100px){.v155-hero-top{grid-template-columns:1fr}.v155-hgrid{grid-template-columns:repeat(2,minmax(0,1fr))}.v155-steps{grid-template-columns:repeat(2,minmax(0,1fr))}.v155-rail{width:64px;flex-basis:64px}.v155-jn{grid-template-columns:repeat(2,1fr)}}
 @media (max-width:760px){#btnPalette.v155-pal .v155-palt,#btnPalette.v155-pal kbd{display:none}#btnPalette.v155-pal{flex:0 0 38px;justify-content:center}.v155-ws{display:none}.v155-dots{inset-inline-end:8px}}
 @media (prefers-reduced-motion:reduce){.v155-sw i,.v155-sw i::after,.v155-chev{transition:none}}
+
+/* ═══ v15.5 screen restructures (src/v155s.js) ═══ */
+/* shared slide-out drawer: above the corner banner (z 60), below popovers (z 80+), no backdrop */
+.v155-drawer{position:fixed;top:0;bottom:0;inset-inline-end:0;width:min(520px,94vw);z-index:76;display:flex;flex-direction:column;background:var(--panel-solid,#0F131B);border-inline-start:1px solid var(--line2);box-shadow:-24px 0 48px -24px rgba(0,0,0,.95);transform:translateX(0)}
+.v155-drawer[hidden]{display:none}
+.v155-dh{display:flex;align-items:center;gap:10px;padding:14px 18px;border-bottom:1px solid var(--hair);position:sticky;top:0;background:var(--panel-solid,#0F131B);z-index:1}
+.v155-dh b{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.v155-dh .x{background:none;border:1px solid var(--hair);color:var(--mut);border-radius:8px;width:30px;height:30px;cursor:pointer;font-size:16px}
+.v155-dh .x:hover{color:var(--gold);border-color:var(--gold)}
+.v155-db{flex:1;overflow:auto;padding:16px 18px;display:flex;flex-direction:column;gap:12px}
+.v155-db details{border-top:1px solid var(--hair);padding-top:10px}.v155-db summary{cursor:pointer;font-weight:600;margin-bottom:8px}
+.v155-chk{padding:6px 0;border-bottom:1px solid var(--hair)}
+/* DEX table */
+.v155-dex{width:100%}.v155-dex td,.v155-dex th{padding:10px 12px}.v155-dex tbody tr{cursor:pointer}.v155-dex tbody tr:hover,.v155-dex tbody tr:focus-visible{background:rgba(148,163,184,.06)}
+.v155-dex td:nth-child(2),.v155-dex th:nth-child(2){text-align:end}
+/* Order Flow 2-column split */
+.tab.on #p5Body .panel,.tab.on #lbPerp .panel{animation:none} /* the desk re-renders every second: an entry animation would restart forever */
+.v155-of{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:16px;align-items:start}
+.v155-ofl{display:flex;flex-direction:column;gap:12px;min-width:0}
+.v155-oft{min-width:0;padding:12px}.v155-oftabs{margin-bottom:10px}
+.v155-tbar{height:10px;border-radius:999px;background:rgba(148,163,184,.14);overflow:hidden;margin:4px 0 8px}
+.v155-tbar i{display:block;height:100%;border-radius:999px;background:var(--up);transition:width .4s}.v155-tbar i.dn{background:var(--dn)}
+.v155-vp,.v155-gex{width:100%;height:160px;margin-top:10px}.v155-gex{height:120px}
+.v155-vp rect{fill:rgba(148,163,184,.25)}.v155-vp rect.va{fill:rgba(148,163,184,.45)}.v155-vp rect.poc{fill:var(--gold)}
+.v155-gex rect.pos{fill:var(--up);opacity:.7}.v155-gex rect.neg{fill:var(--dn);opacity:.7}.v155-gex line{stroke:var(--hair)}
+@media (max-width:1100px){.v155-of{grid-template-columns:1fr}}
+/* Perp Leaderboard: 4 columns; the expanded row becomes a fixed slide-out drawer */
+.v155-lb4>tbody>tr:not(.lb-x)>:is(:nth-child(1),:nth-child(5),:nth-child(6),:nth-child(7),:nth-child(8)){display:none}
+/* main's 3D perspective and the panels' preserve-3d would make "fixed" relative to them: flatten while a drawer is open */
+:is(main,.tab,#lbPerp,#lbPerp .panel,#lbPerp .pb,#lbPerp .q153-scroll,#lbPerp table):has(tr.lb-x:not([hidden])){perspective:none!important;transform:none!important;transform-style:flat!important;filter:none!important;will-change:auto!important;contain:none!important}
+.v155-rk{color:var(--meta);margin-inline-end:6px}.v155-open{color:var(--mut);margin-inline-end:8px}
+.v155-lbsty{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--mut)}
+#lbPerp tr.lb-x{position:fixed;top:0;bottom:0;inset-inline-end:0;width:min(560px,94vw);z-index:76;display:block;overflow:auto;background:var(--panel-solid,#0F131B);border-inline-start:1px solid var(--line2);box-shadow:-24px 0 48px -24px rgba(0,0,0,.95)}
+#lbPerp tr.lb-x[hidden]{display:none}
+#lbPerp tr.lb-x>td{padding:0 18px 18px;border:0;display:block;width:auto!important;max-width:100%;box-sizing:border-box}
+#lbPerp tr.lb-x{overflow-x:hidden}#lbPerp tr.lb-x .lb-pos{display:block;max-width:100%;overflow-x:auto}
+#lbPerp tr.lb-x .v151-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}#lbPerp tr.lb-x .note{white-space:normal}
+#lbPerp tr.lb-x .v155-dh{margin:0 -18px 12px}
+.v155-sig{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
+#lbSmart table.v152-t>tbody>tr>:is(:nth-child(5),:nth-child(6)){display:none}
+/* Grok tab: 3-tab intelligence rail */
+.v155-gkwrap{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:16px;align-items:start}
+.v155-ir{position:sticky;top:8px;padding:12px;display:flex;flex-direction:column;gap:10px;max-height:calc(100vh - 180px);overflow:auto}
+.v155-ir section{display:flex;flex-direction:column;gap:10px}.v155-ir section[hidden]{display:none}
+.v155-ir h5{margin:6px 0 0;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--meta)}
+.v155-ir .gk-p{margin:0}
+.v155-chips{display:flex;flex-wrap:wrap;gap:6px}.v155-chips .chip{font-size:12px;text-align:start;white-space:normal}
+.v155-pill{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:8px 12px;border:1px solid var(--hair);border-radius:12px;font-size:12.5px}
+.v155-pill b{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--meta)}.v155-pill span{flex:1;min-width:140px}
+.v155-pill.up{border-color:color-mix(in srgb,var(--up) 40%,transparent)}.v155-pill.dn{border-color:color-mix(in srgb,var(--dn) 45%,transparent)}.v155-pill.amb{border-color:rgba(245,184,65,.45)}
+.v155-card{display:flex;gap:10px;align-items:flex-start;padding:8px 10px;border:1px solid var(--hair);border-radius:10px}
+@media (max-width:1200px){.v155-gkwrap{grid-template-columns:1fr}.v155-ir{position:static;max-height:none}}
+/* Settings: 4 tabs */
+.v155-stabs{margin-bottom:14px}
+.v155-sg{display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:14px;align-items:start}.v155-sg[hidden]{display:none}
+.v155-sp{min-width:0}
+
+/* ═══ v15.6 Visual Minimalism (all under body.v156) ═══ */
+/* 1. soft obsidian surface elevation: base canvas → panel surface → active card, borders dropped */
+body.v156{--v156-s0:#0B0E14;--v156-s1:#111620;--v156-s2:#181F2E;--v156-gap:20px;background:var(--v156-s0);font-size:13px}
+body.v156:is([data-theme="cyber"],[data-theme="gold"],[data-theme="arctic"],[data-theme="synth"],[data-theme="aurora"],[data-theme="ocean"]){--v156-s0:var(--bg);--v156-s1:var(--panel-solid,#111620);--v156-s2:color-mix(in srgb,var(--panel-solid,#181F2E),#fff 5%)}
+body.v156 .panel{background:var(--v156-s1);border-color:transparent;box-shadow:none}
+body.v156 .panel:hover{border-color:transparent}
+body.v156 :is(.panel .panel,.v151-kpis>div,.v155-card,.wl-row.on,.v155-hero){background:var(--v156-s2);border-color:transparent}
+body.v156 .wl-row{border-bottom-color:transparent}
+body.v156 :is(.v152-t,table) :is(td,th){border-bottom-color:rgba(148,163,200,.05)}
+@media (min-width:1101px){body.v156 #tab-markets .mk{gap:var(--v156-gap)}body.v156 #tab-markets .side-col{gap:var(--v156-gap)}}
+/* 5. strict 3-size type scale: 18px primary figures · 13px active labels · 11px muted metadata */
+/* one id-weight prefix on all three rules: they beat the older component sizes, and source order decides between them
+   (13px base → 11px metadata → 18px figures) */
+body.v156 :is(#top,#nav,.tab,#v155Drawer) :where(button,.btn,.seg button,.wl-row,.in,select,input,textarea,.panel>.ph,.panel>h3,td,label,.chk,summary,.v155-pal,.lang-pill,.learn-btn,.learn-btn>span,.v155-chev,.fxbtn){font-size:13px}
+body.v156 :is(#top,#nav,.tab,#v155Drawer) :where(.note,.mut,small,th,.k,.sec,.lbl,.tag,kbd,.safe-pill,.v155-hk,.v155-sug,.v151-kpis .k,.btn.xs,.btn.sm,.seg.xs button,.chg,.v155-palt){font-size:11px}
+body.v156 :is(#top,#nav,.tab,#v155Drawer) :where(.v151-kpis b,.v155-big){font-size:18px;font-weight:700}
+body.v156 #nav button,body.v156 #nav button>span:not(.ni),body.v156 #modeSwitch button,body.v156 #posStrip,body.v156 #posStrip *{font-size:13px}
+body.v156 #indBtns span,body.v156 #nav button[data-glabel]::before,body.v156 #qSym,body.v156 #book span,body.v156 #tape span,body.v156 #pvBody div,body.v156 #pvBody span{font-size:11px}
+body.v156 #qPrice,body.v156 #eqVal,body.v156 #pvBody b{font-size:18px;font-weight:700}
+body.v156 :is(.num,td.r,.mono){font-variant-numeric:tabular-nums}
+/* 2. hover-only row actions (always reachable by keyboard focus; touch screens keep them visible) */
+body.v156 #lbPerp tr.lb-row{cursor:pointer}
+@media (hover:hover){
+  body.v156 :is(#lbPerp tr.lb-row [data-lb="expand"],#tab-whales tbody tr .btn.xs,#tab-heat tbody tr .btn.xs,#tab-social tbody tr .btn.xs){opacity:0;transition:opacity .15s}
+  body.v156 :is(#lbPerp tr.lb-row,#tab-whales tbody tr,#tab-heat tbody tr,#tab-social tbody tr):is(:hover,:focus-within,:focus) :is([data-lb="expand"],.btn.xs){opacity:1}
+}
+/* 3. one right-hand inspector rail: DEX Token Audit · Whale Trader Detail · 0DTE Greeks share geometry, surface and motion */
+body.v156 .v156-insp,body.v156 #lbPerp tr.lb-x.v156-insp{width:min(520px,94vw);background:var(--v156-s1);border-inline-start:0;box-shadow:-24px 0 48px -24px rgba(0,0,0,.95);animation:v156in .22s ease-out}
+body.v156 .v156-insp .v155-dh{background:var(--v156-s1);border-bottom:0}
+body.v156 #setBody>.v155-sg>.panel{animation:none}
+/* Settings cards are ~460px wide: wide tables (API keys hub) wrap inside their card instead of spilling over the next card */
+body.v156 #setBody .v155-sp{min-width:0}body.v156 #setBody .v155-sp>.pb{min-width:0;overflow-x:auto}
+body.v156 #setBody .v155-sp table{width:100%;max-width:100%}body.v156 #setBody .v155-sp :is(td,th){white-space:normal;overflow-wrap:anywhere} /* Settings panels are re-parented into their tab group: no entrance replay on every move */
+@media (min-width:1101px){body.v156 #lbPerp:has(tr.lb-x.v156-insp:not([hidden])){padding-inline-end:min(520px,94vw)}} /* docked: rows + filter strip reflow beside the rail, never under it */
+[dir="rtl"] body.v156 .v156-insp,[dir="rtl"] body.v156 #lbPerp tr.lb-x.v156-insp{animation-name:v156inR;box-shadow:24px 0 48px -24px rgba(0,0,0,.95)}
+@keyframes v156in{from{opacity:0;transform:translateX(16px)}to{opacity:1;transform:none}}
+@keyframes v156inR{from{opacity:0;transform:translateX(-16px)}to{opacity:1;transform:none}}
+body.v156 .v155-gex rect[data-v156k]{cursor:pointer}body.v156 .v155-gex rect[data-v156k]:hover{opacity:.75}
+/* 4. 44px micro-sparklines + compact figures; max one badge per row */
+.v156-spk{width:44px;height:16px;display:inline-block;vertical-align:middle;flex:none;overflow:visible}
+.v156-spk polyline{fill:none;stroke:var(--gold,#F5B841);stroke-width:1.5;stroke-linejoin:round;stroke-linecap:round}
+.v156-spk.up polyline{stroke:var(--up)}.v156-spk.dn polyline{stroke:var(--dn)}
+.v156-spkbox{display:inline-flex;align-items:center;width:44px}
+body.v156 .wl-row.v156s{grid-template-columns:minmax(0,1fr) 44px auto 12px}
+body.v156 .wl-row.v156s>span:nth-child(4){display:none}
+body:not(.v156) .v156-spkbox{display:none}
+body.v156 :is(#lbPerp tr.lb-row,.v155-dex tbody tr,.wl-row) .tag~.tag{display:none}
+body.v156 .v155-lb4 tr.lb-row>td:nth-child(3) b{display:inline-block;min-width:34px;padding:2px 8px;border-radius:999px;background:var(--v156-s2);text-align:center;font-size:11px}
+/* 6. 1-word top navigation, 4px auto-hiding scrollbars, chart-first ambient dimming */
+body.v156.v156-short #nav button>span:not(.ni):not(.nbadge):not(.v156-nl):not([aria-hidden="true"]){display:none}
+body:not(.v156-short) .v156-nl{display:none}
+body.v156 ::-webkit-scrollbar{width:4px;height:4px}
+body.v156 ::-webkit-scrollbar-track{background:transparent}
+body.v156 ::-webkit-scrollbar-thumb{background:transparent;border:0;border-radius:4px}
+body.v156 :hover::-webkit-scrollbar-thumb{background:rgba(148,163,200,.28)}
+body.v156 ::-webkit-scrollbar-thumb:hover{background:rgba(148,163,200,.45)}
+body.v156 #tab-markets .mk>*{transition:opacity .25s ease}
+@media (hover:hover){body.v156 #tab-markets .mk:has(#chartHost:hover)>:not(:has(#chartHost)){opacity:.78}}
+/* chart toolbar stays one row in every language: the indicator-chip strip gives way (scrolls sideways) instead of wrapping */
+body.v156 #tab-markets .toolbar{flex-wrap:nowrap}
+body.v156 #tab-markets .toolbar>*{flex-shrink:0}
+body.v156 #tab-markets .toolbar>:has(#indBtns){flex-shrink:1;min-width:96px;overflow-x:auto;overflow-y:hidden}
+/* windowed long tables: fixed row height so the spacer maths holds */
+.v156-virt tbody tr:not(.v156-pad){height:28px}.v156-virt td{white-space:nowrap}.v156-virt td:last-child{max-width:280px;overflow:hidden;text-overflow:ellipsis}

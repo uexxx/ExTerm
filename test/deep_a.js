@@ -1,7 +1,7 @@
 const { chromium } = require('/opt/npm-tools/node_modules/playwright');
 (async () => {
   const browser = await chromium.launch({ executablePath: process.env.CHROME_PATH || '/usr/bin/google-chrome', args: ['--no-sandbox'] });
-  const ctx = await browser.newContext({ viewport: { width: 1600, height: 950 }, acceptDownloads: true }); const page = await ctx.newPage();
+  const ctx = await browser.newContext({ viewport: { width: 1600, height: 950 }, acceptDownloads: true }); const page = require('./_reveal')(await ctx.newPage());
   const errs = [], res = []; page.on('pageerror', (e) => errs.push(e.message)); page.on('dialog', (d) => d.accept());
   const ok = (n, c, i = '') => { res.push((c ? 'PASS ' : 'FAIL ') + n + (i ? ' — ' + i : '')); };
   await page.route('**/*', (r) => { const u = r.request().url(); (u.startsWith('http://localhost:8765') || u.startsWith('http://localhost:8899')) ? r.continue() : r.abort(); });
@@ -52,8 +52,11 @@ const { chromium } = require('/opt/npm-tools/node_modules/playwright');
   await page.click('#modeSwitch button[data-mode="stocks"]').catch(() => ev(() => setMode('stocks'))); await sleep(600); ok('mode switch → stocks', await ev(() => ST.mode === 'stocks'));
   await ev(() => setMode('crypto')); await sleep(400);
   // ── backup export/import
+  await page.evaluate((s) => typeof V155S === 'undefined' || V155S.reveal(s), '#seExp'); // v15.5: Settings tabs
   await page.click('nav button[data-tab="set"]'); await sleep(300); const dl2 = page.waitForEvent('download', { timeout: 5000 }).catch(() => null); await page.click('#seExp'); const d2 = await dl2; ok('settings: export backup downloads', !!d2);
+  await page.evaluate((s) => typeof V155S === 'undefined' || V155S.reveal(s), '#seFee'); // v15.5: Settings tabs
   await page.fill('#seFee', '0.2'); await page.click('#seSave'); await sleep(200); ok('settings: fee saves', await ev(() => ST.settings.fee === 0.2));
+  await page.evaluate((s) => typeof V155S === 'undefined' || V155S.reveal(s), '#seCheck'); // v15.5: Settings tabs
   await page.click('#seCheck'); await page.waitForFunction(() => document.getElementById('seCheckOut').textContent.length > 30, null, { timeout: 15000 }).catch(() => {}); ok('connection check reports', await ev(() => document.getElementById('seCheckOut').textContent.length > 30));
   // ── AI copilot
   await page.click('nav button[data-tab="ai"]');

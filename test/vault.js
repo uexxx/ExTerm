@@ -24,10 +24,13 @@ const res = []; process.on('unhandledRejection', (e) => { console.log(res.join('
   ok('key lives in sessionStorage only', await ev(([k, key]) => sessionStorage.getItem(k + '.secrets').includes(key) && !Object.keys(localStorage).some((x) => (localStorage.getItem(x) || '').includes(key)), [lsKey, KEY]));
   // 3) encrypted vault
   await page.click('nav button[data-tab="set"]'); await sleep(400);
+  await page.evaluate((s) => typeof V155S === 'undefined' || V155S.reveal(s), '#seKeyMode'); // v15.5: Settings tabs
   await page.selectOption('#seKeyMode', 'vault'); await page.fill('#seVaultPw', 'correct horse'); await page.fill('#seVaultPw2', 'different!'); await page.click('#sePrivSave'); await sleep(400);
   ok('mismatched passphrases are refused', await ev(() => !KeyVault.exists()));
+  await page.evaluate((s) => typeof V155S === 'undefined' || V155S.reveal(s), '#seVaultPw'); // v15.5: Settings tabs
   await page.fill('#seVaultPw', 'short'); await page.fill('#seVaultPw2', 'short'); await page.click('#sePrivSave'); await sleep(400);
   ok('short passphrase refused', await ev(() => !KeyVault.exists()));
+  await page.evaluate((s) => typeof V155S === 'undefined' || V155S.reveal(s), '#seVaultPw'); // v15.5: Settings tabs
   await page.fill('#seVaultPw', 'correct horse'); await page.fill('#seVaultPw2', 'correct horse'); await page.click('#sePrivSave'); await page.waitForFunction(() => KeyVault.exists() && ST.settings.rememberKeys, null, { timeout: 15000 }).catch(() => {}); await sleep(800);
   ok('vault created and mode saved', await ev(() => KeyVault.exists() && KeyVault.unlocked() && ST.settings.rememberKeys === true));
   ok('vault holds ciphertext only (no plain key anywhere in localStorage)', await ev((key) => !Object.keys(localStorage).some((x) => (localStorage.getItem(x) || '').includes(key)) && JSON.parse(localStorage.getItem('novaterm.vault')).ct.length > 20, KEY));
@@ -42,8 +45,10 @@ const res = []; process.on('unhandledRejection', (e) => { console.log(res.join('
   ok('right passphrase restores every key', await ev((key) => ST.ai.key === key && ST.settings.stKey === 'st-NEWKEY-777' && Sol.keys.st === 'st-NEWKEY-777', KEY));
   // 5) back to session-only removes the vault; forget wipes everything
   await page.click('nav button[data-tab="set"]'); await sleep(300);
+  await page.evaluate((s) => typeof V155S === 'undefined' || V155S.reveal(s), '#seKeyMode'); // v15.5: Settings tabs
   await page.selectOption('#seKeyMode', 'session'); await page.click('#sePrivSave'); await sleep(400);
   ok('switching to session-only deletes the vault', await ev(() => !KeyVault.exists() && ST.settings.rememberKeys === false));
+  await page.evaluate((s) => typeof V155S === 'undefined' || V155S.reveal(s), '#seForget'); // v15.5: Settings tabs
   await page.click('#seForget'); await page.click('#seForget'); await sleep(400);
   ok('Forget all API keys wipes them', await ev((key) => !ST.ai.key && !(sessionStorage.getItem(LS_KEY + '.secrets') || '').includes(key), KEY));
   ok('no page errors', errs.length === 0, errs.slice(0, 2).join(' | '));

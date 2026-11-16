@@ -1,7 +1,7 @@
 const { chromium } = require('/opt/npm-tools/node_modules/playwright');
 (async () => {
   const browser = await chromium.launch({ executablePath: process.env.CHROME_PATH || '/usr/bin/google-chrome', args: ['--no-sandbox'] });
-  const ctx = await browser.newContext({ viewport: { width: 1600, height: 950 }, acceptDownloads: true }); const page = await ctx.newPage();
+  const ctx = await browser.newContext({ viewport: { width: 1600, height: 950 }, acceptDownloads: true }); const page = require('./_reveal')(await ctx.newPage());
   const errs = [], res = [], pwn = []; page.on('pageerror', (e) => errs.push(e.message)); await page.exposeFunction('__pwn', (w) => pwn.push(w));
   const ok = (n, c, i = '') => res.push((c ? 'PASS ' : 'FAIL ') + n + (i ? ' — ' + i : ''));
   const X = '<img src=x onerror="window.__pwn(1)">', J = (r, b) => r.fulfill({ status: 200, contentType: 'application/json', headers: { 'access-control-allow-origin': '*' }, body: JSON.stringify(b) });
@@ -58,6 +58,7 @@ const { chromium } = require('/opt/npm-tools/node_modules/playwright');
   ok('security: relays refuse requests with credentials', await ev(() => !J.relayable('https://finance.yahoo.com/x', { headers: { 'x-api-key': 'k' } }) && !J.relayable('https://api.stocktwits.com/x', { headers: { Authorization: 'Bearer z' } }) && J.relayable('https://api.stocktwits.com/x', {})));
   ok('security: safeUrl blocks javascript:/data:', await ev(() => safeUrl('javascript:alert(1)') === '#' && safeUrl('data:text/html,x') === '#' && safeUrl('https://ok.com/a') === 'https://ok.com/a'));
   ok('security: token metadata sanitized', await ev(() => Sol.clean('<b>‮EVIL', 16) === 'bEVIL'.replace('b', '') || !/[<>‮]/.test(Sol.clean('<b>‮EVIL', 16))));
+  await page.evaluate((s) => typeof V155S === 'undefined' || V155S.reveal(s), '#seForget'); // v15.5: Settings tabs
   await page.click('nav button[data-tab="set"]'); await sleep(300); await page.click('#seForget'); await sleep(100); await page.click('#seForget'); await sleep(200);
   ok('security: forget all API keys wipes them', await ev(() => !ST.ai.key && !ST.settings.stKey && !ST.settings.heliusKey && !(ST.social && ST.social.xToken)));
   ok('no page errors (part B)', errs.length === 0, errs.slice(0, 3).join(' | '));

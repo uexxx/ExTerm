@@ -14,6 +14,7 @@ const { chromium } = require('/opt/npm-tools/node_modules/playwright');
   await page.click('nav button[data-tab="lab"]'); await page.click('#labNav button[data-v="news"]'); await page.waitForTimeout(1500);
   console.log('news:', (await page.textContent('#labBody')).replace(/\s+/g, ' ').slice(0, 120));
   await page.click('#labNav button[data-v="forecast"]'); await page.waitForTimeout(2500); await page.screenshot({ path: 'test/q_fc.png' });
+  await page.evaluate((s) => typeof V155S === 'undefined' || V155S.reveal(s), '#seCheck'); // v15.5: Settings tabs
   await page.click('nav button[data-tab="set"]'); await page.click('#seCheck'); await page.waitForTimeout(9500); await page.screenshot({ path: 'test/q_set.png' });
   console.log('banner:', (await page.textContent('#banner')).slice(0, 200));
   console.log('ERRORS:', errs.length ? errs : 'none'); await browser.close();

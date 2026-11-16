@@ -2,6 +2,42 @@
 
 ExTerm (formerly NovaTerm) is paper trading only in every version: nothing signs or sends a real order.
 
+## v15.6 — Visual Minimalism & 240Hz Engine Speed — 16 Nov 2026
+
+This release also ships the v15.5 screen restructures (`src/v155s.js`) listed under v15.5 below.
+
+### Visual minimalism (`src/v156.js`, `src/style.css` v15.6 layer, all under `body.v156`)
+- Tonal surface elevation replaces nested 1px borders: `#0B0E14` canvas → `#111620` panels → `#181F2E` active cards, with 20px gaps between the Markets columns. Themes with their own palette (Cyber, Gold Rush, Arctic, Synthwave, Aurora, Ocean) derive the same three steps from their colours.
+- A strict 3-size type scale: 18px bold primary figures, 13px active labels, 11px muted metadata (browser-tested across Markets and the nav).
+- One-word top tabs in English (Markets · Flow · DEX · Whales · Lab · Grok · Journal · Learn, plus Bots, Portfolio, Social, Workspace, Challenges, Copilot, World, Settings, Help); the full name stays in the tooltip, and the other 31 languages keep their translated labels.
+- 4px scrollbars, transparent until the scroll area is hovered.
+- Chart-first ambient dimming: hovering the price chart fades the watchlist and order ticket to 78% opacity; hovering a panel restores 100%.
+- The chart toolbar stays on one row in every language: the indicator-chip strip scrolls sideways instead of wrapping (Arabic at 1440 px used to wrap Replay onto a second row).
+- Settings panels no longer replay their entrance animation every time the 4-tab organiser re-parents them.
+
+### Rows
+- 44px sparklines: the Watchlist's own candle sparkline moves into a 44px column and replaces the % column; DEX table rows get one beside a shorthand price.
+- Shorthand figures (`$1.43M`, `+48.2%`, `$0.0₅48`) with the exact value in the `title` tooltip, in the DEX table and the Perp Leaderboard.
+- One badge per row (Alpha pill on the leaderboard, safety grade in the DEX table; the score moves into the grade's tooltip).
+- Hover-only row actions on the leaderboard and the Whales / DEX / Social tables (visible on keyboard focus and on touch screens).
+
+### One inspector rail
+- DEX Token Audit, Whale Trader Detail and the new 0DTE strike Greeks share one right-hand rail (same width, surface and slide-in) and replace each other.
+- Perp Leaderboard: a whole-row click (or Enter on a focused row) opens the trader; while it is open the leaderboard docks beside the rail, so the filter strip is never covered.
+- 0DTE gamma chart: clicking a strike bar opens Delta, Gamma, Theta / day, Vega / vol point, IV and open interest for that strike's call and put (`V156.greeks`).
+- The page-level rail closes when you switch tabs, so it never covers another screen.
+
+### Engine (`src/v156core.js`)
+- O(1) latest-bar chart indicators: the feed's per-poll `set()` keeps the indicator cache, a 24-point history check catches symbol / timeframe switches and backfills, and only the forming bar (plus the bar it just closed) is recomputed for EMA 20/50, SMA 200, Bollinger 20·2, RSI 14 and MACD 12/26/9. Equal to a full recompute (relative error < 1e-9, unit- and browser-tested). Optional overlays and picker indicators refresh on each new bar and at most 4×/s while a bar forms.
+- Pro Desk walk-forward + 1,000-run Monte Carlo run in the backtest Web Worker (new `quant` message; the worker bundle now includes `v15p5core.js`). Without workers, a chunked Monte Carlo yields every 100 runs and returns identical numbers.
+- With fewer than 2 out-of-sample folds, walk-forward now says it needs more history instead of showing an empty table.
+- Windowed backtest trade log: every trade is scrollable (previously the newest 300), with only the visible rows in the DOM.
+
+### Tests
+- `test/v156.test.js` (24 checks) and `test/v156_e2e.js` (33 checks, English LTR + Arabic RTL at 1440×900).
+- `test/_reveal.js`: older suites reveal the Settings tab holding a control before acting on it (Settings has been 4 tabs since v15.5 and is built on first open).
+- `test/v15p5_e2e.js`: the overlay check shows the 300 bars the volume profile covers, so it no longer depends on where the simulated POC falls.
+
 ## v15.5 — Zero-Clutter Visual Polish & Bot $ Profit — 15 Nov 2026
 
 ### Calmer screens (`src/v155.js`, `src/style.css` v15.5 layer)
@@ -33,15 +69,26 @@ ExTerm (formerly NovaTerm) is paper trading only in every version: nothing signs
 - **↺ Reset Clean View** closes every drawer and popover, switches overlays off, leaves Zen and returns to the default Markets layout in one click.
 - Journal: a 4-metric summary strip (trades, win rate, net P&L, profit factor) with **Replay My Worst Loss**.
 
+### Screen restructures (`src/v155s.js`)
+Existing controls are wrapped or moved rather than rebuilt, so their ids, handlers and data feeds are unchanged.
+- **Order Flow (Pro Desk → DOM & Footprint)**: a clean 2-column split. The left column has a compact **Tape Velocity** bar (trades per second vs the 30 s baseline, imbalance and aggressive-sweep tag) above the DOM ladder. The right column is a tabbed card: **CVD & Absorption** (CVD and footprint), **Anchored VWAP & VPVR** (POC, value area and AVWAP ±1σ / ±2σ with a volume profile) and **0DTE Gamma Flip & Charm** (gamma flip, call and put walls, net GEX, per-strike call / put gamma bars, charm window and pin strike).
+- **On-chain DEX pools**: a new **☰ Table** view (the default for new installs) with 4 columns: Token / Pair, Price & 24h %, Safety Score and Signal. A row click slides out an **Inspect Token** drawer with the Dev-Wallet Cluster X-Ray, LP Lock Details from the safety scan, the Gap-Fill Scanner and Lead-Lag Divergences. Tiles, Radar and Bubbles are unchanged.
+- **Perp Leaderboard**: 4 columns (Rank & Wallet, ExTerm Alpha Score, ROI % / Net PnL $, Open Positions), and a **Style** filter in the single filter strip next to timeframe, sort, Anti-Rug and chart heatmap. A trader's details open in a slide-out **Trader Detail & Mirror** drawer with Plot on Chart, Backtest Style, Shadow Mirror, Track Wallet, Exit Alerts and Liquidation Magnet. One drawer is open at a time; × or Esc closes it. The Wallet Tracker's Smart-Money table is trimmed to its key columns.
+- **Grok tab**: a 3-tab intelligence rail beside the console: **Grok Bot** (plain-English starter chips, active-rule cards and a human-readable Drawdown Cool-Off pill you can switch on or off), **3-Agent Copilot** (starter chips for the desk plus the Copilot Bridge) and **Macro Shield** (regime in plain words plus the Global Intel panel).
+- **Settings**: 4 tabs: **General & Language**, **Chart & Hotkeys** (now with a keyboard-shortcuts card), **Execution & Webhooks** and **Security & Vault**. Panels that other modules add later are sorted into the right tab automatically.
+- Drawers sit above the corner banner, have no click-blocking backdrop, and stay pinned to the window even while the 3D tilt effect is active. Live-refreshing panels no longer replay their entry animation every second.
+- Fixed: the CVD chart legend said "undefined".
+
 ### Smoothness
 - Palette search, sliders and hero what-ifs are debounced (16–60 ms); the new status and badge polling pauses while the window is hidden. The chart was already redrawn on demand behind an FPS governor, so it needed no change.
 
 ### Platform
-- 40 new UI strings translated into all 32 named languages; RTL mirroring via CSS logical properties.
+- 68 new UI strings translated into all 32 named languages; RTL mirroring via CSS logical properties.
 - Launcher version 15.5.
 
 ### Tests
-- `test/v155.test.js` (23 unit checks: hero maths on a hand-checked fixture and a real backtest, capital linearity versus a real re-run, What Changed?, Favorite-4, search, groups, i18n coverage, static CSP / privacy checks) and `test/v155_e2e.js` (41 headless-Chrome checks in English and Arabic RTL at 1440×900 and 1280×720: no page scroll or overlapping header controls, single-row toolbar, Ctrl+K, Simple | Pro, Zen, Overlays, Favorite 4, Smart Order Rules, hero $ / % accuracy, What Changed?, Quant Lab wizard, Reset Clean View, strict CSP, zero page errors). Existing suites that clicked header buttons now open ⋯ More first.
+- `test/v155s_e2e.js` (40 headless-Chrome checks of the five restructured screens: layout at 1440×900 and 1280×720 in English and Arabic, drawers above the banner, existing handlers still working, v15.1–v15.5 regressions, zero page errors). Tests that change Settings fields open the right tab first.
+- `test/v155.test.js` (25 unit checks: hero maths on a hand-checked fixture and a real backtest, capital linearity versus a real re-run, What Changed?, Favorite-4, search, groups, i18n coverage, static CSP / privacy checks) and `test/v155_e2e.js` (41 headless-Chrome checks in English and Arabic RTL at 1440×900 and 1280×720: no page scroll or overlapping header controls, single-row toolbar, Ctrl+K, Simple | Pro, Zen, Overlays, Favorite 4, Smart Order Rules, hero $ / % accuracy, What Changed?, Quant Lab wizard, Reset Clean View, strict CSP, zero page errors). Existing suites that clicked header buttons now open ⋯ More first.
 
 ## v15.4 — ExTerm Unified Master Edition — 14 Nov 2026
 
