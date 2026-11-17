@@ -169,3 +169,34 @@
 | Accidental live trading | Fresh installs and any inconsistent saved state load as PAPER. Live needs four gates (fresh heartbeat, three circuit breakers, disclosure, exact `ARM LIVE BOT`); configuration is frozen while live; a boot briefing holds signals after every reload; `Ctrl+Shift+K` and three missed heartbeats revert to PAPER. |
 | XSS | Slot names, endpoints, log lines and receiver samples are rendered through `esc()` or `textContent`; no inline handlers (`build.py --harden` CSP pins unchanged). |
 | Custody | No keys, seeds or exchange credentials are stored or requested; slot secrets only authenticate ExTerm to the user's own receiver. |
+
+## v16.1 addendum: bot fail-safe engines, chart menu, localhost-only webhook gateway
+
+Scope: `src/v161core.js`, `src/v161.js`, the v16.1 changes in `src/v160core.js` / `src/v160.js`, `serve.py` / `serve.ps1` `/hook`.
+
+- **Replay & duplication.** Every envelope carries a UUID v4 `idempotency_key` and `expires_at_ms = ts + 3000`. The sender
+  keeps a rolling nonce cache and never reuses a key. `V160.verify` rejects `expired` packets and, when given a
+  `NonceCache`, any key it has already accepted. The sample receiver does the same. The e2e suite replays a captured
+  packet against a real receiver and confirms the rejection.
+- **Key exposure window.** Packets are signed with an ephemeral session key derived as
+  `HMAC-SHA256(slot secret, "ExTerm-session-v2|" + session)`. The session nonce is redrawn on every boot and every arm,
+  so a captured signature is bound to one session. The slot secret itself never travels.
+- **Acknowledgment binding.** A receiver reply whose `ack` differs from the packet's `idempotency_key` is treated as a
+  failure and recorded in the ledger.
+- **Fat-finger / malformed output.** Opening orders must pass the schema validator (finite numbers, symbol pattern,
+  known action, positive size, stop-loss below entry) and the Max Single-Order Notional cap before dispatch. Closes are
+  never blocked, because blocking an exit would add risk.
+- **Market-condition and behavioural breakers.** The spread ceiling and the consecutive-loss cooldown hold opening
+  orders only. Every trip is written to the receipt ledger.
+- **Fail-safe direction.** The Dead-Man's Switch (3 missed heartbeats, plus a watchdog for a stalled heartbeat loop) and
+  Flatten All & Disarm always move toward PAPER. The `CANCEL_ALL_AND_FLATTEN` packets are built before the state flips,
+  and local state is PAPER even if a receiver is unreachable.
+- **Ledger export.** CSV cells that start with `= + - @` (other than plain numbers) are prefixed with `'`, so exported
+  receipts cannot run spreadsheet formulas.
+- **Webhook gateway (SSRF).** `/hook` now forwards only to `127.0.0.1` / `localhost` / `::1` (never the launcher's own
+  port), or to a private-LAN `https` host:port listed in `EXTERM_HOOK_ALLOW`. Credentials in URLs, other schemes,
+  public hosts, look-alike names and metadata addresses are refused. Redirects are still blocked by the existing
+  opener. The legacy third-party bot-service allowlist is removed.
+- **Chart UI.** The context menu, ruler readout, dry-run viewer and journal card build HTML only from `esc()`-escaped
+  strings and listeners attached in JS. There are no inline handlers, so the `default-src 'none'` CSP with SHA-256
+  script / style pins is unchanged. The ruler canvas is `pointer-events: none`.

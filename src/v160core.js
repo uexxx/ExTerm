@@ -48,20 +48,46 @@ const V160 = (() => {
     const k = await s.importKey('raw', V.unhex(secretHex), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
     return V.hex(await s.sign('HMAC', k, new TextEncoder().encode(msg)));
   };
-  /* wire format (a "simple" text/plain POST, so no CORS preflight): {"payload":"<json string>","sig":"sha256=<hex>"} */
-  V.envelope = async (slot, kind, body, secret, session, seq, mode, now) => {
-    const payload = JSON.stringify({ v: 1, app: 'ExTerm', kind, slot: slot.id, adapter: slot.key, mode, ts: now == null ? Date.now() : now, session, seq, body: body || {} });
-    return JSON.stringify({ payload, sig: 'sha256=' + (await V.hmac(secret, payload)) });
+  /* v16.1: every packet carries a unique idempotency_key and expires_at_ms (TTL_MS after ts), and is signed with an
+     ephemeral per-session key = HMAC-SHA256(slot secret, "ExTerm-session-v2|" + session). A fresh session nonce is drawn
+     on every boot and on every arm, so the signing key rotates without re-pairing the receiver. */
+  V.TTL_MS = 3000;
+  V.KDF = 'session-v2';
+  V.uuid = () => {
+    if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') return crypto.randomUUID();
+    const b = new Uint8Array(16); crypto.getRandomValues(b); b[6] = (b[6] & 15) | 64; b[8] = (b[8] & 63) | 128; const h = V.hex(b);
+    return `${h.slice(0, 8)}-${h.slice(8, 12)}-${h.slice(12, 16)}-${h.slice(16, 20)}-${h.slice(20)}`;
   };
-  /* receiver-side verification (also what the tests use): signature, freshness, monotonically rising seq per session */
-  V.verify = async (wire, secret, last, now) => {
+  V.sessionKey = (secret, session) => V.hmac(secret, 'ExTerm-session-v2|' + String(session));
+  /* wire format (a "simple" text/plain POST, so no CORS preflight): {"payload":"<json string>","sig":"sha256=<hex>"} */
+  V.envelope = async (slot, kind, body, secret, session, seq, mode, now, key) => {
+    const ts = now == null ? Date.now() : now;
+    const payload = JSON.stringify({ v: 2, app: 'ExTerm', kind, slot: slot.id, adapter: slot.key, mode, ts, expires_at_ms: ts + V.TTL_MS, idempotency_key: key || V.uuid(), kdf: V.KDF, session, seq, body: body || {} });
+    return JSON.stringify({ payload, sig: 'sha256=' + (await V.hmac(await V.sessionKey(secret, session), payload)) });
+  };
+  /* receiver-side verification (also what the tests use): signature, freshness, TTL, idempotency nonce, rising seq per session.
+     `nonces` (optional) is a V.NonceCache: a key that was already accepted is rejected as a replay. */
+  V.verify = async (wire, secret, last, now, nonces) => {
     let w, p; try { w = JSON.parse(wire); p = JSON.parse(w.payload); } catch (e) { return { ok: false, why: 'malformed' }; }
-    const want = 'sha256=' + (await V.hmac(secret, w.payload));
+    if (!p || typeof p !== 'object') return { ok: false, why: 'malformed' };
+    const want = 'sha256=' + (await V.hmac(p.kdf === V.KDF ? await V.sessionKey(secret, p.session) : secret, w.payload));
     if (typeof w.sig !== 'string' || w.sig.length !== want.length) return { ok: false, why: 'bad signature' };
     let d = 0; for (let i = 0; i < want.length; i++) d |= want.charCodeAt(i) ^ w.sig.charCodeAt(i); if (d) return { ok: false, why: 'bad signature' };
-    if (Math.abs((now == null ? Date.now() : now) - p.ts) > V.MAX_SKEW) return { ok: false, why: 'stale' };
+    const t = now == null ? Date.now() : now;
+    if (Math.abs(t - p.ts) > V.MAX_SKEW) return { ok: false, why: 'stale' };
+    if (p.expires_at_ms != null && !(t <= +p.expires_at_ms)) return { ok: false, why: 'expired' };
+    if (nonces && p.idempotency_key != null) { if (nonces.has(p.idempotency_key, t)) return { ok: false, why: 'replay' }; }
     if (last && last.session === p.session && !(p.seq > last.seq)) return { ok: false, why: 'replay' };
+    if (nonces && p.idempotency_key != null) nonces.add(p.idempotency_key, t);
     return { ok: true, p };
+  };
+  /* rolling anti-replay cache: remembers keys for `ttl` ms (default 10 min), at most `max` entries (oldest evicted first) */
+  V.NonceCache = class {
+    constructor(max = 5000, ttl = 600000) { this.max = max; this.ttl = ttl; this.m = new Map(); }
+    prune(now) { for (const [k, t] of this.m) { if (now - t <= this.ttl && this.m.size <= this.max) break; this.m.delete(k); } }
+    has(k, now = Date.now()) { this.prune(now); return this.m.has(String(k)); }
+    add(k, now = Date.now()) { this.m.delete(String(k)); this.m.set(String(k), now); this.prune(now); return this; }
+    get size() { return this.m.size; }
   };
 
   /* ── state ── */
@@ -110,10 +136,10 @@ const V160 = (() => {
     return { ok: true, risk };
   };
   /* sample receiver contract shown in the UI next to each slot */
-  V.schema = (slot) => JSON.stringify({ transport: slot.tx === 'ws' ? 'WebSocket text frame, reply with one JSON frame' : 'HTTP POST, Content-Type text/plain, reply 2xx JSON + Access-Control-Allow-Origin', wire: { payload: '<JSON string below>', sig: 'sha256=<hex HMAC-SHA256(slot secret, payload)>' }, payload: { v: 1, app: 'ExTerm', kind: 'heartbeat | signal | disarm', slot: slot.id, adapter: slot.key, mode: 'paper | live', ts: 'epoch ms (drop if older than 30 s)', session: 'per-session nonce', seq: 'rises by 1 per envelope (drop repeats)', body: { action: 'buy | sell', symbol: 'BTC', usd: 250, price: 64000, qty: 0.0039, sl: 62000, tp: 68000, source: 'manual | bot:<id>' } }, reply: { ok: true } }, null, 2);
+  V.schema = (slot) => JSON.stringify({ transport: slot.tx === 'ws' ? 'WebSocket text frame, reply with one JSON frame' : 'HTTP POST, Content-Type text/plain, reply 2xx JSON + Access-Control-Allow-Origin', wire: { payload: '<JSON string below>', sig: 'sha256=<hex HMAC-SHA256(session key, payload)>, session key = HMAC-SHA256(slot secret, "ExTerm-session-v2|" + session)' }, payload: { v: 2, app: 'ExTerm', kind: 'heartbeat | signal | dryrun | flatten | disarm', slot: slot.id, adapter: slot.key, mode: 'paper | live', ts: 'epoch ms (drop if older than 30 s)', expires_at_ms: 'ts + 3000 (drop after this)', idempotency_key: 'UUID v4 (drop any key you already saw)', kdf: 'session-v2', session: 'per-session nonce (rotates every boot and every arm)', seq: 'rises by 1 per envelope (drop repeats)', body: { action: 'buy | sell | CANCEL_ALL_AND_FLATTEN', symbol: 'BTC', usd: 250, price: 64000, qty: 0.0039, sl: 62000, tp: 68000, source: 'manual | bot:<id>', dry_run: 'true on Test Signal Payload (never execute)' } }, reply: { ok: true, ack: '<idempotency_key>' } }, null, 2);
   V.sampleReceiver = (slot, secret) => {
     const u = new URL(slot.tx === 'ws' ? slot.url.replace(/^ws/, 'http') : slot.url);
-    return `# exterm_receiver.py: minimal local receiver for slot ${slot.id} (Python stdlib, HTTP)\nimport hmac, hashlib, json, time\nfrom http.server import BaseHTTPRequestHandler, HTTPServer\nSECRET = bytes.fromhex("${secret || '<copy the slot secret>'}")\nlast = {}\nclass H(BaseHTTPRequestHandler):\n    def do_POST(self):\n        w = json.loads(self.rfile.read(int(self.headers["Content-Length"])))\n        good = hmac.compare_digest(w["sig"], "sha256=" + hmac.new(SECRET, w["payload"].encode(), hashlib.sha256).hexdigest())\n        p = json.loads(w["payload"]) if good else {}\n        good = good and abs(time.time() * 1000 - p["ts"]) < 30000 and p["seq"] > last.get(p["session"], 0)\n        if good: last[p["session"]] = p["seq"]  # act on p["body"] here (paper first!)\n        self.send_response(200 if good else 401); self.send_header("Access-Control-Allow-Origin", "*"); self.end_headers()\n        self.wfile.write(json.dumps({"ok": good}).encode())\nHTTPServer(("127.0.0.1", ${+u.port || 80}), H).serve_forever()\n`;
+    return `# exterm_receiver.py: minimal local receiver for slot ${slot.id} (Python stdlib, HTTP)\nimport hmac, hashlib, json, time\nfrom http.server import BaseHTTPRequestHandler, HTTPServer\nSECRET = bytes.fromhex("${secret || '<copy the slot secret>'}")\nlast, seen = {}, {}\ndef skey(session): return hmac.new(SECRET, ("ExTerm-session-v2|" + session).encode(), hashlib.sha256).hexdigest().encode()\nclass H(BaseHTTPRequestHandler):\n    def do_POST(self):\n        w = json.loads(self.rfile.read(int(self.headers["Content-Length"])))\n        p = json.loads(w["payload"]); now = time.time() * 1000\n        key = bytes.fromhex(skey(p["session"]).decode())\n        good = hmac.compare_digest(w["sig"], "sha256=" + hmac.new(key, w["payload"].encode(), hashlib.sha256).hexdigest())\n        good = good and abs(now - p["ts"]) < 30000 and now <= p["expires_at_ms"] and p["idempotency_key"] not in seen and p["seq"] > last.get(p["session"], 0)\n        if good:\n            last[p["session"]] = p["seq"]; seen[p["idempotency_key"]] = now  # act on p["body"] here (paper first; never when body.dry_run)\n        self.send_response(200 if good else 401); self.send_header("Access-Control-Allow-Origin", "*"); self.end_headers()\n        self.wfile.write(json.dumps({"ok": good, "ack": p["idempotency_key"] if good else None}).encode())\nHTTPServer(("127.0.0.1", ${+u.port || 80}), H).serve_forever()\n`;
   };
   return V;
 })();

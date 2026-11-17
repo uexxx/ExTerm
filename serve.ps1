@@ -6,8 +6,9 @@ $root = Split-Path -Parent $MyInvocation.MyCommand.Path
 Add-Type -AssemblyName System.Net.Http
 try { [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12 -bor [Net.SecurityProtocolType]::Tls13 } catch { [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12 }
 $allow = @('api.exchange.coinbase.com', 'api.coinbase.com', 'api.kraken.com', 'api.coingecko.com', 'api.alternative.me', 'min-api.cryptocompare.com', 'ethereum-rpc.publicnode.com', 'eth.llamarpc.com', '1rpc.io', 'cloudflare-eth.com', 'blockchain.info', 'mempool.space', 'router.huggingface.co', 'openrouter.ai', 'api.openai.com', 'query1.finance.yahoo.com', 'query2.finance.yahoo.com', 'api.mainnet-beta.solana.com', 'solana-rpc.publicnode.com', 'solana.drpc.org', 'solana.api.onfinality.io', 'api.dexscreener.com', 'api.geckoterminal.com', 'api.binance.com', 'testnet.binance.vision', 'api.bybit.com', 'api-testnet.bybit.com', 'api.alpaca.markets', 'paper-api.alpaca.markets', 'data.alpaca.markets', 'api.x.com', 'api.twitter.com', 'api.stocktwits.com', 'www.reddit.com', 'data.solanatracker.io', 'api.helius.xyz', 'www.sec.gov', 'data.sec.gov', 'efts.sec.gov', 'feeds.finance.yahoo.com', 'production.dataviz.cnn.io')
-$hookAllow = @('api.3commas.io', 'wtalerts.com', 'www.cryptohopper.com', 'api.cryptohopper.com', 'webhooks.traderspost.io', 'pineconnector.net', 'webhook.pineconnector.com', 'alertatron.com', 'www.alertatron.com', 'hook.finandy.com', 'aleeert.com', 'zignaly.com', 'api.zignaly.com', 'coinrule.com', 'web.coinrule.com', 'octobot.cloud', 'gunthy.org', 'hooks.zapier.com')
-$hookSuffix = @('.3commas.io', '.wundertrading.com', '.cryptohopper.com', '.traderspost.io', '.pineconnector.com', '.alertatron.com', '.finandy.com', '.zignaly.com', '.coinrule.com', '.octobot.cloud')
+# v16.1 webhook gateway: loopback (never this launcher's port) or an allow-listed private-LAN https host:port (EXTERM_HOOK_ALLOW)
+$hookAllow = @('127.0.0.1', 'localhost', '::1')
+$hookSuffix = @(([string]$env:EXTERM_HOOK_ALLOW -split '[\s,]+') | Where-Object { $_ -match '^(10\.\d{1,3}\.\d{1,3}\.\d{1,3}|192\.168\.\d{1,3}\.\d{1,3}|172\.(1[6-9]|2\d|3[01])\.\d{1,3}\.\d{1,3}):\d{1,5}$' })
 $suffix = @('.helius-rpc.com', '.quiknode.pro', '.alchemy.com', '.ankr.com', '.chainstack.com', '.syndica.io', '.shyft.to', '.extrnode.com')
 $handler = New-Object System.Net.Http.HttpClientHandler
 $handler.AutomaticDecompression = [System.Net.DecompressionMethods]::GZip -bor [System.Net.DecompressionMethods]::Deflate
@@ -48,9 +49,9 @@ $worker = {
     if (($path.StartsWith('/proxy') -or $path -eq '/hook') -and $req.Headers['X-ExTerm'] -cne $token) { SendText 403 '{"error":"missing or wrong session token"}' 'application/json'; return }
     if (($path -eq '/proxy' -or $path -eq '/hook') -and -not (RateOk 1)) { SendText 429 '{"error":"local rate limit"}' 'application/json'; return }
     if ($path -eq '/hook') {
-      $hu = $null; if (-not [Uri]::TryCreate($req.QueryString['u'], [UriKind]::Absolute, [ref]$hu) -or $hu.Scheme -ne 'https') { SendText 403 '{"error":"bad webhook url"}' 'application/json'; return }
-      $hh2 = $hu.Host.ToLower(); $hok = $hookAllow -contains $hh2; if (-not $hok) { foreach ($s3 in $hookSuffix) { if ($hh2.EndsWith($s3)) { $hok = $true } } }
-      if (-not $hok -or $req.HttpMethod -ne 'POST') { SendText 403 '{"error":"webhook host not on the trading-bot allow-list"}' 'application/json'; return }
+      $hu = $null; if (-not [Uri]::TryCreate($req.QueryString['u'], [UriKind]::Absolute, [ref]$hu) -or ($hu.Scheme -ne 'https' -and $hu.Scheme -ne 'http') -or $hu.UserInfo) { SendText 403 '{"error":"bad webhook url"}' 'application/json'; return }
+      $hh2 = $hu.Host.ToLower().Trim('[', ']'); $hok = ($hookAllow -contains $hh2) -and ($hu.Port -ne $port); if (-not $hok -and $hu.Scheme -eq 'https') { $hok = $hookSuffix -contains ($hh2 + ':' + $hu.Port) }
+      if (-not $hok -or $req.HttpMethod -ne 'POST') { SendText 403 '{"error":"webhook target must be 127.0.0.1 / localhost or an allow-listed private-LAN https host:port"}' 'application/json'; return }
       if ($req.ContentLength64 -gt 65536) { SendText 413 '{"error":"signal too large"}' 'application/json'; return }
       $ms2 = New-Object IO.MemoryStream; $buf2 = New-Object byte[] 8192; $tot2 = 0; while (($rd2 = $req.InputStream.Read($buf2, 0, $buf2.Length)) -gt 0) { $tot2 += $rd2; if ($tot2 -gt 65536) { SendText 413 '{"error":"signal too large"}' 'application/json'; return }; $ms2.Write($buf2, 0, $rd2) }  # cap applies to chunked bodies too
       $hm = New-Object System.Net.Http.HttpRequestMessage([System.Net.Http.HttpMethod]::Post, $hu); [void]$hm.Headers.TryAddWithoutValidation('User-Agent', 'ExTerm-Signal/1.0')

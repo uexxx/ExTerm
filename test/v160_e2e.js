@@ -88,7 +88,7 @@ const kinds = (k) => R.got.filter((p) => p.kind === k);
     await ev(() => ACC.buy('ETH-USD', px('ETH-USD') || 3000, 5000, Date.now(), {}));
     await sleep(800);
     ok('circuit breaker: a 50%-of-equity trade without a stop is blocked and never sent', await ev(() => /BLOCKED · BUY ETH/.test($('#v160Log').textContent)) && kinds('signal').length === n0 + 1);
-    ok('replay-safe: every envelope carried a rising seq in one session', R.got.every((p, i) => i === 0 || (p.session === R.got[i - 1].session && p.seq > R.got[i - 1].seq)));
+    ok('replay-safe: inside each session (rotated on arm) every envelope carried a rising seq', R.got.every((p, i) => i === 0 || p.session !== R.got[i - 1].session || p.seq > R.got[i - 1].seq) && new Set(R.got.map((p) => p.session)).size >= 2);
     await ev(() => showTab('grok')); await ev(() => $('#v160Bridge').scrollIntoView({ block: 'start' })); await shot('v16.0-local-bot-bridges.png');
 
     // ── 6. reload with a live bot → briefing modal → Disconnect & Revert to Paper
@@ -96,9 +96,9 @@ const kinds = (k) => R.got.filter((p) => p.kind === k);
     ok('reload: Live External Bot Connected briefing appears with slot, endpoint, caps and non-advisory reminder', await waitFor(() => { const m = $('#v160Brief'); return m && /Live External Bot Connected/.test(m.textContent) && /Slot 1/.test(m.textContent) && /127\.0\.0\.1:18765/.test(m.textContent) && /\$500/.test(m.textContent) && /1%/.test(m.textContent) && /investment advice/.test(m.textContent); }, null, 15000));
     ok('briefing: fresh heartbeat latency shown, signals held until acknowledged', await waitFor(() => /\d+ ms/.test(($('#v160Brief [data-v160b="1"]') || {}).textContent || ''), null, 6000) && await ev(() => { ACC.buy(ST.sel, px(ST.sel), 50, Date.now(), { slPct: 0.02 }); return V160UI.briefed === false; }) && (await sleep(600), await ev(() => /HELD · BUY/.test($('#v160Log').textContent || '') || V160UI.stats.blocked > 0)));
     await clean(); await shot('v16.0-boot-briefing.png');
-    const d0 = kinds('disarm').length;
+    const d0 = kinds('flatten').length;
     await page.click('#v160Brief [data-v160="revert"]');
-    ok('Disconnect & Revert to Paper: modal closes, PAPER on all six slots, pill hidden, receiver told to disarm', await ev(() => !$('#v160Brief') && V160UI.st.mode === 'paper' && V160UI.st.slots.every((s) => s.mode === 'paper') && $('#v160Pill').hidden && !V160UI.st.ack) && await waitFor(() => true) && (await sleep(800), kinds('disarm').length === d0 + 1));
+    ok('Disconnect & Revert to Paper: modal closes, PAPER on all six slots, pill hidden, receiver told to CANCEL_ALL_AND_FLATTEN', await ev(() => !$('#v160Brief') && V160UI.st.mode === 'paper' && V160UI.st.slots.every((s) => s.mode === 'paper') && $('#v160Pill').hidden && !V160UI.st.ack) && await waitFor(() => true) && (await sleep(800), kinds('flatten').length === d0 + 1 && kinds('flatten').pop().body.action === 'CANCEL_ALL_AND_FLATTEN'));
 
     // ── 7. re-arm (disclosure + phrase required again) → reload → acknowledge → Ctrl+Shift+K
     await ev(() => showTab('grok')); await sleep(300);

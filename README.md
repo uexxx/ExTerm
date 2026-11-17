@@ -1,6 +1,6 @@
 <div align="center">
 
-# ExTerm v16.0
+# ExTerm v16.1
 
 ### Local-first trading workstation for US stocks, crypto spot & perps and on-chain DEX tokens, in one browser tab.
 
@@ -8,10 +8,10 @@
 
 <img src="docs/screenshots/v15.7-1s-candles.png" alt="ExTerm Markets screen on the 1s timeframe with true-form candles; at 1440×900: tonal obsidian panels without outlines, one-word top tabs, a watchlist with 44px sparklines, and the watchlist and order ticket gently dimmed while the cursor is over the price chart" width="100%">
 
-**[Quickstart](#-2-second-quickstart)** · **[What's new](#-whats-new-in-v160)** · **[v15.7](#-whats-new-in-v157)** · **[v15.6](#-whats-new-in-v156)** · **[v15.5](#-whats-new-in-v155)** · **[v15.4](#-whats-new-in-v154)** · **[v15.3](#-whats-new-in-v153)** · **[v15.2](#-whats-new-in-v152)** · **[Features](#-whats-in-v151)** · **[Security](#-security)** · **[Verify a build](#-how-to-verify-official-builds)** · **[License](#-license)** · **[Brand policy](#-brand--logo-policy)**
+**[Quickstart](#-2-second-quickstart)** · **[What's new](#-whats-new-in-v161)** · **[v16.0](#-whats-new-in-v160)** · **[v15.7](#-whats-new-in-v157)** · **[v15.6](#-whats-new-in-v156)** · **[v15.5](#-whats-new-in-v155)** · **[v15.4](#-whats-new-in-v154)** · **[v15.3](#-whats-new-in-v153)** · **[v15.2](#-whats-new-in-v152)** · **[Features](#-whats-in-v151)** · **[Security](#-security)** · **[Verify a build](#-how-to-verify-official-builds)** · **[License](#-license)** · **[Brand policy](#-brand--logo-policy)**
 
 <p>
-  <a href="https://github.com/uexxx/ExTerm/releases/latest"><img src="https://img.shields.io/badge/download-v16.0-D4AF37?style=for-the-badge" alt="Download v16.0"></a>
+  <a href="https://github.com/uexxx/ExTerm/releases/latest"><img src="https://img.shields.io/badge/download-v16.1-D4AF37?style=for-the-badge" alt="Download v16.1"></a>
   <img src="https://img.shields.io/badge/indicators-137-D4AF37?style=for-the-badge" alt="137 indicators">
   <img src="https://img.shields.io/badge/backtestable%20strategies-128-CBD5E1?style=for-the-badge" alt="128 backtestable strategies">
   <img src="https://img.shields.io/badge/languages-32%20%2B%20ISO--639-CBD5E1?style=for-the-badge" alt="32 languages plus ISO-639 fallback">
@@ -49,6 +49,53 @@ Useful flags: `python3 serve.py 9000` (other port) · `--no-browser` · `--docto
 
 ---
 
+## 🎯 What's new in v16.1
+
+**Chart click / drag trading, a price-aware right-click menu, a precision measure ruler and eight bot fail-safe engines.**
+Every v16.0 capability is still here, and ExTerm still holds no funds and no keys.
+
+<img src="docs/screenshots/v16.1-chart-order-lines.png" alt="ExTerm v16.1 Markets screen at 1440×900: a draft long bracket on the chart with draggable Entry, Stop-Loss and Take-Profit lines, live dollar and percent risk labels, and the order ticket showing the same limit price, SL % and TP %" width="100%">
+
+### 📈 Chart click-to-trade, done precisely
+- One exact `chart.priceToY` / `chart.yToPrice` mapping is shared by clicks, line drags, the menu and the ruler, on every
+  timeframe from `1s` to `1h`.
+- Dragging the **Entry**, **Stop-Loss** or **TP** line updates the live `$` / `%` risk readout and keeps the order ticket
+  (limit price, SL %, TP %) in step. TP1–TP3 ladder rungs stay draggable.
+- Non-interactive chart overlays use `pointer-events: none`, so every click reaches the chart hit-tester.
+
+<img src="docs/screenshots/v16.1-chart-context-menu.png" alt="ExTerm Chart Context Menu at 1440×900 opened over the BTC chart: Place Buy and Sell orders at the clicked price, Set Price Alert, Drop Horizontal Level, Anchor VWAP Here, Start Tick Replay From Here, Explain Price Move Here, Measure Dragger, Reset Chart Scale and Copy Price" width="100%">
+
+### 🖱 ExTerm Chart Context Menu (right-click the chart)
+The browser's "Save image as" menu no longer opens on the chart. You get a price-aware menu at the cursor instead. It flips at the
+screen edges, supports the arrow keys, and closes on `Esc` or an outside click:
+**Place Buy Limit / Stop @ $Price** · **Place Sell Stop / Limit @ $Price** · **Set Price Alert @ $Price** ·
+**Drop Horizontal Level** · **Anchor VWAP Here** · **Start Tick Replay From Here** · **Explain Price Move Here (AI Forensics)** ·
+**Measure Dragger** · **Reset Chart Scale** · **Copy Price ($Price)**. Right-clicking a TP rung still opens the step-ladder menu.
+
+<img src="docs/screenshots/v16.1-measure-dragger.png" alt="ExTerm v16.1 Measure Dragger at 1440×900: a gold shaded zone between two points on the chart with the price change in dollars and percent, the bar count, the elapsed time and the cumulative volume" width="100%">
+
+### 📏 Precision Measure Dragger (`Shift` + drag, or the **Measure** toolbar toggle)
+A gold zone (price up) or crimson zone (price down) shows the exact **Δ$**, **%**, **bar count**, **elapsed time** and
+**cumulative volume** in tabular figures. It draws on a light top canvas, so the candle layer keeps its full refresh
+rate, and it stays attached to its prices and times when you pan or zoom. `Shift` + drag never pans the chart. `Esc` clears it.
+
+<img src="docs/screenshots/v16.1-bot-failsafes-ledger.png" alt="ExTerm v16.1 Execution Bridge at 1440×900: the 8 Fail-Safe Engines panel with notional, spread, loss-streak and cooldown settings, the Flatten All and Disarm button, and the signed receipt ledger listing heartbeats, signals, breaker trips and kill-switch events with idempotency keys and HMAC signatures" width="100%">
+
+### 🛡 8 live bot security & fail-safe engines
+| # | Engine | What it does |
+|---|---|---|
+| 1 | **Idempotency Shield + Dead-Man's Switch** | Every outbound packet carries a UUID `idempotency_key` and `expires_at_ms` (3 s TTL). Three missed heartbeats, or a stalled heartbeat loop, auto-disarm to PAPER. Each slot has a **Test Signal Payload (Dry-Run)** button that shows the signed JSON and checks the receiver's `ack`. |
+| 2 | **Ephemeral session key + anti-replay cache** | Packets are signed with `HMAC-SHA256(slot secret, "ExTerm-session-v2|" + session)`. A fresh session is drawn on every boot and every arm. Used keys are tracked in a rolling nonce cache, so a replayed packet is rejected. |
+| 3 | **Signal Firewall** | Blocks `NaN` / `Infinity`, negative or zero sizes, invalid symbols, missing or inverted stop-losses, and any opening order above your **Max Single-Order Notional $** cap. |
+| 4 | **Execution Shield** | Holds new orders while the live bid-ask spread is above your `%` ceiling. |
+| 5 | **Tilt & Drawdown Guard** | Pauses live routing for `15m`, `1h` or `24h` after `N` consecutive losing trades. |
+| 6 | **Flatten All & Disarm** | `Ctrl+Shift+K` or the panel button sends a signed `CANCEL_ALL_AND_FLATTEN` to every armed adapter, then locks all six slots back to PAPER. |
+| 7 | **Signed Receipt Ledger** | Records every signal, heartbeat, breaker trip, arm and kill event with its timestamp, `idempotency_key` and HMAC-SHA256 signature. One-click JSON / CSV export. |
+| 8 | **Discipline Attribution** (Journal) | Tags every closed trade **Followed Plan**, **Moved Stop Wider**, **Over-Size Risk** or **Early Exit**, and shows the net `$` from disciplined trades vs. rule violations. |
+
+Closing orders are never blocked by the notional cap, the spread breaker or the cooldown, because they only reduce exposure.
+The launcher's `/hook` gateway now forwards only to `127.0.0.1` / `localhost`, or to a private-LAN `https` host:port you list in
+`EXTERM_HOOK_ALLOW`. Third-party services are refused.
 ## 🔌 What's new in v16.0
 
 **Six local external bot bridges behind a four-gate live safety lock.** Every v15.7 capability is still here. ExTerm

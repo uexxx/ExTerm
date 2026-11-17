@@ -22,10 +22,32 @@ ALLOW = {  # only these public API hosts can be proxied
     "api.worldmonitor.app", "api.x.ai", "stats-data.hyperliquid.xyz",
     "data.solanatracker.io", "api.helius.xyz", "api.rugcheck.xyz", "www.sec.gov", "data.sec.gov", "efts.sec.gov", "feeds.finance.yahoo.com", "production.dataviz.cnn.io",
 }
-# webhook gateway: signals may only be POSTed to these trading-bot services (https only)
-HOOK_ALLOW = {"api.3commas.io", "wtalerts.com", "www.cryptohopper.com", "api.cryptohopper.com", "webhooks.traderspost.io", "pineconnector.net", "webhook.pineconnector.com",
-              "alertatron.com", "www.alertatron.com", "hook.finandy.com", "aleeert.com", "zignaly.com", "api.zignaly.com", "coinrule.com", "web.coinrule.com", "octobot.cloud", "gunthy.org", "hooks.zapier.com"}
-HOOK_SUFFIX = (".3commas.io", ".wundertrading.com", ".cryptohopper.com", ".traderspost.io", ".pineconnector.com", ".alertatron.com", ".finandy.com", ".zignaly.com", ".coinrule.com", ".octobot.cloud")
+# webhook gateway (v16.1): signals may only be POSTed to a bot you run yourself: 127.0.0.1 / localhost (http or https,
+# never this launcher's own port), or a private-LAN host:port you allow-list over https with EXTERM_HOOK_ALLOW="192.168.1.20:8443,..."
+import re as _re0
+HOOK_LOOPBACK = {"127.0.0.1", "localhost", "::1"}
+def _private_ip(h):
+    m = _re0.match(r"^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$", h or "")
+    if not m or any(int(x) > 255 for x in m.groups()): return False
+    a, b = int(m.group(1)), int(m.group(2))
+    return a == 10 or (a == 172 and 16 <= b <= 31) or (a == 192 and b == 168)
+def _hook_lan():
+    out = set()
+    for x in _re0.split(r"[\s,]+", os.environ.get("EXTERM_HOOK_ALLOW", "")):
+        m = _re0.match(r"^(\d{1,3}(?:\.\d{1,3}){3}):(\d{1,5})$", x.strip())
+        if m and _private_ip(m.group(1)) and 0 < int(m.group(2)) < 65536: out.add(m.group(1) + ":" + m.group(2))
+    return out
+def hook_target_ok(url):
+    """True only for loopback (any port but the launcher's) or an allow-listed private-LAN host:port over https."""
+    try:
+        u = urllib.parse.urlparse(str(url)); port = u.port
+    except ValueError:
+        return False
+    host = (u.hostname or "").lower()
+    if u.scheme not in ("http", "https") or u.username or u.password or not host: return False
+    port = port or (443 if u.scheme == "https" else 80)
+    if host in HOOK_LOOPBACK: return port != PORT
+    return u.scheme == "https" and _private_ip(host) and (host + ":" + str(port)) in _hook_lan()
 ALLOW_SUFFIX = (".helius-rpc.com", ".quiknode.pro", ".alchemy.com", ".ankr.com", ".chainstack.com", ".syndica.io", ".shyft.to", ".extrnode.com")
 CTX = ssl.create_default_context()
 import secrets, hmac as _hmac, threading, re
@@ -67,7 +89,7 @@ class NoRedirect(urllib.request.HTTPRedirectHandler):
 NOTIFY_OPENER = urllib.request.build_opener(NoRedirect(), urllib.request.HTTPSHandler(context=CTX))
 LOCAL_OPENER = urllib.request.build_opener(NoRedirect(), urllib.request.HTTPHandler())
 
-VERSION = "16.0"
+VERSION = "16.1"
 STARTED = time.time()
 CACHE_STATS = {"hits": 0, "total": 0}  # /api/feed symbols answered from RAM vs asked for (Grok telemetry strip)
 OLD_DATA_DIR = pathlib.Path.home() / ".novaterm"  # pre-v15 name, moved to ~/.exterm on first start
@@ -1698,8 +1720,8 @@ class H(http.server.BaseHTTPRequestHandler):
         url = (q.get("u") or [""])[0]; u = urllib.parse.urlparse(url); host = (u.hostname or "").lower()
         if not _hmac.compare_digest(self.headers.get("X-ExTerm") or "", TOKEN):
             return self._send(403, b'{"error":"missing or wrong session token"}')
-        if u.scheme != "https" or not (host in HOOK_ALLOW or host.endswith(HOOK_SUFFIX)):
-            return self._send(403, json.dumps({"error": "webhook host not on the trading-bot allow-list: " + host}).encode())
+        if not hook_target_ok(url):
+            return self._send(403, json.dumps({"error": "webhook target must be 127.0.0.1 / localhost or an allow-listed private-LAN https host:port: " + host[:80]}).encode())
         if not rate_ok(2):
             return self._send(429, b'{"error":"local rate limit"}')
         n = int(self.headers.get("Content-Length") or 0)

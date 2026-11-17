@@ -1,7 +1,38 @@
 # Changelog
 
-ExTerm (formerly NovaTerm) holds no funds and no keys in every version. Up to v15.7 it was paper only; from v16.0 it can send HMAC-signed signals to a bot you run on your own machine, only after four explicit gates, and it starts in PAPER.
+ExTerm (formerly NovaTerm) holds no funds and no keys in every version. Up to v15.7 it was paper only; from v16.0 it can send HMAC-signed signals to a bot you run on your own machine, only after four explicit gates, and it starts in PAPER. v16.1 adds eight fail-safe engines on that path.
 
+## v16.1 — Chart Click/Drag Trading, Measure Ruler & 8 Bot Security Engines — 16 Nov 2026
+
+### Chart (`src/v161core.js`, `src/v161.js`)
+- `chart.priceToY` / `chart.yToPrice` / `chart.idxAtX`: one exact mapping for clicks, line drags, menus and the ruler, on every timeframe (`1s` … `1h`).
+- Dragging the draft Entry / Stop-Loss / TP lines keeps the order ticket (limit or stop price, SL %, TP %) in step; live `$` / `%` readouts update during the drag.
+- ExTerm Chart Context Menu on right-click (the browser image menu is suppressed on the chart): Place Buy Limit / Stop, Place Sell Stop / Limit, Set Price Alert, Drop Horizontal Level, Anchor VWAP Here, Start Tick Replay From Here, Explain Price Move Here (AI Forensics), Measure Dragger, Reset Chart Scale, Copy Price. Original SVG icons, edge flipping, arrow keys, `Esc` / outside-click close. TP-rung right-clicks still open the step-ladder menu.
+- Precision Measure Dragger (`Shift` + drag or the Measure toolbar toggle): a gold (up) or crimson (down) zone with Δ$, %, bars, elapsed time and cumulative volume in tabular figures, drawn on a pointer-transparent top canvas, so the candle layer is not redrawn for it. Measure gestures are captured on the chart host, so `Shift` + drag never pans the chart and never grabs an order line.
+- Non-interactive chart overlays are `pointer-events: none`.
+
+### Bot security & fail-safes (`src/v160core.js`, `src/v160.js`, `src/v161core.js`)
+- Envelope v2: UUID `idempotency_key`, `expires_at_ms = ts + 3000`, `kdf: session-v2`; signed with an ephemeral session key `HMAC-SHA256(slot secret, "ExTerm-session-v2|" + session)` that rotates on every boot and every arm. `V160.verify` adds `expired` and nonce-cache `replay` rejection; `V160.NonceCache` is a bounded, time-limited rolling cache. The sender never reuses a key, and a reply whose `ack` does not match is a failure.
+- Test Signal Payload (Dry-Run) on each of the six slots: a signed `dryrun` packet with `dry_run: true`, the full signed JSON shown, and the receiver acknowledgment checked.
+- Dead-Man's Switch: three missed heartbeats, or no successful heartbeat within 3 × 15 s + 10 s (watchdog), auto-disarm to PAPER.
+- Signal Firewall: schema validation (finite numbers, symbol pattern, known action, positive size, stop-loss below entry) and the Max Single-Order Notional $ cap on opening orders.
+- Execution Shield: opening orders are held while the bid-ask spread (from the live quote or the last order book) is above the configured ceiling.
+- Tilt & Drawdown Guard: `N` consecutive losing closes pause live routing for 15m / 1h / 24h from the last loss.
+- Flatten All & Disarm (`Ctrl+Shift+K` and a panel button): a signed `CANCEL_ALL_AND_FLATTEN` goes to every armed slot (built with mode `live`), then all six slots lock to PAPER. It replaces the v16.0 `disarm` packet.
+- Signed Receipt Ledger: every signal, heartbeat, breaker trip, arm, dry-run and kill event, with timestamp, idempotency_key and HMAC-SHA256 signature; persisted (1,000 rows) with JSON / CSV export (formula-safe).
+- Fail-safe settings (notional, spread %, loss streak, cooldown) are sanitised on load, fall back to conservative defaults ($10,000 · 0.5% · 3 · 1h) and are frozen while live.
+
+### Journal
+- Discipline Attribution card: closed trades are tagged Followed Plan / Moved Stop Wider / Over-Size Risk / Early Exit against the plan recorded at entry, with net $ for disciplined trades vs. rule violations and per tag.
+
+### Launcher
+- `/hook` gateway (`serve.py`, `serve.ps1`) forwards only to `127.0.0.1` / `localhost` (never the launcher's own port), or to a private-LAN `https` host:port listed in `EXTERM_HOOK_ALLOW`. The legacy third-party bot-service allowlist is removed, and the in-app webhook fields now accept local endpoints. Launcher version 16.1.
+
+### Tests
+- `test/v161.test.js` (41 checks): idempotency keys, TTL, session-key derivation and rotation, anti-replay cache, firewall, spread breaker, cooldown, ledger CSV / JSON, discipline tags, measure maths, menu flipping, static CSP / privacy checks.
+- `test/v161_server_test.py` (6 checks): localhost-only webhook gateway.
+- `test/v161_e2e.js` (60 checks, 1440×900, English + Arabic) against a receiver that verifies the session key, TTL and idempotency nonce and echoes `ack`: covers chart hit-testing on 1s–1h, ticket sync while dragging Entry / SL / TP, every context-menu action, edge flipping, Shift + drag, all eight fail-safe engines, Journal attribution, v15.1–v16.0 regressions and zero page errors.
+- v15.6 / v15.7 / v16.0 build-order assertions accept the v16.1 modules. The v16.0 e2e expects the per-session seq and the `flatten` packet.
 ## v16.0 — 6 Local External Bot Bridges & Multi-Gate Live Safety System — 16 Nov 2026
 
 ### Bridges (`src/v160core.js`, `src/v160.js`)
