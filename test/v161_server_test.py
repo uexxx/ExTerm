@@ -17,6 +17,6 @@ os.environ["EXTERM_HOOK_ALLOW"] = "192.168.1.20:8443, 8.8.8.8:443, evil.com:80"
 ok("an allow-listed private-LAN host:port passes over https only", serve.hook_target_ok("https://192.168.1.20:8443/x") and not serve.hook_target_ok("http://192.168.1.20:8443/x") and not serve.hook_target_ok("https://192.168.1.20:8444/x"))
 ok("public IPs and hostnames in the allowlist are ignored", not serve.hook_target_ok("https://8.8.8.8:443/") and not serve.hook_target_ok("https://evil.com:80/"))
 del os.environ["EXTERM_HOOK_ALLOW"]
-ok("launcher version is 16.1", serve.VERSION == "16.1")
+ok("launcher version is 16.1 or later", tuple(map(int, serve.VERSION.split("."))) >= (16, 1))
 ok("legacy bot-domain allowlists are gone", not hasattr(serve, "HOOK_ALLOW") and not hasattr(serve, "HOOK_SUFFIX"))
 print("\n".join(res)); fl = sum(r.startswith("FAIL") for r in res); print(f"\n{len(res) - fl}/{len(res)} passed"); sys.exit(1 if fl else 0)

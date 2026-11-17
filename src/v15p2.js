@@ -460,7 +460,7 @@ const Brief = (() => {
   B.auto = () => {
     if (navigator.webdriver || ST.settings.brief === false || ST.settings.briefDay === B.day()) return false;
     ST.settings.briefDay = B.day(); saveState();
-    setTimeout(() => { if (!document.querySelector('.v13-modal, #tourOv, #walkCard')) B.open(); }, 6000);
+    setTimeout(() => { if (!document.querySelector('.v13-modal, #tourOv, #walkCard, #v162Brief')) B.open(); }, 6000);
     return true;
   };
   return B;

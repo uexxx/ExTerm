@@ -52,7 +52,7 @@ ok('geometry: visible bar count fits the plot at 6px per bar (1,000px plot → 1
 
 // ── build + static checks
 const B = fs.readFileSync(path.join(__dirname, '..', 'build.py'), 'utf8'), CORE = fs.readFileSync(path.join(__dirname, '..', 'src', 'core.js'), 'utf8'), APP = fs.readFileSync(path.join(__dirname, '..', 'src', 'app_a.js'), 'utf8');
-ok('build: v157core.js + v157.js bundled after v156.js and before boot.js', /"v156\.js", "v157core\.js", "v157\.js", "v160core\.js", ("v161core\.js", )?"v160\.js", ("v161\.js", )?"boot\.js"/.test(B));
+ok('build: v157core.js + v157.js bundled after v156.js and before boot.js', /"v156\.js", "v157core\.js", "v157\.js", "v160core\.js", ("v161core\.js", )?("v162core\.js", )?"v160\.js", ("v161\.js", )?("v162\.js", )?"boot\.js"/.test(B));
 ok('timeframes: 10s is a first-class timeframe (NT.TF + the timeframe buttons)', /'10s': 10/.test(CORE) && /'5s', '10s', '15s'/.test(APP));
 const SRC = ['v157core.js', 'v157.js'].map((x) => [x, fs.readFileSync(path.join(__dirname, '..', 'src', x), 'utf8')]);
 ok('static: no inline event handlers, eval, new Function, WebGL or external imports in v15.7 modules', SRC.every(([, x]) => !/\son[a-z]+\s*=\s*["'`]/i.test(x.replace(/\/\*[\s\S]*?\*\//g, '')) && !/\beval\(|new Function\(|getContext\(['"]webgl|import\s*\(|https?:\/\/(?!github\.com\/uexxx)/.test(x)));

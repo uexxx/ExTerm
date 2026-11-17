@@ -1,6 +1,6 @@
 <div align="center">
 
-# ExTerm v16.1
+# ExTerm v16.2
 
 ### Local-first trading workstation for US stocks, crypto spot & perps and on-chain DEX tokens, in one browser tab.
 
@@ -8,10 +8,10 @@
 
 <img src="docs/screenshots/v15.7-1s-candles.png" alt="ExTerm Markets screen on the 1s timeframe with true-form candles; at 1440×900: tonal obsidian panels without outlines, one-word top tabs, a watchlist with 44px sparklines, and the watchlist and order ticket gently dimmed while the cursor is over the price chart" width="100%">
 
-**[Quickstart](#-2-second-quickstart)** · **[What's new](#-whats-new-in-v161)** · **[v16.0](#-whats-new-in-v160)** · **[v15.7](#-whats-new-in-v157)** · **[v15.6](#-whats-new-in-v156)** · **[v15.5](#-whats-new-in-v155)** · **[v15.4](#-whats-new-in-v154)** · **[v15.3](#-whats-new-in-v153)** · **[v15.2](#-whats-new-in-v152)** · **[Features](#-whats-in-v151)** · **[Security](#-security)** · **[Verify a build](#-how-to-verify-official-builds)** · **[License](#-license)** · **[Brand policy](#-brand--logo-policy)**
+**[Quickstart](#-2-second-quickstart)** · **[What's new](#-whats-new-in-v162)** · **[v16.1](#-whats-new-in-v161)** · **[v16.0](#-whats-new-in-v160)** · **[v15.7](#-whats-new-in-v157)** · **[v15.6](#-whats-new-in-v156)** · **[v15.5](#-whats-new-in-v155)** · **[v15.4](#-whats-new-in-v154)** · **[v15.3](#-whats-new-in-v153)** · **[v15.2](#-whats-new-in-v152)** · **[Features](#-whats-in-v151)** · **[Security](#-security)** · **[Verify a build](#-how-to-verify-official-builds)** · **[License](#-license)** · **[Brand policy](#-brand--logo-policy)**
 
 <p>
-  <a href="https://github.com/uexxx/ExTerm/releases/latest"><img src="https://img.shields.io/badge/download-v16.1-D4AF37?style=for-the-badge" alt="Download v16.1"></a>
+  <a href="https://github.com/uexxx/ExTerm/releases/latest"><img src="https://img.shields.io/badge/download-v16.2-D4AF37?style=for-the-badge" alt="Download v16.2"></a>
   <img src="https://img.shields.io/badge/indicators-137-D4AF37?style=for-the-badge" alt="137 indicators">
   <img src="https://img.shields.io/badge/backtestable%20strategies-128-CBD5E1?style=for-the-badge" alt="128 backtestable strategies">
   <img src="https://img.shields.io/badge/languages-32%20%2B%20ISO--639-CBD5E1?style=for-the-badge" alt="32 languages plus ISO-639 fallback">
@@ -46,6 +46,46 @@ Useful flags: `python3 serve.py 9000` (other port) · `--no-browser` · `--docto
 
 > Opening `exterm.html` directly also works for crypto, but browsers block some stock and on-chain sources. The launcher
 > proxies only an allow-list of public market-data hosts, on `localhost`, behind a fresh per-launch token.
+
+---
+
+## 🎯 What's new in v16.2
+
+**Universal timeframes, true-form sub-minute candles everywhere, Max Daily Loss auto-flatten, a launch safety briefing and a live-only workspace.**
+Every v16.1 capability is still here in PAPER, and ExTerm still holds no funds and no keys.
+
+<img src="docs/screenshots/v16.2-launch-safety-briefing.png" alt="ExTerm v16.2 Launch Safety and Critical Updates briefing at 1440×900: zero-custody local routing on 127.0.0.1, the 5-point live safety checklist, the v16.2 release highlights, and the Continue in Safe Mode (PAPER) and Open Execution Bridge buttons" width="100%">
+
+### 🛡 Launch Safety & Critical Updates briefing (every start)
+Every fresh launch, in PAPER or with live routing armed, opens a short briefing: zero-custody `127.0.0.1` routing, the
+**5-Point Live Safety Checklist** and the v16.2 highlights. **Continue in Safe Mode (PAPER)** (or `Esc`) keeps you in PAPER;
+if live routing was armed, it flattens and disarms all six slots. **Open Execution Bridge & Safety Settings** takes you to the bridge.
+
+<img src="docs/screenshots/v16.2-stock-15s-true-form.png" alt="ExTerm v16.2 stock chart on the 15s timeframe at 1440×900: full-width true-form candles seeded from 1-minute history and bridged to the live price, EMA 20 and 50 across the whole pane, and the full timeframe bar from 1s to 1w" width="100%">
+
+### ⏱ Universal timeframes and true-form sub-minute candles
+- `1s` `5s` `10s` `15s` `1m` `5m` `15m` `1h` `4h` `1d` `1w` quick pills, and `30s` `3m` `30m` `2h` `1M` behind `⋯`, on crypto, stocks, on-chain, options and futures alike.
+- Stocks and on-chain tokens rarely trade every second. The `1s`–`15s` window is now back-populated from the symbol's recent 1-minute OHLCV and
+  bridged smoothly to the current price, so the chart is full-width from the first frame and EMA 20 / 50 start at the left edge.
+  This works from `$284.64` large caps to 8-decimal micro-caps such as `0.000001088`. Real tick bars replace seeded ones as they arrive.
+- Live ticks keep gapless `Open = previous Close` aggregation. Sub-minute charts keep a minimum price span of 0.20 % of price, so quiet seconds never collapse into dashes.
+- **MARKET CLOSED · LAST SESSION** badge next to the feed pill for US equities outside regular hours; the chart shows the last session.
+
+<img src="docs/screenshots/v16.2-onchain-1s-true-form.png" alt="ExTerm v16.2 on-chain micro-cap token on the 1s timeframe at 1440×900: full-width true-form candles at eight decimals with a readable price axis" width="100%">
+
+### 🧯 Max Daily Loss ($) auto-flatten
+While any slot is armed, ExTerm checks realised + unrealised session drawdown every second. When it reaches your **Max Daily Loss ($)**,
+a signed `CANCEL_ALL_AND_FLATTEN` goes to every armed local bot, all six slots revert to PAPER, the breach is written to the
+Signed Signal Receipt Ledger, and a circuit-breaker alert explains what happened. The Portfolio tab shows a live loss gauge while armed.
+
+<img src="docs/screenshots/v16.2-live-only-armed-ledger.png" alt="ExTerm v16.2 with live routing armed at 1440×900: the live-only workspace with the six local bridge slots, heartbeat monitor, circuit breakers and the signed receipt ledger, with paper and simulation tools hidden" width="100%">
+
+### 🔴 Live-only workspace (`body.live-bot-armed`)
+Arming live routing hides paper and simulation tools in every tab until you disarm: Tick Replay (button and context-menu entry), paper
+balance resets, Genetic Auto-Evolve, Crisis Time Machine, synthetic stress paths, walk-forward / Monte Carlo, the 3D Profit Mountain,
+Backtest Style and Learn practice drills (behind a **LIVE BOT ARMED — Practice Drills Paused** banner). Live candles, indicators, chart
+order lines, the context menu's live actions, the Measure Dragger, the order ticket, positions, the order book, CVD, tape, the 3D terrain, IV
+surface and whale orbit, the six bridge slots, heartbeats, circuit breakers and **Flatten All & Disarm** (`Ctrl+Shift+K`) stay.
 
 ---
 

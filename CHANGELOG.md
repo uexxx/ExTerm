@@ -2,6 +2,23 @@
 
 ExTerm (formerly NovaTerm) holds no funds and no keys in every version. Up to v15.7 it was paper only; from v16.0 it can send HMAC-signed signals to a bot you run on your own machine, only after four explicit gates, and it starts in PAPER. v16.1 adds eight fail-safe engines on that path.
 
+## v16.2 — Universal Timeframes, True-Form Candles, Auto-Flatten & Live-Only Mode — 17 Nov 2026
+
+### Timeframes & candles (`src/core.js`, `src/app_a.js`, `src/data.js`, `src/charts.js`, `src/v162core.js`)
+- `1w` and `1M` join the timeframe list on every market (aggregated from daily bars; `1M` uses 30-day buckets). Quick pills: `1s 5s 10s 15s 1m 5m 15m 1h 4h 1d 1w`; the rest sit behind `⋯`.
+- Stock and on-chain `1s` / `5s` / `10s` / `15s`: `TFX.seedHist` back-populates the full window from 1-minute OHLCV via `V162.seedSub` (open → extremes → close path per minute, deterministic, bridged multiplicatively so the last close equals the live price, at any decimal precision). Real tick bars replace seeded ones; every bar opens at the prior close. Outside US regular hours the window ends at the last session bar.
+- Sub-minute charts keep a minimum y-axis span of 0.20 % of price (`V162.minSpan`).
+- `MARKET CLOSED · LAST SESSION` badge next to the feed pill for US equities outside regular hours.
+
+### Safety (`src/v162.js`, `src/v160.js`)
+- Launch Safety & Critical Updates briefing on every fresh start (PAPER or armed): zero-custody `127.0.0.1` routing, the 5-Point Live Safety Checklist and release highlights. Continue in Safe Mode (PAPER) / `Esc` keeps PAPER and disarms an armed session; Open Execution Bridge & Safety Settings opens the bridge. Focus-trapped dialog. The daily Morning Brief waits until it is closed.
+- Max Daily Loss ($) auto-flatten: checked every second while armed; at or beyond the cap, `CANCEL_ALL_AND_FLATTEN` is broadcast through the existing kill path, all six slots revert to PAPER, a `daily-loss` breaker row is added to the receipt ledger and an alert dialog opens. Portfolio shows a live loss gauge while armed.
+- Live-only workspace: `body.live-bot-armed` hides Tick Replay, paper resets, Auto-Evolve, Crisis Time Machine, synthetic stress, walk-forward / Monte Carlo, the 3D Profit Mountain, Backtest Style and Learn drills (with a paused-drills banner) until disarmed.
+- `V160UI` now exposes `dayLoss`, `live` and `led` for the breaker.
+
+### Tests
+- `test/v162.test.js` (57 checks) and `test/v162_e2e.js` (35 checks, English + Arabic, 1440×900, real signed receiver on 127.0.0.1). Older build-order checks accept the v16.2 modules.
+
 ## v16.1 — Chart Click/Drag Trading, Measure Ruler & 8 Bot Security Engines — 16 Nov 2026
 
 ### Chart (`src/v161core.js`, `src/v161.js`)

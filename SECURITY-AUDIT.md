@@ -200,3 +200,13 @@ Scope: `src/v161core.js`, `src/v161.js`, the v16.1 changes in `src/v160core.js` 
 - **Chart UI.** The context menu, ruler readout, dry-run viewer and journal card build HTML only from `esc()`-escaped
   strings and listeners attached in JS. There are no inline handlers, so the `default-src 'none'` CSP with SHA-256
   script / style pins is unchanged. The ruler canvas is `pointer-events: none`.
+## v16.2 addendum: seeded sub-minute candles, daily-loss auto-flatten, launch briefing, live-only workspace
+
+Scope: `src/v162core.js`, `src/v162.js`, the v16.2 changes in `src/data.js`, `src/charts.js`, `src/core.js`, `src/app_a.js`, `src/v160.js`, `src/v15p2.js`.
+
+- **No new network surface.** Seeding reads the existing 1-minute history path (same allow-listed hosts and launcher proxy); no new hosts, endpoints or `serve.py` routes. The webhook gateway stays loopback / allow-listed private LAN only.
+- **Kill path reuse.** The Max Daily Loss breaker calls the existing `V160UI.kill`, so `CANCEL_ALL_AND_FLATTEN` is signed with the session key, carries a fresh `idempotency_key` and 3 s TTL, and is sent only to slots that were armed. The breaker trips once per armed session and is re-armed only through the four gates.
+- **Fail-safe direction.** The launch briefing's default action (`Esc`, initial focus) is Safe Mode (PAPER); with live routing armed it disarms. The breaker treats a blank / zero cap as off (gate 2 already requires a positive cap to arm).
+- **CSP / XSS.** No inline handlers, no `eval`; dialog text is static or passed through `esc()`; numeric values only in ledger details. `python build.py --harden` passes with the `default-src 'none'` hash policy.
+- **Integrity of seeded data.** Seeded bars are deterministic, bounded to the visible window, marked separately from real bars (`real: true` on tick bars), and never used for order prices: fills still use the live quote.
+- **Automation.** The start-up briefing is skipped when `navigator.webdriver` is set, so automated regression runs can drive the page. A normal browser always shows it.

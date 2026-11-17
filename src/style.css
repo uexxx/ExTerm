@@ -1319,7 +1319,7 @@ body.v155-simple #tab-markets .book,body.v155-simple #tab-markets .tape,body.v15
 /* 4 · chart toolbar: four timeframe pills + ⋯, one row of six controls */
 #tab-markets .toolbar{flex-wrap:wrap;padding:8px 10px}
 #tab-markets #chartHint,#tab-markets #mkMode{display:none}
-#tfBtns.v155-tf:not(.v155-open) button:not([data-v="1s"]):not([data-v="1m"]):not([data-v="15m"]):not([data-v="1h"]):not(.on){display:none}
+#tfBtns.v155-tf:not(.v155-open) button:not([data-v="1s"]):not([data-v="5s"]):not([data-v="10s"]):not([data-v="15s"]):not([data-v="1m"]):not([data-v="5m"]):not([data-v="15m"]):not([data-v="1h"]):not([data-v="4h"]):not([data-v="1d"]):not([data-v="1w"]):not(.on){display:none}
 #tfBtns.v155-tf button,#indBtns .fxbtn,#indBtns .ichip{font-size:12px}
 .v155-tfmore{padding:4px 8px}
 .v155-dd{display:inline-flex;align-items:center;gap:4px}
@@ -1633,3 +1633,34 @@ body.v156 #tab-markets .toolbar>:has(#indBtns){flex-shrink:1;min-width:96px;over
 .v161-dt{width:100%;border-collapse:collapse;font-size:12px}.v161-dt td,.v161-dt th{padding:5px 6px;border-top:1px solid var(--line)}.v161-dt th{color:var(--mut);font-weight:600;text-align:start}.v161-dt .r{text-align:end}
 .v161-tag{display:inline-block;padding:1px 8px;border-radius:999px;font-size:11px}.v161-tag.ok{background:rgba(47,208,138,.14);color:var(--up)}.v161-tag.bad{background:rgba(244,63,94,.14);color:var(--dn)}
 @media (max-width:640px){.v161-disc .v161-dk{grid-template-columns:1fr}.v161-mread{font-size:10.5px}}
+/* ===== v16.2: launch briefing, daily-loss breaker, live-only workspace, market-closed badge ===== */
+.v162-ov{z-index:10002}
+.v162-modal{background:linear-gradient(180deg,#15161a,#0d0e11);color:var(--txt,#e8e8ea);border-radius:14px;box-shadow:0 24px 60px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.05);max-width:620px;width:100%;max-height:calc(100vh - 32px);overflow:auto;padding:20px 22px}
+.v162-mh{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.v162-mh h2{margin:0;font-size:18px;letter-spacing:.01em}
+.v162-ic{width:30px;height:30px;color:#D4AF37;flex:none}
+.v162-alert .v162-ic{color:var(--dn,#f43f5e)}
+.v162-mode{display:inline-block;margin-top:4px;font:700 11px/1 ui-monospace,Menlo,Consolas,monospace;letter-spacing:.06em;padding:4px 8px;border-radius:6px}
+.v162-mode.paper{background:rgba(47,208,138,.14);color:var(--up,#2fd08a)}
+.v162-mode.live{background:rgba(244,63,94,.18);color:var(--dn,#f43f5e)}
+.v162-modal section{margin:12px 0}
+.v162-modal h3{margin:0 0 6px;font-size:13px;color:#D4AF37;text-transform:uppercase;letter-spacing:.06em}
+.v162-modal p{margin:6px 0;line-height:1.5}
+.v162-list{margin:0;padding-inline-start:20px;line-height:1.55}
+.v162-list li{margin:3px 0}
+.v162-acts{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.v162-mkt{background:rgba(212,175,55,.14)!important;color:#D4AF37!important;font-weight:700;letter-spacing:.05em;font-size:11px}
+.v162-mkt[hidden]{display:none!important}
+.v162-gauge .pb{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.v162-gauge meter{width:180px;height:12px}
+.v162-gauge[hidden]{display:none!important}
+.v162-learn{background:rgba(244,63,94,.14);color:var(--dn,#f43f5e);font-weight:700;padding:10px 14px;border-radius:10px;margin:0 0 12px;letter-spacing:.02em}
+body.live-bot-armed #replayBtn,body.live-bot-armed [data-v161m="replay"],body.live-bot-armed #pfReset,body.live-bot-armed #cpReset,body.live-bot-armed #pvReset,body.live-bot-armed #q153Root details[data-sec="evolve"],body.live-bot-armed #q153Root details[data-sec="crisis"],body.live-bot-armed #q153Root details[data-sec="synth"],body.live-bot-armed #v157Mtn,body.live-bot-armed [data-lb="backtest"],body.live-bot-armed [data-lx="drill"]{display:none!important}
+body.live-bot-armed .p5-p:has([data-p5="wfo"]){display:none!important}
+@media (max-width:520px){.v162-modal{padding:16px}.v162-acts .btn{width:100%}}
+/* v16.2: 11 quick timeframe pills on one toolbar row: compact pills; the indicator chips scroll inside their group when space is short */
+body.v156 #tfBtns.v155-tf{flex:none;flex-wrap:nowrap}
+body.v156 #tab-markets .toolbar #indBtns{flex:0 1 auto;flex-wrap:nowrap;min-width:0;overflow-x:auto;overflow-y:hidden;scrollbar-width:none}
+body.v156 #tab-markets .toolbar #indBtns::-webkit-scrollbar{display:none}
+body.v156 #tab-markets .toolbar #indBtns>*{flex:none;white-space:nowrap}
+body.v156 #tfBtns.v155-tf button{padding:4px 6px;font-size:11px;flex:none}

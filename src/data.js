@@ -408,7 +408,7 @@ const Stores = new Map(), StoresBySym = new Map();
    crypto, the pool's swaps for DEX tokens, the launcher's RAM tick buffer for stocks), then extended live tick by tick.
    3m / 30m / 2h: aggregated from 1m / 5m / 1h candles. */
 const TFX = {
-  BASE: { 180: 60, 1800: 300, 7200: 3600 },
+  BASE: { 180: 60, 1800: 300, 7200: 3600, 604800: 86400, 2592000: 86400 }, // shortcut: 1M = 30-day buckets, not calendar months; upgrade if month-aligned bars are needed
   RING: 5000, ring: new Map(), tcache: new Map(), // 5,000 trades per symbol: minutes of 1s bars on majors, bounded RAM
   subOK: () => true,
   /* every live WebSocket trade is kept (per symbol, last RING) so switching to 1s / 5s draws at once from RAM */
@@ -430,6 +430,17 @@ const TFX = {
     const now = Math.floor(Date.now() / 1000 / tf) * tf, last = rows[rows.length - 1]; // keep time continuous up to now so live ticks land on the right bar
     for (let t = Math.max(last.t + tf, now - n * tf); t <= now && rows.length < 20000; t += tf) rows.push({ t, o: last.c, h: last.c, l: last.c, c: last.c, v: 0 });
     return rows.slice(-n);
+  },
+  /* v16.2: stocks / DEX tokens rarely have enough sub-minute trades to fill the pane, so the visible window is
+     back-populated from 1m OHLCV (V162.seedSub) and bridged to the live price; real tick bars replace seeded ones */
+  async seedHist(sym, tf, n, rows) {
+    rows = rows || []; if (typeof V162 === 'undefined') { if (rows.length) return rows; throw new Error('No sub-minute data for ' + sym + ' yet'); }
+    if (rows.filter((r) => !(r.v === 0 && r.h === r.l && r.o === r.c)).length >= n * 0.9) return rows;
+    let m1 = []; try { m1 = await History.get(sym, 60, Math.min(History.MAX, Math.ceil((n * tf) / 60) + 5)); } catch (e) { /* no 1m history: seed from spot */ }
+    const lv = Feed.live[sym] && Feed.live[sym].price, spot = lv > 0 ? lv : (typeof px === 'function' && px(sym)) || (rows.length ? rows[rows.length - 1].c : 0) || (m1.length ? m1[m1.length - 1].c : 0);
+    if (!(spot > 0)) { if (rows.length) return rows; throw new Error('No quote for ' + sym + ' yet: sub-minute bars start with the next tick'); }
+    const closed = isStock(sym) && typeof StockFeed !== 'undefined' && StockFeed.session[sym] === false;
+    return V162.seedSub(m1, tf, n, spot, Date.now() / 1000, rows, closed);
   },
   async tradesCB(sym, pages = 4) {
     const out = []; let after = '';
@@ -460,8 +471,8 @@ const TFX = {
   async candles(sym, tf, n) {
     const P = providerFor(sym);
     if (tf < 60) {
-      if (isStock(sym)) { if (typeof Stocks !== 'undefined' && Stocks.active === StockDemo) return simCandles(sym, (StockDemo.init(sym), StockDemo.px[sym]), tf, n, 0.55); return TFX.stockSub(sym, tf, n); }
-      if (isOnchain(sym)) { if (OC.parse(sym).chain === 'sim') return OC.candles(sym, tf, n); return TFX.fromTrades((await OC.trades(sym)).map((x) => ({ t: x.ts, p: x.p, q: x.q })), tf).slice(-n); }
+      if (isStock(sym)) { if (typeof Stocks !== 'undefined' && Stocks.active === StockDemo) return simCandles(sym, (StockDemo.init(sym), StockDemo.px[sym]), tf, n, 0.55); return TFX.seedHist(sym, tf, n, await TFX.stockSub(sym, tf, n).catch(() => [])); }
+      if (isOnchain(sym)) { if (OC.parse(sym).chain === 'sim') return OC.candles(sym, tf, n); let tr = []; try { tr = TFX.fromTrades((await OC.trades(sym)).map((x) => ({ t: x.ts, p: x.p, q: x.q })), tf).slice(-n); } catch (e) { /* no swaps yet */ } return TFX.seedHist(sym, tf, n, tr); }
       if (P === Demo || P.id === 'demo') return P.candles(sym, tf, n);
       try {
         // one REST pull per symbol per 20 s, shared by 1s / 5s / 15s / 30s (Coinbase rate limits), merged with the live WebSocket trades

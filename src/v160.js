@@ -329,7 +329,7 @@ const V160UI = (() => {
     setInterval(() => { for (const s of V160.liveSlots(U.st)) heartbeat(s); }, HB_EVERY);
     setInterval(watchdog, 5000);
   };
-  Object.assign(U, { arm, kill, brief, heartbeat, route, mount, openPanel, dryRun, exportLedger, watchdog, cooldownNow, spreadOf, send, rotate });
+  Object.assign(U, { arm, kill, brief, heartbeat, route, mount, openPanel, dryRun, exportLedger, watchdog, cooldownNow, spreadOf, send, rotate, dayLoss, live, led });
   return U;
 })();
 if (typeof window !== 'undefined' && typeof document !== 'undefined' && typeof boot === 'function') { const _b160 = boot; boot = async function () { await _b160.apply(this, arguments); try { V160UI.start(); } catch (e) { console.warn('v160 init', e); } }; }

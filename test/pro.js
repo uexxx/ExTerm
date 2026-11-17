@@ -12,7 +12,7 @@ const res = []; process.on('unhandledRejection', (e) => { console.log(res.join('
   await page.goto('http://localhost:8765/'); await ev(() => localStorage.clear()); await page.reload();
   await page.waitForFunction(() => window.__exterm_ready === true && chart && chart.data.length > 50, null, { timeout: 60000 });
   // timeframes
-  ok('14 timeframes in crypto mode (1s and 5s added in v15 p3, 10s in v15.7)', await ev(() => document.querySelectorAll('#tfBtns button').length === 14));
+  ok('16 timeframes in crypto mode (1s and 5s added in v15 p3, 10s in v15.7, 1w and 1M in v16.2)', await ev(() => document.querySelectorAll('#tfBtns button').length === 16));
   for (const tf of ['15s', '30s', '3m', '30m', '2h']) {
     await page.locator(`#tfBtns button:has-text("${tf}")`).dispatchEvent('click'); await page.waitForFunction((t) => chart.data.length > 50 && chart.tfSec === NT.TF[t], tf, { timeout: 15000 }).catch(() => {});
     ok(`${tf} chart loads with ${tf} spacing`, await ev((t) => chart.data.length > 50 && chart.data[5].t - chart.data[4].t === NT.TF[t], tf), await ev(() => chart.data.length + ' bars, step ' + (chart.data[5] ? chart.data[5].t - chart.data[4].t : '?')));

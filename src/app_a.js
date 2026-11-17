@@ -193,7 +193,7 @@ function onTick(sym, price) {
 
 /* ───────────── MARKETS tab ───────────── */
 let chart = null, chartVer = -1, chartKey = '', fcCache = { key: '', v: null }, tape = [], tapeDirty = false, tkSide = 'buy', tkType = 'market', prevPx = {}, bookTimer = 0;
-const TF_ALL = ['1s', '5s', '10s', '15s', '30s', '1m', '3m', '5m', '15m', '30m', '1h', '2h', '4h', '1d'];
+const TF_ALL = ['1s', '5s', '10s', '15s', '30s', '1m', '3m', '5m', '15m', '30m', '1h', '2h', '4h', '1d', '1w', '1M'];
 const tfList = () => TF_ALL; // v15 p3: 1s / 5s / 15s on every market (stocks build sub-minute bars from launcher ticks)
 const TF_LIST = TF_ALL;
 const IND_LIST = [['ema', 'EMA 20/50'], ['sma', 'SMA 200'], ['vwap', 'VWAP'], ['bb', 'Bollinger'], ['kc', 'Keltner'], ['st', 'Supertrend'], ['ichi', 'Ichimoku'], ['psar', 'SAR'], ['vol', 'Volume'], ['rsi', 'RSI'], ['macd', 'MACD'], ['stochrsi', 'StochRSI'], ['adx', 'ADX'], ['atr', 'ATR'], ['obv', 'OBV'], ['trades', 'My trades'], ['fc', 'Forecast']];

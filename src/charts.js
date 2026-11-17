@@ -145,6 +145,7 @@ class CandleChart {
     }
     if (fcN) for (const f of this.fc) { hi = Math.max(hi, f.hi); lo = Math.min(lo, f.lo); }
     const padv = (hi - lo) * (subMin ? 0.04 : 0.07) || hi * (subMin ? 0.0004 : 0.01); lo -= padv; hi += padv;
+    if (subMin && typeof V162 !== 'undefined') ({ lo, hi } = V162.minSpan(lo, hi, 0.002)); // v16.2: ≥ 0.20 % span so quiet seconds never flatten into dashes
     const volH = o.vol ? mainH * 0.16 : 0, y0 = Tm, y1 = Tm + mainH - volH * 0.0;
     const py = (p) => y0 + (hi - p) / (hi - lo) * (mainH - volH - 4);
     Object.assign(this.L, { hi, lo, y0, volH, bars, D });
