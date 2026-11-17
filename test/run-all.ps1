@@ -25,7 +25,7 @@ function Run([string]$name, [string]$exe, [string[]]$argv) {
 try {
   if (-not $Only -or $Only -eq 'unit') {
     Write-Output '-- unit'
-    foreach ($t in 'core', 'strategies', 'validate', 'robust', 'bigdata', 'solana', 'v12', 'v13', 'v14', 'v15', 'v15p2', 'v15p3', 'v15p4', 'v15p5', 'world', 'v151', 'v152', 'v153', 'v154', 'v155', 'v156') { if (Test-Path "test/$t.test.js") { Run "$t.test.js" node @("test/$t.test.js") } }
+    foreach ($t in 'core', 'strategies', 'validate', 'robust', 'bigdata', 'solana', 'v12', 'v13', 'v14', 'v15', 'v15p2', 'v15p3', 'v15p4', 'v15p5', 'world', 'v151', 'v152', 'v153', 'v154', 'v155', 'v156', 'v157', 'v160') { if (Test-Path "test/$t.test.js") { Run "$t.test.js" node @("test/$t.test.js") } }
     Run 'community strategies' node @('tools/validate-strategies.js')
     Run 'launcher/page strategy parity' node @('test/v13_parity.js')
   }
@@ -35,7 +35,7 @@ try {
   }
   if (-not $Only -or $Only -eq 'e2e') {
     Write-Output '-- browser end-to-end'
-    foreach ($t in 'fulltest', 'deep_a', 'deep_b', 'pro', 'oc', 'vault', 'sec_xss', 'smoke', 'smoke2', 'ctl', 'ind', 'draw', 'e2e5', 'e2e_pf', 'e2e_quick', 'perf', 'v12_e2e', 'v13_e2e', 'v131_e2e', 'v14_e2e', 'v15p2_e2e', 'v15p3_e2e', 'v15p4_e2e', 'v15p5_e2e', 'world_e2e', 'v151_e2e', 'v152_e2e', 'v153_e2e', 'v154_e2e', 'v155_e2e', 'v155s_e2e', 'v156_e2e', 'harden_smoke') { if (Test-Path "test/$t.js") { Run "$t.js" node @("test/$t.js") } }
+    foreach ($t in 'fulltest', 'deep_a', 'deep_b', 'pro', 'oc', 'vault', 'sec_xss', 'smoke', 'smoke2', 'ctl', 'ind', 'draw', 'e2e5', 'e2e_pf', 'e2e_quick', 'perf', 'v12_e2e', 'v13_e2e', 'v131_e2e', 'v14_e2e', 'v15p2_e2e', 'v15p3_e2e', 'v15p4_e2e', 'v15p5_e2e', 'world_e2e', 'v151_e2e', 'v152_e2e', 'v153_e2e', 'v154_e2e', 'v155_e2e', 'v155s_e2e', 'v156_e2e', 'v157_e2e', 'v160_e2e', 'harden_smoke') { if (Test-Path "test/$t.js") { Run "$t.js" node @("test/$t.js") } }
   }
 } finally {
   foreach ($p in $srv, $mock) { try { Stop-Process -Id $p.Id -Force -ErrorAction Stop } catch {} }

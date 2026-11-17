@@ -30,7 +30,7 @@ const PORT = 8783, BASE = 'http://localhost:' + PORT, DATA = fs.mkdtempSync(path
 
   /* ── 1s / 5s timeframes ── */
   await ev(() => { showTab('markets'); selectSym('BTC-USD'); }); await sleep(400);
-  ok('crypto: 1s and 5s buttons sit before 15s', await ev(() => { const t = $$('#tfBtns button').map((x) => x.textContent.trim()); return t[0] === '1s' && t[1] === '5s' && t[2] === '15s'; }));
+  ok('crypto: 1s, 5s and 10s buttons sit before 15s', await ev(() => { const t = $$('#tfBtns button').map((x) => x.textContent.trim()); return t[0] === '1s' && t[1] === '5s' && t[2] === '10s' && t[3] === '15s'; }));
   await page.locator('#tfBtns button:text-is("1s")').dispatchEvent('click');
   ok('crypto: the 1s chart renders immediately with 1-second spacing', await waitFor(() => chart.data.length > 30 && chart.data[chart.data.length - 1].t - chart.data[chart.data.length - 2].t === 1, null, 15000), await ev(() => [chart.data.length, chart.err || '']));
   await page.locator('#tfBtns button:text-is("5s")').dispatchEvent('click');

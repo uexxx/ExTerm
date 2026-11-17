@@ -45,7 +45,7 @@ const KeysHub = (() => {
   ];
   K.panel = () => `<div class="panel" id="v13Keys"><h3>🔑 API keys &amp; connections</h3><div class="pb"><div class="note">Every key is optional. They're kept in this browser tab's session only (or in your encrypted key vault) and are never put in backups.</div>
     <table class="keys"><tbody>${LIST.map(([n, ok, why, tab, id], i) => `<tr><td><b>${n}</b><div class="note">${why}</div></td><td><span class="tag ${ok() ? 'up' : ''}">${ok() ? 'set' : 'not set'}</span></td><td class="r"><button class="btn sm" data-key-go="${i}">${ok() ? 'Edit' : 'Set up'}</button></td></tr>`).join('')}</tbody></table></div></div>`;
-  K.go = (i) => { const [, , , tab, id] = LIST[i]; if (curTab !== tab) showTab(tab); setTimeout(() => { const el = $('#' + id); if (el) { el.scrollIntoView({ behavior: 'smooth', block: 'center' }); el.focus(); el.classList.add('flash-field'); setTimeout(() => el.classList.remove('flash-field'), 1600); } else toast('That setting appears once the launcher is running', 'amb'); }, 200); };
+  K.go = (i) => { const [, , , tab, id] = LIST[i]; if (curTab !== tab) showTab(tab); setTimeout(() => { const el = $('#' + id); if (el && typeof V155S !== 'undefined' && V155S.reveal) V155S.reveal('#' + id); if (el) { el.scrollIntoView({ behavior: 'smooth', block: 'center' }); el.focus(); el.classList.add('flash-field'); setTimeout(() => el.classList.remove('flash-field'), 1600); } else toast('That setting appears once the launcher is running', 'amb'); }, 200); };
   return K;
 })();
 

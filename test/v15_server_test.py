@@ -13,7 +13,7 @@ res = []
 def ok(name, cond, info=""):
     res.append(("PASS " if cond else "FAIL ") + name + (" — " + str(info)[:300] if info and not cond else ""))
 
-ok("version is 15.x", re.match(r"^15\.\d+$", serve.VERSION) is not None)
+ok("version is 15.x or later", re.match(r"^1[5-9]\.\d+$", serve.VERSION) is not None)
 ok("data lives in ~/.exterm by default", serve.DATA_DIR.name in (".exterm",) or os.environ.get("EXTERM_DATA") or os.environ.get("NOVATERM_DATA"), serve.DATA_DIR)
 
 # ───────── migration ─────────

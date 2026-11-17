@@ -1,21 +1,21 @@
 <div align="center">
 
-# ExTerm v15.6
+# ExTerm v16.0
 
 ### Local-first trading workstation for US stocks, crypto spot & perps and on-chain DEX tokens, in one browser tab.
 
-**Paper trading only.** Nothing in ExTerm signs or sends a real order.
+**Paper by default.** ExTerm holds no funds and no keys. Live routing to a bot you run on your own machine stays locked behind four gates.
 
-<img src="docs/screenshots/v15.6-markets.png" alt="ExTerm v15.6 Markets screen at 1440×900: tonal obsidian panels without outlines, one-word top tabs, a watchlist with 44px sparklines, and the watchlist and order ticket gently dimmed while the cursor is over the price chart" width="100%">
+<img src="docs/screenshots/v15.7-1s-candles.png" alt="ExTerm Markets screen on the 1s timeframe with true-form candles; at 1440×900: tonal obsidian panels without outlines, one-word top tabs, a watchlist with 44px sparklines, and the watchlist and order ticket gently dimmed while the cursor is over the price chart" width="100%">
 
-**[Quickstart](#-2-second-quickstart)** · **[What's new](#-whats-new-in-v156)** · **[v15.5](#-whats-new-in-v155)** · **[v15.4](#-whats-new-in-v154)** · **[v15.3](#-whats-new-in-v153)** · **[v15.2](#-whats-new-in-v152)** · **[Features](#-whats-in-v151)** · **[Security](#-security)** · **[Verify a build](#-how-to-verify-official-builds)** · **[License](#-license)** · **[Brand policy](#-brand--logo-policy)**
+**[Quickstart](#-2-second-quickstart)** · **[What's new](#-whats-new-in-v160)** · **[v15.7](#-whats-new-in-v157)** · **[v15.6](#-whats-new-in-v156)** · **[v15.5](#-whats-new-in-v155)** · **[v15.4](#-whats-new-in-v154)** · **[v15.3](#-whats-new-in-v153)** · **[v15.2](#-whats-new-in-v152)** · **[Features](#-whats-in-v151)** · **[Security](#-security)** · **[Verify a build](#-how-to-verify-official-builds)** · **[License](#-license)** · **[Brand policy](#-brand--logo-policy)**
 
 <p>
-  <a href="https://github.com/uexxx/ExTerm/releases/latest"><img src="https://img.shields.io/badge/download-v15.6-D4AF37?style=for-the-badge" alt="Download v15.6"></a>
+  <a href="https://github.com/uexxx/ExTerm/releases/latest"><img src="https://img.shields.io/badge/download-v16.0-D4AF37?style=for-the-badge" alt="Download v16.0"></a>
   <img src="https://img.shields.io/badge/indicators-137-D4AF37?style=for-the-badge" alt="137 indicators">
   <img src="https://img.shields.io/badge/backtestable%20strategies-128-CBD5E1?style=for-the-badge" alt="128 backtestable strategies">
   <img src="https://img.shields.io/badge/languages-32%20%2B%20ISO--639-CBD5E1?style=for-the-badge" alt="32 languages plus ISO-639 fallback">
-  <img src="https://img.shields.io/badge/money%20at%20risk-%240%20(paper)-2fd08a?style=for-the-badge" alt="paper trading only">
+  <img src="https://img.shields.io/badge/default-PAPER-2fd08a?style=for-the-badge" alt="paper by default">
 </p>
 <p>
   <a href="https://www.instagram.com/exterm.labs"><img src="https://img.shields.io/badge/Instagram-@exterm.labs-E4405F?style=for-the-badge&logo=instagram&logoColor=white" alt="Instagram @exterm.labs"></a>
@@ -46,6 +46,68 @@ Useful flags: `python3 serve.py 9000` (other port) · `--no-browser` · `--docto
 
 > Opening `exterm.html` directly also works for crypto, but browsers block some stock and on-chain sources. The launcher
 > proxies only an allow-list of public market-data hosts, on `localhost`, behind a fresh per-launch token.
+
+---
+
+## 🔌 What's new in v16.0
+
+**Six local external bot bridges behind a four-gate live safety lock.** Every v15.7 capability is still here. ExTerm
+still holds no funds, no keys and runs no servers: it can now hand HMAC-signed signals to a bot **you** run on your own
+machine, and only after four deliberate steps.
+
+<img src="docs/screenshots/v16.0-local-bot-bridges.png" alt="ExTerm v16.0 Grok tab at 1440×900: the Execution Bridge panel with six local adapter slots, heartbeat latency in milliseconds, per-slot HMAC secrets and receiver schemas" width="100%">
+
+### 🔌 Six original local adapter slots (Grok tab → Execution Bridge; status card in Settings)
+| Slot | Adapter | Default endpoint |
+|---|---|---|
+| 1 | Local Python / Node Script Runner | `http://127.0.0.1:8765/signal` |
+| 2 | Standard JSON Webhook Relay | `http://127.0.0.1:8766/hook` |
+| 3 | Low-Latency Socket / IPC Bridge | `ws://127.0.0.1:8767/exec` |
+| 4 | Perp DEX Local Wallet Signer | `http://127.0.0.1:8768/sign` |
+| 5 | Equities / Futures Local Gateway | `http://127.0.0.1:8769/order` |
+| 6 | Graduated Shadow-to-Live Mirror | `http://127.0.0.1:8770/mirror` |
+
+- **PAPER / SIMULATION on every fresh install.** In paper mode fills are logged as simulated routes and nothing leaves the page.
+- **Loopback only.** Endpoints must be `127.0.0.1` / `localhost`, or a private-LAN `host:port` you allow-list over
+  `https://` / `wss://`. Public hosts, look-alike names, metadata IPs, credentials in URLs and redirects are refused.
+- **Signed.** Every envelope is HMAC-SHA256 signed with a per-slot secret and carries a per-session nonce, a timestamp
+  and a rising sequence number, so your receiver can drop forged, stale or replayed messages. Each slot shows its
+  receiver schema and a 15-line Python sample receiver.
+- **Heartbeat latency** in ms per slot. Slot 6 mirrors the fills of one promoted Quant Lab / Shadow bot; manual orders never go there.
+
+<img src="docs/screenshots/v16.0-4-gate-live-lock.png" alt="ExTerm v16.0 4-Gate Live Safety Lock at 1440×900 with all four gates passed and the Enable Live External Execution button unlocked" width="100%">
+
+### 🔒 4-Gate Live Safety Lock
+**Enable Live External Execution** stays disabled until all four pass:
+1. An enabled adapter answers a signed `127.0.0.1` heartbeat handshake (fresh within 2 minutes).
+2. Hard circuit breakers are set: **Max Daily Loss $**, **Max Risk Per Trade %**, **Max Concurrent Positions**.
+3. The non-advisory, sole-responsibility disclosure box is checked.
+4. The exact phrase **`ARM LIVE BOT`** is typed.
+
+While live, the configuration is frozen and every opening order is checked against the breakers (closing orders
+always pass). Three missed heartbeats on an armed slot revert everything to PAPER automatically.
+
+<img src="docs/screenshots/v16.0-boot-briefing.png" alt="ExTerm v16.0 Live External Bot Connected briefing modal at 1440×900 showing Slot 1, its 127.0.0.1 endpoint, heartbeat latency, circuit-breaker caps and the Acknowledge and Disconnect buttons" width="100%">
+
+### 🚨 Boot briefing, LIVE pill and kill-switch
+- Booting or reloading with a live bot armed opens the **Live External Bot Connected** briefing: slot, endpoint,
+  live heartbeat, caps and the non-advisory reminder. Signals are held until you pick **Acknowledge & Continue Live**
+  or **Disconnect & Revert to Paper**.
+- A pulsing **LIVE BOT ARMED** pill sits in the top bar while live.
+- **`Ctrl+Shift+K`** is the emergency kill-switch: it disarms instantly, reverts all six slots to PAPER and sends each
+  receiver a signed `disarm` message.
+
+<img src="docs/screenshots/v16.0-chart-context-menu-measure.png" alt="ExTerm v16.0 chart with the measure ruler and the right-click take-profit ladder context menu at 1440×900" width="100%">
+
+### ✅ Verified
+`python build.py` and `python build.py --harden` (strict `default-src 'none'` CSP with SHA-256 script and style
+hashes, no inline handlers). `test/v160.test.js` (42 checks) and `test/v160_e2e.js` (36 checks at 1440×900 in English
+and Arabic, against a real HMAC-verifying receiver on 127.0.0.1) plus the full v15.x regression suite.
+
+---
+
+## 🧭 What's new in v15.7
+Sub-second true-form candles and pure-canvas 3D analytics. New 1s / 5s / 10s timeframes are seeded from an in-memory 1-second tick ring, so they switch in under 10 ms, and every fast candle keeps a real body (at least 4px wide and 2.5px tall). Five rotatable 3D views: Order-Book Liquidity Terrain, Options IV & Gamma Surface, Correlation & Regime Orbit, Quant Lab Profit Mountain and Whale & Liquidation Cluster Orbit. Hidden views draw zero frames.
 
 ---
 

@@ -1,6 +1,6 @@
 # NovaTerm security audit (security-audit skill · quick profile)
 
-**Scope.** NovaTerm single-page app (`src/*.js`, `index.html`), local servers (`serve.py`, `serve.ps1`), and the third-party data paths: DexScreener, Solana RPC, Yahoo/SEC, the public CORS relays, the new Social feeds, and the AI Copilot.
+**Scope.** NovaTerm single-page app (`src/*.js`, `index.html`), local servers (`serve.py`, `serve.ps1`), and the third-party data paths: DexScreener, on-chain RPC, Yahoo/SEC, the public CORS relays, the new Social feeds, and the AI Copilot.
 **Method.** A source-first trace from each untrusted source to each HTML or navigation sink and to the proxy, with bounded local reproduction only: headless Chrome with all external traffic aborted, plus curl against 127.0.0.1. This was a single-pass *quick* run without independent verifier agents or a coverage ledger, so treat it as partial coverage, not proof that nothing else exists.
 `findings.json` passes `validate-findings.cjs`.
 
@@ -87,7 +87,7 @@
 
 | # | Finding | Verdict | Severity | Status |
 |---|---|---|---|---|
-| 18 | Exported backups contained the Solana Tracker key, Helius key, Solana RPC URL, X token and SEC contact (only the AI key was stripped) | confirmed | **medium** | **fixed**: every `SECRET_PATHS` field is blanked on export and on import |
+| 18 | Exported backups contained the wallet-tracker key, Helius key, on-chain RPC URL, X token and SEC contact (only the AI key was stripped) | confirmed | **medium** | **fixed**: every `SECRET_PATHS` field is blanked on export and on import |
 | 19 | Telegram / Discord messages could contain clickable links chosen by token creators (Markdown masked links, auto-linked URLs and domains) | confirmed | low | **fixed**: `neutralize()` breaks links, `discord_escape()` shows Markdown literally, link previews off |
 | 20 | A malformed social handle was "repaired" into a different, real-looking link | confirmed | low | **fixed**: invalid handles are dropped; only `https` links are kept |
 | 21 | Token metadata (names, descriptions, socials, logos) as XSS on the token card, radar and bubble map | rejected | — | stripped on ingest, escaped on render, https-only links, canvas labels |
@@ -156,3 +156,16 @@
 | 11 | CSP: inline handlers, `eval`, string timers | — | **none**: E2E asserts zero `on*` attributes and zero CSP violations; the minified build passes the same checks |
 
 **Crypto.** `.exterm` backups use AES-256-GCM with a fresh 16-byte salt and 12-byte IV per file, and PBKDF2-HMAC-SHA256 at 600,000 rounds. Import accepts only files with 100k–2M rounds. A restore writes only ExTerm's own storage keys, as strings capped at 8 MB.
+
+## v16.0 addendum: local external bot bridges
+
+**New outbound path.** From v16.0 the page can POST (or send one WebSocket frame) to a bot process the user runs. Review of `src/v160core.js` and `src/v160.js`:
+
+| Check | Result |
+|---|---|
+| SSRF / exfiltration | `V160.checkUrl` accepts only `127.0.0.1`, `localhost` and `[::1]`, or an exact allow-listed private-LAN `host:port` over https / wss. Public hosts, look-alike hostnames (`127.0.0.1.nip.io`, `localhost.evil.com`), link-local metadata IPs, `0.0.0.0`, credentials in URLs and non-web schemes are rejected (unit-tested). CSP `connect-src` allows plain http / ws only on loopback. |
+| Redirect pivot | `fetch(..., { redirect: 'error', credentials: 'omit', referrerPolicy: 'no-referrer' })`. |
+| Message integrity | HMAC-SHA256 over the exact payload string with a 32-byte per-slot secret (WebCrypto); per-session nonce, timestamp and rising sequence number; the documented receiver check uses a constant-time compare and rejects stale (> 30 s) or replayed envelopes (unit + E2E against a verifying receiver). |
+| Accidental live trading | Fresh installs and any inconsistent saved state load as PAPER. Live needs four gates (fresh heartbeat, three circuit breakers, disclosure, exact `ARM LIVE BOT`); configuration is frozen while live; a boot briefing holds signals after every reload; `Ctrl+Shift+K` and three missed heartbeats revert to PAPER. |
+| XSS | Slot names, endpoints, log lines and receiver samples are rendered through `esc()` or `textContent`; no inline handlers (`build.py --harden` CSP pins unchanged). |
+| Custody | No keys, seeds or exchange credentials are stored or requested; slot secrets only authenticate ExTerm to the user's own receiver. |

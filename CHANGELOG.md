@@ -1,6 +1,51 @@
 # Changelog
 
-ExTerm (formerly NovaTerm) is paper trading only in every version: nothing signs or sends a real order.
+ExTerm (formerly NovaTerm) holds no funds and no keys in every version. Up to v15.7 it was paper only; from v16.0 it can send HMAC-signed signals to a bot you run on your own machine, only after four explicit gates, and it starts in PAPER.
+
+## v16.0 — 6 Local External Bot Bridges & Multi-Gate Live Safety System — 16 Nov 2026
+
+### Bridges (`src/v160core.js`, `src/v160.js`)
+- Six original local adapter slots in the Grok tab (Execution Bridge panel) with a status card in Settings: Local Python / Node Script Runner, Standard JSON Webhook Relay, Low-Latency Socket / IPC Bridge (WebSocket), Perp DEX Local Wallet Signer, Equities / Futures Local Gateway, Graduated Shadow-to-Live Mirror (mirrors one promoted Quant Lab / Shadow bot only).
+- PAPER / SIMULATION on every fresh install; paper fills are logged as simulated routes and nothing is sent.
+- SSRF guard (`V160.checkUrl`): loopback only, or an allow-listed private-LAN `host:port` over https / wss; no credentials in URLs, no other schemes; requests use `redirect: 'error'`, `credentials: 'omit'`, `referrerPolicy: 'no-referrer'`.
+- HMAC-SHA256 envelopes (`{payload, sig}` text/plain, no CORS preflight) with per-slot 32-byte secret, per-session nonce, timestamp and rising sequence number; `V160.verify` documents the receiver checks (signature, 30 s freshness, replay). Each slot shows its receiver schema and a Python stdlib sample receiver.
+- Per-slot heartbeat latency (ms); three missed heartbeats on an armed slot revert to PAPER.
+
+### Live safety
+- Live External Execution stays disabled until four gates pass: fresh 127.0.0.1 heartbeat, all three circuit breakers (Max Daily Loss $, Max Risk Per Trade %, Max Concurrent Positions), non-advisory disclosure, exact phrase `ARM LIVE BOT`. Only healthy slots go live; configuration is frozen while live.
+- Circuit breakers check every opening order (daily loss, open positions, risk % of equity from the stop distance, or full notional without a stop); closing orders always pass.
+- Saved state is sanitised on load: anything inconsistent (no disclosure, no caps, missing secret, non-local URL) loads as PAPER.
+- Boot / reload with a live bot armed opens the Live External Bot Connected briefing (slot, endpoint, live heartbeat, caps, non-advisory reminder); signals are held until Acknowledge & Continue Live or Disconnect & Revert to Paper.
+- LIVE BOT ARMED top-bar pill; `Ctrl+Shift+K` kill-switch (captured before the Ctrl+K palette) reverts all six slots to PAPER and sends each receiver a signed `disarm`.
+
+### Build
+- CSP `connect-src` adds `ws://127.0.0.1:*` (plain http / ws stay loopback-only); `default-src 'none'` and the SHA-256 script / style pins are unchanged.
+
+### Tests
+- `test/v160.test.js` (42 checks): slots, SSRF guard, RFC 4231 HMAC vector, tamper / stale / replay rejection, the four gates, arm / kill, state sanitising, circuit breakers, static CSP / privacy / brand checks.
+- `test/v160_e2e.js` (36 checks, 1440×900, English + Arabic) against a real HMAC-verifying receiver on 127.0.0.1: gate-by-gate unlock, signed live signals, circuit-breaker block, reload briefing with both actions, Ctrl+Shift+K, chart context menu + measure ruler, v15.1–v15.7 regressions, zero page errors / CSP violations.
+- v15.6 / v15.7 build-order assertions updated for the v16.0 modules.
+
+## v15.7 — Sub-Second True-Form Candles & 3D Functional Analytics — 16 Nov 2026
+
+### Candles (`src/v157core.js`, `src/v157.js`)
+- New `10s` timeframe (`NT.TF`, timeframe buttons).
+- Every live trade is folded into a per-market `Float64Array` ring of 900 one-second OHLCV slots (15 minutes, no per-tick allocation; late ticks for a closed second are dropped). A market whose ticker updates arrived before its first trade restarts its ring on exchange time.
+- A new 1s / 5s / 10s candle store is seeded synchronously from the ring (`getStore` wrapper); the existing history load still merges behind it. Rollup keeps open = prior close and fills quiet buckets with flat bars.
+- On 1s / 5s / 10s candle bodies are at least 4px wide with a 2px gap (`V157.body`, visible bar count capped at plot width ÷ 6) and at least 2.5px tall, rounded to whole pixels. Other timeframes keep the previous geometry.
+
+### 3D views (`src/v157.js`, pure canvas, no WebGL, no external code)
+- Order-Book Liquidity Terrain and Options IV & Gamma Surface in Flow (mounted beside the desk body so its 1 s re-render never resets them), Correlation & Regime Orbit in World, Quant Lab Profit Mountain in Lab step 2, Whale & Liquidation Cluster Orbit in Whales.
+- Drag or arrow keys rotate, Home / Reset Angle restores the view; orbit views auto-rotate after 4 s idle.
+- One rAF loop draws only visible, changed views; hidden tabs, off-screen panels and background tabs draw nothing (IntersectionObserver + `document.hidden`).
+- Modelled inputs are labelled in each caption (book depth without a live book, expiries beyond the loaded chain, whale positions without expanded traders).
+
+### Tests
+- `test/v157.test.js` (32 checks): ring, rollup vs direct aggregation, wrap-around, < 2 ms rollup, candle geometry, projection, IV/gamma surface, plateau score, correlation, static CSP / privacy checks.
+- `test/v157_e2e.js` (35 checks, 1440×900, English + Arabic): cold 1s / 5s / 10s switch under 10 ms from RAM, candle bodies ≥ 4px × 2.5px with gaps, O(1) indicator patching, all five 3D views render / rotate / reset, zero frames while hidden, v15.1–v15.6 regressions, zero page errors or CSP violations.
+
+### Docs
+- `SECURITY-AUDIT.md`: chain-specific wording replaced with neutral terms.
 
 ## v15.6 — Visual Minimalism & 240Hz Engine Speed — 16 Nov 2026
 

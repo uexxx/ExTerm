@@ -96,7 +96,7 @@ try:
     ok("/api/hl/trader: bad address → 4xx, never upstream", req("/api/hl/trader?addr=0x1", HH)[0] in (400, 500) and req("/api/hl/trader?addr=%s&types=order" % A1, HH)[0] in (400, 500))
     ok("/api/hl/unknown → 404", req("/api/hl/whatever", HH)[0] == 404)
     ok("page: v15.4 modules + Learn ExTerm + pinned script and style hashes", all(k in page for k in ("const V154 = ", "const LearnUI = ", "const LeaderUI = ", "const V154UpUI = ", "LEARN_MOUNT_TARGET")) and "script-src 'sha256-" in page and "style-src-elem 'self' 'sha256-" in page and "default-src 'none'" in page and "'unsafe-inline'" not in page.split("script-src", 1)[1].split(";", 1)[0])
-    ok("version: launcher reports 15.x (page and launcher agree)", serve.VERSION.startswith("15.") and ("ExTerm v" + serve.VERSION) in page)
+    ok("version: launcher reports 15.x or later (page and launcher agree)", serve.VERSION[:3] in ("15.", "16.") and ("ExTerm v" + serve.VERSION) in page)
 finally:
     proc.terminate(); proc.wait(5)
 

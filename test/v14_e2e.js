@@ -29,7 +29,7 @@ const MOCK = { update: null, ds429: false };
     return { ctx, page, ev: (f, a) => page.evaluate(f, a).catch((e) => { throw new Error(e.message.split('\n')[0] + ' IN ' + String(f).slice(0, 160)); }) };
   };
   let { ctx, page, ev } = await open();
-  ok('v14 boots with the launcher', await ev(() => window.__exterm_v14 === true && Launcher.caps && /^15\.\d+$/.test(Launcher.caps.version) && Launcher.caps.update === true), await ev(() => JSON.stringify(Launcher.caps)));
+  ok('v14 boots with the launcher', await ev(() => window.__exterm_v14 === true && Launcher.caps && /^1[5-9]\.\d+$/.test(Launcher.caps.version) && Launcher.caps.update === true), await ev(() => JSON.stringify(Launcher.caps)));
 
   /* ── multi-timeframe strip ── */
   await page.waitForFunction(() => document.querySelectorAll('#mtfStrip .mtf-c').length === 4, null, { timeout: 20000 }).catch(() => {});
@@ -147,7 +147,7 @@ const MOCK = { update: null, ds429: false };
   await ev(() => V14UI.checkUpdate()); ok('a non-GitHub link never makes a banner', await ev(() => !$('#v14Upd')));
   MOCK.update = null;
   r = await ev(async () => J.get('/api/update', { timeout: 15000 }).catch((e) => ({ err: e.message })));
-  ok('the real launcher endpoint answers (offline here: no update, no crash)', r && /^15\.\d+$/.test(r.current) && r.newer === false, JSON.stringify(r));
+  ok('the real launcher endpoint answers (offline here: no update, no crash)', r && /^1[5-9]\.\d+$/.test(r.current) && r.newer === false, JSON.stringify(r));
 
   /* ── welcome back + saved to disk ── */
   await ev(() => V14UI.saveVisit()); await ev(() => DiskSync.push());
