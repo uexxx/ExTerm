@@ -25,11 +25,32 @@ const V157UI = (() => {
     if (typeof getStore !== 'function' || getStore._v157) return; const g0 = getStore;
     getStore = function () {
       const s = g0.apply(this, arguments);
-      if (s && s.sec <= V157.FAST && !s.candles.length) { const r = V157.rings.get(s.sym); if (r && r.size > 1) { const t0 = performance.now(); s.merge(r.rollup(s.sec, Date.now() / 1000)); U.stats.seeded++; U.stats.seedMs = performance.now() - t0; } }
+      if (s && s.sec <= V157.FAST && !s.candles.length) { const r = V157.rings.get(s.sym); if (r && r.size > 1) { const t0 = performance.now(), rows = r.rollup(s.sec, Date.now() / 1000); s.merge(typeof V163 !== 'undefined' ? V163.activeOnly(rows) : rows); U.stats.seeded++; U.stats.seedMs = performance.now() - t0; } }
       return s;
     };
     getStore._v157 = true;
   };
+  /* ══ v16.3 active-tick rule (1s / 5s / 10s / 15s): a sub-minute candle advances only when a real price or volume change
+     arrives. Quiet ticks (price = prior close, no volume: on-chain polls, closed stocks, idle feeds) never append flat
+     O=H=L=C bars, so candles and EMA 20/50 never stretch into a flat line on the right. Decision maths: V163.subStep. ══ */
+  U.active = { skipped: 0, appended: 0 };
+  const activeWire = () => {
+    if (typeof CandleStore === 'undefined' || CandleStore.prototype._v163) return; const P = CandleStore.prototype, t0 = P.applyTick, a0 = P.applyAgg; P._v163 = true;
+    const add = (s, bar) => { const c = s.candles; c.push(bar); if (typeof CANDLE_CAP !== 'undefined' && c.length > CANDLE_CAP) c.splice(0, c.length - CANDLE_CAP); s.version++; U.active.appended++; };
+    P.applyTick = function (price, size, ts) {
+      const c = this.candles, last = c.length ? c[c.length - 1] : null; if (typeof V163 === 'undefined' || !(price > 0)) return t0.apply(this, arguments);
+      const k = V163.subStep(last, this.sec, ts, V163.tickChanged(last, price, size));
+      if (k === 'pass' || k === 'merge') return t0.apply(this, arguments);
+      if (k === 'append') add(this, V163.nextBar(last, this.sec, ts, { c: price, v: size || 0 })); else if (k === 'skip') U.active.skipped++;
+    };
+    P.applyAgg = function (a) {
+      const c = this.candles, last = c.length ? c[c.length - 1] : null; if (typeof V163 === 'undefined' || !a || !(a.c > 0)) return a0.apply(this, arguments);
+      const k = V163.subStep(last, this.sec, a.t, V163.aggChanged(last, a));
+      if (k === 'pass' || k === 'merge') return a0.apply(this, arguments);
+      if (k === 'append') add(this, V163.nextBar(last, this.sec, a.t, a)); else if (k === 'skip') U.active.skipped++;
+    };
+  };
+
   /* ══ crisp fast candles: ≥ 4px body + 2px gap on 1s / 5s / 10s ══ */
   let fastNow = false;
   const chartWire = () => {
@@ -219,7 +240,7 @@ const V157UI = (() => {
   };
   U.start = () => {
     document.body.classList.add('v157');
-    feedWire(); storeWire(); chartWire(); mount(); kick();
+    feedWire(); storeWire(); activeWire(); chartWire(); mount(); kick();
     setInterval(tickData, 1000);
     document.addEventListener('visibilitychange', () => { if (!document.hidden) { for (const v of U.views.values()) v.dirty = true; kick(); } });
   };

@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-QWQeydLg38bly2c4jl/XVLByVrc2n7UdqcJQWuLns4k='; worker-src 'self' blob:; media-src 'none'; child-src 'none'; manifest-src 'self'; style-src 'self' https://fonts.googleapis.com; style-src-elem 'self' 'sha256-RoS+0R5r5uka6F00MSe6sudjJ8HCMtVRDUZFeZe2CkI=' https://fonts.googleapis.com; style-src-attr 'unsafe-inline'; img-src 'self' https: data: blob:; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https: wss: http://localhost:* http://127.0.0.1:* ws://localhost:* ws://127.0.0.1:*; object-src 'none'; base-uri 'none'; form-action 'none'; frame-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-Iur227LjPnyTdG0K7KR7E045VcpRfZSmWRKCMqrgNpg='; worker-src 'self' blob:; media-src 'none'; child-src 'none'; manifest-src 'self'; style-src 'self' https://fonts.googleapis.com; style-src-elem 'self' 'sha256-NVZfXF0miTLXoe/9dT9EfytaU5hCrUy+APXTOvKRHak=' https://fonts.googleapis.com; style-src-attr 'unsafe-inline'; img-src 'self' https: data: blob:; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https: wss: http://localhost:* http://127.0.0.1:* ws://localhost:* ws://127.0.0.1:*; object-src 'none'; base-uri 'none'; form-action 'none'; frame-src 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#05060e">
@@ -1678,6 +1678,76 @@ body.v156 #tab-markets .toolbar #indBtns{flex:0 1 auto;flex-wrap:nowrap;min-widt
 body.v156 #tab-markets .toolbar #indBtns::-webkit-scrollbar{display:none}
 body.v156 #tab-markets .toolbar #indBtns>*{flex:none;white-space:nowrap}
 body.v156 #tfBtns.v155-tf button{padding:4px 6px;font-size:11px;flex:none}
+/* v16.3 live-execution precision */
+.v163-tk{display:flex;flex-direction:column;gap:6px;padding:8px;border-radius:10px;background:rgba(212,175,55,.05)}
+.v163-tk .v163-risk{gap:6px;align-items:flex-end}.v163-tk .v163-risk .f{flex:1}
+.v163-tk .v163-tifrow{justify-content:space-between;align-items:center;gap:6px}.v163-tk .seg button{min-height:26px}
+.v163-tk .chk{display:flex;align-items:center;gap:6px;font-size:12px}.v163-keys{font-size:11px;opacity:.75}
+.v163-safety{margin-top:14px;padding-top:10px;border-top:1px solid rgba(255,255,255,.06)}
+.v163-safety h3{display:flex;align-items:center;gap:8px}.v163-ic{width:18px;height:18px;color:#D4AF37;flex:none}
+.v163-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:8px 14px;align-items:end}
+.v163-grid label{display:flex;flex-direction:column;gap:3px;font-size:12px}.v163-grid label.v160-chk{flex-direction:row;align-items:center;gap:6px}
+.v163-grid input[type=number],.v163-grid select{width:100%}
+.v163-warn{grid-column:1/-1;margin:0;padding:6px 8px;border-radius:8px;background:rgba(220,20,60,.12);color:#ff8a9a;font-size:12px}
+.v163-be{position:absolute;z-index:6;height:18px;min-width:30px;padding:0 7px;border:0;border-radius:9px;background:#D4AF37;color:#0b0b0d;font:700 10px/18px ui-monospace,Menlo,Consolas,monospace;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.45)}
+.v163-be:hover,.v163-be:focus-visible{background:#f0cf5a;outline:2px solid #fff3;outline-offset:1px}
+@media (max-width:640px){.v163-grid{grid-template-columns:1fr}}
+/* v16.3 closed-loop cockpit */
+.v163-hud{position:absolute;bottom:38px;left:62px;z-index:7;display:flex;flex-direction:column;gap:6px;padding:8px 10px;border-radius:12px;background:rgba(12,12,15,.86);backdrop-filter:blur(6px);box-shadow:0 10px 28px rgba(0,0,0,.55),inset 0 0 0 1px rgba(244,63,94,.35);max-width:min(560px,calc(100% - 140px));font-size:12px;color:var(--txt,#e8e8ea)}
+.v163-hud[hidden]{display:none!important}
+.v163-hud[data-level="ok"]{box-shadow:0 10px 28px rgba(0,0,0,.55),inset 0 0 0 1px rgba(47,208,138,.4)}
+.v163-hud[data-level="crit"]{box-shadow:0 10px 28px rgba(0,0,0,.55),inset 0 0 0 2px rgba(244,63,94,.9)}
+.v163-hrow{display:flex;align-items:center;gap:8px;min-width:0}.v163-hcol{display:flex;flex-direction:column;gap:4px;min-width:0}
+.v163-hud #v163HudTxt{font-size:12px;letter-spacing:.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.v163-led{width:9px;height:9px;border-radius:50%;background:#f43f5e;box-shadow:0 0 0 3px rgba(244,63,94,.22);flex:none;animation:v163pulse 1.6s ease-in-out infinite}
+.v163-hud[data-level="ok"] .v163-led{background:#2fd08a;box-shadow:0 0 0 3px rgba(47,208,138,.22)}
+@keyframes v163pulse{50%{opacity:.45}}
+#v163Spark{width:168px;height:44px;border-radius:6px;background:rgba(255,255,255,.03);flex:none}
+.v163-pill{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:999px;background:rgba(212,175,55,.14);color:#D4AF37;font-size:11px;font-weight:600;white-space:nowrap}
+.v163-pill.warn{background:rgba(244,63,94,.18);color:#ff8a9a}
+.v163-hbtns{flex-wrap:wrap;gap:4px}
+.v163-hb{display:inline-flex;align-items:center;gap:4px;height:24px;padding:0 8px;border:0;border-radius:7px;background:rgba(255,255,255,.06);color:inherit;font:600 11px/1 ui-sans-serif,system-ui,sans-serif;cursor:pointer}
+.v163-hb:hover,.v163-hb:focus-visible{background:rgba(255,255,255,.12);outline:none}.v163-hb.on{background:rgba(212,175,55,.22);color:#D4AF37}
+.v163-hic{width:13px;height:13px;flex:none}
+.v163-flash{animation:v163fl .6s ease-out}.v163-flash-dn{animation:v163fd .7s ease-out}
+@keyframes v163fl{0%{box-shadow:0 0 0 3px rgba(47,208,138,.85)}100%{box-shadow:0 10px 28px rgba(0,0,0,.55)}}
+@keyframes v163fd{0%{box-shadow:0 0 0 3px rgba(244,63,94,.95)}100%{box-shadow:0 10px 28px rgba(0,0,0,.55)}}
+.v163-cd{background:rgba(212,175,55,.16)!important;color:#D4AF37!important;cursor:not-allowed;font-variant-numeric:tabular-nums}
+.v163-ck .v163-ckrow{gap:6px;align-items:center;flex-wrap:wrap}.v163-ck .v163-lev{max-width:110px}
+.v163-mstrip{display:none;align-items:center;gap:8px;flex-wrap:wrap;padding:8px 10px;border-radius:10px;background:rgba(212,175,55,.06);box-shadow:inset 0 0 0 1px rgba(212,175,55,.2)}
+body.v163-micro .v163-mstrip{display:flex}
+.v163-mstrip label{display:flex;align-items:center;gap:4px;font-size:11px}.v163-mstrip .in{width:74px}.v163-mt{color:#D4AF37;font-size:12px}.v163-msym{font-size:12px;opacity:.85}
+.v163-mstrip .btn.up{background:rgba(47,208,138,.18);color:#2fd08a}.v163-mstrip .btn.dn{background:rgba(244,63,94,.18);color:#ff8a9a}
+@media (min-width:1101px){body.v163-micro #tab-markets .mk{grid-template-columns:224px minmax(0,1fr)}body.v163-micro.v155-hideL #tab-markets .mk{grid-template-columns:minmax(0,1fr)}}
+body.v163-micro #tab-markets .mk>.side-col{display:none}
+body.v163-focus #tab-markets #chartHint,body.v163-focus #tab-markets #drawBtns{display:none}
+.v163-drawer{position:fixed;top:64px;right:12px;bottom:12px;z-index:9000;width:min(420px,calc(100vw - 24px));display:flex;flex-direction:column;border-radius:14px;background:linear-gradient(180deg,#15161a,#0d0e11);box-shadow:0 24px 60px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.05);color:var(--txt,#e8e8ea);overflow:hidden}
+.v163-dh{display:flex;align-items:center;gap:8px;padding:12px 14px}.v163-dh h3{margin:0;font-size:14px;flex:1}
+.v163-dbody{flex:1;overflow:auto;padding:0 14px}.v163-dbody h4{margin:14px 0 6px;font-size:12px;color:#D4AF37;text-transform:uppercase;letter-spacing:.06em}
+.v163-prow{padding:10px 0;border-bottom:1px solid rgba(255,255,255,.06)}.v163-ph{display:flex;flex-wrap:wrap;gap:8px;align-items:baseline}
+.v163-side{font:700 10px/1 ui-monospace,Menlo,Consolas,monospace;padding:3px 6px;border-radius:5px;background:rgba(47,208,138,.16);color:#2fd08a}.v163-side.short{background:rgba(196,181,253,.16);color:#c4b5fd}
+.v163-pmeta{margin:4px 0}.v163-pacts{display:flex;flex-wrap:wrap;gap:4px}.v163-drift{color:#D4AF37}
+.v163-orow{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:6px 0;font-size:12px}
+.v163-dfoot{display:flex;flex-wrap:wrap;gap:6px;padding:12px 14px 4px}.v163-drawer>.note{padding:0 14px 12px;margin:0}
+.v163-cockpit h4{margin:14px 0 6px;font-size:12px;color:#D4AF37;letter-spacing:.04em}
+.v163-allow{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:6px 10px}.v163-allow label{display:flex;flex-direction:column;gap:3px;font-size:11px}
+.v163-acts{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 6px}
+.v163-ready{display:inline-block;margin:4px 0;padding:4px 10px;border-radius:7px;font:700 12px/1.4 ui-monospace,Menlo,Consolas,monospace;letter-spacing:.04em}
+.v163-ready.ok{background:rgba(47,208,138,.16);color:#2fd08a}.v163-ready.bad{background:rgba(244,63,94,.16);color:#ff8a9a}
+.v163-chk{list-style:none;margin:4px 0;padding:0;font-size:12px;line-height:1.6}.v163-chk li.ok b{color:#2fd08a}.v163-chk li.bad b{color:#ff8a9a}
+.v163-sync{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;align-items:start}#v163HbCv{width:100%;max-width:360px;height:64px;border-radius:8px;background:rgba(255,255,255,.03)}
+.v163-q{width:100%;border-collapse:collapse;font-size:12px}.v163-q th,.v163-q td{padding:3px 6px;text-align:start}.v163-q caption{text-align:start;padding-bottom:4px}
+.v163-fills{font-size:11px;line-height:1.6;margin-top:6px;opacity:.85}
+.v163-trig,.v163-snap,.v163-br{display:flex;flex-wrap:wrap;gap:6px;align-items:center}.v163-trig .in{width:96px}.v163-snap .in{min-width:220px;flex:1}
+.v163-tlist{margin:6px 0;padding-inline-start:18px;font-size:12px}
+.v163-code{max-height:260px;overflow:auto;font-size:11px;line-height:1.45;white-space:pre}
+.v163-dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-inline-end:6px;vertical-align:middle;background:rgba(255,255,255,.18)}
+.v163-dot.near{background:#D4AF37}.v163-dot.ready{background:#2fd08a;box-shadow:0 0 0 3px rgba(47,208,138,.2)}
+.v163-cardpill{position:fixed;right:16px;bottom:16px;z-index:9001;display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:12px;background:#15161a;box-shadow:0 12px 32px rgba(0,0,0,.55);font-size:12px;color:var(--txt,#e8e8ea)}
+[data-v160="arm"].v163-key1{box-shadow:0 0 0 2px #D4AF37,0 0 16px rgba(212,175,55,.5)}
+body.live-bot-armed #tab-markets .tape,body.live-bot-armed #tab-markets #chartHint{display:none!important}
+html[dir="rtl"] .v163-hud{left:auto;right:62px}html[dir="rtl"] .v163-drawer{right:auto;left:12px}html[dir="rtl"] .v163-cardpill{right:auto;left:16px}
+@media (max-width:760px){.v163-hud{left:8px;right:8px;max-width:none}.v163-sync{grid-template-columns:1fr}#v163Spark{width:120px}}
 
 </style>
 </head>
@@ -1920,7 +1990,7 @@ body.v156 #tfBtns.v155-tf button{padding:4px 6px;font-size:11px;flex:none}
   <section id="tab-grok" class="tab"><div id="gkHost"></div></section>
 
   <!-- SETTINGS -->
-  <section id="tab-set" class="tab"><div id="setBody"></div><p class="note about-notice">ExTerm v16.2 · Official Release by @exterm.labs · <a href="https://github.com/uexxx/ExTerm" target="_blank" rel="noopener noreferrer">github.com/uexxx/ExTerm</a></p></section>
+  <section id="tab-set" class="tab"><div id="setBody"></div><p class="note about-notice">ExTerm v16.3 · Official Release by @exterm.labs · <a href="https://github.com/uexxx/ExTerm" target="_blank" rel="noopener noreferrer">github.com/uexxx/ExTerm</a></p></section>
 </main>
 
 <aside id="drawer" class="drawer" aria-hidden="true"><div class="dhead"><span id="dTitle"></span><span class="sp"></span><button class="ghost" id="dClose">✕</button></div><div class="dbody" id="dBody"></div></aside>
@@ -12117,7 +12187,7 @@ const DataHealth = (() => {
       ${row('Background bots', s.bots, s.bots ? 'Bots can keep trading (paper) after you close this tab.' : 'Needs the launcher.')}
       ${row('Background alerts', s.alerts, s.alerts ? 'Alerts can reach Telegram / Discord.' : 'Needs the launcher.')}
       ${typeof DiskSync !== 'undefined' ? row('Saved to this computer', DiskSync.on && !DiskSync.err, '<span id="v13Disk">' + esc(DiskSync.status()) + '</span>') : ''}
-    </table><button class="btn sm" id="v13Intro" style="margin-top:8px">How to get live data</button>${typeof DiskSync !== 'undefined' && DiskSync.on ? ' <button class="btn sm" id="v13JnDl" style="margin-top:8px" title="Every logged trade kept on this computer (up to 20,000), as a spreadsheet">⬇ Full journal log (CSV)</button>' : ''}</div></div>`;
+    </table><button class="btn sm" id="v13Intro" style="margin-top:8px">${s.launcher ? 'Live Feed Diagnostics' : 'How to get live data'}</button>${typeof DiskSync !== 'undefined' && DiskSync.on ? ' <button class="btn sm" id="v13JnDl" style="margin-top:8px" title="Every logged trade kept on this computer (up to 20,000), as a spreadsheet">⬇ Full journal log (CSV)</button>' : ''}</div></div>`;
   };
   D.intro = (force) => {
     const s = D.state();
@@ -13283,9 +13353,10 @@ const Tour = (() => {
     let ov = $('#tourOv'); if (!ov) { ov = document.createElement('div'); ov.id = 'tourOv'; ov.className = 'tour-ov'; ov.setAttribute('role', 'dialog'); ov.setAttribute('aria-modal', 'true'); document.body.appendChild(ov); document.addEventListener('keydown', T.key); }
     let [sel, title, body] = STEPS[T.i], el = sel ? $(sel) : null;
     if (el && (el.hidden || !el.offsetWidth)) el = null;
+    if (el && el.scrollIntoView) { const q = el.getBoundingClientRect(); if (q.top < 0 || q.bottom > window.innerHeight) el.scrollIntoView({ block: 'nearest' }); } // a target below the fold (e.g. a taller ticket) comes into view first
     const r = el ? el.getBoundingClientRect() : null, pad = 6;
     const hole = r ? `<div class="tour-hole" style="left:${r.left - pad}px;top:${r.top - pad}px;width:${r.width + pad * 2}px;height:${r.height + pad * 2}px"></div>` : '';
-    const cw = 320, left = r ? Math.min(window.innerWidth - cw - 12, Math.max(12, r.left)) : (window.innerWidth - cw) / 2, top = r ? (r.bottom + 180 < window.innerHeight ? r.bottom + 12 : Math.max(12, r.top - 170)) : window.innerHeight / 2 - 90;
+    const cw = 320, left = r ? Math.min(window.innerWidth - cw - 12, Math.max(12, r.left)) : (window.innerWidth - cw) / 2, top = r ? Math.min(window.innerHeight - 200, r.bottom + 180 < window.innerHeight ? r.bottom + 12 : Math.max(12, r.top - 170)) : window.innerHeight / 2 - 90;
     ov.innerHTML = `${hole}<div class="tour-card" style="left:${left}px;top:${top}px;width:${cw}px"><div class="note">${T.i + 1} / ${STEPS.length}</div><h3>${esc(title)}</h3><p>${esc(body)}</p>
       <div class="row" style="justify-content:space-between"><button class="btn sm ghost" id="tourSkip">Skip tour</button><span><button class="btn sm" id="tourPrev" ${T.i ? '' : 'disabled'}>Back</button> <button class="btn sm pri" id="tourNext">${T.i === STEPS.length - 1 ? 'Done' : 'Next'}</button></span></div></div>`;
     $('#tourSkip').onclick = T.end; $('#tourPrev').onclick = T.prev; $('#tourNext').onclick = T.next; setTimeout(() => $('#tourNext').focus(), 20);
@@ -17007,7 +17078,7 @@ const V151UI = (() => {
     const t = e.target.closest && e.target.closest('[data-autosetup]'); if (t && (e.key === 'Enter' || e.key === ' ')) { e.stopPropagation(); return; }
     if (!e.altKey || e.ctrlKey || e.metaKey || (typeof p2typing === 'function' && p2typing())) return;
     const d = /^Digit([1-4])$/.exec(e.code || ''); if (d) { e.preventDefault(); U.preset(V151.PRESET_KEYS[+d[1] - 1]); return; }
-    if (e.code === 'KeyA') { e.preventDefault(); U.autoSetup(ST.sel); return; }
+    if (e.code === 'KeyA' && !e.shiftKey) { e.preventDefault(); U.autoSetup(ST.sel); return; } // Shift + Alt + A is v16.3 Two-Key Arming
     if (e.code === 'KeyG') { e.preventDefault(); const c = cfg(); c.ghost = c.ghost ? null : (ST.sel === 'BTC-USD' ? 'SPY' : 'BTC-USD'); saveState(); toast(c.ghost ? `Ghost line: ${baseOf(c.ghost)}` : 'Ghost line off'); if (chart) chart.invalidate(); }
   };
 
@@ -20653,11 +20724,32 @@ const V157UI = (() => {
     if (typeof getStore !== 'function' || getStore._v157) return; const g0 = getStore;
     getStore = function () {
       const s = g0.apply(this, arguments);
-      if (s && s.sec <= V157.FAST && !s.candles.length) { const r = V157.rings.get(s.sym); if (r && r.size > 1) { const t0 = performance.now(); s.merge(r.rollup(s.sec, Date.now() / 1000)); U.stats.seeded++; U.stats.seedMs = performance.now() - t0; } }
+      if (s && s.sec <= V157.FAST && !s.candles.length) { const r = V157.rings.get(s.sym); if (r && r.size > 1) { const t0 = performance.now(), rows = r.rollup(s.sec, Date.now() / 1000); s.merge(typeof V163 !== 'undefined' ? V163.activeOnly(rows) : rows); U.stats.seeded++; U.stats.seedMs = performance.now() - t0; } }
       return s;
     };
     getStore._v157 = true;
   };
+  /* ══ v16.3 active-tick rule (1s / 5s / 10s / 15s): a sub-minute candle advances only when a real price or volume change
+     arrives. Quiet ticks (price = prior close, no volume: on-chain polls, closed stocks, idle feeds) never append flat
+     O=H=L=C bars, so candles and EMA 20/50 never stretch into a flat line on the right. Decision maths: V163.subStep. ══ */
+  U.active = { skipped: 0, appended: 0 };
+  const activeWire = () => {
+    if (typeof CandleStore === 'undefined' || CandleStore.prototype._v163) return; const P = CandleStore.prototype, t0 = P.applyTick, a0 = P.applyAgg; P._v163 = true;
+    const add = (s, bar) => { const c = s.candles; c.push(bar); if (typeof CANDLE_CAP !== 'undefined' && c.length > CANDLE_CAP) c.splice(0, c.length - CANDLE_CAP); s.version++; U.active.appended++; };
+    P.applyTick = function (price, size, ts) {
+      const c = this.candles, last = c.length ? c[c.length - 1] : null; if (typeof V163 === 'undefined' || !(price > 0)) return t0.apply(this, arguments);
+      const k = V163.subStep(last, this.sec, ts, V163.tickChanged(last, price, size));
+      if (k === 'pass' || k === 'merge') return t0.apply(this, arguments);
+      if (k === 'append') add(this, V163.nextBar(last, this.sec, ts, { c: price, v: size || 0 })); else if (k === 'skip') U.active.skipped++;
+    };
+    P.applyAgg = function (a) {
+      const c = this.candles, last = c.length ? c[c.length - 1] : null; if (typeof V163 === 'undefined' || !a || !(a.c > 0)) return a0.apply(this, arguments);
+      const k = V163.subStep(last, this.sec, a.t, V163.aggChanged(last, a));
+      if (k === 'pass' || k === 'merge') return a0.apply(this, arguments);
+      if (k === 'append') add(this, V163.nextBar(last, this.sec, a.t, a)); else if (k === 'skip') U.active.skipped++;
+    };
+  };
+
   /* ══ crisp fast candles: ≥ 4px body + 2px gap on 1s / 5s / 10s ══ */
   let fastNow = false;
   const chartWire = () => {
@@ -20847,7 +20939,7 @@ const V157UI = (() => {
   };
   U.start = () => {
     document.body.classList.add('v157');
-    feedWire(); storeWire(); chartWire(); mount(); kick();
+    feedWire(); storeWire(); activeWire(); chartWire(); mount(); kick();
     setInterval(tickData, 1000);
     document.addEventListener('visibilitychange', () => { if (!document.hidden) { for (const v of U.views.values()) v.dirty = true; kick(); } });
   };
@@ -21030,7 +21122,8 @@ const V161 = (() => {
         closes (sell) only need a well-formed packet, because blocking an exit would add risk instead of removing it. ── */
   V.SYM_RX = /^[A-Z0-9][A-Z0-9._:\/-]{0,23}$/;
   V.ACTIONS = ['buy', 'sell', 'CANCEL_ALL_AND_FLATTEN'];
-  V.validate = (b, fs) => {
+  /* opt.sl === false (v16.3 explicit "Require Stop-Loss" override) skips only the stop-loss checks */
+  V.validate = (b, fs, opt) => {
     if (!b || typeof b !== 'object' || Array.isArray(b)) return { ok: false, why: 'payload is not an object' };
     if (!V.ACTIONS.includes(b.action)) return { ok: false, why: 'unknown action' };
     if (b.action === 'CANCEL_ALL_AND_FLATTEN') return { ok: true };
@@ -21039,8 +21132,11 @@ const V161 = (() => {
     if (!(b.usd > 0)) return { ok: false, why: 'order size must be above $0' };
     if (b.price != null && !(b.price > 0)) return { ok: false, why: 'price must be above 0' };
     if (b.action === 'buy') {
-      if (!(b.sl > 0)) return { ok: false, why: 'missing stop-loss' };
-      if (b.price > 0 && b.sl >= b.price) return { ok: false, why: 'stop-loss is not below the entry price' };
+      if (!(opt && opt.sl === false)) {
+        if (!(b.sl > 0)) return { ok: false, why: 'missing stop-loss' };
+        if (b.side !== 'short' && b.price > 0 && b.sl >= b.price) return { ok: false, why: 'stop-loss is not below the entry price' };
+        if (b.side === 'short' && b.price > 0 && b.sl <= b.price) return { ok: false, why: 'stop-loss is not above the short entry price' };
+      }
       const cap = fs && +fs.maxNotional; if (!(cap > 0)) return { ok: false, why: 'Max Single-Order Notional cap not set' };
       if (b.usd > cap) return { ok: false, why: `notional $${b.usd.toFixed(2)} is above the $${cap.toFixed(2)} Max Single-Order Notional cap` };
     }
@@ -21203,6 +21299,459 @@ const V162 = (() => {
 })();
 if (typeof module !== 'undefined') module.exports = V162;
 
+/* ===== v163core.js ===== */
+/* Copyright (c) 2026 ExTerm Labs (@exterm.labs) · Licensed under GNU AGPL-3.0 · https://github.com/uexxx/ExTerm */
+/* ExTerm v16.3 core (pure, no DOM, Node-testable): live-execution precision.
+   · active-tick sub-minute bars (a quiet tick never appends a flat O=H=L=C bar)
+   · mandatory stop-loss with direction check (long SL < entry, short SL > entry); closes / flatten always pass
+   · fixed-dollar-risk position sizer, R:R + dollar P&L badges, break-even stop, auto-BE on TP1, TP1/TP2/TP3 splitter
+   · spread tunnel samples, magnetic snap (high / low / VWAP), trailing-stop activation + step plan, slippage in bps / ticks
+   · time-in-force (GTC / IOC / Post-Only) and the Shift+B / Shift+S / Shift+X ticket hotkeys
+   · core risk guards: order-book depth ≥ 3×, stale-quote freeze, trades-per-hour limit, global 6-slot exposure cap,
+     drawdown throttle, correlation guard, thin-hours spread tightening, auto-disarm on idle. UI in v163.js. */
+const V163 = (() => {
+  const V = {};
+  const fin = Number.isFinite;
+  const num = (v, lo, hi, def) => (v !== '' && v !== null && v !== undefined && typeof v !== 'boolean' && fin(+v) && +v >= lo && +v <= hi ? +v : def);
+
+  /* ══ 0. active-tick sub-minute bars ══ */
+  V.SUB = 60;
+  V.quiet = (b) => !!b && !(b.v > 0) && b.o === b.h && b.h === b.l && b.l === b.c;
+  /* what one tick does to a sub-minute store whose newest bar is `last`:
+     'merge' (same bucket) · 'append' (new bucket AND the price or volume changed) · 'skip' (new bucket, nothing changed)
+     · 'old' (late tick for a closed bucket) · 'pass' (not a sub-minute store: leave it to the normal path) */
+  V.subStep = (last, sec, ts, changed) => {
+    if (!last || !(sec > 0 && sec < V.SUB) || !fin(ts)) return 'pass';
+    const b = Math.floor(ts / sec) * sec;
+    if (b < last.t) return 'old';
+    if (b === last.t) return 'merge';
+    return changed ? 'append' : 'skip';
+  };
+  V.tickChanged = (last, price, size) => !!last && (price !== last.c || size > 0);
+  V.aggChanged = (last, a) => !!last && !!a && (a.c !== last.c || a.h !== a.l || a.v > 0);
+  /* the single bar a changed tick appends: opens at the prior close (gapless), no flat filler bars in between */
+  V.nextBar = (last, sec, ts, o) => { const t = Math.floor(ts / sec) * sec, p = last.c; return { t, o: p, h: Math.max(p, o.h != null ? o.h : o.c), l: Math.min(p, o.l != null ? o.l : o.c), c: o.c, v: o.v || 0 }; };
+  /* drop flat quiet bars from a rolled-up sub-minute window (the first bar stays as the anchor); re-chain open = prior close */
+  V.activeOnly = (bars) => {
+    const out = []; for (const b of bars || []) { if (!b) continue; if (out.length && V.quiet(b) && b.c === out[out.length - 1].c) continue; out.push(Object.assign({}, b)); }
+    for (let i = 1; i < out.length; i++) { const b = out[i], p = out[i - 1].c; b.o = p; b.h = Math.max(b.h, p); b.l = Math.min(b.l, p); }
+    return out;
+  };
+
+  /* ══ 1. mandatory stop-loss on live opening orders ══ */
+  V.isOpening = (b) => !!b && b.action === 'buy' && !b.reduce;
+  V.checkSL = (b, on) => {
+    if (on === false || !V.isOpening(b)) return { ok: true };
+    if (!(+b.sl > 0)) return { ok: false, status: 'sl', why: 'Require Stop-Loss: opening order has no stop-loss' };
+    const e = +b.price; if (!(e > 0)) return { ok: true };
+    if (b.side === 'short' ? !(b.sl > e) : !(b.sl < e)) return { ok: false, status: 'sl', why: `Require Stop-Loss: ${b.side === 'short' ? 'short stop must sit above' : 'long stop must sit below'} entry ${e}` };
+    return { ok: true };
+  };
+
+  /* ══ 2. fixed-dollar-risk sizer + R:R / dollar badges ══ */
+  V.decimals = (step) => { if (!(step > 0)) return 8; const s = String(step); return s.includes('e-') ? +s.split('e-')[1] : (s.split('.')[1] || '').length; };
+  V.floorStep = (q, step) => (step > 0 ? +(Math.floor(q / step + 1e-9) * step).toFixed(V.decimals(step)) : q);
+  /* $ risk → exact quantity: qty × (|entry − stop| + round-trip fee) = risk; floored to the lot step; capped by maxUsd */
+  V.sizeByRisk = (riskUsd, entry, sl, o) => {
+    const x = Object.assign({ step: 0, feePct: 0, maxUsd: 0 }, o || {});
+    if (!(riskUsd > 0) || !(entry > 0) || !(sl > 0) || sl === entry) return null;
+    const per = Math.abs(entry - sl) + entry * Math.max(0, x.feePct) * 2; let qty = V.floorStep(riskUsd / per, x.step), capped = false;
+    if (x.maxUsd > 0 && qty * entry > x.maxUsd) { qty = V.floorStep(x.maxUsd / entry, x.step); capped = true; }
+    if (!(qty > 0)) return null;
+    return { qty, usd: qty * entry, risk: qty * per, per, capped, side: sl < entry ? 'long' : 'short' };
+  };
+  V.money = (v) => { const a = Math.abs(v); return (v < 0 ? '-' : '+') + '$' + (a >= 100 ? Math.round(a).toLocaleString('en-US') : a.toFixed(2)); };
+  /* P&L at `target` for qty, and its R multiple against the stop: '+$420 (+2.8R)' / '-$150 (-1.0R)' */
+  V.badge = (entry, sl, target, qty, side) => {
+    if (!(entry > 0) || !(target > 0) || !(qty > 0)) return null;
+    const dir = side === 'short' ? -1 : 1, usd = (target - entry) * qty * dir, risk = sl > 0 ? Math.abs(entry - sl) * qty : 0, r = risk > 0 ? usd / risk : null;
+    return { usd, r, text: V.money(usd) + (r == null ? '' : ` (${r >= 0 ? '+' : '-'}${Math.abs(r).toFixed(1)}R)`) };
+  };
+
+  /* ══ 3. break-even stop, auto-BE on TP1, scaled take-profit ══ */
+  V.breakEven = (entry, side, feePct) => { const f = Math.max(0, +feePct || 0) * 2; return side === 'short' ? entry * (1 - f) : entry * (1 + f); };
+  V.SPLIT = [50, 30, 20];
+  V.splitTP = (qty, entry, tp, pcts, side, step) => {
+    const P = Array.isArray(pcts) && pcts.length === 3 && pcts.every((p) => p > 0) ? pcts : V.SPLIT, sum = P.reduce((a, b) => a + b, 0);
+    if (!(qty > 0) || !(entry > 0) || !(tp > 0) || Math.abs(sum - 100) > 1e-9 || (side === 'short' ? tp >= entry : tp <= entry)) return null;
+    const out = []; let left = qty;
+    for (let i = 0; i < 3; i++) { const q = i < 2 ? V.floorStep((qty * P[i]) / 100, step || 0) : left; left -= q; out.push({ n: i + 1, pct: P[i], qty: q, price: entry + ((tp - entry) * (i + 1)) / 3 }); }
+    return out;
+  };
+  V.hit = (side, price, level) => (side === 'short' ? price <= level : price >= level);
+  /* auto-BE: once TP1 trades, the stop moves to break-even (never loosens an already tighter stop) */
+  V.autoBE = (pos, price, tp1, feePct) => {
+    if (!pos || !(pos.entry > 0) || !(tp1 > 0) || !V.hit(pos.side, price, tp1)) return null;
+    const be = V.breakEven(pos.entry, pos.side, feePct), sl = +pos.sl || 0;
+    if (pos.side === 'short' ? sl > 0 && sl <= be : sl >= be) return null;
+    return be;
+  };
+
+  /* ══ 4. chart precision helpers ══ */
+  V.SPREAD_TF = [1, 5, 10, 15, 30, 60]; // the spread tunnel draws on 1s – 1m
+  V.tunnelOn = (tfSec) => tfSec > 0 && tfSec <= 60;
+  V.pushSpread = (arr, t, bid, ask, max) => { if (!(bid > 0) || !(ask >= bid) || !fin(t)) return arr; const L = arr[arr.length - 1]; if (L && L.t === t) { L.bid = bid; L.ask = ask; } else arr.push({ t, bid, ask }); if (arr.length > (max || 900)) arr.splice(0, arr.length - (max || 900)); return arr; };
+  V.vwap = (bars) => { let pv = 0, v = 0, s = 0, n = 0; for (const b of bars || []) { if (!b) continue; const tp = (b.h + b.l + b.c) / 3; if (!fin(tp)) continue; s += tp; n++; if (b.v > 0) { pv += tp * b.v; v += b.v; } } return v > 0 ? pv / v : n ? s / n : null; };
+  /* magnetic snap: the nearest of high / low / VWAP within tolPrice of p, else p unchanged */
+  V.snap = (p, levels, tolPrice) => { let best = p, d = tolPrice > 0 ? tolPrice : 0; for (const x of levels || []) { if (!(x > 0)) continue; const k = Math.abs(x - p); if (k <= d) { d = k; best = x; } } return best; };
+  /* ghost bracket of the order ticket: entry (limit or last), stop / target from % inputs */
+  V.ghost = (entry, slPct, tpPct, side) => { if (!(entry > 0)) return null; const s = side === 'short' ? -1 : 1; return { entry, sl: slPct > 0 ? entry * (1 - s * slPct) : null, tp: tpPct > 0 ? entry * (1 + s * tpPct) : null }; };
+  /* trailing stop: activates once price moves actPct in favour, then trails trailPct off the extreme and ratchets in
+     stepPct increments (of entry); `next` is the price at which the stop moves up one more step */
+  V.trailPlan = (entry, extreme, trailPct, actPct, stepPct, side) => {
+    if (!(entry > 0) || !(extreme > 0) || !(trailPct > 0)) return null;
+    const s = side === 'short' ? -1 : 1, act = entry * (1 + s * Math.max(0, actPct || 0)), active = s > 0 ? extreme >= act : extreme <= act;
+    if (!active) return { active: false, act, stop: null, next: act };
+    const raw = extreme * (1 - s * trailPct), st = (stepPct || 0) > 0 ? entry * stepPct : 0;
+    const stop = st ? (s > 0 ? Math.floor(raw / st + 1e-9) * st : Math.ceil(raw / st - 1e-9) * st) : raw;
+    const next = st ? (stop + s * st) / (1 - s * trailPct) : null;
+    return { active: true, act, stop, next };
+  };
+  V.tick = (price) => (price > 0 ? Math.pow(10, Math.floor(Math.log10(price)) - 4) : 0);
+  /* slippage vs the reference price at order time; positive = adverse (paid more on a buy, received less on a sell) */
+  V.slippage = (fill, ref, side, tick) => {
+    if (!(fill > 0) || !(ref > 0)) return null; const adv = side === 'sell' ? ref - fill : fill - ref, t = tick > 0 ? tick : V.tick(ref);
+    return { bps: (adv / ref) * 1e4, ticks: t > 0 ? adv / t : null, text: `${adv >= 0 ? '+' : '-'}${Math.abs((adv / ref) * 1e4).toFixed(1)} bps` };
+  };
+
+  /* ══ 5. time-in-force + hotkeys ══ */
+  V.TIF = ['GTC', 'IOC', 'POST'];
+  V.TIF_LABEL = { GTC: 'GTC', IOC: 'IOC', POST: 'Post-Only' };
+  /* limit placement under a TIF: Post-Only refuses a price that would take liquidity; IOC keeps only an immediate fill */
+  V.tifCheck = (tif, side, limit, bid, ask) => {
+    const mk = side === 'buy' ? ask > 0 && limit >= ask : bid > 0 && limit <= bid;
+    if (tif === 'POST' && mk) return { ok: false, why: `Post-Only: a ${side} limit at ${limit} would cross the ${side === 'buy' ? 'ask ' + ask : 'bid ' + bid} and take liquidity` };
+    if (tif === 'IOC') return { ok: true, marketable: mk, cancelRest: !mk };
+    return { ok: true, marketable: mk, cancelRest: false };
+  };
+  V.HOTKEYS = { B: 'buy', S: 'sell', X: 'cancel' };
+  V.hotkey = (e, editable) => {
+    if (!e || editable || !e.shiftKey || e.ctrlKey || e.altKey || e.metaKey || e.repeat) return null;
+    const k = String(e.key || '').toUpperCase(); return Object.prototype.hasOwnProperty.call(V.HOTKEYS, k) ? V.HOTKEYS[k] : null;
+  };
+
+  /* ══ 6. core risk guards ══ */
+  /* opposite-side book depth within bandPct of mid must be ≥ mult × order notional; unknown book = pass, noted */
+  V.depthCheck = (book, side, usd, mult, bandPct) => {
+    const m = mult > 0 ? mult : 3, need = usd * m, lv = book && (side === 'sell' ? book.bids : book.asks);
+    if (!Array.isArray(lv) || !lv.length || !book.bids || !book.asks || !book.bids.length || !book.asks.length) return { ok: true, known: false, depth: null, need };
+    const mid = (+book.bids[0][0] + +book.asks[0][0]) / 2, band = mid * ((bandPct > 0 ? bandPct : 0.5) / 100); let depth = 0;
+    for (const [p, q] of lv) { if (!(p > 0) || !(q > 0)) continue; if (Math.abs(p - mid) > band) break; depth += p * q; }
+    return { ok: depth >= need, known: true, depth, need };
+  };
+  /* stale-quote freeze: the allowed quote age depends on how the market streams */
+  V.STALE_MS = { crypto: 5000, stock: 20000, onchain: 90000 };
+  V.staleQuote = (ageMs, kind, mult) => { const max = (V.STALE_MS[kind] || V.STALE_MS.crypto) * (mult > 0 ? mult : 1); if (!fin(ageMs) || ageMs < 0) return { ok: false, age: null, max, why: 'no quote timestamp' }; return { ok: ageMs <= max, age: ageMs, max }; };
+  V.rateLimit = (times, now, max) => { const n = (times || []).filter((t) => now - t < 3600000 && t <= now).length; return { ok: !(max > 0) || n < max, n, max }; };
+  V.exposure = (positions, addUsd, cap) => { const tot = (positions || []).reduce((a, p) => a + Math.max(0, +(p && p.usd) || 0), 0); return { ok: !(cap > 0) || tot + Math.max(0, +addUsd || 0) <= cap, total: tot, after: tot + Math.max(0, +addUsd || 0), cap }; };
+  /* drawdown throttle: after n consecutive losing closes the next opening order is cut to `cut` of its size */
+  V.throttle = (closes, n, cut) => { const xs = (closes || []).filter((c) => c && fin(c.pnl) && fin(c.ts)).sort((a, b) => a.ts - b.ts); let k = 0; for (let i = xs.length - 1; i >= 0 && xs[i].pnl < 0; i--) k++; const N = n > 0 ? n : 2; return { losses: k, scale: k >= N ? (cut > 0 && cut <= 1 ? cut : 0.5) : 1 }; };
+  V.returns = (xs) => { const r = []; for (let i = 1; i < (xs || []).length; i++) if (xs[i - 1] > 0 && xs[i] > 0) r.push(Math.log(xs[i] / xs[i - 1])); return r; };
+  V.pearson = (a, b) => {
+    const n = Math.min(a.length, b.length); if (n < 10) return null; const x = a.slice(-n), y = b.slice(-n);
+    let mx = 0, my = 0; for (let i = 0; i < n; i++) { mx += x[i]; my += y[i]; } mx /= n; my /= n;
+    let sxy = 0, sxx = 0, syy = 0; for (let i = 0; i < n; i++) { const dx = x[i] - mx, dy = y[i] - my; sxy += dx * dy; sxx += dx * dx; syy += dy * dy; }
+    return sxx > 0 && syy > 0 ? sxy / Math.sqrt(sxx * syy) : null;
+  };
+  /* correlation guard: refuse a new position whose returns move with an open one at r > max */
+  V.corrGuard = (closesNew, open, max) => {
+    const lim = max > 0 ? max : 0.85, rn = V.returns(closesNew);
+    for (const [sym, cs] of Object.entries(open || {})) { const r = V.pearson(rn, V.returns(cs)); if (r != null && r > lim) return { ok: false, sym, r, max: lim }; }
+    return { ok: true, max: lim };
+  };
+  /* thin-liquidity hours: weekends (UTC) for crypto, outside 09:30–16:00 New York for US stocks */
+  V.usRegular = (ms) => {
+    const p = {}; for (const x of new Intl.DateTimeFormat('en-US', { timeZone: 'America/New_York', weekday: 'short', hour: 'numeric', minute: 'numeric', hour12: false }).formatToParts(new Date(ms))) p[x.type] = x.value;
+    if (p.weekday === 'Sat' || p.weekday === 'Sun') return false; const m = (+p.hour % 24) * 60 + +p.minute; return m >= 570 && m < 960;
+  };
+  V.thinHours = (ms, kind) => { if (kind === 'stock') return !V.usRegular(ms); const d = new Date(ms).getUTCDay(); return d === 0 || d === 6; };
+  V.spreadCap = (base, thin, cut) => (thin ? base * (cut > 0 && cut <= 1 ? cut : 0.5) : base);
+  V.IDLE = [0, 15, 30, 60];
+  V.idleDue = (lastAct, now, mins) => mins > 0 && fin(lastAct) && now - lastAct >= mins * 60000;
+
+  /* ══ settings ══ */
+  V.DEFAULTS = () => ({ requireSL: true, depthOn: true, depthX: 3, staleOn: true, maxPerHour: 20, expCap: 25000, throttle: true, corrOn: true, corrMax: 0.85, thinOn: true, idleMin: 0,
+    tif: 'GTC', riskUsd: 100, autoBE: false, splitTP: false, trailAct: 0, trailStep: 0, tunnel: true, ghost: true, fills: true, hotkeys: true });
+  V.load = (raw) => {
+    const d = V.DEFAULTS(); let o = null; try { o = typeof raw === 'string' ? JSON.parse(raw) : raw; } catch (e) { o = null; }
+    if (!o || typeof o !== 'object') return d;
+    for (const k of ['requireSL', 'depthOn', 'staleOn', 'throttle', 'corrOn', 'thinOn', 'autoBE', 'splitTP', 'tunnel', 'ghost', 'fills', 'hotkeys']) if (typeof o[k] === 'boolean') d[k] = o[k];
+    d.depthX = num(o.depthX, 1, 50, d.depthX); d.maxPerHour = Math.round(num(o.maxPerHour, 0, 1000, d.maxPerHour)); d.expCap = num(o.expCap, 0, 1e10, d.expCap);
+    d.corrMax = num(o.corrMax, 0.5, 0.99, d.corrMax); d.idleMin = V.IDLE.includes(+o.idleMin) ? +o.idleMin : 0; d.tif = V.TIF.includes(o.tif) ? o.tif : 'GTC';
+    d.riskUsd = num(o.riskUsd, 0.01, 1e9, d.riskUsd); d.trailAct = num(o.trailAct, 0, 50, 0); d.trailStep = num(o.trailStep, 0, 50, 0);
+    return d;
+  };
+
+  /* every guard for one live opening order, in order; the first failure blocks. ctx:
+     { quoteAge, kind, sentTimes, now, positions:[{usd}], book, closes, corrNew, corrOpen, spread:{bid,ask}, maxSpreadPct } */
+  V.preflight = (b, ctx, cfg) => {
+    const c = Object.assign(V.DEFAULTS(), cfg || {}), x = ctx || {}, now = fin(x.now) ? x.now : Date.now();
+    const sl = V.checkSL(b, c.requireSL); if (!sl.ok) return sl;
+    if (!V.isOpening(b)) return { ok: true, scale: 1, notes: [] };
+    const notes = [], usd = +b.usd || 0;
+    if (c.staleOn) { const s = V.staleQuote(x.quoteAge, x.kind); if (!s.ok) return { ok: false, status: 'stale', why: s.age == null ? 'Stale-Quote Freeze: no fresh quote' : `Stale-Quote Freeze: quote is ${(s.age / 1000).toFixed(1)}s old (max ${(s.max / 1000).toFixed(0)}s for ${x.kind || 'crypto'})` }; }
+    const rl = V.rateLimit(x.sentTimes, now, c.maxPerHour); if (!rl.ok) return { ok: false, status: 'rate', why: `Rate limiter: ${rl.n} live opening orders in the last hour (max ${rl.max})` };
+    const ex = V.exposure(x.positions, usd, c.expCap); if (!ex.ok) return { ok: false, status: 'exposure', why: `6-Slot Exposure Cap: $${Math.round(ex.after).toLocaleString('en-US')} would exceed the $${Math.round(ex.cap).toLocaleString('en-US')} cap` };
+    if (c.depthOn) { const d = V.depthCheck(x.book, 'buy', usd, c.depthX); if (!d.ok) return { ok: false, status: 'depth', why: `Liquidity depth: $${Math.round(d.depth).toLocaleString('en-US')} within 0.5% of mid is below ${c.depthX}× the $${Math.round(usd).toLocaleString('en-US')} order` }; if (!d.known) notes.push('depth unknown (no book)'); }
+    if (c.corrOn) { const r = V.corrGuard(x.corrNew, x.corrOpen, c.corrMax); if (!r.ok) return { ok: false, status: 'corr', why: `Correlation Guard: r = ${r.r.toFixed(2)} with open ${r.sym} (max ${r.max})` }; }
+    if (c.thinOn && x.spread && fin(+x.maxSpreadPct)) {
+      const thin = V.thinHours(now, x.kind); if (thin) { const cap = V.spreadCap(+x.maxSpreadPct, true), b0 = +x.spread.bid, a0 = +x.spread.ask; const pct = b0 > 0 && a0 >= b0 ? ((a0 - b0) / ((a0 + b0) / 2)) * 100 : null; if (pct != null && pct > cap) return { ok: false, status: 'thin', why: `Thin-liquidity hours: spread ${pct.toFixed(3)}% is above the tightened ${cap.toFixed(3)}% cap` }; notes.push('thin hours: spread cap halved'); }
+    }
+    let scale = 1; if (c.throttle) { const t = V.throttle(x.closes, 2, 0.5); scale = t.scale; if (scale < 1) notes.push(`Drawdown Throttle: ${t.losses} losses in a row, size cut to ${scale * 100}%`); }
+    return { ok: true, scale, notes };
+  };
+  /* ══════════ v16.3 closed-loop cockpit (pure) ══════════ */
+  /* compact countdown: 42s · 11m 42s · 2h 05m · 3d 04h */
+  V.countdown = (ms) => {
+    if (!fin(ms) || ms < 0) return '0s'; const s = Math.floor(ms / 1000), d = Math.floor(s / 86400), h = Math.floor((s % 86400) / 3600), m = Math.floor((s % 3600) / 60), x = s % 60, p = (v) => String(v).padStart(2, '0');
+    return d ? `${d}d ${p(h)}h` : h ? `${h}h ${p(m)}m` : m ? `${m}m ${p(x)}s` : `${x}s`;
+  };
+  /* floating live HUD line + alert level (crit once 80% of the daily-loss cap is used) */
+  V.hud = (o) => {
+    const x = o || {}, slots = (x.slots || []).filter((s) => fin(+s)), cap = +x.cap > 0 ? +x.cap : 0, pnl = fin(+x.dayPnl) ? +x.dayPnl : 0, used = cap && pnl < 0 ? -pnl / cap : 0;
+    const head = x.armed ? 'LIVE ARMED' : 'PAPER', sl = slots.length ? 'Slot ' + slots.join(',') : 'no slot', ping = fin(+x.ping) && +x.ping > 0 ? Math.round(+x.ping) + ' ms' : '– ms';
+    const text = `${head} · ${sl} · ${ping} · Day ${V.money(pnl)} vs -$${cap ? Math.round(cap).toLocaleString('en-US') : '–'} cap`;
+    return { text, used, level: !x.armed ? 'paper' : used >= 0.8 ? 'crit' : used >= 0.5 || !(+x.ping > 0) ? 'warn' : 'ok' };
+  };
+  /* 44px equity + drawdown micro-sparkline geometry */
+  V.spark = (xs, w, h) => {
+    const v = (xs || []).filter(fin); if (v.length < 2 || !(w > 0) || !(h > 0)) return null;
+    let lo = Infinity, hi = -Infinity, peak = -Infinity, dd = 0; for (const e of v) { lo = Math.min(lo, e); hi = Math.max(hi, e); peak = Math.max(peak, e); dd = Math.max(dd, peak - e); }
+    const span = hi - lo || Math.abs(hi) * 1e-6 || 1, n = v.length - 1, pk = []; let run = -Infinity;
+    const pts = v.map((e, i) => { run = Math.max(run, e); pk.push([(i / n) * w, h - 2 - ((run - lo) / span) * (h - 4)]); return [(i / n) * w, h - 2 - ((e - lo) / span) * (h - 4)]; });
+    return { pts, peakPts: pk, dd, ddPct: peak > 0 ? (dd / peak) * 100 : 0, last: v[v.length - 1], first: v[0], up: v[v.length - 1] >= v[0] };
+  };
+  /* New York wall clock (minutes since midnight, weekday) */
+  V.ny = (ms) => { const p = {}; for (const x of new Intl.DateTimeFormat('en-US', { timeZone: 'America/New_York', weekday: 'short', hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: false }).formatToParts(new Date(ms))) p[x.type] = x.value; return { wd: p.weekday, min: (+p.hour % 24) * 60 + +p.minute + +p.second / 60 }; };
+  /* next pre-trade event: US close (or next open) for stocks, the next 8-hourly funding print for crypto */
+  V.nextEvent = (now, kind) => {
+    if (kind === 'stock') {
+      const n = V.ny(now), wk = n.wd !== 'Sat' && n.wd !== 'Sun';
+      if (wk && n.min >= 570 && n.min < 960) return { name: 'US close', at: now + (960 - n.min) * 60000, left: (960 - n.min) * 60000 };
+      let add = n.min < 570 && wk ? 570 - n.min : 1440 - n.min + 570, d = new Date(now + add * 60000); for (let i = 0; i < 4 && /Sat|Sun/.test(V.ny(+d).wd); i++) { add += 1440; d = new Date(now + add * 60000); }
+      return { name: 'US open', at: now + add * 60000, left: add * 60000 };
+    }
+    if (kind === 'onchain') return null;
+    const h8 = 8 * 3600000, at = Math.floor(now / h8) * h8 + h8; return { name: 'Funding', at, left: at - now };
+  };
+  /* Pause New Entries (Keep Exits Active): blocks only live opening orders */
+  V.pauseCheck = (b, paused) => (paused && V.isOpening(b) ? { ok: false, status: 'paused', why: 'Pause New Entries is ON: exits stay active, new entries are held' } : { ok: true });
+  V.cooldownLabel = (until, now) => (fin(until) && until > now ? 'Cooldown: ' + V.countdown(until - now) : null);
+  /* position drawer actions → paper close list [{ sym, qty, acct }] */
+  V.drawerPlan = (positions, action, prices) => {
+    const out = [];
+    for (const p of positions || []) {
+      if (!p || !(p.qty > 0) || !(p.entry > 0)) continue; const m = prices && prices[p.sym] > 0 ? prices[p.sym] : p.entry, pnl = (m - p.entry) * p.qty * (p.side === 'short' ? -1 : 1);
+      if (action === 'half') out.push({ sym: p.sym, qty: p.qty / 2, acct: p.acct });
+      else if (action === 'flat' || action === 'reverse' || action === 'all') out.push({ sym: p.sym, qty: p.qty, acct: p.acct });
+      else if (action === 'losers' && pnl < 0) out.push({ sym: p.sym, qty: p.qty, acct: p.acct });
+      else if (action === 'winners' && pnl > 0) out.push({ sym: p.sym, qty: p.qty, acct: p.acct });
+    }
+    return out;
+  };
+  /* scale-in / pyramid preview: add pct of the open size at price → blended entry */
+  V.pyramid = (qty, entry, pct, price) => { if (!(qty > 0) || !(entry > 0) || !(pct > 0) || !(price > 0)) return null; const add = qty * pct, tot = qty + add; return { add, qty: tot, blended: (qty * entry + add * price) / tot, usd: add * price }; };
+  /* fee + funding / borrow drag line: the price that pays round-trip fees plus the carry accrued over `hours` */
+  V.carryLine = (entry, side, feePct, ratePer8h, hours) => { if (!(entry > 0)) return null; const f = Math.max(0, +feePct || 0) * 2 + Math.max(0, +ratePer8h || 0) * Math.max(0, +hours || 0) / 8; return side === 'short' ? entry * (1 - f) : entry * (1 + f); };
+  /* Chase Limit: peg to the best bid (buy) / best ask (sell); aggressive steps one tick inside the spread when there is room */
+  V.chase = (side, bid, ask, tick, aggressive) => {
+    if (!(bid > 0) || !(ask >= bid)) return null; const t = tick > 0 ? tick : V.tick(bid), room = ask - bid > t * 1.5;
+    if (side === 'sell') return aggressive && room ? ask - t : ask;
+    return aggressive && room ? bid + t : bid;
+  };
+  /* isolated-margin liquidation estimate and the buffer from the mark (warn under 15%) */
+  V.LIQ_WARN = 15;
+  V.liq = (entry, lev, side, mmr) => { if (!(entry > 0) || !(lev > 1)) return null; const m = mmr >= 0 ? mmr : 0.005; return side === 'short' ? entry * (1 + 1 / lev - m) : entry * (1 - 1 / lev + m); };
+  V.liqBuffer = (mark, liqPx) => { if (!(mark > 0) || !(liqPx > 0)) return null; const pct = (Math.abs(mark - liqPx) / mark) * 100; return { pct, warn: pct < V.LIQ_WARN }; };
+  /* watchlist Signal Readiness dot: EMA 20 / 50 cross within 3 bars = ready, gap under 0.15% = near */
+  V.ema = (xs, n) => { const k = 2 / (n + 1), out = []; let e = null; for (const x of xs) { e = e == null ? x : x * k + e * (1 - k); out.push(e); } return out; };
+  V.readiness = (closes) => {
+    const c = (closes || []).filter((x) => x > 0); if (c.length < 55) return 'idle'; const a = V.ema(c, 20), b = V.ema(c, 50), n = c.length - 1;
+    for (let i = n; i > n - 3; i--) if ((a[i] - b[i]) * (a[i - 1] - b[i - 1]) < 0) return 'ready';
+    return Math.abs(a[n] - b[n]) / b[n] < 0.0015 ? 'near' : 'idle';
+  };
+  /* one-click Copy Trade Setup text */
+  V.setupText = (o) => {
+    const x = o || {}, f = (v) => (v > 0 ? String(+(+v).toPrecision(7)) : '–'), rr = x.entry > 0 && x.sl > 0 && x.tp > 0 ? Math.abs(x.tp - x.entry) / Math.abs(x.entry - x.sl) : null;
+    return `${x.side === 'short' ? 'SHORT' : 'LONG'} ${String(x.sym || '').toUpperCase()} @ ${f(x.entry)} · SL ${f(x.sl)} · TP ${f(x.tp)}${rr ? ' · R:R ' + rr.toFixed(2) : ''}${x.risk > 0 ? ' · risk $' + (+x.risk).toFixed(2) : ''}${x.tf ? ' · ' + x.tf : ''} · ExTerm`;
+  };
+  /* privacy-masked trade card: R multiple, % and holding time only (no $ size, no quantity, no account value) */
+  V.maskCard = (t, sl) => {
+    if (!t || !(t.price > 0)) return null; const pct = fin(t.pnlPct) ? t.pnlPct * 100 : null, entry = t.qty > 0 && fin(t.pnl) ? (t.usd - t.pnl) / t.qty : null;
+    const r = entry && sl > 0 && Math.abs(entry - sl) > 0 ? ((t.price - entry) / Math.abs(entry - sl)) * (t.short ? -1 : 1) : null, held = fin(t.held) && t.held > 0 ? V.countdown(t.held) : '–';
+    return { title: `${String(t.sym || '').split(/[-/]/)[0].toUpperCase()} · ${t.short ? 'SHORT' : 'LONG'} closed`, result: pct == null ? '–' : (pct >= 0 ? '+' : '') + pct.toFixed(2) + '%', r: r == null ? null : (r >= 0 ? '+' : '') + r.toFixed(2) + 'R', held, win: pct != null && pct >= 0, reason: String(t.reason || '').slice(0, 40) };
+  };
+  /* two-way bot sync: a receiver reply may carry { ack, fill: { price, qty, ts, order_id } } */
+  V.parseFill = (reply, key) => {
+    if (!reply || typeof reply !== 'object' || reply.ack !== key || !reply.fill || typeof reply.fill !== 'object') return null; const f = reply.fill, p = +f.price, q = +f.qty;
+    if (!(p > 0) || !(q > 0) || p > 1e12 || q > 1e15) return null;
+    return { price: p, qty: q, ts: fin(+f.ts) && +f.ts > 0 ? +f.ts : Date.now(), id: String(f.order_id == null ? '' : f.order_id).replace(/[^\w.:-]/g, '').slice(0, 64) };
+  };
+  /* slippage & fill quality by symbol (rolling last `max` fills) */
+  V.qAdd = (m, sym, bps, ackMs, max) => { const k = String(sym || '').toUpperCase(); if (!k || !fin(bps)) return m; const a = m[k] || (m[k] = []); a.push({ bps, ack: fin(ackMs) ? ackMs : null }); if (a.length > (max || 50)) a.splice(0, a.length - (max || 50)); return m; };
+  V.qSummary = (m) => Object.entries(m || {}).map(([sym, a]) => { const ak = a.filter((x) => x.ack != null); return { sym, n: a.length, bps: a.reduce((s, x) => s + x.bps, 0) / (a.length || 1), ack: ak.length ? ak.reduce((s, x) => s + x.ack, 0) / ak.length : null }; }).sort((x, y) => y.n - x.n);
+  V.signedQty = (side, action, qty) => (action === 'buy' ? 1 : -1) * (side === 'short' ? -1 : 1) * qty;
+  /* bot heartbeat latency + packet success */
+  V.hbStats = (xs) => { const s = (xs || []).filter((x) => x && typeof x.ok === 'boolean'), ok = s.filter((x) => x.ok); return { n: s.length, okPct: s.length ? (ok.length / s.length) * 100 : null, avgMs: ok.length ? ok.reduce((a, x) => a + (+x.ms || 0), 0) / ok.length : null, last: s[s.length - 1] || null }; };
+  /* per-slot asset / ticker allowlist ("" = any) */
+  V.allowParse = (s) => [...new Set(String(s || '').toUpperCase().split(/[\s,;]+/).map((x) => x.replace(/[^A-Z0-9._]/g, '')).filter((x) => x && x.length <= 20))];
+  V.allowOk = (list, sym) => { const L = Array.isArray(list) ? list : V.allowParse(list); if (!L.length) return true; const b = String(sym || '').toUpperCase().split(/[-/]/)[0]; return L.includes(b); };
+  V.timeExitDue = (t0, now, mins) => mins > 0 && fin(+t0) && +t0 > 0 && now - +t0 >= mins * 60000;
+  /* Price Alert → Conditional Trigger: fires once when price crosses the level in the chosen direction */
+  V.trigCross = (rule, prev, price) => !!rule && rule.level > 0 && prev > 0 && price > 0 && (rule.op === '<=' ? prev > rule.level && price <= rule.level : prev < rule.level && price >= rule.level);
+  V.trigOk = (r) => !!r && typeof r === 'object' && /^[\w.:/-]{1,40}$/.test(String(r.sym || '')) && (r.op === '>=' || r.op === '<=') && +r.level > 0 && (r.action === 'buy' || r.action === 'sell') && (r.action === 'sell' || +r.usd >= 1);
+  /* EOD Flat Timer: inside the last `mins` minutes of the US regular session */
+  V.eodDue = (now, mins) => { if (!(mins > 0)) return false; const n = V.ny(now); return n.wd !== 'Sat' && n.wd !== 'Sun' && n.min >= 960 - mins && n.min < 960; };
+  /* Hardware-Style Two-Key Arming: Shift + Alt + A turns key 1; Arm must follow within the window */
+  V.TWO_KEY_MS = 10000;
+  V.twoKey = (e) => !!e && e.shiftKey && e.altKey && !e.ctrlKey && !e.metaKey && (e.code === 'KeyA' || String(e.key || '').toUpperCase() === 'A');
+  V.twoKeyOk = (turnedAt, now, win) => fin(turnedAt) && turnedAt > 0 && now - turnedAt >= 0 && now - turnedAt <= (win || V.TWO_KEY_MS);
+  /* 3-Second Live Readiness Self-Check: every row must pass */
+  V.selfCheck = (c) => {
+    const x = c || {}, rows = [];
+    const add = (k, ok, why) => rows.push({ k, ok: !!ok, why: String(why || '') });
+    add('Local bot slot enabled', x.slots > 0, x.slots > 0 ? x.slots + ' slot(s) enabled' : 'enable at least one 127.0.0.1 slot');
+    add('Heartbeat under 3 s on every enabled slot', x.slots > 0 && x.hbOk === x.slots, `${x.hbOk || 0}/${x.slots || 0} answered${x.hbMs > 0 ? ' · worst ' + Math.round(x.hbMs) + ' ms' : ''}`);
+    add('Require Stop-Loss is ON', x.requireSL !== false, x.requireSL !== false ? 'opening orders need a stop' : 'turn Require Stop-Loss back on');
+    add('Max Daily Loss ($) cap set', x.maxLoss > 0, x.maxLoss > 0 ? '$' + x.maxLoss : 'set a daily-loss cap');
+    add('Fresh quote on the selected market', x.quoteOk === true, x.quoteWhy || '');
+    add('No loss-streak cooldown active', !x.cooldown, x.cooldown ? 'cooldown until ' + x.cooldown : 'clear');
+    add('Spread inside the Execution Shield ceiling', x.spreadOk !== false, x.spreadWhy || '');
+    return { rows, ready: rows.every((r) => r.ok), passed: rows.filter((r) => r.ok).length };
+  };
+  V.canReset = (mode) => mode !== 'live';
+  /* encrypted session recovery snapshot: PBKDF2-SHA256 (200k) → AES-256-GCM, WebCrypto in the browser and Node ≥ 18 */
+  const sub = () => (typeof crypto !== 'undefined' && crypto.subtle) || null;
+  const b64 = (u8) => { let s = ''; for (const b of u8) s += String.fromCharCode(b); return typeof btoa === 'function' ? btoa(s) : Buffer.from(u8).toString('base64'); };
+  const unb64 = (s) => { const r = typeof atob === 'function' ? atob(s) : Buffer.from(s, 'base64').toString('binary'); const a = new Uint8Array(r.length); for (let i = 0; i < r.length; i++) a[i] = r.charCodeAt(i); return a; };
+  const kdf = async (pass, salt) => { const s = sub(), base = await s.importKey('raw', new TextEncoder().encode(String(pass)), 'PBKDF2', false, ['deriveKey']); return s.deriveKey({ name: 'PBKDF2', salt, iterations: 200000, hash: 'SHA-256' }, base, { name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']); };
+  V.seal = async (obj, pass) => {
+    if (!sub() || String(pass || '').length < 8) throw new Error('passphrase must be at least 8 characters');
+    const salt = crypto.getRandomValues(new Uint8Array(16)), iv = crypto.getRandomValues(new Uint8Array(12)), k = await kdf(pass, salt);
+    const ct = new Uint8Array(await sub().encrypt({ name: 'AES-GCM', iv }, k, new TextEncoder().encode(JSON.stringify(obj))));
+    return JSON.stringify({ v: 1, app: 'ExTerm', alg: 'PBKDF2-SHA256-200k/AES-256-GCM', ts: Date.now(), s: b64(salt), i: b64(iv), c: b64(ct) });
+  };
+  V.unseal = async (blob, pass) => {
+    let o; try { o = typeof blob === 'string' ? JSON.parse(blob) : blob; } catch (e) { throw new Error('snapshot is damaged'); }
+    if (!o || o.v !== 1 || !o.s || !o.i || !o.c) throw new Error('snapshot is damaged');
+    let pt; try { pt = await sub().decrypt({ name: 'AES-GCM', iv: unb64(o.i) }, await kdf(pass, unb64(o.s)), unb64(o.c)); } catch (e) { throw new Error('wrong passphrase or tampered snapshot'); }
+    return JSON.parse(new TextDecoder().decode(pt));
+  };
+  /* copy-pasteable local broker starter bridges: verify the signed envelope, execute, reply { ok, ack, fill } */
+  const PY_HEAD = (port, imports) => `# ExTerm local starter bridge · listens on 127.0.0.1:${port} only · set EXTERM_SLOT_SECRET to your slot secret
+import hmac, hashlib, json, os, time
+from http.server import BaseHTTPRequestHandler, HTTPServer
+${imports}
+SECRET = bytes.fromhex(os.environ.get("EXTERM_SLOT_SECRET", "PASTE_SLOT_SECRET_HEX"))
+seen, last = set(), {}
+
+def verify(raw):
+    w = json.loads(raw); p = json.loads(w["payload"])
+    key = hmac.new(SECRET, ("ExTerm-session-v2|" + str(p["session"])).encode(), hashlib.sha256).digest()
+    want = "sha256=" + hmac.new(key, w["payload"].encode(), hashlib.sha256).hexdigest()
+    if not hmac.compare_digest(want, w.get("sig", "")): raise ValueError("bad signature")
+    if time.time() * 1000 > p["expires_at_ms"] or p["idempotency_key"] in seen: raise ValueError("expired or replay")
+    if p["seq"] <= last.get(p["session"], -1): raise ValueError("replay")
+    seen.add(p["idempotency_key"]); last[p["session"]] = p["seq"]
+    return p
+
+def is_buy(b): return (b["action"] == "buy") != (b.get("side") == "short")
+`;
+  const PY_TAIL = (port) => `
+class Bridge(BaseHTTPRequestHandler):
+    def do_POST(self):
+        try:
+            p = verify(self.rfile.read(int(self.headers["Content-Length"])))
+            out = {"ok": True, "ack": p["idempotency_key"]}
+            if p["mode"] == "live" and p["kind"] == "signal": out["fill"] = execute(p["body"])
+            if p["mode"] == "live" and p["kind"] == "flatten": flatten()
+        except Exception as e:
+            out = {"ok": False, "error": str(e)[:120]}
+        data = json.dumps(out).encode()
+        self.send_response(200); self.send_header("Content-Type", "application/json")
+        self.send_header("Access-Control-Allow-Origin", "*"); self.end_headers(); self.wfile.write(data)
+
+HTTPServer(("127.0.0.1", ${port}), Bridge).serve_forever()
+`;
+  V.BRIDGES = {
+    ibkr: { name: 'Interactive Brokers (TWS / Gateway)', file: 'exterm_ibkr_bridge.py', port: 8769, slot: 5, pip: 'ib_insync', imports: 'from ib_insync import IB, Stock, MarketOrder', body: `
+ib = IB(); ib.connect("127.0.0.1", 7497, clientId=7)   # 7497 = TWS paper port
+
+def execute(b):
+    c = Stock(b["symbol"], "SMART", "USD"); ib.qualifyContracts(c)
+    qty = max(1, int(b.get("qty") or b["usd"] / b["price"]))
+    t = ib.placeOrder(c, MarketOrder("BUY" if is_buy(b) else "SELL", qty)); ib.sleep(1.5)
+    return {"price": t.orderStatus.avgFillPrice, "qty": t.orderStatus.filled, "ts": int(time.time() * 1000), "order_id": t.order.orderId}
+
+def flatten():
+    ib.reqGlobalCancel()
+    for p in ib.positions(): ib.placeOrder(p.contract, MarketOrder("SELL" if p.position > 0 else "BUY", abs(p.position)))
+` },
+    alpaca: { name: 'Alpaca (paper or live)', file: 'exterm_alpaca_bridge.py', port: 8769, slot: 5, pip: 'alpaca-py', imports: 'from alpaca.trading.client import TradingClient\nfrom alpaca.trading.requests import MarketOrderRequest\nfrom alpaca.trading.enums import OrderSide, TimeInForce', body: `
+api = TradingClient(os.environ["APCA_API_KEY_ID"], os.environ["APCA_API_SECRET_KEY"], paper=True)
+
+def execute(b):
+    qty = round(b.get("qty") or b["usd"] / b["price"], 6)
+    o = api.submit_order(MarketOrderRequest(symbol=b["symbol"], qty=qty, side=OrderSide.BUY if is_buy(b) else OrderSide.SELL, time_in_force=TimeInForce.DAY))
+    time.sleep(1.0); o = api.get_order_by_id(o.id)
+    return {"price": float(o.filled_avg_price or 0), "qty": float(o.filled_qty or 0), "ts": int(time.time() * 1000), "order_id": str(o.id)}
+
+def flatten():
+    api.close_all_positions(cancel_orders=True)
+` },
+    ccxt: { name: 'CCXT crypto exchange', file: 'exterm_ccxt_bridge.py', port: 8765, slot: 1, pip: 'ccxt', imports: 'import ccxt', body: `
+ex = getattr(ccxt, os.environ.get("EX_ID", "kraken"))({"apiKey": os.environ["EX_KEY"], "secret": os.environ["EX_SECRET"]})
+QUOTE = os.environ.get("EX_QUOTE", "USDT")
+
+def execute(b):
+    sym = b["symbol"] + "/" + QUOTE; amt = float(ex.amount_to_precision(sym, b.get("qty") or b["usd"] / b["price"]))
+    o = ex.create_order(sym, "market", "buy" if is_buy(b) else "sell", amt)
+    return {"price": o.get("average") or o.get("price") or b["price"], "qty": o.get("filled") or amt, "ts": o.get("timestamp") or int(time.time() * 1000), "order_id": o["id"]}
+
+def flatten():
+    for o in ex.fetch_open_orders(): ex.cancel_order(o["id"], o["symbol"])
+` },
+    freqtrade: { name: 'Freqtrade REST API', file: 'exterm_freqtrade_bridge.py', port: 8766, slot: 2, pip: 'requests', imports: 'import requests', body: `
+FT = os.environ.get("FT_URL", "http://127.0.0.1:8080/api/v1")   # needs force_entry_enable: true
+AUTH = (os.environ["FT_USER"], os.environ["FT_PASS"]); PAIR = "{}/" + os.environ.get("FT_QUOTE", "USDT")
+
+def execute(b):
+    if b["action"] == "buy":
+        r = requests.post(FT + "/forceenter", json={"pair": PAIR.format(b["symbol"]), "side": "short" if b.get("side") == "short" else "long", "stakeamount": b["usd"]}, auth=AUTH, timeout=3).json()
+    else:
+        t = [x for x in requests.get(FT + "/status", auth=AUTH, timeout=3).json() if x["pair"] == PAIR.format(b["symbol"])]
+        r = requests.post(FT + "/forceexit", json={"tradeid": t[0]["trade_id"]}, auth=AUTH, timeout=3).json() if t else {}
+    return {"price": r.get("open_rate") or b["price"], "qty": r.get("amount") or b.get("qty") or 0, "ts": int(time.time() * 1000), "order_id": r.get("trade_id", "")}
+
+def flatten():
+    requests.post(FT + "/forceexit", json={"tradeid": "all"}, auth=AUTH, timeout=3)
+` },
+  };
+  V.bridge = (k) => { const b = V.BRIDGES[k]; return b ? PY_HEAD(b.port, b.imports) + b.body + PY_TAIL(b.port) : ''; };
+  /* cockpit settings */
+  V.CDEF = () => ({ paused: false, muted: false, cues: true, autoCard: false, twoKey: false, lev: 1, mmr: 0.5, fundRate: 0.01, pyrPct: 50, peg: false, pegAgg: false,
+    titMin: 0, eodMin: 0, allow: { 1: '', 2: '', 3: '', 4: '', 5: '', 6: '' }, triggers: [], focus: false, micro: false, dots: true });
+  V.cload = (raw) => {
+    const d = V.CDEF(); let o = null; try { o = typeof raw === 'string' ? JSON.parse(raw) : raw; } catch (e) { o = null; } if (!o || typeof o !== 'object') return d;
+    for (const k of ['paused', 'muted', 'cues', 'autoCard', 'twoKey', 'peg', 'pegAgg', 'focus', 'micro', 'dots']) if (typeof o[k] === 'boolean') d[k] = o[k];
+    d.lev = num(o.lev, 1, 125, 1); d.mmr = num(o.mmr, 0, 10, 0.5); d.fundRate = num(o.fundRate, 0, 1, 0.01); d.pyrPct = num(o.pyrPct, 1, 300, 50);
+    d.titMin = Math.round(num(o.titMin, 0, 10080, 0)); d.eodMin = [0, 5, 10, 15, 30].includes(+o.eodMin) ? +o.eodMin : 0;
+    if (o.allow && typeof o.allow === 'object') for (const k of Object.keys(d.allow)) if (typeof o.allow[k] === 'string') d.allow[k] = V.allowParse(o.allow[k]).join(', ');
+    if (Array.isArray(o.triggers)) d.triggers = o.triggers.filter(V.trigOk).slice(0, 20).map((r) => ({ id: String(r.id || Math.random().toString(36).slice(2, 10)).replace(/\W/g, '').slice(0, 16), sym: String(r.sym), op: r.op, level: +r.level, action: r.action, usd: +r.usd || 0, sl: num(r.sl, 0, 50, 2) }));
+    return d;
+  };
+  V.HIGHLIGHTS = [
+    'Closed-loop cockpit: floating Live Execution HUD (slot, ping, daily P&L vs cap), 44px equity / drawdown sparkline and a market-close / funding countdown',
+    'Pause New Entries (exits stay active), cooldown countdown inside the Buy button, Focus Chart (F), docked Micro-Ticket and a live position & orders drawer',
+    'Two-way 127.0.0.1 ACK + fill sync, heartbeat latency graph, slippage & fill quality by symbol, and starter bridges for Interactive Brokers, Alpaca, CCXT and Freqtrade',
+    'Require Stop-Loss on every live opening order (ON by default), $ risk sizer with R:R and $ badges, BE pill, Auto-BE on TP1',
+    'Core risk guards: 3× depth, stale-quote freeze, trades-per-hour limit, 6-slot exposure cap, drawdown throttle, correlation guard',
+    'Two-Key Arming (Shift + Alt + A), 3-Second Live Readiness Self-Check, per-slot ticker allowlist, time-in-trade exit and EOD Flat Timer',
+  ];
+  return V;
+})();
+if (typeof module === 'object' && module.exports) module.exports = V163;
+
 /* ===== v160.js ===== */
 /* Copyright (c) 2026 ExTerm Labs (@exterm.labs) · Licensed under GNU AGPL-3.0 · https://github.com/uexxx/ExTerm */
 /* ExTerm v16.0 / v16.1 UI: six local external bot bridges, the four-gate live safety lock and the eight fail-safe engines.
@@ -21220,7 +21769,7 @@ if (typeof module !== 'undefined') module.exports = V162;
    redirects refused, no cookies, no referrer. Logic in V160 (v160core.js) and V161 (v161core.js). */
 const V160UI = (() => {
   const KEY = 'exterm.v160.bridge', FKEY = 'exterm.v161.fs', LKEY = 'exterm.v161.ledger', HB_EVERY = 15000;
-  const U = { st: null, session: '', sessAt: 0, seq: 0, briefed: true, phrase: '', fails: {}, log: [], stats: { sent: 0, blocked: 0, sim: 0, kills: 0 }, fs: null, ledger: [], used: null, lastOk: {}, book: {} };
+  const U = { st: null, session: '', sessAt: 0, seq: 0, briefed: true, phrase: '', fails: {}, log: [], stats: { sent: 0, blocked: 0, sim: 0, kills: 0 }, fs: null, ledger: [], used: null, lastOk: {}, book: {}, pre: [], requireSL: true, post: [], hbL: [], manual: [] };
   const $1 = (s, r) => (r || document).querySelector(s);
   const def = (id) => V160.SLOTS.find((s) => s.id === id);
   const save = () => { try { localStorage.setItem(KEY, JSON.stringify(U.st)); } catch (e) { /* private window: state lives for this session */ } };
@@ -21275,10 +21824,10 @@ const V160UI = (() => {
     return { ms: Math.max(1, Math.round(performance.now() - t0)), key, sig, wire, acked: !!(reply && reply.ack === key), reply };
   };
   const heartbeat = async (s) => {
-    try { const r = await send(s, 'heartbeat', { ping: 1 }); s.hb = { ok: true, ms: r.ms, t: Date.now(), why: '' }; U.fails[s.id] = 0; U.lastOk[s.id] = Date.now(); led('heartbeat', { slot: s.id, status: 'ok', key: r.key, sig: r.sig, detail: r.ms + ' ms' + (r.acked ? ' · acked' : '') }); }
+    try { const r = await send(s, 'heartbeat', { ping: 1 }); s.hb = { ok: true, ms: r.ms, t: Date.now(), why: '' }; U.fails[s.id] = 0; U.lastOk[s.id] = Date.now(); led('heartbeat', { slot: s.id, status: 'ok', key: r.key, sig: r.sig, detail: r.ms + ' ms' + (r.acked ? ' · acked' : '') }); for (const f of U.hbL) { try { f(s, s.hb); } catch (x) { /* listener */ } } }
     catch (e) {
       s.hb = { ok: false, ms: 0, t: Date.now(), why: String(e.message || e).slice(0, 120) }; U.fails[s.id] = (U.fails[s.id] || 0) + 1;
-      led('heartbeat', { slot: s.id, status: 'missed ' + U.fails[s.id], key: e.key, sig: e.sig, detail: s.hb.why });
+      led('heartbeat', { slot: s.id, status: 'missed ' + U.fails[s.id], key: e.key, sig: e.sig, detail: s.hb.why }); for (const f of U.hbL) { try { f(s, s.hb); } catch (x) { /* listener */ } }
       if (s.mode === 'live' && U.fails[s.id] >= V160.HB_FAILS) kill(`Dead-Man's Switch: ${V160.HB_FAILS} missed heartbeats on Slot ${s.id}`);
     }
     save(); paint(); return s.hb;
@@ -21305,26 +21854,31 @@ const V160UI = (() => {
   const block = (status, what, why) => { U.stats.blocked++; note('block', `BLOCKED · ${what}: ${why}`); toast('⛔ ' + esc(status === 'guard' ? 'Circuit breaker' : status === 'spread' ? 'Execution Shield' : status === 'cooldown' ? 'Tilt & Drawdown Guard' : 'Signal firewall') + ': ' + esc(why), 'dn'); led('breaker', { status, detail: `${what}: ${why}` }); };
   const route = (t, acct) => {
     if (!t || t.src === 'backtest' || typeof ACC === 'undefined') return;
-    const bot = acct === ACC ? null : (ST.bots || []).find((b) => b.account === acct); if (acct !== ACC && !bot) return;
+    const man = acct === ACC || U.manual.includes(acct); // v16.3: the cockpit's reverse (short) book routes like a manual order
+    const bot = man ? null : (ST.bots || []).find((b) => b.account === acct); if (!man && !bot) return;
     if (bot && String(bot.id) !== U.st.promote) return;
     const p = acct.pos && acct.pos[t.sym], n = (v) => (v == null || v === 0 ? null : Number.isFinite(v) ? +v.toPrecision(10) : v);
     const usd = Number.isFinite(+t.usd) ? +(+t.usd).toFixed(2) : +t.usd;
     const body = { action: t.side, symbol: baseOf(t.sym), usd, price: n(t.price), qty: n(t.qty), sl: p ? n(p.sl) : null, tp: p ? n(p.tp) : null, source: bot ? 'bot:' + bot.id : 'manual' };
+    if (acct.short) body.side = 'short'; // v16.3: a short-side account opens with "buy"; its stop sits above entry
     const targets = U.st.slots.filter((s) => s.enabled && (bot ? s.id === 6 : s.id !== 6)); if (!targets.length) return;
     const what = `${String(body.action).toUpperCase()} ${body.symbol} $${body.usd}`;
     if (!live()) { U.stats.sim++; note('sim', `PAPER · ${what} simulated on ${targets.length} slot${targets.length > 1 ? 's' : ''}, nothing sent`); return; }
     if (!U.briefed) { U.stats.blocked++; note('block', `HELD · ${what}: acknowledge the live briefing first`); led('breaker', { status: 'held', detail: what + ': briefing not acknowledged' }); return; }
-    const v = V161.validate(body, U.fs); if (!v.ok) { block('schema', what, v.why); return; }
+    const v = V161.validate(body, U.fs, { sl: U.requireSL !== false }); if (!v.ok) { block('schema', what, v.why); return; }
+    /* v16.3 pre-route guards (mandatory stop-loss direction, depth, stale quote, rate, exposure, correlation, thin hours,
+       drawdown throttle). A guard may block ({ ok: false }) or scale body.usd / body.qty down; it never touches a close. */
+    for (const f of U.pre) { let r; try { r = f(body, t, acct); } catch (e) { r = { ok: false, status: 'guard', why: 'guard error: ' + String(e.message || e).slice(0, 80) }; } if (r && r.ok === false) { block(r.status || 'guard', what, r.why); return; } }
     if (body.action === 'buy') {
       const cd = cooldownNow(); if (cd.locked) { block('cooldown', what, `${cd.streak || U.fs.lossN} consecutive losses, cooldown until ${new Date(cd.until).toLocaleTimeString()}`); return; }
       const sp = spreadOf(t.sym), sg = V161.spreadGuard(sp.bid, sp.ask, U.fs.maxSpreadPct);
       if (!sg.ok) { block('spread', what, `spread ${sg.pct.toFixed(3)}% is above the ${U.fs.maxSpreadPct}% ceiling`); return; }
     }
     const open = Object.keys(acct.pos || {}).filter((k) => k !== t.sym && acct.pos[k].qty > 0).length;
-    const riskUsd = body.sl && t.price ? (t.usd * Math.abs(t.price - body.sl)) / t.price : +t.usd;
+    const riskUsd = body.sl && t.price ? (body.usd * Math.abs(t.price - body.sl)) / t.price : +body.usd;
     const g = V160.guard({ side: t.side, riskUsd }, U.st.caps, { dayLoss: dayLoss(), open, equity: equity(acct) });
     if (!g.ok) { block('guard', what, g.why); return; }
-    for (const s of targets.filter((x) => x.mode === 'live')) send(s, 'signal', body).then((r) => { U.stats.sent++; note('sent', `LIVE · ${what} → Slot ${s.id} (${r.ms} ms)`); led('signal', { slot: s.id, status: r.acked ? 'sent · acked' : 'sent', key: r.key, sig: r.sig, detail: what }); }, (e) => { note('err', `FAILED · ${what} → Slot ${s.id}: ${e.message}`); led('signal', { slot: s.id, status: 'failed', key: e.key, sig: e.sig, detail: `${what}: ${e.message}` }); });
+    for (const s of targets.filter((x) => x.mode === 'live')) send(s, 'signal', body).then((r) => { U.stats.sent++; note('sent', `LIVE · ${what} → Slot ${s.id} (${r.ms} ms)`); led('signal', { slot: s.id, status: r.acked ? 'sent · acked' : 'sent', key: r.key, sig: r.sig, detail: what }); for (const f of U.post) { try { f(s, body, r, t); } catch (x) { /* ack + fill listener */ } } }, (e) => { note('err', `FAILED · ${what} → Slot ${s.id}: ${e.message}`); led('signal', { slot: s.id, status: 'failed', key: e.key, sig: e.sig, detail: `${what}: ${e.message}` }); });
   };
   const wireTrades = () => {
     if (typeof NT === 'undefined' || (NT.onTrade && NT.onTrade._v160)) return;
@@ -21807,7 +22361,7 @@ const V162UI = (() => {
     m.innerHTML = `<div class="v162-modal"><div class="v162-mh"><svg viewBox="0 0 24 24" aria-hidden="true" class="v162-ic"><path d="M12 2l8 3v6c0 5-3.4 9.3-8 11-4.6-1.7-8-6-8-11V5z" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8.5 12l2.5 2.5 4.5-5" fill="none" stroke="currentColor" stroke-width="1.8"/></svg><div><h2 id="v162BriefT">Launch Safety &amp; Critical Updates</h2><span class="v162-mode ${live ? 'live' : 'paper'}">${live ? 'LIVE BOT ARMED' : 'PAPER'}</span></div></div>
       <section><h3>Zero-custody local routing</h3><p>ExTerm holds no funds and no keys. Live signals go only to a bot you run yourself on <code>127.0.0.1</code> (or an allow-listed private LAN host over HTTPS), signed per session and expiring after 3 seconds.</p></section>
       <section><h3>5-Point Live Safety Checklist</h3><ol class="v162-list">${V162.CHECKLIST.map((x) => `<li>${esc(x)}</li>`).join('')}</ol></section>
-      <section><h3>v16.2 Release Highlights</h3><ul class="v162-list">${V162.HIGHLIGHTS.map((x) => `<li>${esc(x)}</li>`).join('')}</ul></section>
+      <section><h3>${esc(typeof V163 !== 'undefined' ? 'v16.3' : 'v16.2')} Release Highlights</h3><ul class="v162-list">${(typeof V163 !== 'undefined' ? V163.HIGHLIGHTS : V162.HIGHLIGHTS).map((x) => `<li>${esc(x)}</li>`).join('')}</ul></section>
       <div class="v162-acts"><button type="button" class="btn pri" data-v162="safe">Continue in Safe Mode (PAPER)</button><button type="button" class="btn" data-v162="bridge">Open Execution Bridge &amp; Safety Settings</button></div>
       <p class="note">Esc continues in Safe Mode.${live ? ' Live routing is armed: Safe Mode flattens and disarms all six slots.' : ''}</p></div>`;
     m.addEventListener('click', (e) => { const b = e.target.closest('[data-v162]'); if (!b) return; if (b.dataset.v162 === 'safe') safe(); else openBridge(); });
@@ -21874,6 +22428,848 @@ const V162UI = (() => {
   return U;
 })();
 if (typeof window !== 'undefined' && typeof document !== 'undefined' && typeof boot === 'function') { const _b162 = boot; boot = async function () { await _b162.apply(this, arguments); try { V162UI.start(); } catch (e) { console.warn('v162 init', e); } }; }
+
+/* ===== v163.js ===== */
+/* Copyright (c) 2026 ExTerm Labs (@exterm.labs) · Licensed under GNU AGPL-3.0 · https://github.com/uexxx/ExTerm */
+/* ExTerm v16.3 UI: live-execution precision cockpit. Wraps existing pieces (ids, listeners and the v16.0 router stay
+   intact):
+   · Live Safety Settings (in the Execution Bridge panel): Require Stop-Loss on All Live Opening Orders (ON by default),
+     depth ≥ N×, stale-quote freeze, trades-per-hour limit, 6-slot exposure cap, drawdown throttle, correlation guard,
+     thin-hours spread tightening and Auto-Disarm on Idle (Off (24/7) | 15m | 30m | 60m). Registered as V160UI.pre guards.
+   · Order ticket: $ Risk → exact qty, time-in-force (GTC / IOC / Post-Only), Auto-BE on TP1, TP1 50% / TP2 30% / TP3 20%
+   · Chart: R:R + dollar P&L badges while dragging Entry / SL / TP, one-click BE pill on the open position line, bid/ask
+     spread tunnel on 1s – 1m, order-preview ghost lines, Alt + drag magnetic snap to high / low / VWAP, trailing-stop
+     activation + step lines, fill markers with slippage in bps
+   · Hotkeys: Shift+B buy market · Shift+S sell market · Shift+X cancel all pending orders
+   Strict CSP: no inline handlers, every dynamic string through esc(). Maths in V163 (v163core.js). */
+const V163UI = (() => {
+  const KEY = 'exterm.v163.cfg';
+  const U = { cfg: V163.DEFAULTS(), sent: [], spread: new Map(), books: {}, scale: {}, fills: new Map(), lastAct: Date.now(), bookAt: 0,
+    stats: { blocked: 0, passed: 0, scaled: 0, hot: 0, be: 0, tp: 0, snaps: 0, idle: 0 } };
+  const $1 = (s, r) => (r || document).querySelector(s);
+  const B = () => (typeof V160UI !== 'undefined' && V160UI.st ? V160UI : null);
+  const live = () => { const b = B(); return !!(b && b.live()); };
+  const fp = (v) => NT.fmtPrice(v);
+  const price = (s) => (typeof px === 'function' ? px(s) : 0) || 0;
+  const kindOf = (s) => (typeof isOnchain === 'function' && isOnchain(s) ? 'onchain' : typeof isStock === 'function' && isStock(s) ? 'stock' : 'crypto');
+  const save = () => { try { localStorage.setItem(KEY, JSON.stringify(U.cfg)); } catch (e) { /* private window: settings live for this session */ } };
+  const load = () => { let raw = null; try { raw = localStorage.getItem(KEY); } catch (e) { raw = null; } U.cfg = V163.load(raw); };
+  const sync = () => { const b = B(); if (b) b.requireSL = U.cfg.requireSL !== false; };
+
+  /* ══ 1 + 6. pre-route guard chain for the v16.0 router ══ */
+  const closesOf = (acct) => ((acct && acct.trades) || []).filter((t) => t.side === 'sell' && t.src !== 'backtest' && Number.isFinite(t.pnl) && +t.ts > (U.since || 0)).map((t) => ({ pnl: t.pnl, ts: +t.ts })); // U.since: Reset Session Safety Counters
+  const exposure = (t) => {
+    const out = [], b = B(), bot = b && (ST.bots || []).find((x) => String(x.id) === b.st.promote);
+    for (const a of [typeof ACC !== 'undefined' ? ACC : null, bot && bot.account]) for (const [s, p] of Object.entries((a && a.pos) || {})) {
+      if (!(p && p.qty > 0)) continue; let usd = p.qty * (price(s) || p.cost / p.qty);
+      if (a === ACC && s === t.sym) usd = Math.max(0, usd - (+t.usd || 0)); // the paper fill being routed is already in the book
+      out.push({ sym: s, usd });
+    }
+    return out;
+  };
+  const quoteAge = (s, now) => { const L = typeof Feed !== 'undefined' && Feed.live && Feed.live[s]; let ts = L && L.ts; if (!ts && kindOf(s) === 'onchain' && typeof OC !== 'undefined') ts = OC.polled; return ts ? now - ts : NaN; };
+  const bookOf = (s) => { const k = U.books[s]; if (k && Date.now() - k.ts < 6000) return k; const p = typeof P5UI !== 'undefined' && P5UI.book && P5UI.book.sym === s && Date.now() - (P5UI.bookTs || 0) < 6000 ? P5UI.book : null; return p; };
+  const closesFor = (s) => { try { const st = getStore(s, ST.tf); return st.candles.slice(-61).map((k) => k.c); } catch (e) { return []; } };
+  const guard = (body, t, acct) => {
+    const c = U.cfg, now = Date.now(), b = B();
+    body.tif = c.tif;
+    if (!V163.isOpening(body)) return { ok: true };
+    const open = {}; for (const s of Object.keys(acct.pos || {})) if (s !== t.sym && acct.pos[s].qty > 0) open[baseOf(s)] = closesFor(s);
+    const ctx = { now, kind: kindOf(t.sym), quoteAge: quoteAge(t.sym, now), sentTimes: U.sent, positions: exposure(t), book: bookOf(t.sym), closes: closesOf(acct),
+      corrNew: closesFor(t.sym), corrOpen: open, spread: b ? b.spreadOf(t.sym) : null, maxSpreadPct: b && b.fs ? +b.fs.maxSpreadPct : NaN };
+    const r = V163.preflight(body, ctx, c);
+    if (!r.ok) { U.stats.blocked++; return r; }
+    U.stats.passed++; U.sent.push(now); U.sent = U.sent.filter((x) => now - x < 3600000);
+    if (r.scale < 1) {
+      U.stats.scaled++; body.usd = +(body.usd * r.scale).toFixed(2); if (body.qty > 0) body.qty = +(body.qty * r.scale).toPrecision(10);
+    }
+    if (r.notes.length && b) b.led('guard', { status: r.scale < 1 ? 'scaled' : 'pass', detail: `${baseOf(t.sym)}: ${r.notes.join('; ')}` });
+    return { ok: true };
+  };
+  const wireGuard = () => { const b = B(); if (!b || !Array.isArray(b.pre) || b.pre.includes(guard)) return; b.pre.push(guard); sync(); };
+
+  /* order books for the depth check: the selected market, every 2 s while armed (crypto with a REST book only) */
+  const pullBook = async () => {
+    const s = ST.sel; if (!live() || kindOf(s) !== 'crypto' || typeof Providers === 'undefined' || !Providers.active || !Providers.active.book || Date.now() - U.bookAt < 2000) return;
+    U.bookAt = Date.now(); try { const bk = await Providers.active.book(s); if (bk && bk.bids && bk.asks) U.books[s] = { bids: bk.bids, asks: bk.asks, ts: Date.now() }; } catch (e) { /* unknown book: the depth check notes it */ }
+  };
+
+  /* ══ Live Safety Settings panel ══ */
+  const chk = (k, label, hint) => `<label class="v160-chk"><input type="checkbox" class="v163-cfg" data-v163f="${k}"${U.cfg[k] ? ' checked' : ''}> ${label}${hint ? ` <span class="note">${hint}</span>` : ''}</label>`;
+  const numIn = (k, label, min, max, step) => `<label><span>${label}</span><input type="number" min="${min}" max="${max}" step="${step}" class="in mono v163-cfg" data-v163f="${k}" value="${esc(U.cfg[k])}" inputmode="decimal"></label>`;
+  const panelHTML = () => {
+    const c = U.cfg, idle = V163.IDLE.map((m) => `<option value="${m}"${c.idleMin === m ? ' selected' : ''}>${m ? m + 'm' : 'Off (24/7)'}</option>`).join('');
+    return `<h3><svg viewBox="0 0 24 24" aria-hidden="true" class="v163-ic"><path d="M12 2l8 3v6c0 5-3.4 9.3-8 11-4.6-1.7-8-6-8-11V5z" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8 12h8M12 8v8" stroke="currentColor" stroke-width="1.6"/></svg> Live Safety Settings · v16.3 Core Risk Guards</h3>
+      <p class="note">Checked on every live <b>opening</b> signal before it is signed. Closing and CANCEL_ALL_AND_FLATTEN orders are never blocked.${live() ? ' <b>Locked while armed:</b> disarm to PAPER to loosen a guard.' : ''}</p>
+      <div class="v163-grid">
+        ${chk('requireSL', '<b>Require Stop-Loss on All Live Opening Orders</b>', 'long stop below entry, short stop above')}
+        ${c.requireSL ? '' : '<p class="v163-warn" role="alert">Stop-loss requirement is OFF: live opening orders without a stop will be sent.</p>'}
+        ${chk('depthOn', 'Order-book liquidity depth check')}${numIn('depthX', 'Depth ≥ × order', 1, 50, 0.5)}
+        ${chk('staleOn', 'Smart Stale-Quote Freeze', '5s crypto · 20s stocks · 90s on-chain')}
+        ${numIn('maxPerHour', 'Max trades per hour (0 = off)', 0, 1000, 1)}
+        ${numIn('expCap', 'Global 6-slot exposure cap $ (0 = off)', 0, 1e10, 100)}
+        ${chk('throttle', 'Drawdown Throttle', '50% size cut after 2 losses in a row')}
+        ${chk('corrOn', 'Correlation Guard')}${numIn('corrMax', 'Max correlation r', 0.5, 0.99, 0.01)}
+        ${chk('thinOn', 'Weekend / extended-hours spread cap 50% tighter')}
+        <label><span>Auto-Disarm on Idle</span><select class="in v163-cfg" data-v163f="idleMin">${idle}</select></label>
+      </div>
+      <p class="note" id="v163Stat" role="status"></p>`;
+  };
+  let sec = null;
+  const onCfg = (e) => {
+    const f = e.target.closest('[data-v163f]'); if (!f) return; const k = f.dataset.v163f;
+    if (live() && k !== 'idleMin') { paintPanel(true); toast('Live Safety Settings are locked while armed. Disarm to PAPER to change them.', 'amb'); return; }
+    const nx = Object.assign({}, U.cfg, { [k]: f.type === 'checkbox' ? f.checked : f.tagName === 'SELECT' ? +f.value : f.value });
+    U.cfg = V163.load(nx); save(); sync(); if (f.type === 'checkbox' || f.tagName === 'SELECT' || e.type === 'change') paintPanel(true);
+  };
+  const paintPanel = (force) => {
+    const host = $1('#v160Bridge'); if (!host) return;
+    if (!sec) { sec = document.createElement('div'); sec.id = 'v163Safety'; sec.className = 'v163-safety'; sec.addEventListener('change', onCfg); sec.addEventListener('input', (e) => { if (e.target.type === 'number') onCfg(e); }); }
+    const anchor = $1('#v161Fs', host); if (sec.parentNode !== host) { if (anchor) anchor.after(sec); else host.appendChild(sec); force = true; }
+    const lk = live(); if (force || sec._lk !== lk) { sec._lk = lk; sec.innerHTML = panelHTML(); for (const x of sec.querySelectorAll('.v163-cfg')) if (x.dataset.v163f !== 'idleMin') x.disabled = lk; }
+    const st = $1('#v163Stat', sec), txt = `Guards: ${U.stats.passed} passed · ${U.stats.blocked} blocked · ${U.stats.scaled} size-throttled · ${U.sent.filter((x) => Date.now() - x < 3600000).length} live opens this hour${U.cfg.idleMin ? ` · auto-disarm after ${U.cfg.idleMin}m idle` : ' · 24/7 unattended (no idle disarm)'}`;
+    if (st && st.textContent !== txt) st.textContent = txt;
+  };
+
+  /* ══ 2 + 3 + 5. order ticket: $ Risk → qty, TIF, Auto-BE, TP splitter ══ */
+  const tkNum = (id) => { const el = $1(id), v = el ? parseFloat(el.value) : NaN; return v > 0 ? v : 0; };
+  const tkEntry = () => (typeof tkType !== 'undefined' && tkType !== 'market' ? tkNum('#tkLimit') : price(ST.sel));
+  const sizeCalc = () => {
+    const e = tkEntry(), slp = tkNum('#tkSl') / 100, risk = tkNum('#v163Risk'); if (!(e > 0) || !(slp > 0) || !(risk > 0)) return null;
+    return V163.sizeByRisk(risk, e, e * (1 - slp), { feePct: typeof ACC !== 'undefined' ? ACC.fee : 0, maxUsd: typeof ACC !== 'undefined' ? ACC.cash : 0 });
+  };
+  const paintRisk = () => {
+    const o = $1('#v163RiskOut'); if (!o) return; const r = sizeCalc(), b = baseOf(ST.sel);
+    const txt = r ? `= ${NT.fmtQty(r.qty)} ${b} · ${NT.fmtUSD(r.usd)} notional · loses ${NT.fmtUSD(r.risk)} at the stop${r.capped ? ' (capped by cash)' : ''}` : 'Set a stop-loss % to turn $ risk into an exact quantity';
+    if (o.textContent !== txt) o.textContent = txt;
+  };
+  const applySize = () => {
+    const r = sizeCalc(); if (!r) { toast('Set a $ risk and a stop-loss % first', 'amb'); return; }
+    const z = $1('#tkSize [data-z="usd"]'); if (z && !z.classList.contains('on')) z.click();
+    const u = $1('#tkUsd'); if (u) u.value = r.usd.toFixed(2);
+    try { renderTicketMeta(); } catch (e) { /* ticket not built */ }
+    toast(`Sized ${esc(NT.fmtQty(r.qty))} ${esc(baseOf(ST.sel))} for ${esc(NT.fmtUSD(r.risk))} risk`, 'acc');
+  };
+  const tkHTML = () => `<div class="row v163-risk"><label class="f"><span>$ Risk → exact qty</span><input class="in mono" id="v163Risk" value="${esc(U.cfg.riskUsd)}" inputmode="decimal" aria-describedby="v163RiskOut"></label><button type="button" class="btn sm" data-v163t="size">Size</button></div>
+    <div class="note" id="v163RiskOut" role="status"></div>
+    <div class="row v163-tifrow"><span class="note">Time in force</span><div class="seg" id="v163Tif" role="group" aria-label="Time in force">${V163.TIF.map((k) => `<button type="button" data-tif="${k}" class="${U.cfg.tif === k ? 'on' : ''}" aria-pressed="${U.cfg.tif === k}">${esc(V163.TIF_LABEL[k])}</button>`).join('')}</div></div>
+    <label class="chk"><input type="checkbox" id="v163AutoBE"${U.cfg.autoBE ? ' checked' : ''}> Auto-BE on TP1</label>
+    <label class="chk"><input type="checkbox" id="v163Split"${U.cfg.splitTP ? ' checked' : ''}> Scale out TP1 50% / TP2 30% / TP3 20%</label>
+    <div class="note v163-keys">Shift+B buy market · Shift+S sell market · Shift+X cancel all</div>`;
+  const mountTicket = () => {
+    const go = $1('#tkGo'); if (!go || $1('#v163Tk')) return;
+    const box = document.createElement('div'); box.id = 'v163Tk'; box.className = 'v163-tk'; box.innerHTML = tkHTML(); go.before(box);
+    box.addEventListener('click', (e) => {
+      const t = e.target.closest('[data-tif]'); if (t) { U.cfg.tif = t.dataset.tif; save(); for (const x of box.querySelectorAll('[data-tif]')) { x.classList.toggle('on', x === t); x.setAttribute('aria-pressed', String(x === t)); } return; }
+      if (e.target.closest('[data-v163t="size"]')) applySize();
+    });
+    box.addEventListener('input', (e) => { if (e.target.id === 'v163Risk') { const v = parseFloat(e.target.value); if (v > 0) { U.cfg.riskUsd = v; save(); } paintRisk(); } });
+    box.addEventListener('change', (e) => { if (e.target.id === 'v163AutoBE') { U.cfg.autoBE = e.target.checked; save(); } else if (e.target.id === 'v163Split') { U.cfg.splitTP = e.target.checked; save(); if (chart) chart.invalidate(); } });
+    const tk = $1('#ticket'); if (tk && !tk._v163) { tk._v163 = true; tk.addEventListener('input', paintRisk); tk.addEventListener('click', tifPre, true); tk.addEventListener('click', tifPost); }
+    paintRisk();
+  };
+  /* TIF on manual limit orders: Post-Only refuses a crossing price before the order exists; IOC cancels whatever did not fill */
+  let tifSnap = null;
+  const tifPre = (e) => {
+    tifSnap = null; if (!e.target.closest('#tkGo') || typeof tkType === 'undefined' || tkType !== 'limit') return;
+    const s = ST.sel, L = (typeof Feed !== 'undefined' && Feed.live[s]) || {}, p = price(s), lim = tkNum('#tkLimit');
+    const r = V163.tifCheck(U.cfg.tif, tkSide, lim, L.bid > 0 ? L.bid : p, L.ask > 0 ? L.ask : p);
+    if (!r.ok) { e.preventDefault(); e.stopImmediatePropagation(); toast('⛔ ' + esc(r.why), 'amb'); return; }
+    tifSnap = { ids: new Set((ACC.orders || []).map((o) => o.id)), cancel: r.cancelRest };
+  };
+  const tifPost = (e) => {
+    if (!tifSnap || !e.target.closest('#tkGo')) return; const snap = tifSnap; tifSnap = null; if (!snap.cancel) return;
+    const fresh = (ACC.orders || []).filter((o) => !snap.ids.has(o.id)); for (const o of fresh) ACC.cancel(o.id);
+    if (fresh.length) { toast('IOC: the limit could not fill immediately, so it was cancelled', 'amb'); try { renderTicketMeta(); saveState(); } catch (x) { /* ticket not built */ } }
+  };
+
+  /* ══ 3. Auto-BE on TP1 + scaled take-profit, on every price tick of an open paper position ══ */
+  const levels = (sym) => { const p = ACC.pos[sym], s = U.scale[sym]; if (!p || !s || !(p.tp > s.entry)) return null; return V163.splitTP(s.q0, s.entry, p.tp, V163.SPLIT, 'long'); };
+  const onPx = (sym, last) => {
+    if (typeof ACC === 'undefined' || ACC.short) return; const p = ACC.pos[sym];
+    if (!p || !(p.qty > 0)) { delete U.scale[sym]; return; }
+    const entry = p.cost / p.qty; let s = U.scale[sym];
+    if (!s || p.qty > s.q0 * 1.0001 || (Math.abs(s.entry - entry) / entry > 1e-6 && !s.hit[0])) s = U.scale[sym] = { q0: p.qty, entry, hit: [false, false] };
+    const lv = levels(sym), now = Date.now(); let moved = false;
+    if (U.cfg.splitTP && lv) for (let i = 0; i < 2; i++) {
+      if (s.hit[i] || !V163.hit('long', last, lv[i].price)) continue; s.hit[i] = true; const q = Math.min(lv[i].qty, ACC.qty(sym)); if (!(q > 0)) continue;
+      const t = ACC.sell(sym, last, q, now, { reason: `scaled take-profit TP${i + 1} (${lv[i].pct}%)`, src: 'manual' }); if (t) { U.stats.tp++; moved = true; try { tradeToast(t, 'Paper account'); } catch (e) { /* toast not ready */ } }
+    }
+    const pp = ACC.pos[sym];
+    if (U.cfg.autoBE && pp && pp.tp > s.entry) {
+      const tp1 = lv ? lv[0].price : s.entry + (pp.tp - s.entry) / 3, be = V163.autoBE({ entry: s.entry, side: 'long', sl: pp.sl }, last, tp1, ACC.fee);
+      if (be) { pp.sl = be; U.stats.be++; moved = true; toast(`Auto-BE: ${esc(baseOf(sym))} stop moved to break-even ${esc(fp(be))} after TP1`, 'acc'); }
+    }
+    if (moved && typeof ChartTrade !== 'undefined') ChartTrade.changed();
+  };
+  const moveBE = () => {
+    const sym = ST.sel, p = ACC.pos[sym]; if (!p || !(p.qty > 0)) return;
+    const be = V163.breakEven(p.cost / p.qty, 'long', ACC.fee), from = p.sl;
+    if (typeof ChartTrade !== 'undefined' && ChartTrade.set('pos:' + sym, 'sl', be)) { if (ChartTrade.hist && ChartTrade.hist.push) { try { ChartTrade.hist.push({ key: 'pos:' + sym, field: 'sl', from, to: be }); } catch (e) { /* history optional */ } } ChartTrade.changed(); }
+    else p.sl = be;
+    U.stats.be++; toast(`BE: ${esc(baseOf(sym))} stop at break-even ${esc(fp(be))} (fees included)`, 'acc');
+  };
+
+  /* ══ 4 + 5. chart layer ══ */
+  const feedWire = () => {
+    if (typeof Feed === 'undefined' || Feed._v163) return; Feed._v163 = true;
+    Feed.tickL.push((sym, p) => {
+      const L = Feed.live[sym]; if (L && L.bid > 0 && L.ask > 0) { let a = U.spread.get(sym); if (!a) U.spread.set(sym, (a = [])); V163.pushSpread(a, Math.floor(Date.now() / 1000), +L.bid, +L.ask, 900); }
+      try { onPx(sym, p); } catch (e) { console.warn('v163 scale', e); }
+    });
+  };
+  const tradeWire = () => {
+    if (typeof NT === 'undefined' || (NT.onTrade && NT.onTrade._v163)) return; const o = NT.onTrade;
+    NT.onTrade = function (t) {
+      try { if (t && t.src !== 'backtest' && t.id) { const L = typeof Feed !== 'undefined' && Feed.live[t.sym], ref = (L && (t.side === 'buy' ? L.ask : L.bid)) || price(t.sym); const sl = V163.slippage(t.price, ref, t.side); if (sl) { U.fills.set(t.id, sl); if (U.fills.size > 500) U.fills.delete(U.fills.keys().next().value); } } } catch (e) { /* markers are cosmetic */ }
+      if (o) return o.apply(this, arguments);
+    };
+    NT.onTrade._v163 = true; if (o && o._v160) NT.onTrade._v160 = true; if (o && o._v161) NT.onTrade._v161 = true; // never let the router or journal wrap twice
+  };
+  const tag = (g, txt, x, y, fill, fg) => { g.font = '600 11px ui-monospace, Menlo, Consolas, monospace'; const w = g.measureText(txt).width + 12; g.fillStyle = fill; g.fillRect(x - w, y - 8, w, 16); g.fillStyle = fg || '#0b0b0d'; g.textAlign = 'left'; g.textBaseline = 'middle'; g.fillText(txt, x - w + 6, y); return w; };
+  const hline = (g, L, y, col, dash, label, x1) => { g.strokeStyle = col; g.lineWidth = 1; g.setLineDash(dash || [3, 3]); g.beginPath(); g.moveTo(L.Lm, Math.round(y) + 0.5); g.lineTo(L.W - L.Rm, Math.round(y) + 0.5); g.stroke(); g.setLineDash([]); if (label) { g.globalAlpha = 0.9; tag(g, label, (x1 || L.W - L.Rm) - 4, y - 11, col, '#0b0b0d'); g.globalAlpha = 1; } };
+  const beBtn = (L, y, show) => {
+    const host = chart.host; let el = U.be;
+    if (!show) { if (el) el.hidden = true; return; }
+    if (!el || !el.isConnected || el.parentNode !== host) {
+      el = U.be = document.createElement('button'); el.type = 'button'; el.className = 'v163-be'; el.textContent = 'BE'; el.title = 'Move the stop to break-even (entry + round-trip fees)'; el.setAttribute('aria-label', 'Move stop-loss to break-even');
+      el.addEventListener('pointerdown', (e) => e.stopPropagation()); el.addEventListener('click', (e) => { e.stopPropagation(); moveBE(); }); host.appendChild(el);
+    }
+    el.hidden = false; const top = Math.round(y - 9) + 'px', left = Math.round(L.Lm + 6) + 'px'; if (el.style.top !== top) el.style.top = top; if (el.style.left !== left) el.style.left = left;
+  };
+  const overlay = (g, L, ch) => {
+    if (typeof chart === 'undefined' || ch !== chart || !L || !L.py || !L.D || !L.D.length) return;
+    const c = U.cfg, sym = ST.sel, col = L.col || {}, up = col.up || '#26c281', dn = col.dn || '#ef5350', amb = '#D4AF37', top = L.y0, bot = L.y0 + L.mainH - (L.volH || 0) - 4, ok = (y) => Number.isFinite(y) && y >= top && y <= bot;
+    g.save(); g.beginPath(); g.rect(L.Lm, top, L.W - L.Lm - L.Rm, bot - top); g.clip();
+    /* spread tunnel on 1s – 1m */
+    const sp = U.spread.get(sym), t0 = L.D[Math.max(0, Math.min(L.D.length - 1, (L.end || L.D.length) - (L.bars || L.D.length)))].t;
+    if (c.tunnel && V163.tunnelOn(ch.tfSec) && sp && sp.length > 1) {
+      const pts = sp.filter((q) => q.t >= t0); if (pts.length > 1) {
+        g.beginPath(); pts.forEach((q, i) => { const x = ch.tToX(q.t), y = L.py(q.ask); if (i) g.lineTo(x, y); else g.moveTo(x, y); }); for (let i = pts.length - 1; i >= 0; i--) g.lineTo(ch.tToX(pts[i].t), L.py(pts[i].bid)); g.closePath();
+        g.globalAlpha = 0.14; g.fillStyle = col.acc || '#5b8cff'; g.fill(); g.globalAlpha = 0.5; g.strokeStyle = col.acc || '#5b8cff'; g.lineWidth = 1; g.stroke(); g.globalAlpha = 1;
+      }
+    }
+    /* fill markers with slippage */
+    if (c.fills && typeof ACC !== 'undefined') for (const t of ACC.trades.slice(-200)) {
+      if (t.sym !== sym || t.src === 'backtest' || t.ts / 1000 < t0) continue; const x = ch.tToX(t.ts / 1000), y = L.py(t.price); if (!Number.isFinite(x) || !ok(y)) continue;
+      const buy = t.side === 'buy', s = U.fills.get(t.id); g.fillStyle = buy ? up : dn; g.beginPath(); g.moveTo(x, y + (buy ? 2 : -2)); g.lineTo(x - 5, y + (buy ? 10 : -10)); g.lineTo(x + 5, y + (buy ? 10 : -10)); g.closePath(); g.fill();
+      if (s) { g.font = '10px ui-monospace, Menlo, Consolas, monospace'; g.textAlign = 'center'; g.textBaseline = buy ? 'top' : 'bottom'; g.fillStyle = s.bps > 0.05 ? dn : up; g.fillText(`${s.text}${s.ticks != null ? ' · ' + Math.abs(s.ticks).toFixed(1) + 't' : ''}`, x, y + (buy ? 12 : -12)); }
+    }
+    const b = typeof ChartTrade !== 'undefined' ? ChartTrade.b : null;
+    /* order-preview ghost lines from the ticket when no bracket is on the chart */
+    if (c.ghost && !b && typeof curTab !== 'undefined' && curTab === 'markets' && typeof tkSide !== 'undefined' && tkSide === 'buy') {
+      const gh = V163.ghost(tkEntry(), tkNum('#tkSl') / 100, tkNum('#tkTp') / 100, 'long');
+      if (gh && (gh.sl || gh.tp || tkType !== 'market')) { g.globalAlpha = 0.55; if (ok(L.py(gh.entry))) hline(g, L, L.py(gh.entry), col.acc || '#5b8cff', [2, 4], 'Preview entry'); if (gh.sl && ok(L.py(gh.sl))) hline(g, L, L.py(gh.sl), dn, [2, 4], 'Preview SL'); if (gh.tp && ok(L.py(gh.tp))) hline(g, L, L.py(gh.tp), up, [2, 4], 'Preview TP'); g.globalAlpha = 1; }
+    }
+    let showBE = false, beY = 0;
+    if (b && b.sym === sym && b.entry > 0) {
+      const qty = b.qty > 0 ? b.qty : b.usd > 0 ? b.usd / b.entry : 0, xr = L.W - L.Rm - 4, dragging = !!ChartTrade.drag;
+      /* R:R + dollar P&L badges on the stop and target lines */
+      if (dragging || b.kind === 'draft') for (const [v, cc] of [[b.tp, up], [b.sl, dn]]) {
+        const bd = v > 0 ? V163.badge(b.entry, b.sl, v, qty, 'long') : null, y = v > 0 ? L.py(v) : NaN; if (!bd || !ok(y)) continue;
+        tag(g, bd.text, xr, y + (y - L.py(b.entry) < 0 ? -21 : 21), cc, '#0b0b0d');
+      }
+      if (b.kind === 'pos') {
+        const p = ACC.pos[sym], e = b.entry; beY = L.py(e); showBE = ok(beY) && !(p && p.sl >= V163.breakEven(e, 'long', ACC.fee) * 0.99999);
+        /* TP1 / TP2 of the scaled take-profit */
+        const lv = c.splitTP ? levels(sym) : null; if (lv) for (let i = 0; i < 2; i++) { const y = L.py(lv[i].price); if (ok(y)) hline(g, L, y, up, [1, 3], `TP${i + 1} ${lv[i].pct}%${U.scale[sym] && U.scale[sym].hit[i] ? ' ✓' : ''}`, xr - 150); }
+        /* trailing stop: activation, live stop and the next step */
+        if (p && p.trail > 0) {
+          const tp = V163.trailPlan(e, Math.max(p.hi || 0, price(sym)), p.trail, c.trailAct / 100, c.trailStep / 100, 'long');
+          if (tp && !tp.active && ok(L.py(tp.act))) hline(g, L, L.py(tp.act), amb, [6, 3], `Trail activates ${fp(tp.act)}`, xr - 150);
+          if (tp && tp.active && ok(L.py(tp.stop))) hline(g, L, L.py(tp.stop), amb, [6, 3], `Trail stop ${fp(tp.stop)}`, xr - 150);
+          if (tp && tp.active && tp.next && ok(L.py(tp.next))) { g.globalAlpha = 0.5; hline(g, L, L.py(tp.next), amb, [1, 4], `next step ${fp(tp.next)}`, xr - 150); g.globalAlpha = 1; }
+        }
+      }
+    }
+    g.restore();
+    beBtn(L, beY, showBE);
+  };
+  /* Alt + drag: magnetic snap of a dragged Entry / SL / TP line to the nearest candle high / low or the visible VWAP */
+  const snapMove = (e) => {
+    if (!e.altKey || typeof ChartTrade === 'undefined' || !ChartTrade.drag || typeof chart === 'undefined' || !chart || !chart.L || !chart.L.D) return;
+    const d = ChartTrade.drag, b = ChartTrade.find(d.key); if (!b) return; const v = b[d.field]; if (!(v > 0)) return;
+    const r = chart.cv.getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top, L = chart.L, D = L.D, i = Math.max(0, Math.min(D.length - 1, chart.idxAtX ? chart.idxAtX(x) : D.length - 1));
+    const lv = []; for (let k = i - 1; k <= i + 1; k++) if (D[k]) lv.push(D[k].h, D[k].l);
+    const vis = D.slice(Math.max(0, (L.end || D.length) - (L.bars || D.length)), L.end || D.length), vw = V163.vwap(vis); if (vw) lv.push(vw);
+    const tol = Math.abs(chart.yToPrice(y) - chart.yToPrice(y + 10)), s = V163.snap(v, lv, tol);
+    if (s !== v && ChartTrade.set(d.key, d.field, s)) { U.stats.snaps++; chart.invalidate(); }
+  };
+
+  /* ══ 5. hotkeys ══ */
+  const editable = (el) => !!el && (el.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(el.tagName));
+  const onKey = (e) => {
+    U.lastAct = Date.now();
+    const a = V163.hotkey(e, editable(e.target)); if (!a || !U.cfg.hotkeys || typeof curTab === 'undefined' || curTab !== 'markets') return;
+    if ((typeof Replay !== 'undefined' && Replay.on) || document.querySelector('.v160-ov, .v13-modal')) return;
+    e.preventDefault(); U.stats.hot++;
+    if (a === 'cancel') {
+      const n = (ACC.orders || []).length + (ST.stops || []).length; for (const o of (ACC.orders || []).slice()) ACC.cancel(o.id); ST.stops = [];
+      try { renderStops(); renderTicketMeta(); saveState(); } catch (x) { /* ticket not built */ } if (chart) chart.invalidate();
+      toast(n ? `Shift+X: cancelled ${n} pending order${n > 1 ? 's' : ''}` : 'Shift+X: no pending orders', n ? 'acc' : 'amb'); return;
+    }
+    const side = $1(`#ticket .tabs [data-side="${a}"]`), mk = $1('#tkType [data-t="market"]'), go = $1('#tkGo'); if (!go) return;
+    if (side && !side.classList.contains('on')) side.click(); if (mk && !mk.classList.contains('on')) mk.click();
+    go.click();
+  };
+
+  /* ══ 6. Auto-Disarm on Idle ══ */
+  const idleCheck = () => { const b = B(); if (b && b.live() && V163.idleDue(U.lastAct, Date.now(), U.cfg.idleMin)) { U.stats.idle++; U.lastAct = Date.now(); b.kill(`Auto-Disarm on Idle: no activity for ${U.cfg.idleMin}m`); } };
+  let mvAt = 0; const touch = () => { U.lastAct = Date.now(); };
+
+  const attach = () => { if (typeof chart === 'undefined' || !chart) return; if (!chart.overlays.includes(overlay)) chart.overlays.push(overlay); };
+  const tick = () => { try { wireGuard(); feedWire(); tradeWire(); attach(); mountTicket(); paintPanel(false); idleCheck(); pullBook(); } catch (e) { console.warn('v163', e); } };
+  U.start = () => {
+    load(); document.body.classList.add('v163'); tick(); setInterval(tick, 1000);
+    document.addEventListener('keydown', onKey);
+    for (const t of ['pointerdown', 'wheel']) document.addEventListener(t, touch, { passive: true });
+    document.addEventListener('pointermove', () => { const n = Date.now(); if (n - mvAt > 5000) { mvAt = n; touch(); } }, { passive: true });
+    window.addEventListener('pointermove', snapMove);
+  };
+  Object.assign(U, { guard, overlay, onPx, moveBE, applySize, onKey, snapMove, idleCheck, paintPanel, mountTicket, tick, sizeCalc });
+  return U;
+})();
+if (typeof window !== 'undefined' && typeof document !== 'undefined' && typeof boot === 'function') { const _b163 = boot; boot = async function () { await _b163.apply(this, arguments); try { V163UI.start(); } catch (e) { console.warn('v163 init', e); } }; }
+
+/* ExTerm v16.3 closed-loop live cockpit:
+   · Floating Live Execution HUD (LIVE ARMED · Slot # · ping · daily P&L vs cap), 44px equity + drawdown micro-sparkline and a
+     market-close / funding countdown pill; Pause New Entries (Keep Exits Active); cooldown countdown inside the Buy button
+   · Focus Chart (F, reuses the rail collapse), docked Micro-Ticket strip, live Position & Pending Orders Drawer
+     (Close 50% · Flatten · Reverse Position · Close Losing / Green Legs)
+   · chart: Scale-In / Pyramid ghost line, Fee & Funding / Borrow drag line, liquidation line; ticket: Chase Limit with
+     peg-to-best-bid/ask, liquidation & margin-buffer pill, Copy Trade Setup
+   · watchlist Signal Readiness dots, acoustic + visual cues (instant mute), privacy-masked trade card on close
+   · two-way 127.0.0.1 ACK + fill sync, heartbeat latency & packet-success graph, slippage & fill quality by symbol,
+     Interactive Brokers / Alpaca / CCXT / Freqtrade starter bridges
+   · per-slot ticker allowlist, time-in-trade auto-exit, price alert → conditional trigger, EOD Flat Timer, encrypted session
+     recovery snapshot, Two-Key Arming (Shift + Alt + A), 3-Second Live Readiness Self-Check, Reset Session Safety Counters
+   Strict CSP: listeners attached here, every dynamic string through esc(). Maths in V163 (v163core.js). */
+const V163C = (() => {
+  const KEY = 'exterm.v163.cockpit', SKEY = 'exterm.v163.short', NKEY = 'exterm.v163.snap', QKEY = 'exterm.v163.quality';
+  const C = { c: V163.CDEF(), eq: [], hb: {}, q: {}, botPos: {}, fills: [], turned: 0, seen: new Set(), blocked: null, prevPx: {}, dots: {}, dotsAt: {}, pass: '', check: null, sh: null, peg: new Set(),
+    lastCard: null, eodDay: '', stats: { acks: 0, fills: 0, cues: 0, cards: 0, trig: 0, tit: 0, eod: 0, resets: 0, held: 0 } };
+  const $1 = (s, r) => (r || document).querySelector(s);
+  const B = () => (typeof V160UI !== 'undefined' && V160UI.st ? V160UI : null);
+  const live = () => { const b = B(); return !!(b && b.live()); };
+  const px0 = (s) => (typeof px === 'function' ? px(s) : 0) || 0;
+  const fp = (v) => (typeof NT !== 'undefined' ? NT.fmtPrice(v) : String(v));
+  const kindOf = (s) => (typeof isOnchain === 'function' && isOnchain(s) ? 'onchain' : typeof isStock === 'function' && isStock(s) ? 'stock' : 'crypto');
+  const save = () => { try { localStorage.setItem(KEY, JSON.stringify(C.c)); } catch (e) { /* session only */ } };
+  const saveShort = () => { try { if (C.sh) localStorage.setItem(SKEY, JSON.stringify(C.sh)); } catch (e) { /* session only */ } };
+  const saveQ = () => { try { localStorage.setItem(QKEY, JSON.stringify(C.q)); } catch (e) { /* session only */ } };
+  const load = () => {
+    let raw = null, s = null, q = null; try { raw = localStorage.getItem(KEY); s = JSON.parse(localStorage.getItem(SKEY) || 'null'); q = JSON.parse(localStorage.getItem(QKEY) || 'null'); } catch (e) { /* defaults */ }
+    C.c = V163.cload(raw); if (q && typeof q === 'object') for (const [k, a] of Object.entries(q)) if (Array.isArray(a)) for (const x of a.slice(-50)) if (x && Number.isFinite(+x.bps)) V163.qAdd(C.q, k, +x.bps, x.ack == null ? null : +x.ack);
+    try { C.sh = s && typeof s === 'object' ? NT.ShortAccount.from(Object.assign({}, s, { short: true })) : new NT.ShortAccount({ cash: 100000, fee: ACC ? ACC.fee : 0.001, slip: ACC ? ACC.slip : 0.0005 }); } catch (e) { C.sh = null; }
+  };
+  const ui = () => { try { renderTicketMeta(); } catch (e) { /* ticket not built */ } try { renderPosStrip(); } catch (e) { /* strip not built */ } try { saveState(); } catch (e) { /* storage */ } saveShort(); if (typeof ChartTrade !== 'undefined' && ChartTrade.changed) ChartTrade.changed(); if (typeof chart !== 'undefined' && chart) chart.invalidate(); };
+  const editable = (el) => !!el && (el.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(el.tagName));
+  const modalOpen = () => !!document.querySelector('.v160-ov, .v13-modal');
+
+  /* ══ cues: WebAudio blip + HUD flash, muted instantly ══ */
+  let actx = null;
+  const cue = (kind) => {
+    C.stats.cues++; const h = $1('#v163Hud'); if (h) { h.classList.remove('v163-flash', 'v163-flash-dn'); void h.offsetWidth; h.classList.add(kind === 'block' ? 'v163-flash-dn' : 'v163-flash'); }
+    if (!C.c.cues || C.c.muted) return;
+    try {
+      const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return; actx = actx || new AC(); if (actx.state === 'suspended') actx.resume();
+      const o = actx.createOscillator(), g = actx.createGain(), f = { buy: 880, sell: 660, fill: 990, block: 220, trig: 740 }[kind] || 600, t = actx.currentTime;
+      o.type = kind === 'block' ? 'square' : 'sine'; o.frequency.value = f; g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.06, t + 0.01); g.gain.exponentialRampToValueAtTime(0.0001, t + (kind === 'block' ? 0.22 : 0.09));
+      o.connect(g).connect(actx.destination); o.start(t); o.stop(t + 0.25);
+    } catch (e) { /* audio unavailable */ }
+  };
+
+  /* ══ positions across the paper long account and the cockpit's reverse (short) book ══ */
+  const positions = () => {
+    const out = [];
+    for (const [s, p] of Object.entries((typeof ACC !== 'undefined' && ACC && ACC.pos) || {})) if (p && p.qty > 0) out.push({ sym: s, qty: p.qty, entry: p.cost / p.qty, side: 'long', acct: ACC, sl: p.sl, tp: p.tp, t0: p.t0 });
+    for (const [s, p] of Object.entries((C.sh && C.sh.pos) || {})) if (p && p.qty > 0) out.push({ sym: s, qty: p.qty, entry: p.entry, side: 'short', acct: C.sh, sl: p.sl, tp: p.tp, t0: p.t0 });
+    return out;
+  };
+  const prices = () => { const m = {}; for (const p of positions()) m[p.sym] = px0(p.sym); return m; };
+  const equity = () => { let e = 0; try { e += ACC.equity(priceMap()); } catch (x) { /* not booted */ } try { if (C.sh) e += C.sh.equity(prices()) - C.sh.cash0; } catch (x) { /* no short book */ } return e; };
+  const closeOne = (p, qty, why) => { const pr = px0(p.sym); if (!(pr > 0)) return null; return p.acct.sell(p.sym, pr, qty, Date.now(), { reason: why, src: 'manual' }); };
+  const act = (action, sym) => {
+    const list = positions().filter((p) => !sym || p.sym === sym), plan = V163.drawerPlan(list, action, prices()); let n = 0;
+    for (const x of plan) {
+      const p = list.find((y) => y.sym === x.sym && y.acct === x.acct); if (!p) continue; const pr = px0(p.sym), usd = p.qty * pr;
+      const t = closeOne(p, action === 'half' ? x.qty : null, { half: 'Drawer: Close 50%', flat: 'Drawer: Flatten', reverse: 'Drawer: Reverse Position', losers: 'Drawer: Close Losing Legs', winners: 'Drawer: Close Green Legs', all: 'Drawer: Flatten All' }[action]); if (t) n++;
+      if (t && action === 'reverse' && pr > 0) {
+        const d = p.sl > 0 ? Math.min(0.2, Math.max(0.002, Math.abs(p.entry - p.sl) / p.entry)) : 0.02, nu = usd * (1 - (ACC.fee || 0) * 2);
+        const r = p.side === 'long' ? (C.sh ? C.sh.buy(p.sym, pr, nu, Date.now(), { slPx: pr * (1 + d), reason: 'Drawer: Reverse Position (short)', src: 'manual' }) : null) : ACC.buy(p.sym, pr, nu, Date.now(), { slPx: pr * (1 - d), reason: 'Drawer: Reverse Position (long)', src: 'manual' });
+        if (r) toast(`Reversed ${esc(baseOf(p.sym))} to ${esc(p.side === 'long' ? 'SHORT' : 'LONG')} with a ${esc((d * 100).toFixed(2))}% stop`, 'acc'); else toast('Reverse: the opposite leg could not be opened (cash or price unavailable)', 'amb');
+      }
+    }
+    if (action === 'all') { for (const o of (ACC.orders || []).slice()) ACC.cancel(o.id); ST.stops = []; try { renderStops(); } catch (e) { /* stops list */ } }
+    ui(); paintDrawer(); if (n || action === 'all') toast(`${esc({ half: 'Closed 50%', flat: 'Flattened', reverse: 'Reversed', losers: 'Closed losing legs', winners: 'Closed green legs', all: 'Flattened all positions and cancelled pending orders' }[action])}${n ? ` (${n})` : ''}`, 'acc');
+    else toast('Nothing to close for that action', 'amb');
+    return n;
+  };
+
+  /* ══ HUD ══ */
+  const pingNow = () => { const b = B(); if (!b) return 0; const ls = b.st.slots.filter((s) => s.enabled && (s.mode === 'live' || !b.live())); let m = 0; for (const s of ls) if (s.hb && s.hb.ok) m = m ? Math.min(m, s.hb.ms) : s.hb.ms; return m; };
+  const dayPnl = () => { const b = B(); if (!b) return 0; try { b.dayLoss(); return equity() - (b.st.day ? b.st.day.eq0 : equity()); } catch (e) { return 0; } };
+  const icon = (d) => `<svg viewBox="0 0 24 24" aria-hidden="true" class="v163-hic">${d}</svg>`;
+  const IC = { pause: '<path d="M8 5v14M16 5v14" stroke="currentColor" stroke-width="2.2"/>', play: '<path d="M7 5l12 7-12 7z" fill="currentColor"/>', mute: '<path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/><path d="M17 9l4 6M21 9l-4 6" stroke="currentColor" stroke-width="1.8"/>', sound: '<path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/><path d="M16.5 8.5a5 5 0 010 7M19 6a8.5 8.5 0 010 12" fill="none" stroke="currentColor" stroke-width="1.6"/>', focus: '<path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" fill="none" stroke="currentColor" stroke-width="1.8"/>', micro: '<rect x="3" y="14" width="18" height="6" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M7 17h4" stroke="currentColor" stroke-width="1.8"/>', drawer: '<path d="M4 5h16M4 12h16M4 19h10" stroke="currentColor" stroke-width="1.8"/>', check: '<path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="2"/>' };
+  const hudHTML = () => `<div class="v163-hrow"><span class="v163-led" aria-hidden="true"></span><b id="v163HudTxt" class="mono"></b></div>
+    <div class="v163-hrow"><canvas id="v163Spark" width="168" height="44" aria-label="Live session equity and drawdown"></canvas><div class="v163-hcol"><span id="v163HudDD" class="mono note"></span><span id="v163HudEvt" class="v163-pill mono"></span></div></div>
+    <div class="v163-hrow v163-hbtns">
+      <button type="button" class="v163-hb" data-v163h="pause" aria-pressed="false"></button>
+      <button type="button" class="v163-hb" data-v163h="mute" aria-pressed="false"></button>
+      <button type="button" class="v163-hb" data-v163h="focus" title="Focus Chart (F): collapse both side rails">${icon(IC.focus)}<span>Focus</span></button>
+      <button type="button" class="v163-hb" data-v163h="micro" aria-pressed="false" title="Micro-Ticket docked bottom strip">${icon(IC.micro)}<span>Micro</span></button>
+      <button type="button" class="v163-hb" data-v163h="drawer" title="Live positions & pending orders">${icon(IC.drawer)}<span>Positions</span></button>
+      <button type="button" class="v163-hb" data-v163h="check" title="3-Second Live Readiness Self-Check">${icon(IC.check)}<span>Check</span></button>
+    </div>`;
+  const onHud = (e) => {
+    const x = e.target.closest('[data-v163h]'); if (!x) return; const a = x.dataset.v163h;
+    if (a === 'pause') setPause(!C.c.paused);
+    else if (a === 'mute') { C.c.muted = !C.c.muted; save(); paintHud(true); toast(C.c.muted ? 'Cues muted' : 'Cues on', 'acc'); }
+    else if (a === 'focus') focus();
+    else if (a === 'micro') micro(!C.c.micro);
+    else if (a === 'drawer') drawer();
+    else if (a === 'check') selfCheck();
+  };
+  const setPause = (on) => {
+    C.c.paused = !!on; save(); paintHud(true); paintCockpit(true); const b = B();
+    if (b) b.led('breaker', { status: on ? 'entries paused' : 'entries resumed', detail: on ? 'Pause New Entries: live opening orders held, exits stay active' : 'Pause New Entries released' });
+    toast(on ? '⏸ New entries paused: exits, stops and flatten stay active' : '▶ New entries resumed', on ? 'amb' : 'acc');
+  };
+  const paintSpark = () => {
+    const cv = $1('#v163Spark'); if (!cv) return; const g = cv.getContext('2d'); if (!g) return; const w = cv.width, h = cv.height; g.clearRect(0, 0, w, h);
+    const s = V163.spark(C.eq.map((x) => x.e), w, h); if (!s) { g.fillStyle = 'rgba(255,255,255,.35)'; g.font = '10px ui-monospace, Menlo, Consolas, monospace'; g.fillText('collecting equity…', 6, h / 2 + 3); return; }
+    g.beginPath(); s.peakPts.forEach(([x, y], i) => (i ? g.lineTo(x, y) : g.moveTo(x, y))); for (let i = s.pts.length - 1; i >= 0; i--) g.lineTo(s.pts[i][0], s.pts[i][1]); g.closePath(); g.fillStyle = 'rgba(244,63,94,.22)'; g.fill();
+    g.beginPath(); s.pts.forEach(([x, y], i) => (i ? g.lineTo(x, y) : g.moveTo(x, y))); g.strokeStyle = s.up ? '#2fd08a' : '#f43f5e'; g.lineWidth = 1.5; g.stroke();
+    const dd = $1('#v163HudDD'), t = `DD ${s.ddPct.toFixed(2)}% · ${V163.money(s.last - s.first)}`; if (dd && dd.textContent !== t) dd.textContent = t;
+  };
+  const paintHud = (force) => {
+    const host = typeof chart !== 'undefined' && chart && chart.host ? chart.host : $1('#chartHost'); if (!host) return; let h = $1('#v163Hud');
+    if (!h || h.parentNode !== host) { if (h) h.remove(); h = document.createElement('div'); h.id = 'v163Hud'; h.className = 'v163-hud'; h.setAttribute('role', 'status'); h.setAttribute('aria-label', 'Live Execution HUD'); h.innerHTML = hudHTML(); h.addEventListener('click', onHud); h.addEventListener('pointerdown', (e) => e.stopPropagation()); host.appendChild(h); force = true; }
+    const b = B(), on = live(); h.hidden = !on; if (!on && !force) return;
+    const slots = b ? b.st.slots.filter((s) => s.enabled && s.mode === 'live').map((s) => s.id) : [], H = V163.hud({ armed: on, slots, ping: pingNow(), dayPnl: dayPnl(), cap: b ? b.st.caps.maxLoss : 0 });
+    const tx = $1('#v163HudTxt', h); if (tx.textContent !== H.text) tx.textContent = H.text; if (h.dataset.level !== H.level) h.dataset.level = H.level;
+    const ev = V163.nextEvent(Date.now(), kindOf(ST.sel)), ep = $1('#v163HudEvt', h), et = ev ? `${ev.name} in ${V163.countdown(ev.left)}` : 'on-chain · 24/7'; if (ep.textContent !== et) ep.textContent = et;
+    const pb = $1('[data-v163h="pause"]', h), mb = $1('[data-v163h="mute"]', h), mi = $1('[data-v163h="micro"]', h);
+    if (force || pb._p !== C.c.paused) { pb._p = C.c.paused; pb.innerHTML = icon(C.c.paused ? IC.play : IC.pause) + `<span>${C.c.paused ? 'Resume entries' : 'Pause entries'}</span>`; pb.setAttribute('aria-pressed', String(C.c.paused)); pb.title = 'Pause New Entries (Keep Exits Active)'; pb.classList.toggle('on', C.c.paused); }
+    if (force || mb._m !== C.c.muted) { mb._m = C.c.muted; mb.innerHTML = icon(C.c.muted ? IC.mute : IC.sound) + `<span>${C.c.muted ? 'Muted' : 'Cues'}</span>`; mb.setAttribute('aria-pressed', String(C.c.muted)); mb.title = 'Acoustic & visual confirmation cues (instant mute)'; }
+    mi.setAttribute('aria-pressed', String(C.c.micro)); mi.classList.toggle('on', C.c.micro);
+    paintSpark();
+  };
+
+  /* ══ Buy button: cooldown countdown / paused entries ══ */
+  const paintGo = () => {
+    const go = $1('#tkGo'); if (!go) return; const b = B(), now = Date.now(), on = live(), buy = typeof tkSide === 'undefined' || tkSide === 'buy';
+    const cd = on && b && b.fs ? V163.cooldownLabel(+b.fs.lockUntil, now) : null, lab = buy && cd ? cd : buy && on && C.c.paused ? 'Entries paused · exits active' : null;
+    if (lab) { if (go._v163o == null) go._v163o = go.textContent; go.disabled = true; go.classList.add('v163-cd'); if (go.textContent !== lab) go.textContent = lab; go.setAttribute('aria-disabled', 'true'); }
+    else if (go._v163o != null) { go.textContent = go._v163o; go._v163o = null; go.disabled = false; go.classList.remove('v163-cd'); go.removeAttribute('aria-disabled'); try { renderTicketMeta(); } catch (e) { /* ticket not built */ } }
+    const mb = $1('#v163Micro [data-v163m="buy"]'); if (mb) { mb.disabled = !!lab; const t = lab || 'Buy'; if (mb.textContent !== t) mb.textContent = t; }
+  };
+
+  /* ══ Focus Chart (F) + Micro-Ticket ══ */
+  const focus = () => { if (typeof V155UI !== 'undefined' && V155UI.zen) V155UI.zen(); else document.body.classList.toggle('v155-hideL'); setTimeout(paintFocus, 60); };
+  const paintFocus = () => { const on = document.body.classList.contains('v155-hideL') && document.body.classList.contains('v155-hideR'); document.body.classList.toggle('v163-focus', on); const f = $1('#v163Hud [data-v163h="focus"]'); if (f) { f.setAttribute('aria-pressed', String(on)); f.classList.toggle('on', on); } };
+  const micro = (on) => { C.c.micro = !!on; save(); document.body.classList.toggle('v163-micro', C.c.micro); mountMicro(); paintHud(true); setTimeout(() => window.dispatchEvent(new Event('resize')), 30); };
+  const mountMicro = () => {
+    const strip = $1('#posStrip'); if (!strip) return; let m = $1('#v163Micro');
+    if (!m) {
+      m = document.createElement('div'); m.id = 'v163Micro'; m.className = 'v163-mstrip'; m.setAttribute('role', 'group'); m.setAttribute('aria-label', 'Micro-Ticket');
+      m.innerHTML = `<b class="v163-mt">Micro-Ticket</b><span class="v163-msym mono" id="v163mSym"></span>
+        <label><span>$</span><input class="in mono" id="v163mUsd" inputmode="decimal" value="100" aria-label="Order size in dollars"></label>
+        <label><span>SL %</span><input class="in mono" id="v163mSl" inputmode="decimal" value="1.5" aria-label="Stop-loss percent"></label>
+        <label><span>TP %</span><input class="in mono" id="v163mTp" inputmode="decimal" value="3" aria-label="Take-profit percent"></label>
+        <button type="button" class="btn up" data-v163m="buy">Buy</button><button type="button" class="btn dn" data-v163m="sell">Sell</button>
+        <button type="button" class="btn sm" data-v163m="drawer">Positions</button><button type="button" class="btn sm" data-v163m="exit" aria-label="Exit Micro-Ticket">✕</button>`;
+      m.addEventListener('click', (e) => { const x = e.target.closest('[data-v163m]'); if (!x) return; const a = x.dataset.v163m; if (a === 'exit') micro(false); else if (a === 'drawer') drawer(); else microGo(a); });
+    }
+    if (m.parentNode !== strip.parentNode || m.previousElementSibling !== strip) strip.after(m);
+    const s = $1('#v163mSym', m), t = ST.sel ? baseOf(ST.sel) + ' ' + fp(px0(ST.sel)) : ''; if (s.textContent !== t) s.textContent = t;
+  };
+  const setVal = (sel, v) => { const el = $1(sel); if (!el) return false; el.value = v; el.dispatchEvent(new Event('input', { bubbles: true })); el.dispatchEvent(new Event('change', { bubbles: true })); return true; };
+  const microGo = (side) => {
+    const usd = parseFloat(($1('#v163mUsd') || {}).value), sl = parseFloat(($1('#v163mSl') || {}).value), tp = parseFloat(($1('#v163mTp') || {}).value);
+    if (!(usd > 0)) { toast('Micro-Ticket: enter a $ size', 'amb'); return; }
+    const sb = $1(`#ticket .tabs [data-side="${side}"]`); if (sb && !sb.classList.contains('on')) sb.click();
+    const mk = $1('#tkType [data-t="market"]'); if (mk && !mk.classList.contains('on')) mk.click();
+    const z = $1('#tkSize [data-z="usd"]'); if (z && !z.classList.contains('on')) z.click();
+    setVal('#tkUsd', usd.toFixed(2)); if (side === 'buy') { setVal('#tkSl', sl > 0 ? String(sl) : ''); setVal('#tkTp', tp > 0 ? String(tp) : ''); }
+    const go = $1('#tkGo'); if (go && !go.disabled) go.click(); else toast('Micro-Ticket: order button is locked (cooldown or paused entries)', 'amb');
+  };
+
+  /* ══ Live Position & Pending Orders Drawer ══ */
+  const drawer = (open) => {
+    let d = $1('#v163Drawer'); const want = open == null ? !d : open;
+    if (!want) { if (d) d.remove(); return; }
+    if (!d) {
+      d = document.createElement('aside'); d.id = 'v163Drawer'; d.className = 'v163-drawer'; d.setAttribute('role', 'dialog'); d.setAttribute('aria-label', 'Live positions and pending orders');
+      d.addEventListener('click', (e) => {
+        const x = e.target.closest('[data-v163d]'); if (!x) return; const a = x.dataset.v163d, s = x.dataset.sym || '';
+        if (a === 'close') { d.remove(); return; }
+        if (a === 'cancel') { ACC.cancel(x.dataset.id); C.peg.delete(x.dataset.id); ui(); paintDrawer(); return; }
+        if (a === 'unstop') { ST.stops = (ST.stops || []).filter((o) => String(o.id) !== x.dataset.id); try { renderStops(); } catch (er) { /* list */ } ui(); paintDrawer(); return; }
+        if (a === 'copy') { copySetup(s); return; }
+        act(a, s || null);
+      });
+      d.addEventListener('keydown', (e) => { if (e.key === 'Escape') d.remove(); });
+      document.body.appendChild(d);
+    }
+    paintDrawer(true); const f = $1('[data-v163d="close"]', d); if (f && open !== false) f.focus({ preventScroll: true });
+    return d;
+  };
+  const paintDrawer = (force) => {
+    const d = $1('#v163Drawer'); if (!d) return; const pos = positions(), pr = prices(), b = B();
+    const rows = pos.map((p) => {
+      const m = pr[p.sym] || p.entry, pnl = (m - p.entry) * p.qty * (p.side === 'short' ? -1 : 1), pct = ((m - p.entry) / p.entry) * 100 * (p.side === 'short' ? -1 : 1), bq = C.botPos[baseOf(p.sym)];
+      const sync = bq == null ? '<span class="note">no bot fills</span>' : Math.abs(Math.abs(bq) - p.qty) <= p.qty * 0.01 ? `<span class="up">bot ${esc(NT.fmtQty(bq))} ✓ in sync</span>` : `<span class="v163-drift">bot ${esc(NT.fmtQty(bq))} · drift</span>`;
+      return `<div class="v163-prow"><div class="v163-ph"><b>${esc(baseOf(p.sym))}</b><span class="v163-side ${p.side}">${p.side === 'short' ? 'SHORT' : 'LONG'}</span><span class="mono">${esc(NT.fmtQty(p.qty))} @ ${esc(fp(p.entry))}</span><span class="mono ${pnl >= 0 ? 'up' : 'dn'}">${esc(V163.money(pnl))} (${esc((pct >= 0 ? '+' : '') + pct.toFixed(2))}%)</span></div>
+        <div class="v163-pmeta note mono">SL ${p.sl > 0 ? esc(fp(p.sl)) : '–'} · TP ${p.tp > 0 ? esc(fp(p.tp)) : '–'} · in trade ${p.t0 ? esc(V163.countdown(Date.now() - p.t0)) : '–'} · ${sync}</div>
+        <div class="v163-pacts"><button type="button" class="btn xs" data-v163d="half" data-sym="${esc(p.sym)}">Close 50%</button><button type="button" class="btn xs" data-v163d="flat" data-sym="${esc(p.sym)}">Flatten</button><button type="button" class="btn xs" data-v163d="reverse" data-sym="${esc(p.sym)}">Reverse Position</button><button type="button" class="btn xs" data-v163d="copy" data-sym="${esc(p.sym)}">Copy setup</button></div></div>`;
+    }).join('');
+    const ords = (ACC.orders || []).map((o) => `<div class="v163-orow mono"><span>${esc(String(o.side).toUpperCase())} ${esc(baseOf(o.sym))} limit @ ${esc(fp(o.price))}${C.peg.has(o.id) ? ' · pegged' : ''}</span><button type="button" class="btn xs" data-v163d="cancel" data-id="${esc(o.id)}">Cancel</button></div>`).join('')
+      + (ST.stops || []).map((o) => `<div class="v163-orow mono"><span>STOP ${esc(baseOf(o.sym || ''))} @ ${esc(fp(o.price || o.trig || 0))}</span><button type="button" class="btn xs" data-v163d="unstop" data-id="${esc(o.id)}">Cancel</button></div>`).join('');
+    const k = rows + '|' + ords + '|' + (b && b.live()); if (!force && d._k === k) return; d._k = k;
+    d.innerHTML = `<div class="v163-dh"><h3>Live Positions &amp; Pending Orders</h3><span class="v162-mode ${b && b.live() ? 'live' : 'paper'}">${b && b.live() ? 'LIVE BOT ARMED' : 'PAPER'}</span><button type="button" class="btn xs" data-v163d="close" aria-label="Close drawer">✕</button></div>
+      <div class="v163-dbody">${rows || '<p class="note">No open positions.</p>'}<h4>Pending orders</h4>${ords || '<p class="note">No pending orders.</p>'}</div>
+      <div class="v163-dfoot"><button type="button" class="btn sm" data-v163d="losers">Close Losing Legs</button><button type="button" class="btn sm" data-v163d="winners">Close Green Legs</button><button type="button" class="btn sm dn" data-v163d="all">Flatten All</button></div>
+      <p class="note">Every close is a normal exit: it is never blocked by Pause New Entries, cooldowns or the opening-order guards.</p>`;
+  };
+
+  /* ══ ticket: Chase Limit + peg, liquidation & margin buffer, countdown, Copy Trade Setup ══ */
+  const tkNum = (id) => { const el = $1(id), v = el ? parseFloat(el.value) : NaN; return v > 0 ? v : 0; };
+  const tkEntry = () => (typeof tkType !== 'undefined' && tkType !== 'market' ? tkNum('#tkLimit') || px0(ST.sel) : px0(ST.sel));
+  const quote = (s) => { const L = (typeof Feed !== 'undefined' && Feed.live[s]) || {}, p = px0(s); return { bid: L.bid > 0 ? +L.bid : p, ask: L.ask > 0 ? +L.ask : p }; };
+  const chasePx = () => { const q = quote(ST.sel), side = typeof tkSide === 'undefined' ? 'buy' : tkSide; return V163.chase(side, q.bid, q.ask, V163.tick(q.bid), C.c.pegAgg); };
+  const chase = () => {
+    const p = chasePx(); if (!(p > 0)) { toast('Chase Limit: no bid / ask yet', 'amb'); return; }
+    const lb = $1('#tkType [data-t="limit"]'); if (lb && !lb.classList.contains('on')) lb.click();
+    setVal('#tkLimit', String(+p.toPrecision(10))); toast(`Chase Limit: pegged to best ${esc(typeof tkSide !== 'undefined' && tkSide === 'sell' ? 'ask' : 'bid')} ${esc(fp(p))}`, 'acc');
+  };
+  const ckHTML = () => `<div class="row v163-ckrow"><button type="button" class="btn sm" data-v163k="chase" title="Set the limit to the best bid (buy) or best ask (sell)">Chase Limit</button>
+      <label class="chk"><input type="checkbox" id="v163Peg"${C.c.peg ? ' checked' : ''}> Peg to best bid/ask</label><label class="chk"><input type="checkbox" id="v163PegAgg"${C.c.pegAgg ? ' checked' : ''}> 1 tick inside</label></div>
+    <div class="row v163-ckrow"><label class="f v163-lev"><span>Leverage ×</span><input class="in mono" id="v163Lev" inputmode="decimal" value="${esc(C.c.lev)}"></label><span class="v163-pill mono" id="v163Liq" role="status"></span></div>
+    <div class="row v163-ckrow"><span class="v163-pill mono" id="v163Evt" role="timer"></span><button type="button" class="btn sm" data-v163k="copy">Copy Trade Setup</button></div>`;
+  const mountCk = () => {
+    const go = $1('#tkGo'); if (!go || $1('#v163Ck')) return;
+    const box = document.createElement('div'); box.id = 'v163Ck'; box.className = 'v163-tk v163-ck'; box.innerHTML = ckHTML(); go.before(box);
+    box.addEventListener('click', (e) => { const x = e.target.closest('[data-v163k]'); if (!x) return; if (x.dataset.v163k === 'chase') chase(); else copySetup(); });
+    box.addEventListener('change', (e) => { const t = e.target; if (t.id === 'v163Peg') { C.c.peg = t.checked; save(); } else if (t.id === 'v163PegAgg') { C.c.pegAgg = t.checked; save(); } });
+    box.addEventListener('input', (e) => { if (e.target.id === 'v163Lev') { C.c = V163.cload(Object.assign({}, C.c, { lev: e.target.value })); save(); paintCk(); if (chart) chart.invalidate(); } });
+    const tk = $1('#ticket'); if (tk && !tk._v163c) { tk._v163c = true; tk.addEventListener('click', pegPre, true); tk.addEventListener('click', pegPost); }
+    paintCk();
+  };
+  let pegSnap = null;
+  const pegPre = (e) => { pegSnap = e.target.closest('#tkGo') && C.c.peg && typeof tkType !== 'undefined' && tkType === 'limit' ? new Set((ACC.orders || []).map((o) => o.id)) : null; };
+  const pegPost = (e) => { if (!pegSnap || !e.target.closest('#tkGo')) return; for (const o of ACC.orders || []) if (!pegSnap.has(o.id)) C.peg.add(o.id); pegSnap = null; };
+  const repeg = () => {
+    if (C.c.peg && typeof tkType !== 'undefined' && tkType === 'limit' && document.activeElement !== $1('#tkLimit')) { const p = chasePx(); const el = $1('#tkLimit'); if (p > 0 && el && Math.abs((parseFloat(el.value) || 0) - p) > p * 1e-9) setVal('#tkLimit', String(+p.toPrecision(10))); }
+    for (const o of ACC.orders || []) {
+      if (!C.peg.has(o.id)) continue; const q = quote(o.sym), np = V163.chase(o.side, q.bid, q.ask, V163.tick(q.bid), C.c.pegAgg); if (np > 0 && np !== o.price) o.price = np;
+    }
+    for (const id of [...C.peg]) if (!(ACC.orders || []).some((o) => o.id === id)) C.peg.delete(id);
+  };
+  const paintCk = () => {
+    const lq = $1('#v163Liq'); if (lq) {
+      const e = tkEntry(), side = typeof tkSide !== 'undefined' && tkSide === 'sell' ? 'short' : 'long', L = V163.liq(e, C.c.lev, side, C.c.mmr / 100), bf = L ? V163.liqBuffer(px0(ST.sel) || e, L) : null;
+      const slp = tkNum('#tkSl') / 100, slPx = slp > 0 ? e * (1 - slp) : 0, beyond = L && slPx > 0 && slPx <= L;
+      const t = !L ? `${C.c.lev}× · no liquidation (spot)` : `${bf.warn || beyond ? '⚠ ' : ''}Liq ≈ ${fp(L)} · buffer ${bf.pct.toFixed(1)}%${bf.warn ? ' (< 15%)' : ''}${beyond ? ' · stop beyond liq' : ''}`;
+      if (lq.textContent !== t) lq.textContent = t; lq.classList.toggle('warn', !!(L && (bf.warn || beyond)));
+    }
+    const ev = $1('#v163Evt'); if (ev) { const x = V163.nextEvent(Date.now(), kindOf(ST.sel)), t = x ? `${x.name} in ${V163.countdown(x.left)}` : 'On-chain · trades 24/7'; if (ev.textContent !== t) ev.textContent = t; ev.classList.toggle('warn', !!(x && x.left < 15 * 60000)); }
+  };
+  const copySetup = (sym) => {
+    const s = sym || ST.sel, pos = positions().find((p) => p.sym === s);
+    let o; if (pos) o = { sym: baseOf(s), side: pos.side, entry: pos.entry, sl: pos.sl, tp: pos.tp, tf: ST.tf };
+    else { const e = tkEntry(), sl = tkNum('#tkSl') / 100, tp = tkNum('#tkTp') / 100, r = typeof V163UI !== 'undefined' && V163UI.sizeCalc ? V163UI.sizeCalc() : null; o = { sym: baseOf(s), side: 'long', entry: e, sl: sl > 0 ? e * (1 - sl) : 0, tp: tp > 0 ? e * (1 + tp) : 0, risk: r ? r.risk : 0, tf: ST.tf }; }
+    const txt = V163.setupText(o); C.lastSetup = txt;
+    const done = () => toast('Trade setup copied: ' + esc(txt), 'acc');
+    try { navigator.clipboard.writeText(txt).then(done, () => toast('Copy blocked by the browser. Setup: ' + esc(txt), 'amb')); } catch (e) { toast('Setup: ' + esc(txt), 'acc'); }
+    return txt;
+  };
+
+  /* ══ chart layer: pyramid ghost, fee & funding drag line, liquidation, reverse-book lines ══ */
+  const tag = (g, txt, x, y, fill) => { g.font = '600 11px ui-monospace, Menlo, Consolas, monospace'; const w = g.measureText(txt).width + 12; g.fillStyle = fill; g.fillRect(x - w, y - 8, w, 16); g.fillStyle = '#0b0b0d'; g.textAlign = 'left'; g.textBaseline = 'middle'; g.fillText(txt, x - w + 6, y); };
+  const hl = (g, L, y, col, dash, label, xr) => { g.strokeStyle = col; g.lineWidth = 1; g.setLineDash(dash); g.beginPath(); g.moveTo(L.Lm, Math.round(y) + 0.5); g.lineTo(L.W - L.Rm, Math.round(y) + 0.5); g.stroke(); g.setLineDash([]); if (label) { g.globalAlpha = 0.92; tag(g, label, xr, y - 11, col); g.globalAlpha = 1; } };
+  const overlay = (g, L, ch) => {
+    if (typeof chart === 'undefined' || ch !== chart || !L || !L.py) return; const sym = ST.sel, p = positions().find((x) => x.sym === sym); if (!p) return;
+    const top = L.y0, bot = L.y0 + L.mainH - (L.volH || 0) - 4, ok = (y) => Number.isFinite(y) && y >= top && y <= bot, pr = px0(sym), xr = L.W - L.Rm - 170, col = L.col || {};
+    g.save(); g.beginPath(); g.rect(L.Lm, top, L.W - L.Lm - L.Rm, bot - top); g.clip();
+    if (p.side === 'short') { if (ok(L.py(p.entry))) hl(g, L, L.py(p.entry), '#c4b5fd', [4, 3], `SHORT ${NT.fmtQty(p.qty)} @ ${fp(p.entry)}`, xr); if (p.sl > 0 && ok(L.py(p.sl))) hl(g, L, L.py(p.sl), col.dn || '#ef5350', [4, 3], `Short SL ${fp(p.sl)}`, xr); }
+    const py = V163.pyramid(p.qty, p.entry, C.c.pyrPct / 100, pr);
+    if (py && ok(L.py(pr))) { g.globalAlpha = 0.6; hl(g, L, L.py(pr), '#7dd3fc', [2, 5], `Add ${C.c.pyrPct}% @ ${fp(pr)} → avg ${fp(py.blended)}`, xr); g.globalAlpha = 1; if (ok(L.py(py.blended))) { g.globalAlpha = 0.45; hl(g, L, L.py(py.blended), '#7dd3fc', [1, 4], 'Blended entry', xr); g.globalAlpha = 1; } }
+    const hrs = p.t0 ? (Date.now() - p.t0) / 3600000 : 0, rate = kindOf(sym) === 'crypto' || (p.side === 'short' && kindOf(sym) === 'stock') ? C.c.fundRate / 100 : 0, cl = V163.carryLine(p.entry, p.side, ACC.fee, rate, hrs);
+    if (cl && ok(L.py(cl))) { const usd = Math.abs(cl - p.entry) * p.qty; hl(g, L, L.py(cl), '#D4AF37', [6, 3], `Fees + ${p.side === 'short' && kindOf(sym) === 'stock' ? 'borrow' : 'funding'} BE ${fp(cl)} (−$${usd.toFixed(2)})`, xr); }
+    const lq = V163.liq(p.entry, C.c.lev, p.side, C.c.mmr / 100); if (lq && ok(L.py(lq))) hl(g, L, L.py(lq), '#ff4d6d', [8, 4], `Liq ≈ ${fp(lq)}`, xr);
+    g.restore();
+  };
+
+  /* ══ watchlist Signal Readiness dots ══ */
+  let mo = null, dotting = false;
+  const dotFor = (s) => {
+    const now = Date.now(); if (C.dotsAt[s] && now - C.dotsAt[s] < 10000) return C.dots[s] || 'idle'; C.dotsAt[s] = now;
+    let cs = []; try { if (typeof Stores !== 'undefined') { const st = Stores.get(s + '|' + ST.tf) || Stores.get(s + '|1m'); if (st && st.candles) cs = st.candles.slice(-120).map((k) => k.c); } } catch (e) { cs = []; }
+    return (C.dots[s] = V163.readiness(cs));
+  };
+  const applyDots = () => {
+    const wl = $1('#watchList'); if (!wl || dotting) return; dotting = true;
+    try {
+      for (const r of wl.querySelectorAll('.wl-row[data-s]')) {
+        const s = r.dataset.s, d = C.c.dots ? dotFor(s) : null; let i = r.querySelector('.v163-dot');
+        if (!d) { if (i) i.remove(); continue; }
+        if (!i) { i = document.createElement('i'); i.className = 'v163-dot'; i.setAttribute('role', 'img'); const b = r.querySelector('b'); if (b) b.before(i); else r.prepend(i); }
+        const cls = 'v163-dot ' + d; if (i.className !== cls) { i.className = cls; const lab = d === 'ready' ? 'Signal ready: EMA 20/50 crossed in the last 3 bars' : d === 'near' ? 'Signal near: EMA 20/50 within 0.15%' : 'No signal'; i.title = lab; i.setAttribute('aria-label', lab); }
+      }
+    } finally { dotting = false; }
+  };
+  const wireDots = () => { const wl = $1('#watchList'); if (!wl || mo) return; mo = new MutationObserver(() => { if (!dotting) applyDots(); }); mo.observe(wl, { childList: true }); applyDots(); };
+
+  /* ══ trades: cues + privacy-masked trade card on close ══ */
+  const scanTrades = () => {
+    const all = [...((typeof ACC !== 'undefined' && ACC && ACC.trades) || []).slice(-20), ...((C.sh && C.sh.trades) || []).slice(-20)];
+    if (!C.primed) { for (const t of all) C.seen.add(t.id); C.primed = true; return; }
+    for (const t of all) {
+      if (!t || C.seen.has(t.id) || t.src === 'backtest') continue; C.seen.add(t.id); cue(t.side === 'buy' ? 'buy' : 'sell');
+      if (t.side === 'sell' && Number.isFinite(t.pnl)) offerCard(t);
+    }
+    if (C.seen.size > 2000) C.seen = new Set([...C.seen].slice(-500));
+    const b = B(); if (b) { const n = b.stats.blocked; if (C.blocked != null && n > C.blocked) cue('block'); C.blocked = n; }
+  };
+  const offerCard = (t) => {
+    const prior = (t.short ? C.sh : ACC).trades.filter((x) => x.sym === t.sym && x.side === 'buy' && x.ts <= t.ts).pop(), sl = C.slAt && C.slAt[t.sym];
+    const card = V163.maskCard(t, sl || (prior && prior.slPx) || 0); if (!card) return; C.lastCard = { t, card };
+    if (C.c.autoCard) { exportCard(); return; }
+    let p = $1('#v163CardPill'); if (!p) { p = document.createElement('div'); p.id = 'v163CardPill'; p.className = 'v163-cardpill'; p.setAttribute('role', 'status'); p.addEventListener('click', (e) => { const x = e.target.closest('[data-v163p]'); if (!x) return; if (x.dataset.v163p === 'save') exportCard(); p.remove(); }); document.body.appendChild(p); }
+    p.innerHTML = `<span><b>${esc(card.title)}</b> <span class="${card.win ? 'up' : 'dn'}">${esc(card.result)}${card.r ? ' · ' + esc(card.r) : ''}</span></span><button type="button" class="btn xs" data-v163p="save">Save privacy-masked card</button><button type="button" class="btn xs" data-v163p="x" aria-label="Dismiss">✕</button>`;
+    clearTimeout(C.cardT); C.cardT = setTimeout(() => { const q = $1('#v163CardPill'); if (q) q.remove(); }, 20000);
+  };
+  const cardCanvas = () => {
+    const L = C.lastCard; if (!L) return null; const W = 1200, H = 675, cv = document.createElement('canvas'); cv.width = W; cv.height = H; const g = cv.getContext('2d');
+    g.fillStyle = '#0b0b0d'; g.fillRect(0, 0, W, H);
+    try { if (typeof chart !== 'undefined' && chart && chart.cv && chart.cv.width > 0) { g.globalAlpha = 0.9; g.drawImage(chart.cv, 0, 0, chart.cv.width, chart.cv.height, 0, 0, W, Math.round(H * 0.7)); g.globalAlpha = 1; } } catch (e) { /* tainted or absent */ }
+    const gr = g.createLinearGradient(0, H * 0.55, 0, H); gr.addColorStop(0, 'rgba(11,11,13,0)'); gr.addColorStop(0.3, 'rgba(11,11,13,.92)'); gr.addColorStop(1, '#0b0b0d'); g.fillStyle = gr; g.fillRect(0, H * 0.55, W, H * 0.45);
+    const c = L.card; g.textBaseline = 'alphabetic'; g.fillStyle = '#D4AF37'; g.font = '700 22px ui-sans-serif, system-ui, sans-serif'; g.fillText('ExTerm · Trade Card', 40, H - 150);
+    g.fillStyle = '#e8e8ea'; g.font = '700 40px ui-sans-serif, system-ui, sans-serif'; g.fillText(c.title, 40, H - 100);
+    g.fillStyle = c.win ? '#2fd08a' : '#f43f5e'; g.font = '800 64px ui-monospace, Menlo, Consolas, monospace'; g.fillText(c.result + (c.r ? '  ' + c.r : ''), 40, H - 34);
+    g.fillStyle = 'rgba(232,232,234,.7)'; g.font = '500 18px ui-monospace, Menlo, Consolas, monospace'; g.textAlign = 'right'; g.fillText(`held ${c.held}${c.reason ? ' · ' + c.reason : ''}`, W - 40, H - 100); g.fillText('privacy-masked: no size, no quantity, no account value', W - 40, H - 40); g.textAlign = 'left';
+    return cv;
+  };
+  const exportCard = () => {
+    const cv = cardCanvas(); if (!cv) { toast('No closed trade to export yet', 'amb'); return false; }
+    cv.toBlob((bl) => { if (!bl) return; const u = URL.createObjectURL(bl), a = document.createElement('a'); a.href = u; a.download = `exterm-trade-card-${(C.lastCard.card.title.split(' ')[0] || 'trade').replace(/[^\w-]/g, '')}-${new Date().toISOString().slice(0, 10)}.png`; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(u), 4000); C.stats.cards++; toast('Privacy-masked trade card saved', 'acc'); }, 'image/png');
+    return true;
+  };
+
+  /* ══ two-way bot sync: ACK + fill callback, heartbeat samples ══ */
+  const onAck = (s, body, r) => {
+    C.stats.acks++; const f = V163.parseFill(r && r.reply, r && r.key), b = B(); if (!f) return;
+    const dir = V163.signedQty(body.side, body.action, 1) > 0 ? 'buy' : 'sell', ref = +body.price > 0 ? +body.price : f.price, sl = V163.slippage(f.price, ref, dir);
+    V163.qAdd(C.q, body.symbol, sl ? sl.bps : 0, r.ms); saveQ(); C.stats.fills++;
+    const k = String(body.symbol).toUpperCase(); C.botPos[k] = +((C.botPos[k] || 0) + V163.signedQty(body.side, body.action, f.qty)).toPrecision(12);
+    C.fills.unshift({ ts: f.ts, slot: s.id, sym: k, side: dir, qty: f.qty, price: f.price, bps: sl ? sl.bps : 0, ack: r.ms, id: f.id }); if (C.fills.length > 30) C.fills.length = 30;
+    if (b) b.led('fill', { slot: s.id, status: 'filled', key: r.key, sig: r.sig, detail: `${k} ${dir} ${f.qty} @ ${f.price} · ${sl ? sl.text : '0 bps'} vs ${ref} · ACK ${r.ms} ms${f.id ? ' · order ' + f.id : ''}` });
+    cue('fill'); paintSync();
+  };
+  const onHb = (s, hb) => { const a = C.hb[s.id] || (C.hb[s.id] = []); a.push({ ok: !!(hb && hb.ok), ms: hb && hb.ms ? hb.ms : 0, t: Date.now() }); if (a.length > 60) a.splice(0, a.length - 60); paintSync(); };
+  const guard = (body, t, acct) => {
+    if (!V163.isOpening(body)) return { ok: true };
+    const p = V163.pauseCheck(body, C.c.paused); if (!p.ok) { C.stats.held++; return p; }
+    const b = B(), bot = acct !== ACC && !(b.manual || []).includes(acct);
+    for (const s of b.st.slots.filter((x) => x.enabled && x.mode === 'live' && (bot ? x.id === 6 : x.id !== 6))) if (!V163.allowOk(C.c.allow[s.id], body.symbol)) return { ok: false, status: 'allowlist', why: `Slot ${s.id} ticker allowlist (${C.c.allow[s.id]}) does not include ${body.symbol}` };
+    return { ok: true };
+  };
+  const wire = () => {
+    const b = B(); if (!b) return;
+    if (Array.isArray(b.pre) && !b.pre.includes(guard)) b.pre.unshift(guard);
+    if (Array.isArray(b.post) && !b.post.includes(onAck)) b.post.push(onAck);
+    if (Array.isArray(b.hbL) && !b.hbL.includes(onHb)) b.hbL.push(onHb);
+    if (C.sh && Array.isArray(b.manual) && !b.manual.includes(C.sh)) b.manual.push(C.sh);
+  };
+
+  /* ══ automation: time-in-trade exit, EOD flat, conditional triggers, reverse-book exits ══ */
+  const automate = () => {
+    const now = Date.now(), b = B();
+    if (C.c.titMin > 0) for (const p of positions()) if (V163.timeExitDue(p.t0, now, C.c.titMin)) { const t = closeOne(p, null, `Time-in-Trade auto-exit (${C.c.titMin}m)`); if (t) { C.stats.tit++; toast(`⏱ Time-in-Trade: closed ${esc(baseOf(p.sym))} after ${esc(C.c.titMin)}m`, 'amb'); if (b) b.led('breaker', { status: 'time-exit', detail: `${baseOf(p.sym)} closed after ${C.c.titMin}m in trade` }); ui(); } }
+    const day = new Date().toISOString().slice(0, 10);
+    if (C.c.eodMin > 0 && V163.eodDue(now, C.c.eodMin)) {
+      const stk = positions().filter((p) => kindOf(p.sym) === 'stock');
+      if (stk.length) { let n = 0; for (const p of stk) if (closeOne(p, null, `EOD Flat Timer (${C.c.eodMin}m before the US close)`)) n++; if (n) { C.stats.eod++; C.eodDay = day; toast(`🔔 EOD Flat Timer: flattened ${n} equity position${n > 1 ? 's' : ''} before the close`, 'amb'); if (b) b.led('breaker', { status: 'eod-flat', detail: `${n} equity position(s) flattened ${C.c.eodMin}m before the US close` }); ui(); } }
+    }
+    let fired = false;
+    for (const r of C.c.triggers.slice()) {
+      const p = px0(r.sym), prev = C.prevPx[r.id]; C.prevPx[r.id] = p; if (!V163.trigCross(r, prev, p)) continue;
+      let t = null; if (r.action === 'buy') t = ACC.buy(r.sym, p, r.usd, now, { slPct: (r.sl || 2) / 100, reason: `Conditional trigger ${r.op} ${r.level}`, src: 'manual' }); else if (ACC.qty(r.sym) > 0) t = ACC.sell(r.sym, p, null, now, { reason: `Conditional trigger ${r.op} ${r.level}`, src: 'manual' });
+      C.c.triggers = C.c.triggers.filter((x) => x.id !== r.id); fired = true; C.stats.trig++; cue('trig');
+      toast(t ? `🎯 Trigger fired: ${esc(r.action.toUpperCase())} ${esc(baseOf(r.sym))} at ${esc(fp(p))}` : `🎯 Trigger crossed ${esc(baseOf(r.sym))} ${esc(r.op)} ${esc(fp(r.level))} but no order was possible`, t ? 'acc' : 'amb');
+      if (b) b.led('breaker', { status: 'trigger', detail: `${baseOf(r.sym)} ${r.op} ${r.level} → ${r.action}${t ? '' : ' (nothing to do)'}` });
+    }
+    if (fired) { save(); ui(); paintCockpit(true); }
+    if (C.sh) for (const s of Object.keys(C.sh.pos)) { const p = px0(s); if (p > 0 && C.sh.checkExits(s, p, p, now, { src: 'manual' })) { saveShort(); ui(); } }
+  };
+
+  /* ══ Two-Key Arming (Shift + Alt + A) + F hotkey hand-off ══ */
+  const onKey = (e) => {
+    if (V163.twoKey(e)) { e.preventDefault(); e.stopImmediatePropagation(); C.turned = Date.now(); /* the chord must never reach the Alt + A Auto-Setup hotkey */ const a = $1('[data-v160="arm"]'); if (a) { a.classList.add('v163-key1'); setTimeout(() => a.classList.remove('v163-key1'), V163.TWO_KEY_MS); } toast('🔑 Key 1 turned: press “Enable Live External Execution” within 10 s to arm', 'amb'); return; }
+    if ((e.key === 'f' || e.key === 'F') && !e.ctrlKey && !e.metaKey && !e.altKey && !editable(e.target)) setTimeout(paintFocus, 60);
+  };
+  const onArmClick = (e) => {
+    const a = e.target.closest && e.target.closest('[data-v160="arm"]'); if (!a || !C.c.twoKey || a.disabled) return;
+    if (!V163.twoKeyOk(C.turned, Date.now())) { e.preventDefault(); e.stopImmediatePropagation(); toast('🔐 Two-Key Arming: press Shift + Alt + A first (key 1), then arm within 10 s (key 2)', 'amb'); return; }
+    C.turned = 0; a.classList.remove('v163-key1');
+  };
+
+  /* ══ 3-Second Live Readiness Self-Check ══ */
+  const selfCheck = async () => {
+    const b = B(); if (!b) return null; const t0 = performance.now(), sym = ST.sel, now = Date.now(), en = b.st.slots.filter((s) => s.enabled);
+    C.check = { running: true }; paintCheck();
+    const hb = await Promise.all(en.map((s) => Promise.race([b.heartbeat(s).then((h) => h || { ok: false }, () => ({ ok: false })), new Promise((r) => setTimeout(() => r({ ok: false, why: 'no reply in 3 s' }), 3000))])));
+    const L = typeof Feed !== 'undefined' && Feed.live && Feed.live[sym], ts = L && L.ts ? L.ts : kindOf(sym) === 'onchain' && typeof OC !== 'undefined' ? OC.polled : 0, sq = V163.staleQuote(ts ? Date.now() - ts : NaN, kindOf(sym));
+    const sp = b.spreadOf(sym), sg = sp.bid > 0 && sp.ask > 0 && b.fs ? V161.spreadGuard(sp.bid, sp.ask, b.fs.maxSpreadPct) : null, cd = b.fs && +b.fs.lockUntil > now ? new Date(+b.fs.lockUntil).toLocaleTimeString() : '';
+    const r = V163.selfCheck({ slots: en.length, hbOk: hb.filter((h) => h && h.ok).length, hbMs: Math.max(0, ...hb.filter((h) => h && h.ok).map((h) => h.ms || 0)), requireSL: typeof V163UI !== 'undefined' ? V163UI.cfg.requireSL : true, maxLoss: +b.st.caps.maxLoss || 0,
+      quoteOk: sq.ok, quoteWhy: sq.age == null ? 'no quote timestamp yet' : `${baseOf(sym)} quote ${(sq.age / 1000).toFixed(1)}s old (max ${(sq.max / 1000).toFixed(0)}s)`, cooldown: cd, spreadOk: sg ? sg.ok : true, spreadWhy: sg ? `spread ${sg.pct.toFixed(3)}% (ceiling ${b.fs.maxSpreadPct}%)` : 'no bid/ask: checked again on every order' });
+    r.ms = Math.round(performance.now() - t0); r.ts = Date.now(); C.check = r; paintCheck();
+    b.led('selfcheck', { status: r.ready ? 'ready' : 'not ready', detail: `${r.passed}/${r.rows.length} checks passed in ${r.ms} ms` });
+    toast(r.ready ? `✅ Live Readiness: all ${esc(r.rows.length)} checks passed in ${esc(r.ms)} ms` : `⚠ Live Readiness: ${esc(r.rows.length - r.passed)} check(s) failed`, r.ready ? 'acc' : 'amb');
+    return r;
+  };
+  const paintCheck = () => {
+    const el = $1('#v163Check'); if (!el) return; const r = C.check;
+    if (!r) { el.innerHTML = '<p class="note">Not run yet. Pings every enabled slot (3 s timeout) and checks stops, caps, quote freshness, cooldown and spread.</p>'; return; }
+    if (r.running) { el.innerHTML = '<p class="note">Running… (max 3 s)</p>'; return; }
+    el.innerHTML = `<div class="v163-ready ${r.ready ? 'ok' : 'bad'}">${r.ready ? 'READY' : 'NOT READY'} · ${r.passed}/${r.rows.length} in ${r.ms} ms</div><ul class="v163-chk">${r.rows.map((x) => `<li class="${x.ok ? 'ok' : 'bad'}"><b>${x.ok ? '✓' : '✗'}</b> ${esc(x.k)} <span class="note">${esc(x.why)}</span></li>`).join('')}</ul>`;
+  };
+
+  /* ══ Reset Session Safety Counters (PAPER only) ══ */
+  const resetCounters = () => {
+    const b = B(); if (!b || !V163.canReset(b.st.mode)) { toast('Reset is only available while disarmed in PAPER mode', 'amb'); return false; }
+    if (typeof V163UI !== 'undefined') { for (const k of Object.keys(V163UI.stats)) V163UI.stats[k] = 0; V163UI.sent = []; V163UI.since = Date.now(); } // restarts the drawdown-throttle window too
+    for (const k of Object.keys(b.stats)) b.stats[k] = 0; for (const k of Object.keys(b.fails)) b.fails[k] = 0;
+    if (b.fs) { b.fs.lockUntil = 0; b.fs.streakFrom = Date.now(); try { localStorage.setItem('exterm.v161.fs', JSON.stringify(b.fs)); } catch (e) { /* session only */ } }
+    try { b.st.day = { d: new Date().toISOString().slice(0, 10), eq0: ACC.equity(priceMap()) }; localStorage.setItem('exterm.v160.bridge', JSON.stringify(b.st)); } catch (e) { /* session only */ }
+    if (typeof V162UI !== 'undefined') V162UI.tripped = false;
+    C.eq = []; for (const k of Object.keys(C.stats)) C.stats[k] = 0; C.stats.resets = 1; C.check = null; C.blocked = b.stats.blocked;
+    b.led('reset', { status: 'paper', detail: 'Session safety counters reset: guard stats, hourly rate, heartbeat misses, loss-streak cooldown and daily-loss baseline' });
+    toast('Session safety counters reset (PAPER)', 'acc'); paintCockpit(true); return true;
+  };
+
+  /* ══ encrypted session recovery snapshot ══ */
+  const snapObj = () => ({ v163: typeof V163UI !== 'undefined' ? V163UI.cfg : null, cockpit: C.c, quality: C.q, short: C.sh ? C.sh.toJSON() : null, ts: Date.now() });
+  const snapSave = async (pass) => {
+    try { const blob = await V163.seal(snapObj(), pass); localStorage.setItem(NKEY, blob); C.pass = pass; C.snapAt = Date.now(); paintSnap(); toast('🔒 Encrypted session snapshot saved (AES-256-GCM)', 'acc'); return true; }
+    catch (e) { toast('Snapshot: ' + esc(e.message || e), 'amb'); return false; }
+  };
+  const snapRestore = async (pass) => {
+    if (live()) { toast('Disarm to PAPER before restoring a snapshot', 'amb'); return false; }
+    let blob = null; try { blob = localStorage.getItem(NKEY); } catch (e) { blob = null; } if (!blob) { toast('No encrypted snapshot saved yet', 'amb'); return false; }
+    try {
+      const o = await V163.unseal(blob, pass);
+      if (o.cockpit) C.c = V163.cload(o.cockpit); if (o.v163 && typeof V163UI !== 'undefined') { V163UI.cfg = V163.load(o.v163); try { localStorage.setItem('exterm.v163.cfg', JSON.stringify(V163UI.cfg)); } catch (x) { /* session */ } }
+      if (o.short) { try { C.sh = NT.ShortAccount.from(Object.assign({}, o.short, { short: true })); const b = B(); if (b) b.manual = [C.sh]; } catch (x) { /* keep current */ } }
+      if (o.quality) { C.q = {}; for (const [k, a] of Object.entries(o.quality)) if (Array.isArray(a)) for (const y of a) if (y && Number.isFinite(+y.bps)) V163.qAdd(C.q, k, +y.bps, y.ack); }
+      C.pass = pass; save(); saveShort(); saveQ(); ui(); paintCockpit(true); toast('Session restored from the encrypted snapshot', 'acc'); return true;
+    } catch (e) { toast('Restore failed: ' + esc(e.message || e), 'dn'); return false; }
+  };
+  const paintSnap = () => { const el = $1('#v163SnapSt'); if (!el) return; let has = false; try { has = !!localStorage.getItem(NKEY); } catch (e) { has = false; } const t = `${has ? 'Snapshot stored' : 'No snapshot yet'}${C.snapAt ? ' · last saved ' + new Date(C.snapAt).toLocaleTimeString() : ''}${C.pass ? ' · auto-saves every 60 s this session' : ''}`; if (el.textContent !== t) el.textContent = t; };
+
+  /* ══ Closed-Loop Live Cockpit panel (inside the Execution Bridge) ══ */
+  const ck = (k, label, hint, lock) => `<label class="v160-chk"><input type="checkbox" class="v163c-cfg" data-v163c="${k}"${C.c[k] ? ' checked' : ''}${lock ? ' data-lock="1"' : ''}> ${label}${hint ? ` <span class="note">${hint}</span>` : ''}</label>`;
+  const nm = (k, label, min, max, step) => `<label><span>${label}</span><input type="number" min="${min}" max="${max}" step="${step}" class="in mono v163c-cfg" data-v163c="${k}" value="${esc(C.c[k])}" inputmode="decimal"></label>`;
+  const cockpitHTML = () => {
+    const L = live(), eod = [0, 5, 10, 15, 30].map((m) => `<option value="${m}"${C.c.eodMin === m ? ' selected' : ''}>${m ? m + ' min before close' : 'Off'}</option>`).join('');
+    const bopts = Object.entries(V163.BRIDGES).map(([k, x]) => `<option value="${k}">${esc(x.name)} · slot ${x.slot} · :${x.port}</option>`).join('');
+    const trig = C.c.triggers.map((r) => `<li class="mono">${esc(baseOf(r.sym))} ${esc(r.op === '>=' ? '≥' : '≤')} ${esc(fp(r.level))} → ${esc(r.action.toUpperCase())}${r.action === 'buy' ? ' $' + esc(r.usd) + ' · SL ' + esc(r.sl) + '%' : ' all'} <button type="button" class="btn xs" data-v163a="untrig" data-id="${esc(r.id)}" aria-label="Remove trigger">✕</button></li>`).join('');
+    return `<h3><svg viewBox="0 0 24 24" aria-hidden="true" class="v163-ic"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 7v5l3.5 2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M3 12h2M19 12h2" stroke="currentColor" stroke-width="1.6"/></svg> Closed-Loop Live Cockpit · v16.3</h3>
+      <div class="v163-grid">
+        ${ck('paused', '<b>Pause New Entries (Keep Exits Active)</b>', 'stops, closes and flatten still work')}
+        ${ck('twoKey', 'Hardware-Style Two-Key Arming', 'Shift + Alt + A, then Arm within 10 s', true)}
+        ${ck('cues', 'Acoustic &amp; visual confirmation cues')}${ck('muted', 'Mute cues')}
+        ${ck('autoCard', 'Auto-save privacy-masked trade card on close')}${ck('dots', 'Watchlist Signal Readiness dots')}
+        ${nm('lev', 'Leverage × (liquidation pill)', 1, 125, 1)}${nm('mmr', 'Maintenance margin %', 0, 10, 0.1)}
+        ${nm('fundRate', 'Funding / borrow % per 8h', 0, 1, 0.005)}${nm('pyrPct', 'Pyramid ghost add %', 1, 300, 5)}
+        ${nm('titMin', 'Time-in-Trade auto-exit (min, 0 = off)', 0, 10080, 1)}
+        <label><span>EOD Flat Timer (equities / futures)</span><select class="in v163c-cfg" data-v163c="eodMin">${eod}</select></label>
+      </div>
+      <h4>Per-slot asset &amp; ticker allowlist <span class="note">empty = any symbol · opening orders only${L ? ' · locked while armed' : ''}</span></h4>
+      <div class="v163-allow">${[1, 2, 3, 4, 5, 6].map((i) => `<label><span>Slot ${i}</span><input class="in mono v163c-allow" data-slot="${i}" value="${esc(C.c.allow[i])}" placeholder="any (e.g. BTC, ETH, NVDA)"${L ? ' disabled' : ''}></label>`).join('')}</div>
+      <div class="v163-acts"><button type="button" class="btn pri" data-v163a="check">Run 3-Second Live Readiness Self-Check</button>
+        <button type="button" class="btn" data-v163a="reset"${L ? ' disabled title="Disarm to PAPER first"' : ''}>Reset Session Safety Counters</button>
+        <button type="button" class="btn" data-v163a="drawer">Positions &amp; Orders Drawer</button></div>
+      <div id="v163Check" role="status"></div>
+      <h4>Two-way bot sync · 127.0.0.1 ACK + fill callback</h4>
+      <div class="v163-sync"><div><canvas id="v163HbCv" width="360" height="64" aria-label="Bot heartbeat latency and packet success"></canvas><div id="v163HbSt" class="note mono"></div></div>
+        <div><table class="v163-q"><caption class="note">Slippage &amp; fill quality by symbol</caption><thead><tr><th>Symbol</th><th>Fills</th><th>Avg slip</th><th>Avg ACK</th></tr></thead><tbody id="v163Q"></tbody></table></div></div>
+      <div id="v163Fills" class="v163-fills mono"></div>
+      <h4>Price alert → conditional trigger</h4>
+      <div class="v163-trig"><input class="in mono" id="v163tSym" value="${esc(ST.sel || '')}" aria-label="Trigger symbol"><select class="in" id="v163tOp" aria-label="Direction"><option value=">=">crosses above ≥</option><option value="<=">crosses below ≤</option></select>
+        <input class="in mono" id="v163tLvl" inputmode="decimal" placeholder="price" aria-label="Trigger price"><select class="in" id="v163tAct" aria-label="Action"><option value="buy">BUY</option><option value="sell">SELL all</option></select>
+        <input class="in mono" id="v163tUsd" inputmode="decimal" value="100" aria-label="Buy size in dollars"><input class="in mono" id="v163tSl" inputmode="decimal" value="2" aria-label="Stop-loss percent"><button type="button" class="btn sm" data-v163a="trig">Add trigger</button></div>
+      <ul class="v163-tlist">${trig || '<li class="note">No triggers armed.</li>'}</ul>
+      <h4>Encrypted session recovery snapshot</h4>
+      <div class="v163-snap"><input class="in" type="password" id="v163Pass" autocomplete="new-password" placeholder="passphrase (8+ characters, never stored)" aria-label="Snapshot passphrase"><button type="button" class="btn sm" data-v163a="snap">Save encrypted snapshot</button><button type="button" class="btn sm" data-v163a="restore">Restore</button><span class="note" id="v163SnapSt"></span></div>
+      <h4>Local broker starter bridges <span class="note">~40 lines of Python each · verify the signature, execute, reply ack + fill</span></h4>
+      <div class="v163-br"><select class="in" id="v163BrSel" aria-label="Starter bridge">${bopts}</select><button type="button" class="btn sm" data-v163a="brcopy">Copy</button><button type="button" class="btn sm" data-v163a="brsave">Download .py</button></div>
+      <pre class="v161-pre mono v163-code" id="v163BrCode" tabindex="0" aria-label="Starter bridge source"></pre>`;
+  };
+  let cp = null;
+  const onCockpit = async (e) => {
+    const a = e.target.closest('[data-v163a]'); if (!a || e.type !== 'click') return; const k = a.dataset.v163a;
+    if (k === 'check') selfCheck();
+    else if (k === 'reset') { if (typeof confirmClick === 'function') confirmClick(a, resetCounters); else resetCounters(); }
+    else if (k === 'drawer') drawer(true);
+    else if (k === 'untrig') { C.c.triggers = C.c.triggers.filter((x) => x.id !== a.dataset.id); save(); paintCockpit(true); }
+    else if (k === 'trig') {
+      const r = { id: Math.random().toString(36).slice(2, 10), sym: ($1('#v163tSym').value || '').trim(), op: $1('#v163tOp').value, level: parseFloat($1('#v163tLvl').value), action: $1('#v163tAct').value, usd: parseFloat($1('#v163tUsd').value) || 0, sl: parseFloat($1('#v163tSl').value) || 2 };
+      if (!V163.trigOk(r)) { toast('Trigger needs a symbol, a price above 0 and (for BUY) at least $1', 'amb'); return; }
+      C.c.triggers = V163.cload(Object.assign({}, C.c, { triggers: C.c.triggers.concat([r]) })).triggers; C.prevPx[r.id] = px0(r.sym); save(); paintCockpit(true); toast(`Trigger armed: ${esc(baseOf(r.sym))} ${esc(r.op)} ${esc(fp(r.level))} → ${esc(r.action.toUpperCase())}`, 'acc');
+    } else if (k === 'snap' || k === 'restore') { const p = $1('#v163Pass'), v = p ? p.value : ''; if (p) p.value = ''; if (k === 'snap') snapSave(v); else snapRestore(v); }
+    else if (k === 'brcopy') { const t = V163.bridge($1('#v163BrSel').value); try { await navigator.clipboard.writeText(t); toast('Starter bridge copied', 'acc'); } catch (x) { toast('Copy blocked: select the code and copy it manually', 'amb'); } }
+    else if (k === 'brsave') { const x = V163.BRIDGES[$1('#v163BrSel').value]; if (!x) return; const u = URL.createObjectURL(new Blob([V163.bridge($1('#v163BrSel').value)], { type: 'text/x-python' })), l = document.createElement('a'); l.href = u; l.download = x.file; document.body.appendChild(l); l.click(); l.remove(); setTimeout(() => URL.revokeObjectURL(u), 4000); }
+  };
+  const onCfg = (e) => {
+    const t = e.target;
+    if (t.id === 'v163BrSel') { paintBridge(); return; }
+    if (t.classList.contains('v163c-allow')) { if (live()) { paintCockpit(true); return; } if (e.type === 'change') { C.c.allow[t.dataset.slot] = V163.allowParse(t.value).join(', '); save(); t.value = C.c.allow[t.dataset.slot]; } return; }
+    const f = t.closest('[data-v163c]'); if (!f) return; const k = f.dataset.v163c;
+    if (f.dataset.lock && live()) { toast('Two-Key Arming is locked while armed', 'amb'); paintCockpit(true); return; }
+    if (k === 'paused') { setPause(f.checked); return; }
+    C.c = V163.cload(Object.assign({}, C.c, { [k]: f.type === 'checkbox' ? f.checked : f.tagName === 'SELECT' ? +f.value : f.value })); save(); paintHud(true);
+    if (k === 'dots') { C.dotsAt = {}; applyDots(); } if (f.type === 'checkbox' || f.tagName === 'SELECT') paintCockpit(true); if (typeof chart !== 'undefined' && chart) chart.invalidate();
+  };
+  const paintBridge = () => { const s = $1('#v163BrSel'), c = $1('#v163BrCode'); if (!s || !c) return; const t = V163.bridge(s.value); if (c.textContent !== t) c.textContent = t; };
+  const paintSync = () => {
+    const cv = $1('#v163HbCv'); if (cv) {
+      const g = cv.getContext('2d'), w = cv.width, h = cv.height; g.clearRect(0, 0, w, h); const all = Object.entries(C.hb).flatMap(([id, a]) => a.map((x) => Object.assign({ id: +id }, x))).sort((a, b) => a.t - b.t).slice(-60);
+      const mx = Math.max(10, ...all.filter((x) => x.ok).map((x) => x.ms)), bw = w / 60;
+      all.forEach((x, i) => { const bh = x.ok ? Math.max(3, (x.ms / mx) * (h - 14)) : h - 14; g.fillStyle = x.ok ? (x.ms > 1000 ? '#D4AF37' : '#2fd08a') : '#f43f5e'; g.fillRect(i * bw + 1, h - bh, Math.max(1, bw - 2), bh); });
+      g.fillStyle = 'rgba(232,232,234,.55)'; g.font = '10px ui-monospace, Menlo, Consolas, monospace'; g.fillText(all.length ? `max ${Math.round(mx)} ms` : 'waiting for heartbeats…', 4, 10);
+    }
+    const st = $1('#v163HbSt'); if (st) { const t = Object.entries(C.hb).map(([id, a]) => { const s = V163.hbStats(a); return `Slot ${id}: ${s.okPct == null ? '–' : s.okPct.toFixed(0)}% ok · avg ${s.avgMs == null ? '–' : Math.round(s.avgMs)} ms · ${s.n} pkts`; }).join('  |  ') || 'No heartbeats yet: enable a slot and wait 15 s or run the self-check.'; if (st.textContent !== t) st.textContent = t; }
+    const q = $1('#v163Q'); if (q) { const rows = V163.qSummary(C.q); const html = rows.map((r) => `<tr><td>${esc(r.sym)}</td><td>${esc(r.n)}</td><td class="${r.bps > 0.05 ? 'dn' : 'up'}">${esc((r.bps >= 0 ? '+' : '') + r.bps.toFixed(1))} bps</td><td>${r.ack == null ? '–' : esc(Math.round(r.ack)) + ' ms'}</td></tr>`).join('') || '<tr><td colspan="4" class="note">No bot fills yet</td></tr>'; if (q._h !== html) { q._h = html; q.innerHTML = html; } }
+    const f = $1('#v163Fills'); if (f) { const html = C.fills.slice(0, 6).map((x) => `<div>${esc(new Date(x.ts).toLocaleTimeString())} · Slot ${esc(x.slot)} · ${esc(x.sym)} ${esc(x.side.toUpperCase())} ${esc(NT.fmtQty(x.qty))} @ ${esc(fp(x.price))} · ${esc((x.bps >= 0 ? '+' : '') + x.bps.toFixed(1))} bps · ACK ${esc(x.ack)} ms${x.id ? ' · #' + esc(x.id) : ''}</div>`).join(''); if (f._h !== html) { f._h = html; f.innerHTML = html; } }
+  };
+  const paintCockpit = (force) => {
+    const host = $1('#v160Bridge'); if (!host) return;
+    if (!cp) { cp = document.createElement('div'); cp.id = 'v163Cockpit'; cp.className = 'v163-safety v163-cockpit'; cp.addEventListener('click', onCockpit); cp.addEventListener('change', onCfg); cp.addEventListener('input', (e) => { if (e.target.type === 'number') onCfg(e); }); }
+    const anchor = $1('#v163Safety', host); if (cp.parentNode !== host) { if (anchor) anchor.after(cp); else host.appendChild(cp); if (!cp.firstChild) force = true; } // re-attach keeps the same nodes (focus, confirm clicks)
+    const lk = live(); if (force || cp._lk !== lk) { const sel = $1('#v163BrSel', cp), sv = sel ? sel.value : ''; cp._lk = lk; cp.innerHTML = cockpitHTML(); if (sv) $1('#v163BrSel', cp).value = sv; for (const x of cp.querySelectorAll('[data-lock]')) x.disabled = lk; paintBridge(); paintCheck(); }
+    paintSync(); paintSnap();
+  };
+
+  const attach = () => { if (typeof chart === 'undefined' || !chart) return; if (!chart.overlays.includes(overlay)) chart.overlays.push(overlay); };
+  let snapT = 0;
+  const tick = () => {
+    try {
+      wire(); attach(); mountCk(); paintCk(); paintGo(); repeg(); scanTrades(); C.slAt = C.slAt || {}; for (const p of positions()) if (p.sl > 0) C.slAt[p.sym] = p.sl; automate(); paintCockpit(false); paintDrawer(false); wireDots();
+      const now = Date.now(); if (live()) { C.eq.push({ t: now, e: equity() }); if (C.eq.length > 900) C.eq.splice(0, C.eq.length - 900); } paintHud(false);
+      if (C.c.micro) mountMicro(); document.body.classList.toggle('v163-micro', !!C.c.micro); paintFocus();
+      if (C.pass && now - snapT > 60000) { snapT = now; V163.seal(snapObj(), C.pass).then((b) => { try { localStorage.setItem(NKEY, b); C.snapAt = Date.now(); } catch (e) { /* storage */ } }, () => {}); }
+    } catch (e) { console.warn('v163 cockpit', e); }
+  };
+  C.start = () => {
+    load(); tick(); setInterval(tick, 1000); setInterval(() => { C.dotsAt = {}; applyDots(); }, 15000);
+    document.addEventListener('keydown', onKey, true); document.addEventListener('click', onArmClick, true);
+  };
+  Object.assign(C, { act, drawer, paintDrawer, micro, microGo, focus, setPause, chase, chasePx, copySetup, overlay, onAck, onHb, guard, automate, selfCheck, resetCounters, snapSave, snapRestore, exportCard, cardCanvas, applyDots, paintHud, paintCockpit, positions, tick, offerCard });
+  return C;
+})();
+if (typeof window !== 'undefined' && typeof document !== 'undefined' && typeof boot === 'function') { const _b163c = boot; boot = async function () { await _b163c.apply(this, arguments); try { V163C.start(); } catch (e) { console.warn('v163 cockpit init', e); } }; }
 
 /* ===== boot.js ===== */
 /* Copyright (c) 2026 ExTerm Labs (@exterm.labs) · Licensed under GNU AGPL-3.0 · https://github.com/uexxx/ExTerm */

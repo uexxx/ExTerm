@@ -117,7 +117,7 @@ const DataHealth = (() => {
       ${row('Background bots', s.bots, s.bots ? 'Bots can keep trading (paper) after you close this tab.' : 'Needs the launcher.')}
       ${row('Background alerts', s.alerts, s.alerts ? 'Alerts can reach Telegram / Discord.' : 'Needs the launcher.')}
       ${typeof DiskSync !== 'undefined' ? row('Saved to this computer', DiskSync.on && !DiskSync.err, '<span id="v13Disk">' + esc(DiskSync.status()) + '</span>') : ''}
-    </table><button class="btn sm" id="v13Intro" style="margin-top:8px">How to get live data</button>${typeof DiskSync !== 'undefined' && DiskSync.on ? ' <button class="btn sm" id="v13JnDl" style="margin-top:8px" title="Every logged trade kept on this computer (up to 20,000), as a spreadsheet">⬇ Full journal log (CSV)</button>' : ''}</div></div>`;
+    </table><button class="btn sm" id="v13Intro" style="margin-top:8px">${s.launcher ? 'Live Feed Diagnostics' : 'How to get live data'}</button>${typeof DiskSync !== 'undefined' && DiskSync.on ? ' <button class="btn sm" id="v13JnDl" style="margin-top:8px" title="Every logged trade kept on this computer (up to 20,000), as a spreadsheet">⬇ Full journal log (CSV)</button>' : ''}</div></div>`;
   };
   D.intro = (force) => {
     const s = D.state();

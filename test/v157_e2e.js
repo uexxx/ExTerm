@@ -39,7 +39,7 @@ const SHOTS = process.env.EXTERM_SHOTS || ''; // optional: directory for the REA
         const btn = [...document.querySelectorAll('#tfBtns button')].find((x) => x.textContent.trim() === tf), s0 = V157UI.stats.seeded, t0 = performance.now(); btn.click(); const dt = performance.now() - t0, d = chart.data, n = d.length;
         return { dt, n, step: n > 1 ? d[n - 1].t - d[n - 2].t : 0, seeded: V157UI.stats.seeded - s0, seedMs: V157UI.stats.seedMs };
       }, tf);
-      ok(`${tf}: cold switch renders candles from the RAM ring in < 10 ms (no network wait)`, r.dt < 10 && r.n > 10 && r.seeded === 1 && r.step === { '1s': 1, '5s': 5, '10s': 10 }[tf], JSON.stringify(r));
+      ok(`${tf}: cold switch renders candles from the RAM ring in < 10 ms (no network wait)`, r.dt < 10 && r.n >= (tf === '1s' ? 11 : 2) && r.seeded === 1 && r.step === { '1s': 1, '5s': 5, '10s': 10 }[tf], JSON.stringify(r));
       await sleep(400);
       const g = await ev(async () => {
         const rec = [], f = NT.bodyRect; NT.bodyRect = (...a) => { const r = f(...a); rec.push(r); return r; };
@@ -47,7 +47,7 @@ const SHOTS = process.env.EXTERM_SHOTS || ''; // optional: directory for the REA
         rec.sort((a, b) => a.x - b.x); const gaps = rec.slice(1).map((r, i) => r.x - (rec[i].x + rec[i].w));
         return { n: rec.length, minW: Math.min(...rec.map((r) => r.w)), minH: Math.min(...rec.map((r) => r.h)), minGap: Math.min(...gaps), avgGap: gaps.reduce((a, b) => a + b, 0) / gaps.length, bars: chart.view.bars, plotW: chart.L.plotW };
       });
-      ok(`${tf}: every candle has a real body (width ≥ 4px, height ≥ 2.5px), bars never touch (avg gap ≈ 2px), count fits the plot`, g.n > 10 && g.minW >= 4 && g.minH >= 2.5 && g.minGap >= 1 && g.avgGap >= 1.5 && g.bars <= Math.floor(g.plotW / 6) + 1, JSON.stringify(g));
+      ok(`${tf}: every candle has a real body (width ≥ 4px, height ≥ 2.5px), bars never touch (avg gap ≈ 2px), count fits the plot`, g.n >= (tf === '1s' ? 11 : 2) && g.minW >= 4 && g.minH >= 2.5 && g.minGap >= 1 && g.avgGap >= 1.5 && g.bars <= Math.floor(g.plotW / 6) + 1, JSON.stringify(g));
     }
     ok('1s: gapless candles (open = prior close) on the live chart', await ev(() => { const d = chart.data.slice(-120); return d.every((k, i) => i === 0 || Math.abs(k.o - d[i - 1].c) < 1e-9); }));
     { const p0 = await ev(() => V156UI.stats.patch); await sleep(3000); const p1 = await ev(() => V156UI.stats.patch);

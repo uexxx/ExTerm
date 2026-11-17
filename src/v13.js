@@ -21,9 +21,10 @@ const Tour = (() => {
     let ov = $('#tourOv'); if (!ov) { ov = document.createElement('div'); ov.id = 'tourOv'; ov.className = 'tour-ov'; ov.setAttribute('role', 'dialog'); ov.setAttribute('aria-modal', 'true'); document.body.appendChild(ov); document.addEventListener('keydown', T.key); }
     let [sel, title, body] = STEPS[T.i], el = sel ? $(sel) : null;
     if (el && (el.hidden || !el.offsetWidth)) el = null;
+    if (el && el.scrollIntoView) { const q = el.getBoundingClientRect(); if (q.top < 0 || q.bottom > window.innerHeight) el.scrollIntoView({ block: 'nearest' }); } // a target below the fold (e.g. a taller ticket) comes into view first
     const r = el ? el.getBoundingClientRect() : null, pad = 6;
     const hole = r ? `<div class="tour-hole" style="left:${r.left - pad}px;top:${r.top - pad}px;width:${r.width + pad * 2}px;height:${r.height + pad * 2}px"></div>` : '';
-    const cw = 320, left = r ? Math.min(window.innerWidth - cw - 12, Math.max(12, r.left)) : (window.innerWidth - cw) / 2, top = r ? (r.bottom + 180 < window.innerHeight ? r.bottom + 12 : Math.max(12, r.top - 170)) : window.innerHeight / 2 - 90;
+    const cw = 320, left = r ? Math.min(window.innerWidth - cw - 12, Math.max(12, r.left)) : (window.innerWidth - cw) / 2, top = r ? Math.min(window.innerHeight - 200, r.bottom + 180 < window.innerHeight ? r.bottom + 12 : Math.max(12, r.top - 170)) : window.innerHeight / 2 - 90;
     ov.innerHTML = `${hole}<div class="tour-card" style="left:${left}px;top:${top}px;width:${cw}px"><div class="note">${T.i + 1} / ${STEPS.length}</div><h3>${esc(title)}</h3><p>${esc(body)}</p>
       <div class="row" style="justify-content:space-between"><button class="btn sm ghost" id="tourSkip">Skip tour</button><span><button class="btn sm" id="tourPrev" ${T.i ? '' : 'disabled'}>Back</button> <button class="btn sm pri" id="tourNext">${T.i === STEPS.length - 1 ? 'Done' : 'Next'}</button></span></div></div>`;
     $('#tourSkip').onclick = T.end; $('#tourPrev').onclick = T.prev; $('#tourNext').onclick = T.next; setTimeout(() => $('#tourNext').focus(), 20);

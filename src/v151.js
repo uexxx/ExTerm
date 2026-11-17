@@ -368,7 +368,7 @@ const V151UI = (() => {
     const t = e.target.closest && e.target.closest('[data-autosetup]'); if (t && (e.key === 'Enter' || e.key === ' ')) { e.stopPropagation(); return; }
     if (!e.altKey || e.ctrlKey || e.metaKey || (typeof p2typing === 'function' && p2typing())) return;
     const d = /^Digit([1-4])$/.exec(e.code || ''); if (d) { e.preventDefault(); U.preset(V151.PRESET_KEYS[+d[1] - 1]); return; }
-    if (e.code === 'KeyA') { e.preventDefault(); U.autoSetup(ST.sel); return; }
+    if (e.code === 'KeyA' && !e.shiftKey) { e.preventDefault(); U.autoSetup(ST.sel); return; } // Shift + Alt + A is v16.3 Two-Key Arming
     if (e.code === 'KeyG') { e.preventDefault(); const c = cfg(); c.ghost = c.ghost ? null : (ST.sel === 'BTC-USD' ? 'SPY' : 'BTC-USD'); saveState(); toast(c.ghost ? `Ghost line: ${baseOf(c.ghost)}` : 'Ghost line off'); if (chart) chart.invalidate(); }
   };
 

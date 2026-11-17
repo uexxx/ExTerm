@@ -210,3 +210,14 @@ Scope: `src/v162core.js`, `src/v162.js`, the v16.2 changes in `src/data.js`, `sr
 - **CSP / XSS.** No inline handlers, no `eval`; dialog text is static or passed through `esc()`; numeric values only in ledger details. `python build.py --harden` passes with the `default-src 'none'` hash policy.
 - **Integrity of seeded data.** Seeded bars are deterministic, bounded to the visible window, marked separately from real bars (`real: true` on tick bars), and never used for order prices: fills still use the live quote.
 - **Automation.** The start-up briefing is skipped when `navigator.webdriver` is set, so automated regression runs can drive the page. A normal browser always shows it.
+## v16.3 addendum: closed-loop live cockpit, mandatory stop-loss, core risk guards
+
+Scope: `src/v163core.js`, `src/v163.js`, the v16.3 changes in `src/v160.js`, `src/v161core.js`, `src/v162.js`, `src/v157.js`, `src/v151.js`, `src/style.css`.
+
+- **No new network surface.** ACK + fill sync reads the reply of the existing signed loopback transport; heartbeats, the self-check and flatten reuse `V160UI.send`. No new hosts, endpoints or `serve.py` routes. The webhook gateway stays loopback / allow-listed private LAN only.
+- **Fill authenticity.** A fill is accepted only when the reply echoes the packet's `idempotency_key` (`V163.parseFill`); price and quantity must be positive and bounded; the order id is reduced to `[\w.:-]`, 64 characters max. A mismatching ack is already treated as a failed send by v16.1.
+- **Fail-safe direction.** Require Stop-Loss is ON by default and rejects a stop on the wrong side of entry. Every new guard (pause, allowlist, depth, stale quote, rate, exposure, correlation, thin hours, throttle) applies only to live **opening** orders: closes, drawer exits, time-in-trade, EOD flat and `CANCEL_ALL_AND_FLATTEN` are never blocked. Guard settings, Two-Key Arming and the allowlist are locked while armed; **Reset Session Safety Counters** is refused unless the bridge is in PAPER (`V163.canReset`).
+- **Two-Key Arming.** `Shift + Alt + A` sets a 10-second window, and the arm button is intercepted in the capture phase until then. The chord no longer reaches the `Alt + A` Auto-Setup hotkey.
+- **Secrets at rest.** The session snapshot uses PBKDF2-SHA256 (200,000 rounds) → AES-256-GCM with a random salt and IV; the passphrase is never written to storage and a wrong passphrase or tampered blob is rejected. Starter bridges read keys and the slot secret from environment variables and bind to `127.0.0.1`.
+- **Privacy.** The trade card shows R, %, holding time and the chart only: no position size, quantity or account value.
+- **CSP / XSS.** No inline handlers, no `eval`; every dynamic string in the HUD, drawer, cockpit, toasts and card is passed through `esc()` or set via `textContent`; downloads use `blob:` object URLs that are revoked. `python build.py --harden` passes with the `default-src 'none'` hash policy.

@@ -23,7 +23,8 @@ const V161 = (() => {
         closes (sell) only need a well-formed packet, because blocking an exit would add risk instead of removing it. ── */
   V.SYM_RX = /^[A-Z0-9][A-Z0-9._:\/-]{0,23}$/;
   V.ACTIONS = ['buy', 'sell', 'CANCEL_ALL_AND_FLATTEN'];
-  V.validate = (b, fs) => {
+  /* opt.sl === false (v16.3 explicit "Require Stop-Loss" override) skips only the stop-loss checks */
+  V.validate = (b, fs, opt) => {
     if (!b || typeof b !== 'object' || Array.isArray(b)) return { ok: false, why: 'payload is not an object' };
     if (!V.ACTIONS.includes(b.action)) return { ok: false, why: 'unknown action' };
     if (b.action === 'CANCEL_ALL_AND_FLATTEN') return { ok: true };
@@ -32,8 +33,11 @@ const V161 = (() => {
     if (!(b.usd > 0)) return { ok: false, why: 'order size must be above $0' };
     if (b.price != null && !(b.price > 0)) return { ok: false, why: 'price must be above 0' };
     if (b.action === 'buy') {
-      if (!(b.sl > 0)) return { ok: false, why: 'missing stop-loss' };
-      if (b.price > 0 && b.sl >= b.price) return { ok: false, why: 'stop-loss is not below the entry price' };
+      if (!(opt && opt.sl === false)) {
+        if (!(b.sl > 0)) return { ok: false, why: 'missing stop-loss' };
+        if (b.side !== 'short' && b.price > 0 && b.sl >= b.price) return { ok: false, why: 'stop-loss is not below the entry price' };
+        if (b.side === 'short' && b.price > 0 && b.sl <= b.price) return { ok: false, why: 'stop-loss is not above the short entry price' };
+      }
       const cap = fs && +fs.maxNotional; if (!(cap > 0)) return { ok: false, why: 'Max Single-Order Notional cap not set' };
       if (b.usd > cap) return { ok: false, why: `notional $${b.usd.toFixed(2)} is above the $${cap.toFixed(2)} Max Single-Order Notional cap` };
     }

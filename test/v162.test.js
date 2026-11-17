@@ -55,7 +55,7 @@ ok('live-only: every listed selector has a body.live-bot-armed hide rule', V.PAP
 
 // 6. static
 const ui = src('v162.js'), core = src('v162core.js'), B = fs.readFileSync(path.join(root, 'build.py'), 'utf8');
-ok('build: v162core.js after v161core.js, v162.js after v161.js, both before boot.js', /"v161core\.js", "v162core\.js", "v160\.js", "v161\.js", "v162\.js", "boot\.js"/.test(B));
+ok('build: v162core.js after v161core.js, v162.js after v161.js, both before boot.js', /"v161core\.js", "v162core\.js", (?:"v163core\.js", )?"v160\.js", "v161\.js", "v162\.js", (?:"v163\.js", )?"boot\.js"/.test(B));
 ok('timeframes: 1s–1M on every market (TF list + NT.TF)', /'1w', '1M'\]/.test(src('app_a.js')) && /'1w': 604800, '1M': 2592000/.test(src('core.js')) && /const tfList = \(\) => TF_ALL/.test(src('app_a.js')));
 ok('timeframes: quick pills 1s 5s 10s 15s 1m 5m 15m 1h 4h 1d 1w', ['1s', '5s', '10s', '15s', '1m', '5m', '15m', '1h', '4h', '1d', '1w'].every((t) => css.includes(`:not([data-v="${t}"])`)));
 ok('data: stocks + on-chain sub-minute go through seedHist', /return TFX\.seedHist\(sym, tf, n, await TFX\.stockSub/.test(src('data.js')) && /return TFX\.seedHist\(sym, tf, n, tr\)/.test(src('data.js')));
@@ -63,7 +63,7 @@ ok('chart: sub-minute y-axis uses V162.minSpan 0.20 %', /V162\.minSpan\(lo, hi, 
 ok('breaker: kill path broadcasts CANCEL_ALL_AND_FLATTEN and logs the breach', /b\.kill\(/.test(ui) && /led\('breaker'/.test(ui) && /CANCEL_ALL_AND_FLATTEN/.test(src('v160.js')));
 ok('CSP: no inline handlers and no eval in v16.2', !/\son[a-z]+=["']/i.test(ui + core) && !/\beval\(|new Function/.test(ui + core));
 ok('XSS: dynamic text in v16.2 templates goes through esc()', !/\$\{(?!esc\(|V162\.|live \?|G\.|x\b|dl\.toFixed\(2\)\}|cap\})[a-z]/i.test(ui.replace(/\$\{live \? [^}]*\}/g, '')));
-ok('privacy: no personal paths or emails in v16.2 sources', !/[A-Z]:\\Users\\|\/Users\/|@gmail|roblo/i.test(ui + core + src('v162core.js')));
+ok('privacy: no personal paths or emails in v16.2 sources', !new RegExp(['[A-Z]:\\\\Users\\\\', '\\/Users\\/', '@gm' + 'ail', 'ro' + 'blo'].join('|'), 'i').test(ui + core + src('v162core.js')));
 
 const fails = res.filter((r) => r.startsWith('FAIL'));
 console.log(res.join('\n')); console.log(`${res.length - fails.length}/${res.length} passed`); process.exit(fails.length ? 1 : 0);

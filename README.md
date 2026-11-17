@@ -1,21 +1,23 @@
 <div align="center">
 
-# ExTerm v16.2
+# ExTerm v16.3
 
-### Local-first trading workstation for US stocks, crypto spot & perps and on-chain DEX tokens, in one browser tab.
+### The $0, local-first trading workstation: multi-asset charting at up to 240 Hz, quant research, 3D market structure and a zero-custody live execution cockpit, in one browser tab.
 
-**Paper by default.** ExTerm holds no funds and no keys. Live routing to a bot you run on your own machine stays locked behind four gates.
+**Your money never leaves your broker, exchange or wallet.** ExTerm holds no funds and no keys: it paper-trades by default, and live
+signals go only to a bot you run yourself on `127.0.0.1`, signed, checked by ten risk engines and locked behind four gates.
 
-<img src="docs/screenshots/v15.7-1s-candles.png" alt="ExTerm Markets screen on the 1s timeframe with true-form candles; at 1440×900: tonal obsidian panels without outlines, one-word top tabs, a watchlist with 44px sparklines, and the watchlist and order ticket gently dimmed while the cursor is over the price chart" width="100%">
+<img src="docs/screenshots/01-markets-live-execution.png" alt="ExTerm Markets terminal at 1440×900: BTC 5m candles with EMA 20 and EMA 50, an open position with Entry, Stop-Loss and Take-Profit lines, dollar tags on the price axis, the gold BE break-even pill, a Scale-In ghost line, and the order ticket with the $ Risk to exact quantity sizer and time-in-force" width="100%">
 
-**[Quickstart](#-2-second-quickstart)** · **[What's new](#-whats-new-in-v162)** · **[v16.1](#-whats-new-in-v161)** · **[v16.0](#-whats-new-in-v160)** · **[v15.7](#-whats-new-in-v157)** · **[v15.6](#-whats-new-in-v156)** · **[v15.5](#-whats-new-in-v155)** · **[v15.4](#-whats-new-in-v154)** · **[v15.3](#-whats-new-in-v153)** · **[v15.2](#-whats-new-in-v152)** · **[Features](#-whats-in-v151)** · **[Security](#-security)** · **[Verify a build](#-how-to-verify-official-builds)** · **[License](#-license)** · **[Brand policy](#-brand--logo-policy)**
+**[30-second launch](#-30-second-local-launch)** · **[What's new](#-whats-new-in-v163)** · **[Charting](#1--240-hz-multi-asset-charting--direct-order-execution)** · **[Live cockpit](#2--closed-loop-zero-custody-live-execution-cockpit-127001)** · **[3D](#3--pure-canvas-3d-market-structure-5-engines-zero-3d-libraries)** · **[Quant Lab](#4--17-test-statistical-quant-lab--strategy-studio)** · **[Global](#5--on-chain-whale-intelligence-32-languages--rtl-and-learn-exterm)** · **[Security](#6--browser-security-hardening--verification)** · **[Release history](#-release-history)** · **[Verify a build](#-how-to-verify-official-builds)**
 
 <p>
-  <a href="https://github.com/uexxx/ExTerm/releases/latest"><img src="https://img.shields.io/badge/download-v16.2-D4AF37?style=for-the-badge" alt="Download v16.2"></a>
+  <a href="https://github.com/uexxx/ExTerm/releases/latest"><img src="https://img.shields.io/badge/download-v16.3-D4AF37?style=for-the-badge" alt="Download v16.3"></a>
+  <img src="https://img.shields.io/badge/price-%240-2fd08a?style=for-the-badge" alt="$0">
   <img src="https://img.shields.io/badge/indicators-137-D4AF37?style=for-the-badge" alt="137 indicators">
   <img src="https://img.shields.io/badge/backtestable%20strategies-128-CBD5E1?style=for-the-badge" alt="128 backtestable strategies">
-  <img src="https://img.shields.io/badge/languages-32%20%2B%20ISO--639-CBD5E1?style=for-the-badge" alt="32 languages plus ISO-639 fallback">
-  <img src="https://img.shields.io/badge/default-PAPER-2fd08a?style=for-the-badge" alt="paper by default">
+  <img src="https://img.shields.io/badge/languages-32%20%2B%20RTL-CBD5E1?style=for-the-badge" alt="32 languages plus RTL">
+  <img src="https://img.shields.io/badge/custody-zero-2fd08a?style=for-the-badge" alt="zero custody">
 </p>
 <p>
   <a href="https://www.instagram.com/exterm.labs"><img src="https://img.shields.io/badge/Instagram-@exterm.labs-E4405F?style=for-the-badge&logo=instagram&logoColor=white" alt="Instagram @exterm.labs"></a>
@@ -26,11 +28,11 @@
 
 ---
 
-## ⚡ 2-Second Quickstart
+## ⚡ 30-Second Local Launch
 
-ExTerm is one HTML file plus a small standard-library launcher. No account, no install step, no build step.
+ExTerm is one HTML file plus a small standard-library launcher. No account, no install step, no build step, no subscription.
 
-**Windows** — unzip to e.g. `C:\ExTerm`, then double-click **`start-exterm.bat`**
+**Windows**: unzip to e.g. `C:\ExTerm`, then double-click **`start-exterm.bat`**
 (it falls back to the built-in PowerShell server, `serve.ps1`, if Python isn't installed).
 
 **macOS / Linux**
@@ -47,7 +49,143 @@ Useful flags: `python3 serve.py 9000` (other port) · `--no-browser` · `--docto
 > Opening `exterm.html` directly also works for crypto, but browsers block some stock and on-chain sources. The launcher
 > proxies only an allow-list of public market-data hosts, on `localhost`, behind a fresh per-launch token.
 
+**What ExTerm is:** a terminal for **crypto spot & perps, US stocks, on-chain DEX tokens, options and futures** with
+professional charting, 137 indicators, 128 backtestable strategies, a statistical Quant Lab, on-chain whale intelligence and
+five pure-canvas 3D views. Everything runs on your computer. Trading is **paper by default**. When you choose to go live,
+ExTerm sends signed intents to **your own** local bot, and that bot talks to **your own** broker, exchange or wallet: ExTerm
+never touches the money.
+
 ---
+
+## 🎯 What's new in v16.3
+
+> **Closed-Loop Live Cockpit.** v16.3 closes the loop between the chart and your local bot.
+>
+> - 🛰 **Floating Live Execution HUD**: `LIVE ARMED · Slot # · ping ms · Day P&L vs -$cap`, a 44px equity & drawdown sparkline and a market-close / funding countdown.
+> - ⏸ **Pause New Entries (Keep Exits Active)** and a live **`Cooldown: 11m 42s`** countdown inside the disabled Buy button.
+> - 🎯 **Focus Chart (`F`)**, a docked **Micro-Ticket** strip, and a **Position & Pending Orders Drawer** (`Close 50%` · `Flatten` · `Reverse Position` · `Close Losing / Green Legs`).
+> - 🔁 **Two-way `127.0.0.1` ACK + fill sync**: bot position sync, heartbeat latency & packet-success graph, **slippage & fill quality by symbol**, and ~40-line starter bridges for **Interactive Brokers, Alpaca, CCXT and Freqtrade**.
+> - 🛡 **Require Stop-Loss ON by default**, $ risk → exact quantity, **R:R & $ badges**, **BE pill**, Auto-BE on TP1, 3× depth, stale-quote freeze, trades-per-hour limit, drawdown throttle, per-slot ticker allowlist.
+> - 🔐 **Two-Key Arming (`Shift + Alt + A`)**, **3-Second Live Readiness Self-Check**, time-in-trade exit, EOD Flat Timer, conditional triggers, an AES-256-GCM session snapshot and **Reset Session Safety Counters** (PAPER only).
+> - 📈 **Active-tick sub-minute bars**: a quiet second never draws a flat filler candle on stocks or on-chain tokens.
+>
+> Full notes: [`CHANGELOG.md`](CHANGELOG.md) · earlier versions: [Release history](#-release-history)
+
+---
+
+## 🧭 Complete functional overview
+
+### 1 · 240 Hz multi-asset charting & direct order execution
+
+One chart engine for **Crypto, US Stocks, On-chain DEX tokens, Options and Futures**. It draws at your display's refresh
+rate (an adaptive governor targets 60–240 Hz and steps down when frames get expensive).
+
+- **Every timeframe, every market:** `1s · 5s · 10s · 15s · 1m · 5m · 15m · 30m · 1h · 4h · 1d · 1w · 1M` with true-form,
+  gapless candles. Sub-minute bars are **active-tick**: a bar is only added when price or volume actually changed.
+- **137 indicators** (EMA, SMA, VWAP, Bollinger Bands, RSI, MACD, ATR, Donchian and more), multi-timeframe trend pills and
+  drawing tools (trend, level, Fib, channel, zone, long / short).
+- **Trade on the chart:** click to place Entry, Stop-Loss and Take-Profit, drag any line, **R:R and $ P&L badges** while
+  you drag, dollar tags on the price axis, a one-click **BE** break-even pill, Auto-BE on TP1, TP1 50% / TP2 30% / TP3 20%
+  scale-out, trailing-stop activation lines, fill markers with slippage in bps, and a bid/ask spread tunnel on 1s–1m.
+- **Order ticket:** market / limit / stop, **$ Risk → exact quantity** sizer, GTC / IOC / Post-Only, **Chase Limit** (peg to
+  best bid / ask), a **liquidation & margin-buffer** pill, a pre-trade market-close / funding countdown and one-click
+  **Copy Trade Setup**. Hotkeys: `Shift+B` buy · `Shift+S` sell · `Shift+X` cancel all.
+- **Precision tools:** `Shift + drag` **Measure Dragger** (Δ$, %, bars, time, volume), the **ExTerm Chart Context Menu**
+  (right-click for price-aware orders, alerts and levels), Alt + drag magnetic snap to high / low / VWAP, a Scale-In / Pyramid
+  ghost line and a Fee & Funding / Borrow drag line.
+
+### 2 · Closed-loop zero-custody live execution cockpit (`127.0.0.1`)
+
+<img src="docs/screenshots/02-live-hud-focus-cockpit.png" alt="ExTerm Markets with the local bot armed: the Floating Live Execution HUD reads LIVE ARMED, Slot 1, ping in ms and the day's P&L against the -$500 cap, with an equity and drawdown sparkline and a funding countdown; the side rails are collapsed by Focus Chart, the Micro-Ticket strip is docked at the bottom and the Live Positions and Pending Orders drawer is open on the right" width="100%">
+
+ExTerm never holds your funds or keys. Live mode sends **HMAC-SHA256 signed** intents (fresh session key, 3-second expiry,
+unique idempotency key, rising sequence number) to a bot **you** run on `127.0.0.1` (or an allow-listed private LAN host over
+HTTPS). Your bot replies with an **ACK + fill**, and ExTerm reconciles it.
+
+- **Six local adapter slots:** script runner, JSON webhook relay, socket / IPC bridge, perp DEX wallet signer, equities /
+  futures gateway and a graduated shadow-to-live mirror.
+- **Starter bridges** (Execution Bridge → *Local broker starter bridges*): copy or download ~40 lines of Python for
+  **Interactive Brokers**, **Alpaca**, **CCXT** or **Freqtrade**. Each verifies the signature, refuses replays, executes and
+  replies `{ ok, ack, fill }`.
+- **Cockpit:** Floating Live Execution HUD, Focus Chart (`F`), Micro-Ticket, Position & Pending Orders Drawer, **Live-Only
+  Workspace Mode** (`body.live-bot-armed` hides paper-only tools), watchlist **Signal Readiness** dots, acoustic and visual
+  confirmation cues with instant mute, and a **privacy-masked trade card** (R, % and holding time only) on every close.
+- **Arming:** four gates (healthy heartbeat, risk caps set, disclosure acknowledged, exact phrase), optional **Two-Key
+  Arming** (`Shift + Alt + A`, then Arm within 10 s), a **3-Second Live Readiness Self-Check**, and `Ctrl+Shift+K` to
+  flatten everything and disarm.
+
+**The 10-engine security & risk lockdown**
+
+| # | Engine | What it does |
+|---|---|---|
+| 1 | `Require Stop-Loss` | ON by default: every live opening order needs a stop (long below entry, short above). Closes and flatten never blocked. |
+| 2 | `Signal Firewall` | Schema check, fat-finger `Max Single-Order Notional`, SSRF-safe endpoint check (loopback / allow-listed LAN only). |
+| 3 | `Signed Envelopes` | HMAC-SHA256 with a per-session key, 3 s TTL, idempotency key, nonce cache and rising sequence: replays are rejected. |
+| 4 | `Depth & Stale-Quote Guard` | Order-book depth within 0.5% of mid must be `≥ 3×` the order; quotes older than 5 s (crypto) / 20 s (stocks) / 90 s (on-chain) freeze entries. |
+| 5 | `Rate & Exposure Caps` | `Max Trades-Per-Hour` and a global 6-slot exposure cap. |
+| 6 | `Drawdown Throttle & Cooldown` | Size cut to 50% after 2 losses in a row; a loss-streak cooldown pauses entries with a visible countdown. |
+| 7 | `Correlation & Thin-Hours Guard` | Refuses positions correlated above `r = 0.85` with an open one; halves the spread cap on weekends and outside US hours. |
+| 8 | `Execution Shield` | Spread ceiling, per-slot ticker allowlist and `Pause New Entries (Keep Exits Active)`. |
+| 9 | `Max Daily Loss Auto-Flatten` | Breaching the daily cap broadcasts `CANCEL_ALL_AND_FLATTEN` and locks all six slots to PAPER. |
+| 10 | `Dead-Man's Switch & Kill-Switch` | Missed heartbeats, idle auto-disarm, EOD Flat Timer, time-in-trade exit and `Ctrl+Shift+K` all flatten and disarm. |
+
+Every decision lands in the **Signed Signal Receipt Ledger** (CSV / JSON export with timestamp, idempotency key and signature).
+
+<img src="docs/screenshots/05-execution-bridge-safety.png" alt="Execution Bridge and Live Safety Settings: Require Stop-Loss on all live opening orders checked, depth, stale-quote, trades-per-hour, exposure, drawdown throttle, correlation and weekend spread guards, then the Closed-Loop Live Cockpit with Pause New Entries, Two-Key Arming, cues, leverage, funding, time-in-trade and EOD Flat Timer, per-slot ticker allowlists and a READY 7/7 result from the 3-Second Live Readiness Self-Check" width="100%">
+
+### 3 · Pure-canvas 3D market structure (5 engines, zero 3D libraries)
+
+<img src="docs/screenshots/03-3d-market-structure.png" alt="The Flow tab with the 3D Order-Book Liquidity Terrain (bids in green, asks in red, depth over time) next to the 3D Options IV and Gamma Surface, both drawn as wireframes on plain canvas in the obsidian and gold theme" width="100%">
+
+Five rotatable 3D views written on plain `<canvas>` (drag or arrow keys to rotate, **Reset Angle** to return). Each pauses
+when off-screen:
+
+- **Order-Book Liquidity Terrain**: depth over time; walls are ridges, gaps are cliffs.
+- **Options IV & Gamma Surface**: implied volatility (or $ gamma) by strike and expiry.
+- **Quant Lab Profit Mountain**: a 7 × 7 stop / target sweep that shows plateau vs. spike.
+- **Multi-Asset Correlation Orbit**: rolling correlations and market regime.
+- **Whale Liquidation Cluster Orbit**: where large positions would be forced out.
+
+### 4 · 17-test statistical Quant Lab & Strategy Studio
+
+<img src="docs/screenshots/04-quant-lab-validation.png" alt="The Strategy builder in the Bots tab: Buy when RSI 14 is below 30 AND Close is above SMA 200, Sell when RSI 14 is above 60, risk stop 5%, with Save, Backtest, Validate, Export Pine Script v5, Share and Import JSON buttons, and the 17-test Validation Lab result grading the idea F with 2 of 17 tests passed" width="100%">
+
+- **Visual IF / AND / OR builder** with templates and a community library, exporting to **Pine Script v5** or JSON, plus a
+  v5-compatible importer for a safe subset.
+- The **17-test Validation Lab** grades every strategy A–F (the screenshot shows an honest F: the idea has no edge on that
+  data). It covers **walk-forward** optimisation (in-sample pick, out-of-sample score), **Monte Carlo** (1,000 seeded
+  reshuffles), **risk of ruin**, slippage fragility and a candle data-quality grade.
+- **Genetic parameter search** (Auto-Evolve) keeps only mutations that survive walk-forward and grade C or better;
+  Crisis Time Machine and synthetic stress paths; a portfolio backtester; prop-firm odds; and a Bot Net Profit hero card
+  with fees and slippage deducted.
+- Promote a validated bot to **Shadow** (dry-run on live ticks), then to the live mirror slot.
+
+### 5 · On-chain whale intelligence, 32 languages + RTL and Learn ExTerm
+
+<img src="docs/screenshots/06-global-rtl-accessibility.png" alt="ExTerm in Arabic: the whole workstation mirrored right-to-left with Arabic navigation, the watchlist on the right, the order ticket on the left and the ETH 15m chart with EMA 20 and EMA 50" width="100%">
+
+- **On-chain:** DEX tokens on several chains, a Launch Radar, token safety scanner, wallet tracker, smart-money and perp
+  leaderboards with Trader Detail & Mirror, and a whale & liquidation cluster view.
+- **32 languages** with full **right-to-left** mirroring (for example Arabic) and an ISO-639 fallback, chosen at first launch.
+- **Learn ExTerm**: an interactive academy with **35 lessons**, sandbox drills on simulated charts, a 5-minute quick-start
+  track and "How do I…" fuzzy search.
+
+### 6 · Browser security hardening & verification
+
+- **Strict CSP:** `default-src 'none'`; the bundled script is pinned by its **SHA-256** hash at build time. No inline
+  handlers, no `eval`, every dynamic string HTML-escaped.
+- **Local storage encryption:** API keys and alert channels sit in an **AES-256-GCM** vault (PBKDF2-SHA256), encrypted
+  `.exterm` backups, and the v16.3 session snapshot (AES-256-GCM, passphrase never stored).
+- **Locked-down launcher:** localhost only, fresh session token every launch, Origin + Host checks, rate limits and a
+  proxy allow-list. Live bots are reachable on loopback or an allow-listed private LAN host only.
+- **Verify every download** against `SHA256SUMS.txt` (see [below](#-how-to-verify-official-builds)), or use **Settings →
+  Verify build integrity**.
+
+---
+
+## 📚 Release history
+
+The sections below document every earlier release. All of these capabilities are still in v16.3.
 
 ## 🎯 What's new in v16.2
 

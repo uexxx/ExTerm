@@ -1,6 +1,38 @@
 # Changelog
 
-ExTerm (formerly NovaTerm) holds no funds and no keys in every version. Up to v15.7 it was paper only; from v16.0 it can send HMAC-signed signals to a bot you run on your own machine, only after four explicit gates, and it starts in PAPER. v16.1 adds eight fail-safe engines on that path.
+ExTerm holds no funds and no keys in every version. Up to v15.7 it was paper only; from v16.0 it can send HMAC-signed signals to a bot you run on your own machine, only after four explicit gates, and it starts in PAPER. v16.1 adds eight fail-safe engines on that path; v16.3 closes the loop with ACK + fill sync and a live cockpit.
+
+## v16.3 — Closed-Loop Live Cockpit, Live-Execution Precision & Active-Tick Candles — 17 Nov 2026
+
+### Live-execution precision (`src/v163core.js`, `src/v163.js`, `src/v157.js`, `src/v160.js`, `src/v161core.js`)
+- **Require Stop-Loss on All Live Opening Orders**, ON by default: a long stop must sit below entry and a short stop above it. Closing orders and `CANCEL_ALL_AND_FLATTEN` are never blocked. Turning it off shows a warning.
+- **$ Risk → exact quantity** sizer (fees included, floored to the lot step, capped by cash), **R:R + $ P&L badges** while dragging Entry / SL / TP, a one-click **BE** pill, **Auto-BE on TP1** and a TP1 50% / TP2 30% / TP3 20% scale-out.
+- Chart: bid/ask spread tunnel on 1s–1m, order-preview ghost lines, Alt + drag magnetic snap to high / low / VWAP, trailing-stop activation and step lines, fill markers with slippage in bps and ticks.
+- Ticket: time-in-force **GTC / IOC / Post-Only** (Post-Only refuses a crossing price, IOC cancels the unfilled rest) and hotkeys `Shift+B` / `Shift+S` / `Shift+X`.
+- Core risk guards on every live opening order, registered in the v16.0 router: order-book depth `≥ 3×` within 0.5% of mid, **Stale-Quote Freeze** (5 s crypto · 20 s stocks · 90 s on-chain), **Max Trades-Per-Hour**, global 6-slot exposure cap, **Drawdown Throttle** (50% size after 2 losses in a row), correlation guard (`r > 0.85`), thin-hours spread tightening and Auto-Disarm on Idle (`Off (24/7) | 15m | 30m | 60m`). Locked while armed.
+- **Active-tick sub-minute bars**: a quiet tick (no price change, no volume) never appends a flat O=H=L=C bar; seeded windows drop flat filler bars and re-chain open = prior close.
+
+### Closed-loop live cockpit (`src/v163core.js`, `src/v163.js`, `src/v160.js`, `src/v162.js`, `src/v151.js`, `src/style.css`)
+- **Floating Live Execution HUD** while armed: `LIVE ARMED · Slot # · ping ms · Day P&L vs -$cap` (amber at 50%, red at 80% of the cap), a 44px equity & drawdown sparkline, and a market-close / next-open (stocks) or 8-hourly funding (crypto) countdown pill.
+- **Pause New Entries (Keep Exits Active)** (HUD button or cockpit toggle; logged in the ledger) and a **cooldown countdown** inside the disabled Buy button (`Cooldown: 11m 42s`).
+- **Focus Chart** (`F`, reuses the rail collapse and declutters the toolbar), docked **Micro-Ticket** strip (drives the normal ticket, so every guard applies) and a **Live Position & Pending Orders Drawer**: `Close 50%`, `Flatten`, `Reverse Position` (opens the opposite leg with a stop on the other side, through a cockpit short book that routes like a manual order), `Close Losing Legs`, `Close Green Legs`, `Flatten All`, cancel pending limits / stops, bot position next to each paper position (`in sync` / `drift`).
+- Chart: **Scale-In / Pyramid** ghost line (add N% @ price → blended entry), **Fee & Funding / Borrow** drag line, liquidation line. Ticket: **Chase Limit** with peg-to-best-bid/ask (optionally 1 tick inside; also re-pegs resting limits placed while pegged), a **Liquidation & Margin Buffer** pill (warns under 15%, flags a stop beyond liquidation) and **Copy Trade Setup**.
+- Watchlist **Signal Readiness** dots (EMA 20 / 50 cross in the last 3 bars, or within 0.15%), acoustic + visual cues on fills, blocks and triggers with instant mute, and a **privacy-masked trade card** on close (R, %, holding time; no size or account value) saved as a 1200×675 PNG.
+- **Two-way bot sync:** a receiver reply `{ ok, ack, fill: { price, qty, ts, order_id } }` is accepted only when `ack` equals the packet's idempotency key; fills update the bot position, a **slippage & fill quality by symbol** table (avg bps, avg ACK ms) and a `fill` ledger row. **Heartbeat latency & packet-success graph** per slot.
+- **Local broker starter bridges** (~40 lines of Python each, loopback only, signature + replay checks, secrets from the environment): Interactive Brokers, Alpaca, CCXT, Freqtrade. Copy or download `.py`.
+- **Per-slot asset & ticker allowlist**, **Time-in-Trade auto-exit**, **Price Alert → Conditional Trigger** (one-shot, buys carry a stop), **EOD Flat Timer** for equities / futures (5–30 min before the US close), **Encrypted Session Recovery Snapshot** (PBKDF2-SHA256 200k → AES-256-GCM; passphrase held in memory only, auto-save every 60 s once set).
+- **Hardware-Style Two-Key Arming** (optional): `Shift + Alt + A` turns key 1, Arm must follow within 10 s. Plain `Alt + A` still opens Auto-Setup.
+- **3-Second Live Readiness Self-Check**: pings every enabled slot (3 s timeout) and checks Require Stop-Loss, the daily-loss cap, quote freshness, cooldown and spread; READY / NOT READY with a ledger row.
+- **Reset Session Safety Counters**, available only when disarmed in PAPER: zeroes guard stats, the hourly rate window, heartbeat misses, the loss-streak cooldown, the drawdown-throttle window and the daily-loss baseline, with a `reset` ledger row.
+- Launch Safety & Critical Updates briefing lists the v16.3 highlights. `body.live-bot-armed` also hides the live-trades tape. The HUD, drawer and card mirror in RTL.
+- `V160UI` gains `post` (ACK + fill listeners), `hbL` (heartbeat listeners) and `manual` (extra accounts routed like manual orders).
+
+### Fixes
+- First-run tour (`src/v13.js`): a step whose target sits below the fold (the taller v16.3 ticket pushes the Perps panel down) now scrolls it into view, and the tour card is clamped inside the viewport.
+- v16.3 inputs and selects in the Execution Bridge use the standard input style.
+
+### Tests
+- `test/v163.test.js` (123 checks) and `test/v163_e2e.js` (60 checks, English + Arabic, 1440×900, real signed receiver on 127.0.0.1 that replies with fills). The v16.2 briefing check accepts the v16.3 highlights; the v15.7 cold-switch check expects real (non-filler) 5s / 10s bars. Full regression (`test/run-all.ps1`): every unit, launcher and browser suite passes.
 
 ## v16.2 — Universal Timeframes, True-Form Candles, Auto-Flatten & Live-Only Mode — 17 Nov 2026
 

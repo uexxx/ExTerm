@@ -14,7 +14,7 @@
    redirects refused, no cookies, no referrer. Logic in V160 (v160core.js) and V161 (v161core.js). */
 const V160UI = (() => {
   const KEY = 'exterm.v160.bridge', FKEY = 'exterm.v161.fs', LKEY = 'exterm.v161.ledger', HB_EVERY = 15000;
-  const U = { st: null, session: '', sessAt: 0, seq: 0, briefed: true, phrase: '', fails: {}, log: [], stats: { sent: 0, blocked: 0, sim: 0, kills: 0 }, fs: null, ledger: [], used: null, lastOk: {}, book: {} };
+  const U = { st: null, session: '', sessAt: 0, seq: 0, briefed: true, phrase: '', fails: {}, log: [], stats: { sent: 0, blocked: 0, sim: 0, kills: 0 }, fs: null, ledger: [], used: null, lastOk: {}, book: {}, pre: [], requireSL: true, post: [], hbL: [], manual: [] };
   const $1 = (s, r) => (r || document).querySelector(s);
   const def = (id) => V160.SLOTS.find((s) => s.id === id);
   const save = () => { try { localStorage.setItem(KEY, JSON.stringify(U.st)); } catch (e) { /* private window: state lives for this session */ } };
@@ -69,10 +69,10 @@ const V160UI = (() => {
     return { ms: Math.max(1, Math.round(performance.now() - t0)), key, sig, wire, acked: !!(reply && reply.ack === key), reply };
   };
   const heartbeat = async (s) => {
-    try { const r = await send(s, 'heartbeat', { ping: 1 }); s.hb = { ok: true, ms: r.ms, t: Date.now(), why: '' }; U.fails[s.id] = 0; U.lastOk[s.id] = Date.now(); led('heartbeat', { slot: s.id, status: 'ok', key: r.key, sig: r.sig, detail: r.ms + ' ms' + (r.acked ? ' · acked' : '') }); }
+    try { const r = await send(s, 'heartbeat', { ping: 1 }); s.hb = { ok: true, ms: r.ms, t: Date.now(), why: '' }; U.fails[s.id] = 0; U.lastOk[s.id] = Date.now(); led('heartbeat', { slot: s.id, status: 'ok', key: r.key, sig: r.sig, detail: r.ms + ' ms' + (r.acked ? ' · acked' : '') }); for (const f of U.hbL) { try { f(s, s.hb); } catch (x) { /* listener */ } } }
     catch (e) {
       s.hb = { ok: false, ms: 0, t: Date.now(), why: String(e.message || e).slice(0, 120) }; U.fails[s.id] = (U.fails[s.id] || 0) + 1;
-      led('heartbeat', { slot: s.id, status: 'missed ' + U.fails[s.id], key: e.key, sig: e.sig, detail: s.hb.why });
+      led('heartbeat', { slot: s.id, status: 'missed ' + U.fails[s.id], key: e.key, sig: e.sig, detail: s.hb.why }); for (const f of U.hbL) { try { f(s, s.hb); } catch (x) { /* listener */ } }
       if (s.mode === 'live' && U.fails[s.id] >= V160.HB_FAILS) kill(`Dead-Man's Switch: ${V160.HB_FAILS} missed heartbeats on Slot ${s.id}`);
     }
     save(); paint(); return s.hb;
@@ -99,26 +99,31 @@ const V160UI = (() => {
   const block = (status, what, why) => { U.stats.blocked++; note('block', `BLOCKED · ${what}: ${why}`); toast('⛔ ' + esc(status === 'guard' ? 'Circuit breaker' : status === 'spread' ? 'Execution Shield' : status === 'cooldown' ? 'Tilt & Drawdown Guard' : 'Signal firewall') + ': ' + esc(why), 'dn'); led('breaker', { status, detail: `${what}: ${why}` }); };
   const route = (t, acct) => {
     if (!t || t.src === 'backtest' || typeof ACC === 'undefined') return;
-    const bot = acct === ACC ? null : (ST.bots || []).find((b) => b.account === acct); if (acct !== ACC && !bot) return;
+    const man = acct === ACC || U.manual.includes(acct); // v16.3: the cockpit's reverse (short) book routes like a manual order
+    const bot = man ? null : (ST.bots || []).find((b) => b.account === acct); if (!man && !bot) return;
     if (bot && String(bot.id) !== U.st.promote) return;
     const p = acct.pos && acct.pos[t.sym], n = (v) => (v == null || v === 0 ? null : Number.isFinite(v) ? +v.toPrecision(10) : v);
     const usd = Number.isFinite(+t.usd) ? +(+t.usd).toFixed(2) : +t.usd;
     const body = { action: t.side, symbol: baseOf(t.sym), usd, price: n(t.price), qty: n(t.qty), sl: p ? n(p.sl) : null, tp: p ? n(p.tp) : null, source: bot ? 'bot:' + bot.id : 'manual' };
+    if (acct.short) body.side = 'short'; // v16.3: a short-side account opens with "buy"; its stop sits above entry
     const targets = U.st.slots.filter((s) => s.enabled && (bot ? s.id === 6 : s.id !== 6)); if (!targets.length) return;
     const what = `${String(body.action).toUpperCase()} ${body.symbol} $${body.usd}`;
     if (!live()) { U.stats.sim++; note('sim', `PAPER · ${what} simulated on ${targets.length} slot${targets.length > 1 ? 's' : ''}, nothing sent`); return; }
     if (!U.briefed) { U.stats.blocked++; note('block', `HELD · ${what}: acknowledge the live briefing first`); led('breaker', { status: 'held', detail: what + ': briefing not acknowledged' }); return; }
-    const v = V161.validate(body, U.fs); if (!v.ok) { block('schema', what, v.why); return; }
+    const v = V161.validate(body, U.fs, { sl: U.requireSL !== false }); if (!v.ok) { block('schema', what, v.why); return; }
+    /* v16.3 pre-route guards (mandatory stop-loss direction, depth, stale quote, rate, exposure, correlation, thin hours,
+       drawdown throttle). A guard may block ({ ok: false }) or scale body.usd / body.qty down; it never touches a close. */
+    for (const f of U.pre) { let r; try { r = f(body, t, acct); } catch (e) { r = { ok: false, status: 'guard', why: 'guard error: ' + String(e.message || e).slice(0, 80) }; } if (r && r.ok === false) { block(r.status || 'guard', what, r.why); return; } }
     if (body.action === 'buy') {
       const cd = cooldownNow(); if (cd.locked) { block('cooldown', what, `${cd.streak || U.fs.lossN} consecutive losses, cooldown until ${new Date(cd.until).toLocaleTimeString()}`); return; }
       const sp = spreadOf(t.sym), sg = V161.spreadGuard(sp.bid, sp.ask, U.fs.maxSpreadPct);
       if (!sg.ok) { block('spread', what, `spread ${sg.pct.toFixed(3)}% is above the ${U.fs.maxSpreadPct}% ceiling`); return; }
     }
     const open = Object.keys(acct.pos || {}).filter((k) => k !== t.sym && acct.pos[k].qty > 0).length;
-    const riskUsd = body.sl && t.price ? (t.usd * Math.abs(t.price - body.sl)) / t.price : +t.usd;
+    const riskUsd = body.sl && t.price ? (body.usd * Math.abs(t.price - body.sl)) / t.price : +body.usd;
     const g = V160.guard({ side: t.side, riskUsd }, U.st.caps, { dayLoss: dayLoss(), open, equity: equity(acct) });
     if (!g.ok) { block('guard', what, g.why); return; }
-    for (const s of targets.filter((x) => x.mode === 'live')) send(s, 'signal', body).then((r) => { U.stats.sent++; note('sent', `LIVE · ${what} → Slot ${s.id} (${r.ms} ms)`); led('signal', { slot: s.id, status: r.acked ? 'sent · acked' : 'sent', key: r.key, sig: r.sig, detail: what }); }, (e) => { note('err', `FAILED · ${what} → Slot ${s.id}: ${e.message}`); led('signal', { slot: s.id, status: 'failed', key: e.key, sig: e.sig, detail: `${what}: ${e.message}` }); });
+    for (const s of targets.filter((x) => x.mode === 'live')) send(s, 'signal', body).then((r) => { U.stats.sent++; note('sent', `LIVE · ${what} → Slot ${s.id} (${r.ms} ms)`); led('signal', { slot: s.id, status: r.acked ? 'sent · acked' : 'sent', key: r.key, sig: r.sig, detail: what }); for (const f of U.post) { try { f(s, body, r, t); } catch (x) { /* ack + fill listener */ } } }, (e) => { note('err', `FAILED · ${what} → Slot ${s.id}: ${e.message}`); led('signal', { slot: s.id, status: 'failed', key: e.key, sig: e.sig, detail: `${what}: ${e.message}` }); });
   };
   const wireTrades = () => {
     if (typeof NT === 'undefined' || (NT.onTrade && NT.onTrade._v160)) return;
