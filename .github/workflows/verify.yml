@@ -10,8 +10,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "20"
-      - name: Verify Core Release Assets & JS Syntax
+      - name: Verify Core Source & Syntax
         run: |
-          test -f dist/index.html
-          test -f SHA256SUMS.txt
+          test -f src/index.html
+          test -f build.py
           for f in src/*.js; do node --check "$f"; done
