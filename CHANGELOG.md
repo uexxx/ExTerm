@@ -4,6 +4,11 @@ ExTerm holds no funds and no keys in every version. Up to v15.7 it was paper onl
 
 ## v16.6 — 240 Hz Typed-Array Live Transactions Tape for Stocks, Crypto & On-Chain / DEX — 18 Nov 2026
 
+### Default-open tape + bottom telemetry dock (v16.6 refresh)
+- The Live Transactions drawer is **open by default** on Markets for Stocks, Crypto and On-Chain / DEX: a 230 px in-flow panel (the chart shrinks above it instead of being covered), tabs and filter chips on one row, collapsible with a gold **▾ Hide Tape / ▴ Live Tape** toggle (remembered only when you hide it).
+- The bottom status bar became an Obsidian (`#07080B`) & Bullion Gold (`#F5C84B`) **telemetry dock** on every tab: position / Cash readout on the left with quick-dock chips (Live Tape · Whales ($25K+) · Tracker · Positions · 3D Depth · AI Bridge), live BTC · ETH · SOL · SPY pills and the active symbol's tape flow delta on the right. The v16.3 Micro-Ticket stays docked under the chart.
+- README rebuilt as an Obsidian & Gold showcase with a 3D-beveled hero banner, gold divider and six section-header SVGs in `assets/`, and fresh screenshots in `screenshots/`.
+
 ### Tape engine (`src/v166core.js`)
 - One 2,000-print ring per symbol: `Float64Array` (ts, price, size, total USD) + `Uint32Array` (side bitmask, venue / maker id). O(1) ingest, no per-print allocation; three isolated markets (stocks · crypto · onchain) with their own ring maps and venue tables, up to 32 rings each (least-recent evicted, never the symbol on screen).
 - Classification bits at ingest: Buy · Sell · Whale ($25K+) · Block ($100K+) · Sweep (≥ 3 same-side prints ≤ 1 s apart walking the price) · Unusual (> 3× the buffer average) · 1-minute aggregate; Tracked follows a live venue / maker set. Allocation-free bitmask filter (newest first, side chips OR, others AND, min USD) measured well under 1 ms over 2,000 prints.

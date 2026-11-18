@@ -36,8 +36,7 @@ const PORT = +process.env.EXTERM_E2E_PORT || 8826, BASE = 'http://127.0.0.1:' + 
     // seeded prints (deterministic) on top of whatever the offline demo feeds stream in
     const seed = (sym) => ev((sym) => { const now = Date.now(), p = px(sym) || 10, out = []; const add = (dt, k, usd, side, who) => out.push(V166UI.ingest(sym, p * k, usd / (p * k), side, now - dt, { who })); for (let i = 0; i < 40; i++) add(60000 - i * 900, 1 + (i % 5) * 0.0002, 200 + (i % 7) * 90, i % 3 ? 'buy' : 'sell', 'Venue' + (i % 4)); add(9000, 1.001, 30000, 'buy', 'WhaleA'); add(8000, 0.999, 140000, 'sell', 'BlockB'); add(3000, 1.0, 500, 'buy', 'Sweeper'); add(2800, 1.0001, 500, 'buy', 'Sweeper'); add(2600, 1.0002, 500, 'buy', 'Sweeper'); return out.every((s) => s >= 0); }, sym);
     const markets = [['crypto', 'BTC-USD'], ['stocks', 'AAPL'], ['onchain', null]];
-    await ev(() => $('#v166Btn').click());
-    ok('toolbar Tape button opens the Live Transactions drawer on Markets', await waitFor(() => !$('#v166Tape').hidden && $('#v166Btn').classList.contains('on'), null, 5000));
+    ok('Live Transactions drawer is open by default on Markets (~230px) above the bottom telemetry dock', await waitFor(() => !$('#v166Tape').hidden && $('#v166Btn').classList.contains('on') && Math.abs($('#v166Tape').getBoundingClientRect().height - 230) < 4 && !!$('#v166Dock #posStrip') && $('#v166Dock').getBoundingClientRect().bottom <= innerHeight, null, 5000));
     const syms = {};
     for (const [mk, sym] of markets) {
       await ev(([mk, sym]) => { showTab('markets'); if (ST.mode !== mk) setMode(mk, sym || undefined); else if (sym && ST.sel !== sym) selectSym(sym); }, [mk, sym]);

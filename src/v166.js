@@ -9,7 +9,7 @@
    Strict CSP: listeners attached here, rows written with textContent, tables through esc(). */
 const V166UI = (() => {
   const KEY = 'exterm.v166.cfg', RH = 18, POOL = 22, B = V166.BIT;
-  const U = { E: V166.engine(), open: false, tab: 'trades', chips: [], minUsd: 0, manual: false, hover: false, idx: new Uint32Array(V166.CAP), cnt: 0, sym: '', dirty: true, pins: {}, drawnPins: 0,
+  const U = { E: V166.engine(), open: true, tab:'trades', chips: [], minUsd: 0, manual: false, hover: false, idx: new Uint32Array(V166.CAP), cnt: 0, sym: '', dirty: true, pins: {}, drawnPins: 0,
     lastCopy: '', perf: { last: 0, max: 0, avg: 0, frames: 0 }, stock: { sym: '', seen: new Map(), session: '', last: 0, busy: false, prevC: 0 }, raf: 0, stripAt: 0, altAt: 0, rows: [] };
   const $1 = (s, r) => (r || document).querySelector(s);
   const paused = () => U.manual || U.hover;
@@ -17,10 +17,10 @@ const V166UI = (() => {
     let o = null; try { o = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) { o = null; }
     if (!o || typeof o !== 'object') return;
     if (V166.TABS.some((t) => t[0] === o.tab)) U.tab = o.tab; if (Array.isArray(o.chips)) U.chips = o.chips.filter((c) => V166.CHIPS.some((x) => x[0] === c && c !== 'all'));
-    if (Number.isFinite(o.minUsd) && o.minUsd >= 0) U.minUsd = o.minUsd; U.open = o.open === true;
+    if (Number.isFinite(o.minUsd) && o.minUsd >= 0) U.minUsd = o.minUsd; U.open = o.tape !== 'hidden'; // default-open: only an explicit [▾ Hide Tape] keeps it collapsed
     if (o.tracked && typeof o.tracked === 'object') for (const mk of V166.MARKETS) for (const n of Array.isArray(o.tracked[mk]) ? o.tracked[mk].slice(0, 200) : []) if (typeof n === 'string' && n) U.E.m[mk].trackedNames.add(n.slice(0, 64));
   };
-  const save = () => { try { const tracked = {}; for (const mk of V166.MARKETS) tracked[mk] = [...U.E.m[mk].trackedNames]; localStorage.setItem(KEY, JSON.stringify({ tab: U.tab, chips: U.chips, minUsd: U.minUsd, open: U.open, tracked })); } catch (e) { /* session only */ } };
+  const save = () => { try { const tracked = {}; for (const mk of V166.MARKETS) tracked[mk] = [...U.E.m[mk].trackedNames]; localStorage.setItem(KEY, JSON.stringify({ tab: U.tab, chips: U.chips, minUsd: U.minUsd, tape: U.open ? 'open' : 'hidden', tracked })); } catch (e) { /* session only */ } };
   const fp = (v) => (v > 0 ? (v < 0.01 ? NT.fmtTiny(v) : NT.fmtPrice(v)) : '–');
   const fq = (v) => (v >= 1e6 ? NT.fmtCompact(v) : v >= 100 ? Math.round(v).toLocaleString('en-US') : +v.toPrecision(4) + '');
   const short = (s) => (/^(0x)?[0-9a-zA-Z]{30,}$/.test(s) ? s.slice(0, 6) + '…' + s.slice(-4) : s);
@@ -88,18 +88,21 @@ const V166UI = (() => {
       <button type="button" class="btn xs" data-v166a="pause" id="v166Pause">Pause</button>
       <button type="button" class="btn xs ghost" data-v166a="boost" id="v166BoostBtn" title="Optional: your own Finnhub token or Alpaca key for every stock trade">Stock boost</button>
       <button type="button" class="btn xs pri" data-v166a="copy">Copy Tape for AI</button>
-      <button type="button" class="btn xs ghost" data-v166a="close" aria-label="Close tape drawer">✕</button></div>
+      <button type="button" class="btn xs v166-tog" data-v166a="close" aria-label="Hide the Live Transactions tape">▾ Hide Tape</button></div>
     <div class="v166-row v166-boost" id="v166Boost" hidden><b>Stock boost</b><input class="in" type="password" autocomplete="off" id="v166Fh" placeholder="Finnhub token"><span class="note">or</span><input class="in" type="password" autocomplete="off" id="v166Ak" placeholder="Alpaca key ID"><input class="in" type="password" autocomplete="off" id="v166As" placeholder="Alpaca secret"><button type="button" class="btn xs" data-v166a="bsave">Save for this session</button><button type="button" class="btn xs ghost" data-v166a="bclear">Clear</button><span class="note">Keys stay in this tab (sessionStorage), never on disk.</span></div>
-    <div class="v166-tabs" role="tablist">${V166.TABS.map((t) => `<button type="button" role="tab" data-v166t="${t[0]}">${esc(t[1])}</button>`).join('')}</div>
-    <div class="v166-chips">${V166.CHIPS.map((c) => `<button type="button" class="v166-chip" data-v166f="${c[0]}">${esc(c[1])}</button>`).join('')}<label class="v166-min">Min $ <input type="number" min="0" step="1000" id="v166Min" class="in" inputmode="numeric"></label><span class="note" id="v166Cnt"></span></div>
+    <div class="v166-nav"><div class="v166-tabs" role="tablist">${V166.TABS.map((t) => `<button type="button" role="tab" data-v166t="${t[0]}">${esc(t[1])}</button>`).join('')}</div>
+    <div class="v166-chips">${V166.CHIPS.map((c) => `<button type="button" class="v166-chip" data-v166f="${c[0]}">${esc(c[1])}</button>`).join('')}<label class="v166-min">Min $ <input type="number" min="0" step="1000" id="v166Min" class="in" inputmode="numeric"></label><span class="note" id="v166Cnt"></span></div></div>
     <div class="v166-list" id="v166List"><div class="v166-head"><span>Age</span><span>Type</span><span>Price</span><span id="v166QtyH">Amount</span><span>Total USD</span><span>Venue / Maker</span><span>Signal Tags</span></div>
       <div class="v166-body" id="v166Body" tabindex="0" aria-label="Live prints (hover to pause)"><div class="v166-sp" id="v166Sp"></div></div></div>
     <div class="v166-alt" id="v166Alt" hidden></div>`;
   const mount = () => {
     const tb = $1('#tab-markets .toolbar');
-    if (tb && !$1('#v166Btn')) { const b = document.createElement('button'); b.type = 'button'; b.id = 'v166Btn'; b.className = 'btn sm v166-btn'; b.title = 'Live Transactions tape (Stocks · Crypto · On-Chain / DEX)'; b.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true" class="v165-ic"><path d="M4 6h16M4 12h10M4 18h13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg> Tape'; b.addEventListener('click', () => toggle()); const rp = $1('#replayBtn', tb); if (rp) rp.after(b); else tb.appendChild(b); }
+    if (tb && !$1('#v166Btn')) { const b = document.createElement('button'); b.type = 'button'; b.id = 'v166Btn'; b.className = 'btn sm v166-btn v166-tog'; b.title = 'Live Transactions tape (Stocks · Crypto · On-Chain / DEX)'; b.textContent = '▾ Hide Tape'; b.addEventListener('click', () => toggle()); const rp = $1('#replayBtn', tb); if (rp) rp.after(b); else tb.appendChild(b); }
     if ($1('#v166Tape')) return;
-    const d = document.createElement('section'); d.id = 'v166Tape'; d.className = 'v166-drawer'; d.hidden = true; d.setAttribute('aria-label', 'Live Transactions'); d.innerHTML = html(); document.body.appendChild(d);
+    // in-flow below <main> (body is a flex column): the chart shrinks to make room instead of being covered
+    const d = document.createElement('section'); d.id = 'v166Tape'; d.className = 'v166-drawer'; d.hidden = true; d.setAttribute('aria-label', 'Live Transactions'); d.innerHTML = html();
+    const mn = $1('body > main'); if (mn) mn.after(d); else document.body.appendChild(d);
+    mountDock(d);
     const body = $1('#v166Body', d);
     for (let i = 0; i < POOL; i++) { const r = document.createElement('div'); r.className = 'v166-r'; r.hidden = true; for (let j = 0; j < 7; j++) r.appendChild(document.createElement('span')); r._seq = -1; body.appendChild(r); U.rows.push(r); }
     body.addEventListener('mouseenter', () => { U.hover = true; pausePaint(); });
@@ -119,8 +122,42 @@ const V166UI = (() => {
   const toggle = (on) => { U.open = on == null ? !U.open : !!on; save(); show(); };
   const show = () => {
     const d = $1('#v166Tape'); if (!d) return; const vis = U.open && typeof curTab !== 'undefined' && curTab === 'markets'; if (d.hidden === vis) d.hidden = !vis;
-    const b = $1('#v166Btn'); if (b) { b.classList.toggle('on', U.open); b.setAttribute('aria-pressed', String(U.open)); }
+    const lbl = U.open ? '▾ Hide Tape' : '▴ Live Tape';
+    for (const b of [$1('#v166Btn'), $1('#v166DTape')]) if (b) { b.classList.toggle('on', U.open); b.setAttribute('aria-pressed', String(U.open)); if (b.textContent !== lbl) b.textContent = lbl; }
+    const wb = $1('#v166DWhale'); if (wb) wb.classList.toggle('on', U.open && U.tab === 'trades' && U.chips.includes('whale'));
     if (vis && !U.raf) { U.dirty = true; U.raf = requestAnimationFrame(frame); }
+  };
+
+  /* ══ bottom telemetry dock: position + cash, quick-dock chips, live market pills (all tabs) ══ */
+  const TELE = [['BTC-USD', 'BTC'], ['ETH-USD', 'ETH'], ['SOL-USD', 'SOL'], ['SPY', 'SPY']];
+  const mountDock = (after) => {
+    if ($1('#v166Dock')) return;
+    const k = document.createElement('footer'); k.id = 'v166Dock'; k.className = 'v166-dock'; k.setAttribute('aria-label', 'Position and market telemetry');
+    k.innerHTML = `<div class="v166-dl"><div class="v166-dpos" id="v166DPos"></div><span class="v166-dsep" aria-hidden="true"></span>
+      <button type="button" class="v166-dc v166-tog" data-v166d="tape" id="v166DTape">▾ Hide Tape</button><button type="button" class="v166-dc" data-v166d="whale" id="v166DWhale">Whales ($25K+)</button><button type="button" class="v166-dc" data-v166d="tracker">Tracker</button><button type="button" class="v166-dc" data-v166d="positions">Positions</button><button type="button" class="v166-dc" data-v166d="depth">3D Depth</button><button type="button" class="v166-dc" data-v166d="ai">AI Bridge</button></div>
+      <div class="v166-dr" role="status" aria-live="off">${TELE.map((t) => `<span class="v166-tp" data-v166s="${t[0]}"><i>${t[1]}</i><b>–</b><em></em></span>`).join('')}<span class="v166-tp v166-flow" id="v166DFlow"><i>Flow</i><b>–</b><em></em></span></div>`;
+    after.after(k);
+    const ps = $1('#posStrip'); if (ps) $1('#v166DPos', k).appendChild(ps); // renderPosStrip keeps writing into it
+    k.addEventListener('click', (e) => { const b = e.target.closest('[data-v166d]'); if (b) dock(b.dataset.v166d); });
+  };
+  const dock = (k) => {
+    if (k === 'ai') { if (typeof showTab === 'function') showTab('bridge'); return; }
+    const was = typeof curTab !== 'undefined' && curTab === 'markets'; if (!was && typeof showTab === 'function') showTab('markets');
+    if (k === 'tape') { toggle(was ? null : true); return; }
+    if (k === 'depth') { const b = $1('#bookView button[data-v="3d"]'); if (b) b.click(); return; }
+    U.open = true;
+    if (k === 'whale') { U.tab = 'trades'; U.chips = U.chips.includes('whale') && was ? U.chips.filter((c) => c !== 'whale') : [...new Set(U.chips.concat('whale'))]; save(); paintChrome(); refilter(true); }
+    else setTab(k === 'tracker' ? 'tracking' : 'positions');
+    show();
+  };
+  const tele = () => {
+    const k = $1('#v166Dock'); if (!k) return; const set = (e, t) => { if (e && e.textContent !== t) e.textContent = t; };
+    for (const el of k.querySelectorAll('[data-v166s]')) {
+      const s = el.dataset.v166s; let p = 0, c = null; try { p = px(s) || 0; c = chg24(s); } catch (e) { /* feed not ready */ }
+      set(el.children[1], p ? NT.fmtPrice(p) : '–'); set(el.children[2], c == null || !Number.isFinite(c) ? '' : NT.fmtPct(c, 1)); el.children[2].className = c > 0 ? 'up' : c < 0 ? 'dn' : '';
+    }
+    const f = $1('#v166DFlow'), sym = U.sym || (typeof ST !== 'undefined' ? ST.sel : ''), r = sym ? U.E.ring(sym) : null, P = r ? V166.pressure(r) : null, net = P ? P.buy - P.sell : 0;
+    if (f) { set(f.children[0], (sym ? baseOf(sym) : '') + ' Δ'); set(f.children[1], P ? (net > 0 ? '+' : '') + V166.money(net) : '–'); set(f.children[2], P ? P.buyPct.toFixed(0) + '% buy' : ''); f.children[1].className = net > 0 ? 'up' : net < 0 ? 'dn' : ''; }
   };
   const setTab = (k) => { if (!V166.TABS.some((t) => t[0] === k)) return; U.tab = k; save(); paintChrome(); U.altAt = 0; U.dirty = true; };
   const setChip = (k) => { if (k === 'all') U.chips = []; else U.chips = U.chips.includes(k) ? U.chips.filter((c) => c !== k) : U.chips.concat(k); save(); paintChrome(); refilter(true); };
@@ -225,7 +262,7 @@ const V166UI = (() => {
   let n = 0;
   const tick = () => {
     try {
-      mount(); show(); n++;
+      mount(); show(); tele(); n++;
       if (typeof chart !== 'undefined' && chart && !chart.overlays.includes(overlay)) chart.overlays.push(overlay);
       if (n % 30 === 1 || (U.stock.sym !== ST.sel && V166.marketOf(ST.sel) === 'stocks')) stockPoll(); // 15 s
       boostSync(); // cheap no-op unless a stock boost key is set, the launcher's stock poll cadence
@@ -235,7 +272,7 @@ const V166UI = (() => {
     load(); if (typeof Feed !== 'undefined' && !Feed._v166) { Feed._v166 = true; Feed.tradeL.push((sym, p, q, side, ts, x) => { try { ingest(sym, p, q, side, ts, x); } catch (e) { /* never break the feed */ } }); Feed.tickL.push((sym, p) => { try { onStockTick(sym, p); } catch (e) { /* demo only */ } }); }
     tick(); setInterval(tick, 500);
   };
-  Object.assign(U, { boost, boostSync, ingest, refilter, paint, strip, frame, pin, overlay, copyTape, setTab, setChip, track, toggle, stockPoll, altHTML, paused });
+  Object.assign(U, { boost, boostSync, ingest, refilter, paint, strip, frame, pin, overlay, copyTape, setTab, setChip, track, toggle, dock, tele, stockPoll, altHTML, paused });
   return U;
 })();
 if (typeof window !== 'undefined' && typeof document !== 'undefined' && typeof boot === 'function') { const _b166 = boot; boot = async function () { await _b166.apply(this, arguments); try { V166UI.start(); } catch (e) { console.warn('v166 init', e); } }; }

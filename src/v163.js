@@ -449,7 +449,8 @@ const V163C = (() => {
         <button type="button" class="btn sm" data-v163m="drawer">Positions</button><button type="button" class="btn sm" data-v163m="exit" aria-label="Exit Micro-Ticket">✕</button>`;
       m.addEventListener('click', (e) => { const x = e.target.closest('[data-v163m]'); if (!x) return; const a = x.dataset.v163m; if (a === 'exit') micro(false); else if (a === 'drawer') drawer(); else microGo(a); });
     }
-    if (m.parentNode !== strip.parentNode || m.previousElementSibling !== strip) strip.after(m);
+    const ch = $1('#chartHost'), at = strip.closest('#v166Dock') && ch ? ch.closest('.v155-chartrow') || ch : strip; // v16.6 moved #posStrip into the bottom dock: keep the micro-ticket under the chart
+    if (m.parentNode !== at.parentNode || m.previousElementSibling !== at) at.after(m);
     const s = $1('#v163mSym', m), t = ST.sel ? baseOf(ST.sel) + ' ' + fp(px0(ST.sel)) : ''; if (s.textContent !== t) s.textContent = t;
   };
   const setVal = (sel, v) => { const el = $1(sel); if (!el) return false; el.value = v; el.dispatchEvent(new Event('input', { bubbles: true })); el.dispatchEvent(new Event('change', { bubbles: true })); return true; };

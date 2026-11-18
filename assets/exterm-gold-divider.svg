@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="28" viewBox="0 0 1280 28" role="img" aria-label="divider">
+<defs><linearGradient id="gold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFF1BF"/><stop offset=".38" stop-color="#F5C84B"/><stop offset=".72" stop-color="#D9A62E"/><stop offset="1" stop-color="#9C7414"/></linearGradient>
+<linearGradient id="goldH" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#F5C84B" stop-opacity="0"/><stop offset=".5" stop-color="#F5C84B"/><stop offset="1" stop-color="#F5C84B" stop-opacity="0"/></linearGradient>
+<linearGradient id="obs" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#101219"/><stop offset="1" stop-color="#07080B"/></linearGradient></defs>
+<rect x="40" y="13.25" width="1200" height="1.5" fill="url(#goldH)"/>
+<rect x="160" y="10" width="960" height="8" fill="url(#goldH)" opacity=".08"/>
+<g transform="translate(640 14) rotate(45)"><rect x="-8" y="-8" width="16" height="16" fill="#07080B" stroke="url(#gold)" stroke-width="1.6"/><rect x="-3.5" y="-3.5" width="7" height="7" fill="url(#gold)"/></g>
+<circle cx="600" cy="14" r="2" fill="#F5C84B"/><circle cx="680" cy="14" r="2" fill="#F5C84B"/>
+</svg>
