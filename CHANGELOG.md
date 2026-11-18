@@ -1,7 +1,34 @@
 # Changelog
 
-ExTerm holds no funds and no keys in every version. Up to v15.7 it was paper only; from v16.0 it can send HMAC-signed signals to a bot you run on your own machine, only after four explicit gates, and it starts in PAPER. v16.1 adds eight fail-safe engines on that path; v16.3 closes the loop with ACK + fill sync and a live cockpit.
+ExTerm holds no funds and no keys in every version. Up to v15.7 it was paper only; from v16.0 it can send HMAC-signed signals to a bot you run on your own machine, only after four explicit gates, and it starts in PAPER. v16.1 adds eight fail-safe engines on that path; v16.3 closes the loop with ACK + fill sync and a live cockpit; v16.4 adds DEX discovery, a local Copilot and a realistic backtester.
 
+## v16.4 — Chart Precision, DEX Discovery, Structural Strategies, Copilot & Realistic Backtester — 17 Nov 2026
+
+### Chart precision (`src/data.js`, `src/v164core.js`, `src/v164.js`, `serve.py`)
+- **Zero-volume bar re-anchoring** in the core `CandleStore` rollover (`applyTick` and worker `applyAgg`): a forming 1s–15s bar that saw no trade and no price change moves to the new bucket in place, so no flat `Vol 0.00` bar is left behind on crypto, stocks, on-chain, options or futures. Quote-driven bars that moved keep their slot; quiet buckets are never back-filled.
+- **Full-depth on-chain candles:** GeckoTerminal OHLCV pages up to `limit=1000` (also in the launcher's background bots); 30m (15m × 2), 12h, 1w (1d × 7) and 1M (1d × 30) are aggregated from the nearest native unit instead of falling back to hourly bars; young tokens fit the viewport edge-to-edge and the previous zoom returns when you leave them.
+- **Multi-exchange stream failover:** when the primary crypto trade stream stalls for more than 1.5 s, the selected market switches to the next public stream (Kraken · Coinbase · Binance) and back once the primary resumes; a toolbar pill names the active stream.
+- **500 ms DEX swap tape:** `GET /api/swaps?sym=oc:<chain>:<pool>&since=` answers from RAM; one background fetch per pool refreshes from GeckoTerminal at most every 4 s; swaps are de-duplicated by transaction hash on the server and in the page, and are injected only while the regular on-chain trade feed is quiet.
+- **⚓ AVWAP** chart-toolbar tool (click a candle, session open, last swing low / high; off-screen label pinned with ▲ / ▼) and a **tape-delta + book micro-imbalance strip** (10 s / 60 s aggressive buy share and $ delta).
+
+### DEX tab Discovery (`src/v164.js`, `src/v164core.js`, `src/style.css`)
+- Scanner, Tiles (RVOL + spread badges, sparklines), Bubbles (Market Cap · Volume Surge · Whale Net Flow · Volatility Squeeze, gravity clusters by tier / sector / chain, hover tooltip) and Buy Pressure (5m / 15m / 1h taker share and net $ delta) on one dataset.
+- **Strict market-mode isolation:** every row carries its market and is filtered by the top market pill (On-chain → DEX tokens only, Stocks → US equities only, Crypto → crypto pairs only); the classic heat-map views follow the same pill.
+- GMGN-style **filter drawer** (chain and DEX pills, min / max liquidity, market cap / FDV, 5m / 1h / 24h volume, token age, holders, buy / sell ratio, strict safety toggles), presets (New Launches · High-Liquidity Breakouts · Smart-Money Accumulation), unified pills (All · Top Movers · Volume Surges · groups), Top Movers rail with Pin, `/` search, ↑ / ↓ / Enter / P keys, `Shift+Click` bracket draft, **Export Filtered Basket → Quant Lab** (≤ 10, mode-pure) and a **3D Orbit** jump.
+
+### Strategies, Copilot and research (`src/v164core.js`, `src/v164.js`, `src/v160.js`, `build.py`)
+- **6 structural strategy specs** (pack 5): Opening Range Breakout, Anchored VWAP Pullback, Volatility Squeeze Expansion, Liquidity Sweep and Failed Breakdown Reversal, Regime-Filtered Z-Score Mean Reversion, Funding-Rate and Perp Basis Divergence (a crowded-long proxy, described as such). Registered in the page and the backtest worker, 17-test graded, Pine-exportable, launcher-parity safe.
+- **Safe Pine Script v5 template library** (confirmed bars, `lookahead_off`, $ risk sizing, `strategy.exit` stop, `max_intraday_loss`, `127.0.0.1` webhook JSON) with a rule checker.
+- **Quant & Execution Copilot** (AI tab, no API key): Analyze Active Chart, plain English → safe strategy spec + Pine v5 + 17-test validation, Pre-Trade Setup & Stop-Loss Auditor (ATR, R:R, correlation), receipt-ledger leak detector, action pills.
+- **Strategy Studio Pro** (Lab): drag-and-drop node builder, 17-test validation, backtest, replay trades on the chart, Pine / Python / Node export (standalone bots print signals with a stop on every entry), depth-aware square-root slippage, ≤ 10-symbol portfolio with correlation matrix, Flash Crash / FOMC / Thin Weekend stress, walk-forward rolling out-of-sample decay; Shadow Drift Monitor, Regime-Aware Auto-Switcher (only while flat) and the **Multi-Slot Strategy Router** (`V160UI.slotFor`, default Slot 6).
+
+### Fixes & housekeeping
+- The launcher's update check and `upload-to-github.bat` point at `uexxx/ExTerm`.
+- Copilot reads the candle store when the Markets chart is hidden.
+- Legacy product-name mentions removed from docs and comments; the original browser storage keys stay so nobody loses saved data.
+
+### Tests
+- `test/v164.test.js` (73 checks: real `CandleStore` rollover, strategies through the real engine and 17-test validator, exported bots executed in Node and Python, `SwapTape` in Python) and `test/v164_e2e.js` (53 checks, English + Arabic, 1440×900). Older build-order checks accept the v16.4 modules.
 ## v16.3 — Closed-Loop Live Cockpit, Live-Execution Precision & Active-Tick Candles — 17 Nov 2026
 
 ### Live-execution precision (`src/v163core.js`, `src/v163.js`, `src/v157.js`, `src/v160.js`, `src/v161core.js`)
@@ -412,10 +439,10 @@ Existing controls are wrapped or moved rather than rebuilt, so their ids, handle
 
 ## v15 — ExTerm, phase 1 — 13 Nov 2026
 
-### NovaTerm is now ExTerm
+### New name: ExTerm
 - New name across the app, launcher, build (`dist/exterm.html`, `dist/exterm.min.html`) and launchers (`start-exterm.bat / .command / .sh`). The session header is now `X-ExTerm`.
-- On first start the launcher moves `~/.novaterm` to `~/.exterm` (never overwrites an existing `~/.exterm`), so alerts, background bots and saved state carry over. `EXTERM_DATA` replaces `NOVATERM_DATA` (the old variable still works).
-- Kept on purpose so nothing is lost: browser storage keys (`novaterm.v1`, …), the journal and backup databases in the browser, and the GitHub repository used by the update check.
+- On first start the launcher moves the pre-v15 data folder to `~/.exterm` (never overwrites an existing `~/.exterm`), so alerts, background bots and saved state carry over. `EXTERM_DATA` replaces `EXTERM_DATA` (the old variable still works).
+- Kept on purpose so nothing is lost: the original browser storage keys, the journal and backup databases in the browser, and the GitHub repository used by the update check.
 
 ### Live data
 - **Launcher price feed**: a multithreaded RAM cache polls DexScreener (30 pools per call) and Yahoo Finance (`spark?symbols=…`) every 2 seconds. The page reads it with one token-gated `GET /api/feed` instead of many direct calls. Symbols used by background bots and price alerts stay watched with the browser closed, and alerts read the cached price first. `--no-feed` turns it off.
@@ -433,7 +460,7 @@ Existing controls are wrapped or moved rather than rebuilt, so their ids, handle
 ## v14 — 9 Nov 2026
 
 ### Saving and reliability
-- **Saved to your computer** (v13.1): the launcher mirrors everything the page saves (settings, watchlists, bots, paper accounts, drawings, workspaces, the trade journal) to `~/.novaterm/state.json` and restores it on open, so a new launcher port, another browser or cleared site data no longer looks like a fresh install. The newest copy wins; the journal on disk is a long-term log (up to 20,000 trades, chart snapshots stay in the browser); one dated backup per day (14 kept); "Reset everything" resets the disk copy too. API keys are never written. Settings → Data status shows when it last saved and offers the **full journal log as CSV**. `--no-state` turns it off.
+- **Saved to your computer** (v13.1): the launcher mirrors everything the page saves (settings, watchlists, bots, paper accounts, drawings, workspaces, the trade journal) to `~/.exterm/state.json` and restores it on open, so a new launcher port, another browser or cleared site data no longer looks like a fresh install. The newest copy wins; the journal on disk is a long-term log (up to 20,000 trades, chart snapshots stay in the browser); one dated backup per day (14 kept); "Reset everything" resets the disk copy too. API keys are never written. Settings → Data status shows when it last saved and offers the **full journal log as CSV**. `--no-state` turns it off.
 - **Rate limits handled** (v13.1): GeckoTerminal requests are paced (~20/min, slower after a limit), cached and de-duplicated; a 429 starts a shared cool-down (all tabs) and returns "free limit reached, pausing Ns" instead of the raw API text. Lists keep their last real data instead of switching to simulated, new pairs fall back to DexScreener, the Launch Radar backs off and says when it resumes, and Data status shows the pause. DexScreener calls get the same pacing (50/min on list endpoints, 240/min elsewhere).
 - **Update check**: the launcher asks GitHub for the latest release every 6 hours and the page shows a banner with a link to what's new. Nothing is downloaded or installed. `--no-update-check` turns it off.
 

@@ -112,7 +112,7 @@ ok('settings: junk falls back to safe defaults', (() => { const d = V.load('{"de
 
 // static wiring / CSP / privacy
 const ui = src('v163.js'), core = src('v163core.js'), B = fs.readFileSync(path.join(root, 'build.py'), 'utf8'), v157 = src('v157.js'), v160 = src('v160.js'), css = src('style.css');
-ok('build: v163core.js after v162core.js, v163.js after v162.js, both before boot.js', /"v162core\.js", "v163core\.js", "v160\.js", "v161\.js", "v162\.js", "v163\.js", "boot\.js"/.test(B));
+ok('build: v163core.js after v162core.js, v163.js after v162.js, both before boot.js', /"v162core\.js", "v163core\.js", (?:"v164core\.js", )?"v160\.js", "v161\.js", "v162\.js", "v163\.js", (?:"v164\.js", )?"boot\.js"/.test(B));
 ok('v157: active-tick wrapper installed on CandleStore.applyTick + applyAgg and the ring seed drops flat bars', /activeWire\(\)/.test(v157) && /P\.applyTick = function/.test(v157) && /P\.applyAgg = function/.test(v157) && /V163\.activeOnly\(rows\)/.test(v157));
 ok('router: v16.0 runs the v16.3 pre-guards and passes the SL toggle to the schema', /for \(const f of U\.pre\)/.test(v160) && /V161\.validate\(body, U\.fs, \{ sl: U\.requireSL !== false \}\)/.test(v160) && /pre: \[\], requireSL: true/.test(v160));
 ok('data status: launcher on → "Live Feed Diagnostics", off → "How to get live data"', /s\.launcher \? 'Live Feed Diagnostics' : 'How to get live data'/.test(src('v13core.js')));

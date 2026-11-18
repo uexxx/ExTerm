@@ -55,7 +55,7 @@ ok('live-only: every listed selector has a body.live-bot-armed hide rule', V.PAP
 
 // 6. static
 const ui = src('v162.js'), core = src('v162core.js'), B = fs.readFileSync(path.join(root, 'build.py'), 'utf8');
-ok('build: v162core.js after v161core.js, v162.js after v161.js, both before boot.js', /"v161core\.js", "v162core\.js", (?:"v163core\.js", )?"v160\.js", "v161\.js", "v162\.js", (?:"v163\.js", )?"boot\.js"/.test(B));
+ok('build: v162core.js after v161core.js, v162.js after v161.js, both before boot.js', /"v161core\.js", "v162core\.js", (?:"v163core\.js", )?(?:"v164core\.js", )?"v160\.js", "v161\.js", "v162\.js", (?:"v163\.js", )?(?:"v164\.js", )?"boot\.js"/.test(B));
 ok('timeframes: 1s–1M on every market (TF list + NT.TF)', /'1w', '1M'\]/.test(src('app_a.js')) && /'1w': 604800, '1M': 2592000/.test(src('core.js')) && /const tfList = \(\) => TF_ALL/.test(src('app_a.js')));
 ok('timeframes: quick pills 1s 5s 10s 15s 1m 5m 15m 1h 4h 1d 1w', ['1s', '5s', '10s', '15s', '1m', '5m', '15m', '1h', '4h', '1d', '1w'].every((t) => css.includes(`:not([data-v="${t}"])`)));
 ok('data: stocks + on-chain sub-minute go through seedHist', /return TFX\.seedHist\(sym, tf, n, await TFX\.stockSub/.test(src('data.js')) && /return TFX\.seedHist\(sym, tf, n, tr\)/.test(src('data.js')));

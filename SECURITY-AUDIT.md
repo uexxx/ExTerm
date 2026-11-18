@@ -1,6 +1,6 @@
-# NovaTerm security audit (security-audit skill · quick profile)
+# ExTerm security audit (security-audit skill · quick profile)
 
-**Scope.** NovaTerm single-page app (`src/*.js`, `index.html`), local servers (`serve.py`, `serve.ps1`), and the third-party data paths: DexScreener, on-chain RPC, Yahoo/SEC, the public CORS relays, the new Social feeds, and the AI Copilot.
+**Scope.** ExTerm single-page app (`src/*.js`, `index.html`), local servers (`serve.py`, `serve.ps1`), and the third-party data paths: DexScreener, on-chain RPC, Yahoo/SEC, the public CORS relays, the new Social feeds, and the AI Copilot.
 **Method.** A source-first trace from each untrusted source to each HTML or navigation sink and to the proxy, with bounded local reproduction only: headless Chrome with all external traffic aborted, plus curl against 127.0.0.1. This was a single-pass *quick* run without independent verifier agents or a coverage ledger, so treat it as partial coverage, not proof that nothing else exists.
 `findings.json` passes `validate-findings.cjs`.
 
@@ -8,7 +8,7 @@
 |---|---|---|---|---|
 | 1 | Script execution from third-party market data rendered into link attributes (DexScreener url, tx signatures and hashes) | confirmed | **medium** | **fixed** (safeUrl, ingestion sanitizing, hex and encoding checks, CSP) |
 | 2 | News links accepted `javascript:` URLs | confirmed | low | **fixed** (safeUrl) |
-| 3 | Local proxy accepted any website's requests and any Host header (DNS rebinding) | confirmed | low | **fixed** (Host and Origin gates, required `X-NovaTerm` header, size caps, security headers) |
+| 3 | Local proxy accepted any website's requests and any Host header (DNS rebinding) | confirmed | low | **fixed** (Host and Origin gates, required `X-ExTerm` header, size caps, security headers) |
 | 4 | Proxy followed redirects off the allow-list | confirmed | low | **fixed and proven end to end** (`test/redirect_e2e.py`, 11/11) |
 | 5 | AI Copilot output injection or actions | rejected | — | output is escaped; model-suggested actions (v9) only become buttons the user must click, internal commands are blocked, and everything is paper-only |
 
@@ -50,7 +50,7 @@
 | 9 | API keys could be saved in plain text in localStorage | confirmed | low | **fixed**: keys never touch persistent storage unencrypted. Default is this-session-only; optional vault encrypts them with your passphrase (PBKDF2-SHA256, 600,000 rounds → AES-256-GCM). Old plain-text keys are migrated automatically. `test/vault.js` 15/15 |
 | 10 | Windows launcher: chunked request bodies bypassed the 1 MB / 64 KB caps | confirmed | low | **fixed**: bodies are counted while read. Static review only (no PowerShell in the audit sandbox) |
 
-**Release integrity.** Every build writes `dist/SHA256SUMS.txt` (SHA-256 of `novaterm.html`, `novaterm.min.html`, `serve.py`, `serve.ps1`); the README explains how to verify a download on Windows, macOS and Linux.
+**Release integrity.** Every build writes `dist/SHA256SUMS.txt` (SHA-256 of `exterm.html`, `exterm.min.html`, `serve.py`, `serve.ps1`); the README explains how to verify a download on Windows, macOS and Linux.
 **Reporting.** `SECURITY.md` now explains GitHub private vulnerability reporting and what to include.
 **Known limits.** Not independently reviewed by a second person; `serve.ps1` was reviewed line by line against the tested `serve.py` but not executed; live third-party APIs were exercised only through mocks. `findings.json` (10 findings) passes `validate-findings.cjs`.
 
@@ -66,7 +66,7 @@
 | 13 | Strategy files as a code-execution / prototype-pollution vector | rejected | — | strict schema, allow-listed fields/indicators/comparisons, interpreted not eval'd; CI validates every community file |
 | 14 | Safety scanner rendering creator-controlled token names and RugCheck text | rejected | — | stripped on ingest, escaped on render, links only from validated addresses |
 | 15 | Other websites calling `/api/alerts` or `/ollama` on the launcher | rejected | — | per-launch token header, Host/Origin checks, JSON-only, size caps, 3 fixed Ollama paths |
-| 16 | Telegram token / Discord webhook exposure | rejected | — | format-checked, stored owner-only (0600) in `~/.novaterm`, masked in every reply, redacted in errors |
+| 16 | Telegram token / Discord webhook exposure | rejected | — | format-checked, stored owner-only (0600) in `~/.exterm`, masked in every reply, redacted in errors |
 | 17 | Journal notes, CSV export, stored workspace/theme settings as injection vectors | rejected | — | escaped, snapshot data-URL pattern check, CSV formula neutralising, storage re-validated on load |
 
 **Bugs the new tests caught before release (not security issues).** "Remove saved details" for background alerts was rejected by the server's own validator; a duplicate element id (`wsName`) made the workspace "Save as" box type into the wallet-tracker form; custom strategies were missing from the strategy menu; 3D tilt was applied to the order ticket (made precise clicks harder) and is now limited to display-only cards. All fixed and covered by tests.
@@ -78,7 +78,7 @@
 - Still paper-only: no new code path signs or sends orders.
 
 **Tests.** `test/v12.test.js` 43/43 · `test/v12_server_test.py` 49/49 · `test/v12_e2e.js` 79/79 · `tools/validate-strategies.js` 6/6, plus every older suite re-run green (`test/run-all.sh`). `security-findings.json` (17 findings) passes `validate-findings.cjs`.
-**Known limits.** Same as before: one reviewer, quick profile; `serve.ps1` (Windows fallback when Python is missing) does not implement the v12 launcher features, so the page hides background alerts and the local-AI bridge there; live third-party APIs exercised only through mocks; Windows file-permission behaviour for `~/.novaterm` reasoned about, not executed.
+**Known limits.** Same as before: one reviewer, quick profile; `serve.ps1` (Windows fallback when Python is missing) does not implement the v12 launcher features, so the page hides background alerts and the local-AI bridge there; live third-party APIs exercised only through mocks; Windows file-permission behaviour for `~/.exterm` reasoned about, not executed.
 
 ## v13 re-audit (Launch Radar, token card, launch forensics, perps + paper futures, strategy pack 3, short / windowed / multi-timeframe backtests, background bots, wallet tracker and social upgrades, chart tools, safe storage, PWA)
 
@@ -129,7 +129,7 @@
 
 **Design notes.**
 - Still paper-only: no new code path signs or sends orders.
-- Saving to this computer writes `~/.novaterm/state.json` (or `NOVATERM_DATA`), owner-only, plus one dated copy per day in `state-backups/` (14 kept). Deleting journal entries removes them from `state.json` at once; older daily copies age out after 14 days. `--no-state` turns saving off.
+- Saving to this computer writes `~/.exterm/state.json` (or `EXTERM_DATA`), owner-only, plus one dated copy per day in `state-backups/` (14 kept). Deleting journal entries removes them from `state.json` at once; older daily copies age out after 14 days. `--no-state` turns saving off.
 - The update check sends one request to GitHub every 6 hours while the launcher runs (GitHub sees the IP address, as with any visit). `--no-update-check` turns it off. It only shows a banner; nothing is downloaded or installed.
 - Rate limits: GeckoTerminal (~30 calls/min) and DexScreener (~60/min on list endpoints) are paced in the page, identical requests share one call, a 429 starts a shared cool-down and the last real data stays on screen. Prices keep updating from DexScreener while GeckoTerminal is cooling down.
 - Risk of ruin and the data-quality grade are labelled estimates from the backtest's own trades and candles.
@@ -221,3 +221,13 @@ Scope: `src/v163core.js`, `src/v163.js`, the v16.3 changes in `src/v160.js`, `sr
 - **Secrets at rest.** The session snapshot uses PBKDF2-SHA256 (200,000 rounds) → AES-256-GCM with a random salt and IV; the passphrase is never written to storage and a wrong passphrase or tampered blob is rejected. Starter bridges read keys and the slot secret from environment variables and bind to `127.0.0.1`.
 - **Privacy.** The trade card shows R, %, holding time and the chart only: no position size, quantity or account value.
 - **CSP / XSS.** No inline handlers, no `eval`; every dynamic string in the HUD, drawer, cockpit, toasts and card is passed through `esc()` or set via `textContent`; downloads use `blob:` object URLs that are revoked. `python build.py --harden` passes with the `default-src 'none'` hash policy.
+## v16.4 addendum: swap tape, stream failover, discovery, Copilot, strategy export
+
+Scope: `src/v164core.js`, `src/v164.js`, the v16.4 changes in `serve.py`, `src/data.js`, `src/v160.js`, `src/v162.js`, `src/v163.js`, `build.py`.
+
+- **New launcher route `/api/swaps`.** Same gates as every `/api` route (localhost, per-launch `X-ExTerm` token, Origin + Host checks). Symbols must match `oc:<chain>:<pool>`; upstream is the already allow-listed `api.geckoterminal.com` through the redirect-checked opener, fetched by one background thread per pool at most every 4 s; at most 20 pools and 300 swaps each are held in RAM; responses are capped and JSON-only.
+- **Stream failover** opens public, unauthenticated trade channels only (`wss://` is already permitted by the CSP `connect-src`); messages are parsed field by field with numeric bounds, never evaluated; one backup socket at a time, closed as soon as the primary resumes.
+- **Discovery / Copilot / Studio** render every dynamic string through `esc()` or `textContent`; no inline handlers, no `eval`; downloads use revoked `blob:` URLs. Strict safety toggles never pass a token with unknown safety data.
+- **Generated code.** Exported Python / Node bots and Pine templates are static text built from validated spec operators only; unsupported operators are refused; every entry carries a stop; nothing is executed by ExTerm.
+- **Router.** `V160UI.slotFor` only chooses which already-armed slot receives a promoted bot's signal (default Slot 6); every guard, signature and gate still applies.
+- **Privacy.** No new storage of secrets; the update check now targets the `uexxx/ExTerm` repository. `python build.py --harden` passes with the `default-src 'none'` hash policy.

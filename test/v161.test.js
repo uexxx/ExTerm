@@ -81,7 +81,7 @@ const V0 = require('../src/v160core.js'), V = require('../src/v161core.js');
   const root = path.join(__dirname, '..'), src = (f) => fs.readFileSync(path.join(root, 'src', f), 'utf8');
   const ui = src('v161.js') + src('v160.js'), core = src('v161core.js');
   ok('static: no inline handlers, eval or document.write in v16.1 modules', !/\son[a-z]+\s*=\s*["'`]/i.test(ui.replace(/ws\.on(open|message|error)\s*=/g, '')) && !/\beval\(|new Function|document\.write/.test(ui + core));
-  ok('static: v16.1 modules are in the build order before boot.js', /"v160core\.js", "v161core\.js", ("v162core\.js", )?("v163core\.js", )?"v160\.js", "v161\.js", ("v162\.js", )?("v163\.js", )?"boot\.js"/.test(fs.readFileSync(path.join(root, 'build.py'), 'utf8')));
+  ok('static: v16.1 modules are in the build order before boot.js', /"v160core\.js", "v161core\.js", ("v162core\.js", )?("v163core\.js", )?("v164core\.js", )?"v160\.js", "v161\.js", ("v162\.js", )?("v163\.js", )?("v164\.js", )?"boot\.js"/.test(fs.readFileSync(path.join(root, 'build.py'), 'utf8')));
   ok('static: no personal paths or e-mail addresses', !/[A-Za-z]:\\Users\\|\/home\/[a-z]|[A-Za-z0-9._%+-]+@(?!exterm)[A-Za-z0-9.-]+\.[a-z]{2,}/.test(ui + core));
   ok('static: the measure overlay canvas is pointer-transparent', /canvas\.v161-ov\{[^}]*pointer-events:none/.test(src('style.css')));
   const sp = fs.readFileSync(path.join(root, 'serve.py'), 'utf8');

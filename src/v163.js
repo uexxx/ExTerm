@@ -640,7 +640,8 @@ const V163C = (() => {
     if (!V163.isOpening(body)) return { ok: true };
     const p = V163.pauseCheck(body, C.c.paused); if (!p.ok) { C.stats.held++; return p; }
     const b = B(), bot = acct !== ACC && !(b.manual || []).includes(acct);
-    for (const s of b.st.slots.filter((x) => x.enabled && x.mode === 'live' && (bot ? x.id === 6 : x.id !== 6))) if (!V163.allowOk(C.c.allow[s.id], body.symbol)) return { ok: false, status: 'allowlist', why: `Slot ${s.id} ticker allowlist (${C.c.allow[s.id]}) does not include ${body.symbol}` };
+    const bs = bot && typeof b.slotFor === 'function' ? b.slotFor((ST.bots || []).find((x) => x.account === acct)) : 6;
+    for (const s of b.st.slots.filter((x) => x.enabled && x.mode === 'live' && (bot ? x.id === bs : x.id !== 6))) if (!V163.allowOk(C.c.allow[s.id], body.symbol)) return { ok: false, status: 'allowlist', why: `Slot ${s.id} ticker allowlist (${C.c.allow[s.id]}) does not include ${body.symbol}` };
     return { ok: true };
   };
   const wire = () => {

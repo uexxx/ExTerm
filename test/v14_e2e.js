@@ -135,7 +135,7 @@ const MOCK = { update: null, ds429: false };
   MOCK.ds429 = false;
 
   /* ── update banner ── */
-  MOCK.update = { current: '14.0', latest: '14.1', newer: true, url: 'https://github.com/uexxx/novaterm-pioneering-trading-terminals/releases/tag/v14.1', notes: '<img src=x onerror="window.__pwn=9"> Faster radar' };
+  MOCK.update = { current: '14.0', latest: '14.1', newer: true, url: 'https://github.com/uexxx/ExTerm/releases/tag/v14.1', notes: '<img src=x onerror="window.__pwn=9"> Faster radar' };
   await ev(() => V14UI.checkUpdate());
   r = await ev(() => { const b = $('#v14Upd'); return b && { txt: b.textContent, href: b.querySelector('a').getAttribute('href'), rel: b.querySelector('a').rel, img: !!b.querySelector('img') }; });
   ok('a newer release shows an update banner with a link to GitHub', r && /14\.1 is out/.test(r.txt) && r.href.startsWith('https://github.com/') && /noopener/.test(r.rel), JSON.stringify(r));

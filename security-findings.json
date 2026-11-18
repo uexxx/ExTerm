@@ -126,7 +126,7 @@
    },
    "impact": {
     "score": "medium",
-    "reason": "Keys for paid/free API accounts exposed; no trading keys exist in NovaTerm."
+    "reason": "Keys for paid/free API accounts exposed; no trading keys exist in ExTerm."
    },
    "overall_severity": "medium"
   },
@@ -260,7 +260,7 @@
   "verdict": "confirmed",
   "fingerprint": "client-xss:remote-metadata-in-href-attributes",
   "title": "Script execution from third-party market data rendered into link attributes",
-  "description": "Token metadata (DexScreener url), Solana transaction signatures and BTC/ETH transaction hashes from remote APIs were interpolated unescaped into href attributes of HTML built with innerHTML. A value containing a quote breaks out of the attribute and injects an element with an event handler, which runs script in the NovaTerm origin, where API keys (OpenRouter/OpenAI, Hugging Face, Helius, Solana Tracker) are stored in localStorage. The public CORS relays used when the app runs without its local server are an additional party able to rewrite these responses.",
+  "description": "Token metadata (DexScreener url), Solana transaction signatures and BTC/ETH transaction hashes from remote APIs were interpolated unescaped into href attributes of HTML built with innerHTML. A value containing a quote breaks out of the attribute and injects an element with an event handler, which runs script in the ExTerm origin, where API keys (OpenRouter/OpenAI, Hugging Face, Helius, Solana Tracker) are stored in localStorage. The public CORS relays used when the app runs without its local server are an additional party able to rewrite these responses.",
   "root_cause": "tokLink(), the hot-token Chart button, solscan() and the whale-row link builder concatenated remote strings into HTML attributes without escaping or scheme validation.",
   "intended_behavior": "Remote data must only ever be rendered as inert text; links built from remote data must be HTML-escaped absolute http(s) URLs.",
   "trace": [
@@ -309,7 +309,7 @@
    }
   ],
   "execution": {
-   "attacker_perspective": "An operator of a data source or relay that NovaTerm reads from.",
+   "attacker_perspective": "An operator of a data source or relay that ExTerm reads from.",
    "payloads": [
     "\"><img src=x onerror=\"window.__pwn('token-url')\">"
    ],
@@ -439,14 +439,14 @@
     "file": "src/disksync.js",
     "line": 19,
     "scope": "DiskSync.restore",
-    "description": "An empty browser restores from ~/.novaterm/state.json."
+    "description": "An empty browser restores from ~/.exterm/state.json."
    }
   ],
   "evidence": [
    {
     "file": "test/v131_e2e.js",
     "line": 1,
-    "description": "After 'Reset everything' the disk copy has no novaterm.v1 and the next open starts with defaults."
+    "description": "After 'Reset everything' the disk copy has no the main storage key and the next open starts with defaults."
    }
   ],
   "conditions": [
@@ -493,7 +493,7 @@
  {
   "verdict": "rejected",
   "fingerprint": "disksync:secrets-on-disk",
-  "title": "API keys written to ~/.novaterm/state.json",
+  "title": "API keys written to ~/.exterm/state.json",
   "description": "Mirroring browser storage to disk could copy secrets.",
   "claimed_root_cause": "Whole-storage mirror.",
   "trace": [
@@ -502,7 +502,7 @@
     "file": "src/disksync.js",
     "line": 1,
     "scope": "DiskSync.push",
-    "description": "Copies novaterm.* and nt.* storage keys."
+    "description": "Copies the app's own and nt.* storage keys."
    },
    {
     "kind": "sink",
@@ -545,7 +545,7 @@
     "file": "serve.py",
     "line": 854,
     "scope": "StateStore._write",
-    "description": "~/.novaterm/state.json (0600)."
+    "description": "~/.exterm/state.json (0600)."
    }
   ],
   "evidence": [
@@ -753,7 +753,7 @@
     "file": "serve.py",
     "line": 1,
     "scope": "_api / _ollama",
-    "description": "Per-launch X-NovaTerm token (custom header forces a CORS preflight that is never approved), Host and Origin checks, rate limit, JSON-only bodies, size caps, three fixed Ollama paths."
+    "description": "Per-launch X-ExTerm token (custom header forces a CORS preflight that is never approved), Host and Origin checks, rate limit, JSON-only bodies, size caps, three fixed Ollama paths."
    }
   ],
   "evidence": [
@@ -763,7 +763,7 @@
     "description": "Missing token → 403, foreign Origin → 403, rebinding Host → 421, non-JSON → 400, path traversal / unlisted Ollama routes → 404, oversize → 413/400."
    }
   ],
-  "reason": "Per-launch X-NovaTerm token (custom header forces a CORS preflight that is never approved), Host and Origin checks, rate limit, JSON-only bodies, size caps, three fixed Ollama paths."
+  "reason": "Per-launch X-ExTerm token (custom header forces a CORS preflight that is never approved), Host and Origin checks, rate limit, JSON-only bodies, size caps, three fixed Ollama paths."
  },
  {
   "verdict": "rejected",
@@ -784,7 +784,7 @@
     "file": "serve.py",
     "line": 1,
     "scope": "Alerts.save / public / redact",
-    "description": "Strict format checks; stored in ~/.novaterm/alerts.json created 0600; /api responses show only '•••• last4'; error text is redacted; the server does not log requests."
+    "description": "Strict format checks; stored in ~/.exterm/alerts.json created 0600; /api responses show only '•••• last4'; error text is redacted; the server does not log requests."
    }
   ],
   "evidence": [
@@ -799,7 +799,7 @@
     "description": "Settings page only ever shows masked values."
    }
   ],
-  "reason": "Strict format checks; stored in ~/.novaterm/alerts.json created 0600; /api responses show only '•••• last4'; error text is redacted; the server does not log requests."
+  "reason": "Strict format checks; stored in ~/.exterm/alerts.json created 0600; /api responses show only '•••• last4'; error text is redacted; the server does not log requests."
  },
  {
   "verdict": "confirmed",
@@ -878,7 +878,7 @@
   "title": "Local proxy accepted requests from any website and any Host header",
   "description": "serve.py (and serve.ps1) proxied requests to allow-listed APIs without checking Origin, Host or a custom header. Any website open in the same browser could make the user's machine send requests through the proxy, and a DNS-rebinding page (foreign Host header) was served the app and proxy.",
   "root_cause": "The proxy handlers had no same-machine request checks.",
-  "intended_behavior": "Only pages served by NovaTerm itself on localhost may use the proxy.",
+  "intended_behavior": "Only pages served by ExTerm itself on localhost may use the proxy.",
   "trace": [
    {
     "kind": "entrypoint",
@@ -892,7 +892,7 @@
     "file": "serve.py",
     "line": 73,
     "scope": "H._proxy",
-    "description": "Outbound proxied request; now requires X-NovaTerm: 1 (forces a CORS preflight that is never approved)."
+    "description": "Outbound proxied request; now requires X-ExTerm: 1 (forces a CORS preflight that is never approved)."
    }
   ],
   "evidence": [
@@ -905,7 +905,7 @@
   "conditions": [
    {
     "kind": "user_interaction",
-    "description": "The user visits a hostile website while NovaTerm's server is running."
+    "description": "The user visits a hostile website while ExTerm's server is running."
    },
    {
     "kind": "network_routing",
@@ -918,13 +918,13 @@
     "fetch('http://localhost:8765/proxy?u=https://api.coingecko.com/api/v3/ping')"
    ],
    "instructions": [
-    "Start NovaTerm's server.",
+    "Start ExTerm's server.",
     "Send the request from a foreign origin or with a foreign Host header."
    ],
    "observed_result": "Before: forwarded (200) / served (200). After: 403 cross-origin blocked, 403 missing header, 421 misdirected request."
   },
   "remediation": {
-   "strategy": "Reject non-localhost Host headers, reject foreign Origin headers, require a custom X-NovaTerm header on /proxy, cap request and response sizes, and send nosniff / frame / referrer / COOP headers.",
+   "strategy": "Reject non-localhost Host headers, reject foreign Origin headers, require a custom X-ExTerm header on /proxy, cap request and response sizes, and send nosniff / frame / referrer / COOP headers.",
    "code_changes": [
     {
      "file_name": "serve.py",
@@ -981,7 +981,7 @@
   "conditions": [
    {
     "kind": "user_interaction",
-    "description": "Only code already running in the NovaTerm page (it holds the session token) can reach the endpoint."
+    "description": "Only code already running in the ExTerm page (it holds the session token) can reach the endpoint."
    }
   ],
   "execution": {
@@ -1163,7 +1163,7 @@
    "code_changes": [
     {
      "file_name": "serve.py",
-     "fixed_code": "sent = ALERTS.send(\"NovaTerm · \" + neutralize(text))  # and discord_escape() + flags 4 for Discord"
+     "fixed_code": "sent = ALERTS.send(\"ExTerm · \" + neutralize(text))  # and discord_escape() + flags 4 for Discord"
     }
    ]
   }
@@ -1376,7 +1376,7 @@
   "execution": {
    "attacker_perspective": "Local malware reading the browser profile.",
    "payloads": [
-    "read localStorage['novaterm.v1'].ai.key"
+    "read the main localStorage key.ai.key"
    ],
    "instructions": [
     "Run node test/vault.js"

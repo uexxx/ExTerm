@@ -523,7 +523,10 @@ class CandleStore {
   applyTick(price, size, ts) {
     const c = this.candles; if (!c.length || !(price > 0)) return;
     const b = Math.floor(ts / this.sec) * this.sec, last = c[c.length - 1];
-    if (b > last.t) { if (this.sec < 60) for (let t = last.t + this.sec, k = 0; t < b && k < 300; t += this.sec, k++) c.push({ t, o: last.c, h: last.c, l: last.c, c: last.c, v: 0 }); // quiet buckets: flat bars keep time continuous
+    if (b > last.t) {
+      /* v16.4 zero-volume re-anchoring: a forming sub-minute bar that saw no trade and no price change is moved to the new
+         bucket in place (no "Vol 0.00" flat bar is left behind, and quiet buckets are never back-filled with flat bars) */
+      if (this.sec < 60 && c.length > 1 && !(last.v > 0) && last.o === last.h && last.h === last.l && last.l === last.c) { last.t = b; last.c = price; if (price > last.h) last.h = price; if (price < last.l) last.l = price; last.v += size || 0; this.version++; return; }
       const o = this.sec < 60 ? last.c : price; c.push({ t: b, o, h: Math.max(o, price), l: Math.min(o, price), c: price, v: size || 0 }); if (c.length > CANDLE_CAP) c.splice(0, c.length - CANDLE_CAP); } // sub-minute: open at the prior close
     else if (b === last.t) { last.c = price; if (price > last.h) last.h = price; if (price < last.l) last.l = price; last.v += size || 0; }
     else return;
@@ -533,7 +536,8 @@ class CandleStore {
   applyAgg(a) {
     const c = this.candles; if (!c.length || !(a.c > 0)) return;
     const b = Math.floor(a.t / this.sec) * this.sec, last = c[c.length - 1];
-    if (b > last.t) { if (this.sec < 60) for (let t = last.t + this.sec, k = 0; t < b && k < 300; t += this.sec, k++) c.push({ t, o: last.c, h: last.c, l: last.c, c: last.c, v: 0 });
+    if (b > last.t) {
+      if (this.sec < 60 && c.length > 1 && !(last.v > 0) && last.o === last.h && last.h === last.l && last.l === last.c) { last.t = b; last.c = a.c; if (a.h > last.h) last.h = a.h; if (a.l < last.l) last.l = a.l; last.v += a.v || 0; this.version++; return; } // v16.4 re-anchor (see applyTick)
       const o = this.sec < 60 ? last.c : a.o; c.push({ t: b, o, h: Math.max(o, a.h), l: Math.min(o, a.l), c: a.c, v: a.v }); if (c.length > CANDLE_CAP) c.splice(0, c.length - CANDLE_CAP); } // sub-minute: open at the prior close
     else if (b === last.t) { last.c = a.c; if (a.h > last.h) last.h = a.h; if (a.l < last.l) last.l = a.l; last.v += a.v; }
     else return;

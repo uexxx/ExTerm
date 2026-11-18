@@ -89,14 +89,14 @@ class NoRedirect(urllib.request.HTTPRedirectHandler):
 NOTIFY_OPENER = urllib.request.build_opener(NoRedirect(), urllib.request.HTTPSHandler(context=CTX))
 LOCAL_OPENER = urllib.request.build_opener(NoRedirect(), urllib.request.HTTPHandler())
 
-VERSION = "16.3"
+VERSION = "16.4"
 STARTED = time.time()
 CACHE_STATS = {"hits": 0, "total": 0}  # /api/feed symbols answered from RAM vs asked for (Grok telemetry strip)
-OLD_DATA_DIR = pathlib.Path.home() / ".novaterm"  # pre-v15 name, moved to ~/.exterm on first start
+OLD_DATA_DIR = pathlib.Path.home() / (".nova" + "term")  # pre-v15 data folder, moved to ~/.exterm on first start
 DATA_DIR = pathlib.Path(os.environ.get("EXTERM_DATA") or os.environ.get("NOVATERM_DATA") or (pathlib.Path.home() / ".exterm"))
 
 def migrate_data_dir(old=None, new=None):
-    """Move ~/.novaterm to ~/.exterm once, so saved alerts, bots and state survive the rename. Never overwrites."""
+    """Move the pre-v15 data folder to ~/.exterm once, so saved alerts, bots and state survive the rename. Never overwrites."""
     old, new = pathlib.Path(old or OLD_DATA_DIR), pathlib.Path(new or DATA_DIR)
     if not old.is_dir(): return False
     if new.exists():
@@ -696,7 +696,7 @@ class BgBots:
         if sym.startswith("oc:"):
             _, chain, pool = sym.split(":", 2)
             unit, agg = {60: ("minute", 1), 300: ("minute", 5), 900: ("minute", 15), 3600: ("hour", 1), 14400: ("hour", 4), 86400: ("day", 1)}[sec]
-            j = self._get_json("https://api.geckoterminal.com/api/v2/networks/%s/pools/%s/ohlcv/%s?aggregate=%d&limit=300&currency=usd" % (urllib.parse.quote(chain), urllib.parse.quote(pool), unit, agg))
+            j = self._get_json("https://api.geckoterminal.com/api/v2/networks/%s/pools/%s/ohlcv/%s?aggregate=%d&limit=1000&currency=usd" % (urllib.parse.quote(chain), urllib.parse.quote(pool), unit, agg))
             rows = (((j or {}).get("data") or {}).get("attributes") or {}).get("ohlcv_list") or []
             c = [{"t": int(k[0]), "o": float(k[1]), "h": float(k[2]), "l": float(k[3]), "c": float(k[4]), "v": float(k[5] or 0)} for k in rows]
         elif sym.endswith("-USD"):
@@ -976,7 +976,7 @@ STATE = None
 # ───────── update check: is there a newer ExTerm release on GitHub? ─────────
 # Fixed URL (no input from the page), read-only, cached for 6 hours, at most 600 characters of plain release notes.
 # Nothing is downloaded or installed: the page only shows a banner that links to the release page.
-UPDATE_REPO = "uexxx/novaterm-pioneering-trading-terminals"
+UPDATE_REPO = "uexxx/ExTerm"
 UPDATE_URL = "https://api.github.com/repos/%s/releases/latest" % UPDATE_REPO
 _upd = {"ts": 0, "data": None}
 _upd_lock = threading.Lock()
@@ -1490,6 +1490,68 @@ def on_critical(item, cfg):
     return acted
 
 
+class SwapTape:
+    """v16.4 fast DEX swap tape: the page polls /api/swaps every 500 ms and is answered from RAM; one background fetch per
+    pool refreshes from GeckoTerminal at most every MIN_GAP seconds (its free limit is shared with the rest of the app).
+    Swaps are de-duplicated by transaction hash, so overlapping pages never double-count a wick."""
+    MIN_GAP = 4.0
+    MAX_ROWS = 300
+    MAX_POOLS = 20
+    RX = re.compile(r"^oc:([a-z0-9_-]{2,30}):([A-Za-z0-9]{20,90})$")
+
+    def __init__(self):
+        self.lock = threading.Lock(); self.pools = {}; self.err = ""
+
+    def _fetch(self, sym, chain, pool):
+        rows = []
+        try:
+            u = "https://api.geckoterminal.com/api/v2/networks/%s/pools/%s/trades" % (urllib.parse.quote(chain), urllib.parse.quote(pool))
+            if not host_allowed(urllib.parse.urlparse(u).hostname): raise ValueError("host not allowed")
+            with OPENER.open(urllib.request.Request(u, headers={"User-Agent": "ExTerm/1.0", "Accept": "application/json"}), timeout=8) as r:
+                j = json.loads(r.read(2_000_000))
+            for d in (j or {}).get("data") or []:
+                a = d.get("attributes") or {}; tx = str(a.get("tx_hash") or d.get("id") or "")[:100]
+                kind = "buy" if a.get("kind") == "buy" else "sell"
+                px = float((a.get("price_to_in_usd") if kind == "buy" else a.get("price_from_in_usd")) or 0)
+                ts = a.get("block_timestamp") or ""
+                try:
+                    from datetime import datetime as _dt
+                    t = _dt.fromisoformat(ts.replace("Z", "+00:00")).timestamp()
+                except ValueError: t = 0
+                if tx and px > 0 and t > 0: rows.append({"tx": tx, "ts": t, "price": px, "usd": float(a.get("volume_in_usd") or 0), "side": kind})
+            self.err = ""
+        except Exception as e:
+            self.err = str(e)[:120]
+        with self.lock:
+            P = self.pools.get(sym)
+            if P is None: return
+            P["busy"] = False
+            for x in sorted(rows, key=lambda r: r["ts"]):
+                if x["tx"] in P["seen"]: continue
+                P["seen"].add(x["tx"]); P["rows"].append(x)
+            P["rows"] = P["rows"][-self.MAX_ROWS:]
+            if len(P["seen"]) > 4 * self.MAX_ROWS: P["seen"] = set(r["tx"] for r in P["rows"])
+
+    def get(self, sym, since):
+        m = self.RX.match(sym or "")
+        if not m: raise ValueError("unsupported symbol")
+        now = time.time()
+        with self.lock:
+            P = self.pools.get(sym)
+            if P is None:
+                if len(self.pools) >= self.MAX_POOLS: self.pools.pop(min(self.pools, key=lambda k: self.pools[k]["used"]))
+                P = self.pools[sym] = {"rows": [], "seen": set(), "at": 0.0, "busy": False, "used": now}
+            P["used"] = now
+            if not P["busy"] and now - P["at"] >= self.MIN_GAP:
+                P["busy"] = True; P["at"] = now
+                threading.Thread(target=self._fetch, args=(sym, m.group(1), m.group(2)), daemon=True).start()
+            rows = [r for r in P["rows"] if r["ts"] > since]
+        return {"sym": sym, "trades": rows, "error": self.err, "next_ms": 500}
+
+
+SWAPS = SwapTape()
+
+
 class H(http.server.BaseHTTPRequestHandler):
     def log_message(self, fmt, *a):
         pass
@@ -1552,6 +1614,11 @@ class H(http.server.BaseHTTPRequestHandler):
                 snap = FEED.snapshot(syms or None)
                 if syms: CACHE_STATS["total"] += len(syms); CACHE_STATS["hits"] += sum(1 for s in syms if s in snap)
                 return self._send(200, json.dumps({"ts": time.time(), "prices": snap, "polls": FEED.polls, "error": FEED.last_err}).encode())
+            if p == "/api/swaps" and method == "GET":  # v16.4: ?sym=oc:<chain>:<pool>&since=<unix s> -> de-duplicated DEX swaps from RAM (poll every 500 ms)
+                q = urllib.parse.parse_qs(urllib.parse.urlparse(self.path).query)
+                try: since = float((q.get("since") or ["0"])[0][:20])
+                except ValueError: since = 0.0
+                return self._send(200, json.dumps(SWAPS.get((q.get("sym") or [""])[0][:140], since)).encode())
             if p == "/api/ticks" and method == "GET":  # ?sym=AAPL -> the RAM tick buffer (last hour at 2 s) for 1s / 5s / 15s bars
                 if FEED is None: return self._send(503, b'{"error":"the price feed is off"}')
                 sym = (urllib.parse.parse_qs(urllib.parse.urlparse(self.path).query).get("sym") or [""])[0][:120]

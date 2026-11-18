@@ -1,21 +1,21 @@
 <div align="center">
 
-# ExTerm v16.3
+# ExTerm v16.4
 
-### The $0, local-first trading workstation: multi-asset charting at up to 240 Hz, quant research, 3D market structure and a zero-custody live execution cockpit, in one browser tab.
+### The $0, local-first trading workstation: multi-asset charting at up to 240 Hz, DEX discovery, quant research, 3D market structure, a context-aware Copilot and a zero-custody live execution cockpit, in one browser tab.
 
 **Your money never leaves your broker, exchange or wallet.** ExTerm holds no funds and no keys: it paper-trades by default, and live
 signals go only to a bot you run yourself on `127.0.0.1`, signed, checked by ten risk engines and locked behind four gates.
 
-<img src="docs/screenshots/01-markets-live-execution.png" alt="ExTerm Markets terminal at 1440×900: BTC 5m candles with EMA 20 and EMA 50, an open position with Entry, Stop-Loss and Take-Profit lines, dollar tags on the price axis, the gold BE break-even pill, a Scale-In ghost line, and the order ticket with the $ Risk to exact quantity sizer and time-in-force" width="100%">
+<img src="docs/screenshots/01-markets-live-execution.png" alt="ExTerm Markets terminal at 1440×900: BTC 5m candles with EMA 20 and EMA 50, a session-anchored VWAP, the live tape-delta strip at the top of the chart, an open position with Entry, Stop-Loss and Take-Profit lines and dollar tags on the price axis, the BE break-even pill, the AVWAP toolbar tool, the exchange stream pill and the order ticket" width="100%">
 
-**[30-second launch](#-30-second-local-launch)** · **[What's new](#-whats-new-in-v163)** · **[Charting](#1--240-hz-multi-asset-charting--direct-order-execution)** · **[Live cockpit](#2--closed-loop-zero-custody-live-execution-cockpit-127001)** · **[3D](#3--pure-canvas-3d-market-structure-5-engines-zero-3d-libraries)** · **[Quant Lab](#4--17-test-statistical-quant-lab--strategy-studio)** · **[Global](#5--on-chain-whale-intelligence-32-languages--rtl-and-learn-exterm)** · **[Security](#6--browser-security-hardening--verification)** · **[Release history](#-release-history)** · **[Verify a build](#-how-to-verify-official-builds)**
+**[30-second launch](#-30-second-local-launch)** · **[What's new](#-whats-new-in-v164)** · **[Charting](#1--240-hz-multi-asset-charting--direct-order-execution)** · **[Live cockpit](#2--closed-loop-zero-custody-live-execution-cockpit-127001)** · **[DEX & 3D](#3--dex-discovery--pure-canvas-3d-market-structure)** · **[Quant Lab](#4--17-test-quant-lab--strategy-studio-pro)** · **[Copilot](#5--quant--execution-copilot--safe-pine-script-v5)** · **[Global](#6--on-chain-intelligence-32-languages--rtl-and-learn-exterm)** · **[Security](#7--browser-security-hardening--verification)** · **[Release history](#-release-history)**
 
 <p>
-  <a href="https://github.com/uexxx/ExTerm/releases/latest"><img src="https://img.shields.io/badge/download-v16.3-D4AF37?style=for-the-badge" alt="Download v16.3"></a>
+  <a href="https://github.com/uexxx/ExTerm/releases/latest"><img src="https://img.shields.io/badge/download-v16.4-D4AF37?style=for-the-badge" alt="Download v16.4"></a>
   <img src="https://img.shields.io/badge/price-%240-2fd08a?style=for-the-badge" alt="$0">
   <img src="https://img.shields.io/badge/indicators-137-D4AF37?style=for-the-badge" alt="137 indicators">
-  <img src="https://img.shields.io/badge/backtestable%20strategies-128-CBD5E1?style=for-the-badge" alt="128 backtestable strategies">
+  <img src="https://img.shields.io/badge/backtestable%20strategies-134-CBD5E1?style=for-the-badge" alt="134 backtestable strategies">
   <img src="https://img.shields.io/badge/languages-32%20%2B%20RTL-CBD5E1?style=for-the-badge" alt="32 languages plus RTL">
   <img src="https://img.shields.io/badge/custody-zero-2fd08a?style=for-the-badge" alt="zero custody">
 </p>
@@ -50,24 +50,24 @@ Useful flags: `python3 serve.py 9000` (other port) · `--no-browser` · `--docto
 > proxies only an allow-list of public market-data hosts, on `localhost`, behind a fresh per-launch token.
 
 **What ExTerm is:** a terminal for **crypto spot & perps, US stocks, on-chain DEX tokens, options and futures** with
-professional charting, 137 indicators, 128 backtestable strategies, a statistical Quant Lab, on-chain whale intelligence and
-five pure-canvas 3D views. Everything runs on your computer. Trading is **paper by default**. When you choose to go live,
-ExTerm sends signed intents to **your own** local bot, and that bot talks to **your own** broker, exchange or wallet: ExTerm
-never touches the money.
+professional charting, 137 indicators, 134 backtestable strategies, DEX discovery, a statistical Quant Lab, a local Copilot,
+on-chain whale intelligence and five pure-canvas 3D views. Everything runs on your computer. Trading is **paper by default**.
+When you choose to go live, ExTerm sends signed intents to **your own** local bot, and that bot talks to **your own** broker,
+exchange or wallet: ExTerm never touches the money.
 
 ---
 
-## 🎯 What's new in v16.3
+## 🎯 What's new in v16.4
 
-> **Closed-Loop Live Cockpit.** v16.3 closes the loop between the chart and your local bot.
+> **Chart precision, DEX Discovery, a context-aware Copilot and a realistic backtester.**
 >
-> - 🛰 **Floating Live Execution HUD**: `LIVE ARMED · Slot # · ping ms · Day P&L vs -$cap`, a 44px equity & drawdown sparkline and a market-close / funding countdown.
-> - ⏸ **Pause New Entries (Keep Exits Active)** and a live **`Cooldown: 11m 42s`** countdown inside the disabled Buy button.
-> - 🎯 **Focus Chart (`F`)**, a docked **Micro-Ticket** strip, and a **Position & Pending Orders Drawer** (`Close 50%` · `Flatten` · `Reverse Position` · `Close Losing / Green Legs`).
-> - 🔁 **Two-way `127.0.0.1` ACK + fill sync**: bot position sync, heartbeat latency & packet-success graph, **slippage & fill quality by symbol**, and ~40-line starter bridges for **Interactive Brokers, Alpaca, CCXT and Freqtrade**.
-> - 🛡 **Require Stop-Loss ON by default**, $ risk → exact quantity, **R:R & $ badges**, **BE pill**, Auto-BE on TP1, 3× depth, stale-quote freeze, trades-per-hour limit, drawdown throttle, per-slot ticker allowlist.
-> - 🔐 **Two-Key Arming (`Shift + Alt + A`)**, **3-Second Live Readiness Self-Check**, time-in-trade exit, EOD Flat Timer, conditional triggers, an AES-256-GCM session snapshot and **Reset Session Safety Counters** (PAPER only).
-> - 📈 **Active-tick sub-minute bars**: a quiet second never draws a flat filler candle on stocks or on-chain tokens.
+> - 🕯 **Zero-volume bar re-anchoring** in the core 1s–15s rollover (no flat `Vol 0.00` bars on any market), **full-depth on-chain candles** on every timeframe (`limit=1000`; 30m, 12h, 1w and 1M aggregated from the nearest GeckoTerminal unit) and an edge-to-edge viewport for young tokens.
+> - 🔁 **Multi-exchange stream failover** (Kraken · Coinbase · Binance public trades, after a 1.5 s stall) and a **500 ms DEX swap tape** in the launcher, de-duplicated by transaction hash.
+> - ⚓ **AVWAP tool** on the chart toolbar (click, session open, last swing) and a live **tape-delta + book micro-imbalance strip**.
+> - 🧭 **DEX tab Discovery**: Scanner, Tiles, Bubbles and Buy Pressure on one **strictly isolated** dataset per market pill (Crypto · Stocks · On-chain), a GMGN-style filter drawer with presets, unified pills, a Top Movers rail, `/` search, keyboard navigation and **Export Filtered Basket → Quant Lab**.
+> - 📐 **6 structural strategies** (Opening Range Breakout, Anchored VWAP Pullback, Volatility Squeeze Expansion, Liquidity Sweep Reversal, Regime-Filtered Z-Score Reversion, Funding & Basis Divergence) graded by the 17-test lab, plus a **safe Pine Script v5 template library**.
+> - 🤖 **Quant & Execution Copilot** (no API key): chart reader, plain English → safe strategy + Pine v5 + 17-test validation, pre-trade stop auditor, ledger leak detector and one-click action pills.
+> - 🧪 **Strategy Studio Pro**: drag-and-drop node builder, depth-aware slippage, ≤ 10-symbol portfolio, Flash Crash / FOMC / Thin Weekend stress, walk-forward decay matrix, replay on chart, standalone Python / Node bot export, shadow drift, regime auto-switcher and a multi-slot router.
 >
 > Full notes: [`CHANGELOG.md`](CHANGELOG.md) · earlier versions: [Release history](#-release-history)
 
@@ -81,38 +81,34 @@ One chart engine for **Crypto, US Stocks, On-chain DEX tokens, Options and Futur
 rate (an adaptive governor targets 60–240 Hz and steps down when frames get expensive).
 
 - **Every timeframe, every market:** `1s · 5s · 10s · 15s · 1m · 5m · 15m · 30m · 1h · 4h · 1d · 1w · 1M` with true-form,
-  gapless candles. Sub-minute bars are **active-tick**: a bar is only added when price or volume actually changed.
-- **137 indicators** (EMA, SMA, VWAP, Bollinger Bands, RSI, MACD, ATR, Donchian and more), multi-timeframe trend pills and
-  drawing tools (trend, level, Fib, channel, zone, long / short).
-- **Trade on the chart:** click to place Entry, Stop-Loss and Take-Profit, drag any line, **R:R and $ P&L badges** while
-  you drag, dollar tags on the price axis, a one-click **BE** break-even pill, Auto-BE on TP1, TP1 50% / TP2 30% / TP3 20%
-  scale-out, trailing-stop activation lines, fill markers with slippage in bps, and a bid/ask spread tunnel on 1s–1m.
-- **Order ticket:** market / limit / stop, **$ Risk → exact quantity** sizer, GTC / IOC / Post-Only, **Chase Limit** (peg to
-  best bid / ask), a **liquidation & margin-buffer** pill, a pre-trade market-close / funding countdown and one-click
-  **Copy Trade Setup**. Hotkeys: `Shift+B` buy · `Shift+S` sell · `Shift+X` cancel all.
-- **Precision tools:** `Shift + drag` **Measure Dragger** (Δ$, %, bars, time, volume), the **ExTerm Chart Context Menu**
-  (right-click for price-aware orders, alerts and levels), Alt + drag magnetic snap to high / low / VWAP, a Scale-In / Pyramid
-  ghost line and a Fee & Funding / Borrow drag line.
+  gapless candles. A sub-minute bar that saw no trade and no price change is **re-anchored** to the next second instead
+  of leaving a flat `Vol 0.00` bar; on-chain history pages up to 1,000 bars per request on every timeframe.
+- **Resilient data:** crypto streams fail over between Kraken, Coinbase and Binance public trade streams when the primary
+  stalls for 1.5 s (the toolbar pill shows the active stream); the launcher polls DEX swaps every 500 ms for sub-minute
+  on-chain wicks, de-duplicated by transaction hash.
+- **137 indicators** (EMA, SMA, VWAP, Bollinger Bands, RSI, MACD, ATR, Donchian and more), multi-timeframe trend pills,
+  drawing tools, the **⚓ AVWAP** tool (click a candle, session open, last swing high / low) and a **tape-delta strip**
+  (10 s / 60 s aggressive buy share and $ delta, plus order-book micro-imbalance).
+- **Trade on the chart:** click to place Entry, Stop-Loss and Take-Profit, drag any line, **R:R and $ P&L badges**, dollar
+  tags on the price axis, the **BE** break-even pill, Auto-BE on TP1, TP1 / TP2 / TP3 scale-out, trailing-stop lines, fill
+  markers with slippage in bps and a bid/ask spread tunnel on 1s–1m.
+- **Order ticket:** market / limit / stop, **$ Risk → exact quantity**, GTC / IOC / Post-Only, **Chase Limit**, a
+  liquidation & margin-buffer pill, a market-close / funding countdown and **Copy Trade Setup**. Hotkeys: `Shift+B` buy ·
+  `Shift+S` sell · `Shift+X` cancel all · `F` Focus Chart.
 
 ### 2 · Closed-loop zero-custody live execution cockpit (`127.0.0.1`)
 
-<img src="docs/screenshots/02-live-hud-focus-cockpit.png" alt="ExTerm Markets with the local bot armed: the Floating Live Execution HUD reads LIVE ARMED, Slot 1, ping in ms and the day's P&L against the -$500 cap, with an equity and drawdown sparkline and a funding countdown; the side rails are collapsed by Focus Chart, the Micro-Ticket strip is docked at the bottom and the Live Positions and Pending Orders drawer is open on the right" width="100%">
+<img src="docs/screenshots/02-live-hud-focus-cockpit.png" alt="ExTerm Markets with the local bot armed: the Floating Live Execution HUD reads LIVE ARMED, Slot 1, ping in ms and the day's P&L against the -$500 cap, with an equity and drawdown sparkline and a funding countdown; Focus Chart has collapsed the side rails, the Micro-Ticket strip is docked at the bottom and the Live Positions and Pending Orders drawer is open" width="100%">
 
-ExTerm never holds your funds or keys. Live mode sends **HMAC-SHA256 signed** intents (fresh session key, 3-second expiry,
-unique idempotency key, rising sequence number) to a bot **you** run on `127.0.0.1` (or an allow-listed private LAN host over
-HTTPS). Your bot replies with an **ACK + fill**, and ExTerm reconciles it.
+Live mode sends **HMAC-SHA256 signed** intents (fresh session key, 3-second expiry, unique idempotency key, rising sequence)
+to a bot **you** run on `127.0.0.1` (or an allow-listed private LAN host over HTTPS). The bot replies with an **ACK + fill**
+and ExTerm reconciles it.
 
-- **Six local adapter slots:** script runner, JSON webhook relay, socket / IPC bridge, perp DEX wallet signer, equities /
-  futures gateway and a graduated shadow-to-live mirror.
-- **Starter bridges** (Execution Bridge → *Local broker starter bridges*): copy or download ~40 lines of Python for
-  **Interactive Brokers**, **Alpaca**, **CCXT** or **Freqtrade**. Each verifies the signature, refuses replays, executes and
-  replies `{ ok, ack, fill }`.
-- **Cockpit:** Floating Live Execution HUD, Focus Chart (`F`), Micro-Ticket, Position & Pending Orders Drawer, **Live-Only
-  Workspace Mode** (`body.live-bot-armed` hides paper-only tools), watchlist **Signal Readiness** dots, acoustic and visual
-  confirmation cues with instant mute, and a **privacy-masked trade card** (R, % and holding time only) on every close.
-- **Arming:** four gates (healthy heartbeat, risk caps set, disclosure acknowledged, exact phrase), optional **Two-Key
-  Arming** (`Shift + Alt + A`, then Arm within 10 s), a **3-Second Live Readiness Self-Check**, and `Ctrl+Shift+K` to
-  flatten everything and disarm.
+- **Six local adapter slots**, **starter bridges** for Interactive Brokers, Alpaca, CCXT and Freqtrade (~40 lines of Python
+  each), and the v16.4 **Multi-Slot Strategy Router** (each bot strategy → its own slot).
+- **Cockpit:** Floating Live Execution HUD, Focus Chart, Micro-Ticket, Position & Pending Orders Drawer, Live-Only Workspace
+  Mode, Signal Readiness dots, cues with instant mute, privacy-masked trade cards, Two-Key Arming (`Shift + Alt + A`) and the
+  3-Second Live Readiness Self-Check.
 
 **The 10-engine security & risk lockdown**
 
@@ -129,55 +125,72 @@ HTTPS). Your bot replies with an **ACK + fill**, and ExTerm reconciles it.
 | 9 | `Max Daily Loss Auto-Flatten` | Breaching the daily cap broadcasts `CANCEL_ALL_AND_FLATTEN` and locks all six slots to PAPER. |
 | 10 | `Dead-Man's Switch & Kill-Switch` | Missed heartbeats, idle auto-disarm, EOD Flat Timer, time-in-trade exit and `Ctrl+Shift+K` all flatten and disarm. |
 
-Every decision lands in the **Signed Signal Receipt Ledger** (CSV / JSON export with timestamp, idempotency key and signature).
+<img src="docs/screenshots/05-execution-bridge-safety.png" alt="Execution Bridge and Live Safety Settings: Require Stop-Loss on all live opening orders checked, the core risk guards, the Closed-Loop Live Cockpit settings, per-slot ticker allowlists and a READY 7/7 result from the 3-Second Live Readiness Self-Check" width="100%">
 
-<img src="docs/screenshots/05-execution-bridge-safety.png" alt="Execution Bridge and Live Safety Settings: Require Stop-Loss on all live opening orders checked, depth, stale-quote, trades-per-hour, exposure, drawdown throttle, correlation and weekend spread guards, then the Closed-Loop Live Cockpit with Pause New Entries, Two-Key Arming, cues, leverage, funding, time-in-trade and EOD Flat Timer, per-slot ticker allowlists and a READY 7/7 result from the 3-Second Live Readiness Self-Check" width="100%">
+### 3 · DEX Discovery & pure-canvas 3D market structure
 
-### 3 · Pure-canvas 3D market structure (5 engines, zero 3D libraries)
+<img src="docs/screenshots/03-dex-discovery-3d-structure.png" alt="The DEX tab Discovery panel in Crypto mode: the Bubbles view sized by market cap with gravity clusters for Mega, Large, Mid and Small cap, unified pills (All, Top Movers, Volume Surges and tiers), Market Cap, Volume Surge, Whale Net Flow and Volatility Squeeze sizing, the Top Gainers and Losers rail, presets, filters, basket export and the 3D Orbit button, above the classic heat map" width="100%">
 
-<img src="docs/screenshots/03-3d-market-structure.png" alt="The Flow tab with the 3D Order-Book Liquidity Terrain (bids in green, asks in red, depth over time) next to the 3D Options IV and Gamma Surface, both drawn as wireframes on plain canvas in the obsidian and gold theme" width="100%">
+- **One dataset, four views:** Scanner (sortable), Tiles (RVOL and spread badges, mini-sparklines), Bubbles (Market Cap ·
+  Volume Surge · Whale Net Flow · Volatility Squeeze, gravity-clustered by sector / tier / chain) and Buy Pressure (taker
+  buy share and net aggressive $ delta per 5m / 15m / 1h).
+- **Strict market-mode isolation:** the top market pill decides the dataset. On-chain shows only DEX tokens, Stocks only
+  US equities, Crypto only crypto pairs, in every view, the Top Movers rail and the classic heat map.
+- **GMGN-style filter drawer** (on-chain): chain pills (Solana · Base · Ethereum · BSC · Arbitrum), DEX pills (Pump.fun ·
+  Raydium · Meteora · Uniswap · PancakeSwap), min / max ranges (liquidity, market cap / FDV, 5m / 1h / 24h volume, token age,
+  holders, buy / sell ratio), strict safety toggles and presets (New Launches · High-Liquidity Breakouts · Smart-Money
+  Accumulation).
+- `/` search, ↑ / ↓ / Enter / P keyboard navigation, `Shift+Click` drafts a bracket order, **Export Filtered Basket →
+  Quant Lab** sends up to 10 symbols to the portfolio backtest, and **3D Orbit** jumps to the correlation orbit.
+- **Five 3D engines, zero 3D libraries:** Order-Book Liquidity Terrain, Options IV & Gamma Surface, Quant Lab Profit Mountain,
+  Multi-Asset Correlation Orbit and Whale Liquidation Cluster Orbit, all rotatable and paused off-screen.
 
-Five rotatable 3D views written on plain `<canvas>` (drag or arrow keys to rotate, **Reset Angle** to return). Each pauses
-when off-screen:
+### 4 · 17-test Quant Lab & Strategy Studio Pro
 
-- **Order-Book Liquidity Terrain**: depth over time; walls are ridges, gaps are cliffs.
-- **Options IV & Gamma Surface**: implied volatility (or $ gamma) by strike and expiry.
-- **Quant Lab Profit Mountain**: a 7 × 7 stop / target sweep that shows plateau vs. spike.
-- **Multi-Asset Correlation Orbit**: rolling correlations and market regime.
-- **Whale Liquidation Cluster Orbit**: where large positions would be forced out.
+<img src="docs/screenshots/04-quant-lab-validation.png" alt="Strategy Studio Pro in the Lab: a palette of condition chips, Entry and Exit drop zones with ALL / ANY joins, stop / target / trail inputs, the research strategy picker with validation, backtest, replay and Pine / Python / Node export buttons, and the walk-forward rolling out-of-sample decay matrix over five folds" width="100%">
 
-### 4 · 17-test statistical Quant Lab & Strategy Studio
+- **Strategy Studio Pro:** a drag-and-drop node builder, then **Run 17-Test Validation**, Backtest, **Replay trades on
+  chart**, Export Pine v5 and **Export Python / Node bot** (a standalone script that prints signals with a stop on every entry).
+- **Realistic backtester:** order-book depth & square-root slippage, a ≤ 10-symbol equal-weight **portfolio with a
+  correlation matrix**, **event stress** (Flash Crash · FOMC · Thin Weekend) and a **walk-forward rolling out-of-sample decay
+  matrix**.
+- **Bots:** Live Bot Dry-Run Shadow Drift Monitor (paper vs bot fills in bps), Regime-Aware Auto-Switcher (trend / range /
+  volatile → strategy, only while flat) and the Multi-Slot Strategy Router.
+- **6 structural strategies** joined the 128 earlier ones; every spec strategy runs in the **17-test Validation Lab** (A–F:
+  walk-forward, 1,000-run Monte Carlo, risk of ruin, slippage fragility, data quality), Auto-Evolve, the portfolio tester and
+  the launcher's background bots, and exports to Pine Script v5.
 
-<img src="docs/screenshots/04-quant-lab-validation.png" alt="The Strategy builder in the Bots tab: Buy when RSI 14 is below 30 AND Close is above SMA 200, Sell when RSI 14 is above 60, risk stop 5%, with Save, Backtest, Validate, Export Pine Script v5, Share and Import JSON buttons, and the 17-test Validation Lab result grading the idea F with 2 of 17 tests passed" width="100%">
+### 5 · Quant & Execution Copilot + safe Pine Script v5
 
-- **Visual IF / AND / OR builder** with templates and a community library, exporting to **Pine Script v5** or JSON, plus a
-  v5-compatible importer for a safe subset.
-- The **17-test Validation Lab** grades every strategy A–F (the screenshot shows an honest F: the idea has no edge on that
-  data). It covers **walk-forward** optimisation (in-sample pick, out-of-sample score), **Monte Carlo** (1,000 seeded
-  reshuffles), **risk of ruin**, slippage fragility and a candle data-quality grade.
-- **Genetic parameter search** (Auto-Evolve) keeps only mutations that survive walk-forward and grade C or better;
-  Crisis Time Machine and synthetic stress paths; a portfolio backtester; prop-firm odds; and a Bot Net Profit hero card
-  with fees and slippage deducted.
-- Promote a validated bot to **Shadow** (dry-run on live ticks), then to the live mirror slot.
+<img src="docs/screenshots/05-copilot-pine-bridge.png" alt="The Quant and Execution Copilot: action pills (Analyze Active Chart, Preview Lines on Chart, Set Stop to 1.5 ATR, Run 17-Test Validation, Copy Pine Script v5, Audit Pre-Trade Setup, Scan Ledger for Leaks), a plain-English strategy turned into a validated spec that grades F with 3 of 17 tests passed, and the safe Pine Script v5 template library with every safety rule ticked" width="100%">
 
-### 5 · On-chain whale intelligence, 32 languages + RTL and Learn ExTerm
+- **No API key, no network:** it reads your chart, ticket and receipt ledger locally.
+- **Analyze Active Chart** (trend, swing structure, equal highs / lows as resting liquidity, ATR, regime), **plain English →
+  safe strategy** (unknown phrases are refused, a stop is always added) with Pine v5 and 17-test validation, a **pre-trade
+  stop auditor** (ATR distance, R:R, correlation with open positions) and a **ledger leak detector** (repeated blocks, failed
+  sends, slippage, overtrading bursts, stop refusals).
+- **Action pills:** Preview Lines on Chart, Set Stop to 1.5 ATR, Run 17-Test Validation, Copy Pine Script v5.
+- **Safe Pine v5 templates:** confirmed bars only, `lookahead_off`, $ risk sizing, a mandatory `strategy.exit` stop,
+  `max_intraday_loss` and a JSON alert for a `127.0.0.1` relay; a checker shows each rule.
 
-<img src="docs/screenshots/06-global-rtl-accessibility.png" alt="ExTerm in Arabic: the whole workstation mirrored right-to-left with Arabic navigation, the watchlist on the right, the order ticket on the left and the ETH 15m chart with EMA 20 and EMA 50" width="100%">
+### 6 · On-chain intelligence, 32 languages + RTL and Learn ExTerm
 
-- **On-chain:** DEX tokens on several chains, a Launch Radar, token safety scanner, wallet tracker, smart-money and perp
+<img src="docs/screenshots/06-onchain-scanner-rtl.png" alt="ExTerm in Arabic, mirrored right to left: the On-chain Discovery scanner with only DEX tokens, the filter drawer with chain and DEX pills, min / max range inputs and the strict safety toggles, and the Top Gainers rail" width="100%">
+
+- **On-chain:** DEX tokens across several chains, a Launch Radar, token safety scanner, wallet tracker, smart-money and perp
   leaderboards with Trader Detail & Mirror, and a whale & liquidation cluster view.
-- **32 languages** with full **right-to-left** mirroring (for example Arabic) and an ISO-639 fallback, chosen at first launch.
-- **Learn ExTerm**: an interactive academy with **35 lessons**, sandbox drills on simulated charts, a 5-minute quick-start
-  track and "How do I…" fuzzy search.
+- **32 languages** with full **right-to-left** mirroring and an ISO-639 fallback, chosen at first launch.
+- **Learn ExTerm**: an interactive academy with **35 lessons**, sandbox drills, a 5-minute quick-start track and "How do I…"
+  fuzzy search.
 
-### 6 · Browser security hardening & verification
+### 7 · Browser security hardening & verification
 
 - **Strict CSP:** `default-src 'none'`; the bundled script is pinned by its **SHA-256** hash at build time. No inline
   handlers, no `eval`, every dynamic string HTML-escaped.
-- **Local storage encryption:** API keys and alert channels sit in an **AES-256-GCM** vault (PBKDF2-SHA256), encrypted
-  `.exterm` backups, and the v16.3 session snapshot (AES-256-GCM, passphrase never stored).
-- **Locked-down launcher:** localhost only, fresh session token every launch, Origin + Host checks, rate limits and a
-  proxy allow-list. Live bots are reachable on loopback or an allow-listed private LAN host only.
+- **Local storage encryption:** an **AES-256-GCM** key vault (PBKDF2-SHA256), encrypted `.exterm` backups and an AES-256-GCM
+  session snapshot.
+- **Locked-down launcher:** localhost only, fresh session token every launch, Origin + Host checks, rate limits, a proxy
+  allow-list; the new `/api/swaps` tape answers from RAM and fetches upstream at most every 4 s per pool.
 - **Verify every download** against `SHA256SUMS.txt` (see [below](#-how-to-verify-official-builds)), or use **Settings →
   Verify build integrity**.
 
@@ -185,7 +198,21 @@ when off-screen:
 
 ## 📚 Release history
 
-The sections below document every earlier release. All of these capabilities are still in v16.3.
+The sections below document every earlier release. All of these capabilities are still in v16.4.
+
+## 🎯 What's new in v16.3
+
+> **Closed-Loop Live Cockpit.** v16.3 closes the loop between the chart and your local bot.
+>
+> - 🛰 **Floating Live Execution HUD**: `LIVE ARMED · Slot # · ping ms · Day P&L vs -$cap`, a 44px equity & drawdown sparkline and a market-close / funding countdown.
+> - ⏸ **Pause New Entries (Keep Exits Active)** and a live **`Cooldown: 11m 42s`** countdown inside the disabled Buy button.
+> - 🎯 **Focus Chart (`F`)**, a docked **Micro-Ticket** strip, and a **Position & Pending Orders Drawer** (`Close 50%` · `Flatten` · `Reverse Position` · `Close Losing / Green Legs`).
+> - 🔁 **Two-way `127.0.0.1` ACK + fill sync**: bot position sync, heartbeat latency & packet-success graph, **slippage & fill quality by symbol**, and ~40-line starter bridges for **Interactive Brokers, Alpaca, CCXT and Freqtrade**.
+> - 🛡 **Require Stop-Loss ON by default**, $ risk → exact quantity, **R:R & $ badges**, **BE pill**, Auto-BE on TP1, 3× depth, stale-quote freeze, trades-per-hour limit, drawdown throttle, per-slot ticker allowlist.
+> - 🔐 **Two-Key Arming (`Shift + Alt + A`)**, **3-Second Live Readiness Self-Check**, time-in-trade exit, EOD Flat Timer, conditional triggers, an AES-256-GCM session snapshot and **Reset Session Safety Counters** (PAPER only).
+> - 📈 **Active-tick sub-minute bars**: a quiet second never draws a flat filler candle on stocks or on-chain tokens.
+>
+> Full notes: [`CHANGELOG.md`](CHANGELOG.md) · earlier versions: [Release history](#-release-history)
 
 ## 🎯 What's new in v16.2
 

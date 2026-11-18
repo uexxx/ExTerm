@@ -25,7 +25,7 @@ ok("notes are flattened to one plain line", r["notes"] == "Faster radar - fixes"
 r, _ = fresh({"tag_name": "13.9", "html_url": REL + "13.9"}); ok("an older release is not newer", r["newer"] is False and r["latest"] == "13.9")
 r, _ = fresh({"tag_name": "v" + serve.VERSION, "html_url": REL + "v" + serve.VERSION}); ok("the same version is not newer", r["newer"] is False)
 r, _ = fresh({"tag_name": "v16.10", "html_url": REL + "v16.10"}); ok("16.10 counts as newer than 16.0 (numeric, not text)", r["newer"] is True)
-for bad_url in ["https://evil.example/releases/x", "javascript:alert(1)", "https://github.com/someone-else/novaterm/releases/x", "http://github.com/%s/releases/x" % serve.UPDATE_REPO]:
+for bad_url in ["https://evil.example/releases/x", "javascript:alert(1)", "https://github.com/someone-else/exterm/releases/x", "http://github.com/%s/releases/x" % serve.UPDATE_REPO]:
     r, _ = fresh({"tag_name": "v99", "html_url": bad_url})
     ok("a release link off the project's GitHub is rejected (%s)" % bad_url[:30], r["newer"] is False and r["url"] is None)
 for tag in ["<script>", "latest", "", None, "v1.2.3.4.5"]:

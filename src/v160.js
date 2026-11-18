@@ -106,7 +106,8 @@ const V160UI = (() => {
     const usd = Number.isFinite(+t.usd) ? +(+t.usd).toFixed(2) : +t.usd;
     const body = { action: t.side, symbol: baseOf(t.sym), usd, price: n(t.price), qty: n(t.qty), sl: p ? n(p.sl) : null, tp: p ? n(p.tp) : null, source: bot ? 'bot:' + bot.id : 'manual' };
     if (acct.short) body.side = 'short'; // v16.3: a short-side account opens with "buy"; its stop sits above entry
-    const targets = U.st.slots.filter((s) => s.enabled && (bot ? s.id === 6 : s.id !== 6)); if (!targets.length) return;
+    const botSlot = bot && typeof U.slotFor === 'function' ? U.slotFor(bot) : 6; // v16.4 Multi-Slot Strategy Router (default: slot 6 mirror)
+    const targets = U.st.slots.filter((s) => s.enabled && (bot ? s.id === botSlot : s.id !== 6)); if (!targets.length) return;
     const what = `${String(body.action).toUpperCase()} ${body.symbol} $${body.usd}`;
     if (!live()) { U.stats.sim++; note('sim', `PAPER · ${what} simulated on ${targets.length} slot${targets.length > 1 ? 's' : ''}, nothing sent`); return; }
     if (!U.briefed) { U.stats.blocked++; note('block', `HELD · ${what}: acknowledge the live briefing first`); led('breaker', { status: 'held', detail: what + ': briefing not acknowledged' }); return; }

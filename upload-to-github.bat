@@ -2,7 +2,7 @@
 setlocal EnableExtensions
 title ExTerm - one-click upload to GitHub
 cd /d "%~dp0"
-set "REPO=https://github.com/uexxx/novaterm-pioneering-trading-terminals.git"
+set "REPO=https://github.com/uexxx/ExTerm.git"
 
 echo.
 echo   ExTerm - one-click upload to GitHub
