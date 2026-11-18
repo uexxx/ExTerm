@@ -42,7 +42,7 @@ const post = (body, key) => new Promise((resolve) => {
 
     // ── 1. briefing + tab shell
     await ev(() => V162UI.brief()); await sleep(200);
-    ok('briefing: v16.5 Release Highlights (AI Bridge, firewall, copy engine) fit 1440×900', await ev(() => { const m = $('#v162Brief'); return !!m && /v16\.5 Release Highlights/.test(m.textContent) && /AI Bridge tab/.test(m.textContent) && /llm-signal/.test(m.textContent) && m.querySelector('.v162-modal').getBoundingClientRect().bottom <= innerHeight; }));
+    ok('briefing: v16.5 Release Highlights (AI Bridge, firewall, copy engine) fit 1440×900', await ev(() => { const m = $('#v162Brief'); return !!m && /v16\.[56] Release Highlights/.test(m.textContent) && /AI Bridge tab/.test(m.textContent) && /llm-signal/.test(m.textContent) && m.querySelector('.v162-modal').getBoundingClientRect().bottom <= innerHeight; }));
     await page.keyboard.press('Escape'); await sleep(150); await clean();
     const nav = await ev(() => { const g = $('#nav button[data-tab="grok"]'), bb = $('#nav button[data-tab="bridge"]'); return { has: !!bb, next: !!g && g.nextElementSibling === bb, txt: bb ? bb.textContent.trim() : '', svg: !!(bb && bb.querySelector('svg')), vis: bb ? bb.getBoundingClientRect().width > 0 : false }; });
     ok('nav: AI Bridge tab button with a custom SVG icon, right after Grok', nav.has && nav.next && nav.txt === 'AI Bridge' && nav.svg && nav.vis, JSON.stringify(nav));

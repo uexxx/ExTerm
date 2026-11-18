@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-+DyBiFRigZ6vXJ5Pz0VQad7smTgP/PiM3I8NwXN/SdQ='; worker-src 'self' blob:; media-src 'none'; child-src 'none'; manifest-src 'self'; style-src 'self' https://fonts.googleapis.com; style-src-elem 'self' 'sha256-58wGKK7DAMfGWYvAf5dOtpbmsf/LFxK8m+PFExwDCIc=' https://fonts.googleapis.com; style-src-attr 'unsafe-inline'; img-src 'self' https: data: blob:; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https: wss: http://localhost:* http://127.0.0.1:* ws://localhost:* ws://127.0.0.1:*; object-src 'none'; base-uri 'none'; form-action 'none'; frame-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-l9SOchvCO2l25cUUgW9fb2V2vwMfYYPyMBGqOCAXE9w='; worker-src 'self' blob:; media-src 'none'; child-src 'none'; manifest-src 'self'; style-src 'self' https://fonts.googleapis.com; style-src-elem 'self' 'sha256-f+yA5emMi8+g3Ud4cIJIo6+NNfMQRrQ1Qb3XizJaD3c=' https://fonts.googleapis.com; style-src-attr 'unsafe-inline'; img-src 'self' https: data: blob:; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https: wss: http://localhost:* http://127.0.0.1:* ws://localhost:* ws://127.0.0.1:*; object-src 'none'; base-uri 'none'; form-action 'none'; frame-src 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#07080B">
@@ -1820,6 +1820,31 @@ html[dir="rtl"] .v164-tip{direction:rtl}html[dir="rtl"] .v164-pb i{inset:0 0 0 a
 html[dir="rtl"] .v165-banner,html[dir="rtl"] .v165-h{flex-direction:row-reverse;text-align:right}html[dir="rtl"] .v165-acts .btn{text-align:right}html[dir="rtl"] .v165-t th,html[dir="rtl"] .v165-t td{text-align:right}
 @media (max-width:1180px){.v165-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.v165-copy .v165-gl{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media (max-width:760px){.v165-grid{grid-template-columns:1fr}.v165-copy .v165-gl,.v165-gl{grid-template-columns:1fr}}
+
+/* v16.6 Live Transactions drawer */
+.v166-btn.on{border-color:#D4AF37;color:#D4AF37}
+.v166-drawer{position:fixed;left:16px;right:16px;bottom:10px;z-index:60;max-width:1400px;margin:0 auto;background:var(--panel-solid,#111624);border:1px solid rgba(212,175,55,.38);border-radius:12px;box-shadow:0 18px 50px rgba(0,0,0,.55);font-size:12px;display:flex;flex-direction:column}
+.v166-drawer[hidden]{display:none}
+.v166-strip{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;padding:8px 12px;border-bottom:1px solid var(--line)}
+.v166-strip .sp{flex:1}.v166-k{color:var(--mut);white-space:nowrap}.v166-k b{color:var(--text);font-family:var(--mono);font-weight:600}.v166-k b.up,.v166-drawer .up{color:var(--up)}.v166-k b.dn,.v166-drawer .dn{color:var(--dn)}
+.v166-bar{display:inline-flex;width:120px;height:6px;border-radius:3px;overflow:hidden;background:var(--line2)}.v166-bar i{display:block;height:100%}.v166-bar .b{background:var(--up);width:50%}.v166-bar .s{background:var(--dn);width:50%}
+.v166-sess{font-family:var(--mono);font-size:11px;letter-spacing:.04em;color:var(--mut);border:1px solid var(--line2);border-radius:999px;padding:2px 8px}.v166-sess.last{color:#D4AF37;border-color:rgba(212,175,55,.6);background:rgba(212,175,55,.08)}
+.v166-pill{background:#D4AF37;color:#141006;font-weight:700;border-radius:999px;padding:2px 10px;font-size:11px}.v166-pill[hidden]{display:none}
+.v166-tabs{display:flex;gap:2px;padding:4px 8px 0;border-bottom:1px solid var(--line);overflow-x:auto}.v166-tabs button{background:none;border:0;border-bottom:2px solid transparent;color:var(--mut);padding:6px 10px;font-size:12px;cursor:pointer;white-space:nowrap}.v166-tabs button.on{color:#D4AF37;border-bottom-color:#D4AF37}
+.v166-chips{display:flex;flex-wrap:wrap;gap:6px;align-items:center;padding:6px 10px}.v166-chips[hidden]{display:none}.v166-chip{border:1px solid var(--line2);background:transparent;color:inherit;border-radius:999px;padding:3px 10px;font-size:11px;cursor:pointer}.v166-chip.on{border-color:#D4AF37;color:#D4AF37;background:rgba(212,175,55,.1)}
+.v166-min{display:inline-flex;gap:6px;align-items:center;color:var(--mut)}.v166-min .in{width:96px;padding:3px 6px}
+.v166-list[hidden],.v166-alt[hidden]{display:none}
+.v166-head,.v166-r{display:grid;grid-template-columns:52px 104px minmax(80px,1fr) minmax(70px,1fr) 90px minmax(110px,1.4fr) minmax(90px,1.2fr);gap:8px;padding:0 12px;align-items:center}
+.v166-head{color:var(--mut);font-size:11px;height:22px;border-bottom:1px solid var(--line)}
+.v166-body{position:relative;height:360px;overflow-y:auto;overflow-x:hidden;contain:strict}
+.v166-r{position:absolute;left:0;right:0;top:0;height:18px;font-family:var(--mono);font-size:11px;cursor:pointer;will-change:transform}.v166-r[hidden]{display:none}.v166-r:hover{background:rgba(212,175,55,.08)}
+.v166-r span{overflow:hidden;white-space:nowrap;text-overflow:ellipsis}.v166-r span:nth-child(3),.v166-r span:nth-child(4),.v166-r span:nth-child(5){text-align:right}
+.v166-drawer .gold{color:#D4AF37}.v166-drawer .amb{color:var(--amber)}.v166-r.gold span:nth-child(5){font-weight:700}
+.v166-alt{max-height:420px;overflow:auto;padding:8px 12px}.v166-t{width:100%;border-collapse:collapse}.v166-t th,.v166-t td{text-align:left;padding:4px 6px;border-bottom:1px solid var(--line);white-space:nowrap}.v166-t th{color:var(--mut);font-weight:500}
+.v166-row{display:flex;gap:8px;align-items:center;margin:0 0 8px}.v166-row .in{width:280px}.v166-boost{flex-wrap:wrap;margin:0;padding:6px 12px;border-bottom:1px solid var(--line)}.v166-boost[hidden]{display:none}.v166-boost .in{width:170px}
+html[dir="rtl"] .v166-strip,html[dir="rtl"] .v166-chips,html[dir="rtl"] .v166-tabs,html[dir="rtl"] .v166-row{flex-direction:row-reverse}html[dir="rtl"] .v166-head,html[dir="rtl"] .v166-r{direction:rtl}html[dir="rtl"] .v166-t th,html[dir="rtl"] .v166-t td{text-align:right}
+@media (max-width:760px){.v166-drawer{left:8px;right:8px}.v166-head,.v166-r{grid-template-columns:40px 80px 1fr 1fr 70px;gap:6px}.v166-head span:nth-child(n+6),.v166-r span:nth-child(n+6){display:none}.v166-bar{width:70px}}
+
 </style>
 </head>
 <body class="mode-crypto">
@@ -2061,7 +2086,7 @@ html[dir="rtl"] .v165-banner,html[dir="rtl"] .v165-h{flex-direction:row-reverse;
   <section id="tab-grok" class="tab"><div id="gkHost"></div></section>
 
   <!-- SETTINGS -->
-  <section id="tab-set" class="tab"><div id="setBody"></div><p class="note about-notice">ExTerm v16.5 · Official Release by @exterm.labs · <a href="https://github.com/uexxx/ExTerm" target="_blank" rel="noopener noreferrer">github.com/uexxx/ExTerm</a></p></section>
+  <section id="tab-set" class="tab"><div id="setBody"></div><p class="note about-notice">ExTerm v16.6 · Official Release by @exterm.labs · <a href="https://github.com/uexxx/ExTerm" target="_blank" rel="noopener noreferrer">github.com/uexxx/ExTerm</a></p></section>
 </main>
 
 <aside id="drawer" class="drawer" aria-hidden="true"><div class="dhead"><span id="dTitle"></span><span class="sp"></span><button class="ghost" id="dClose">✕</button></div><div class="dbody" id="dBody"></div></aside>
@@ -22732,6 +22757,145 @@ def ask_model(prompt):
 })();
 if (typeof module === 'object' && module.exports) module.exports = V165;
 
+/* ===== v166core.js ===== */
+/* Copyright (c) 2026 ExTerm Labs (@exterm.labs) · Licensed under GNU AGPL-3.0 · https://github.com/uexxx/ExTerm */
+/* ExTerm v16.6 core (pure, no DOM, Node-testable): typed-array live tape engine.
+   · one ring per symbol, 2,000 prints: Float64Array [ts, price, size, totalUsd] + Uint32Array [sideMask, venueId]
+   · three strictly isolated markets (stocks · crypto · onchain): separate ring maps and venue / maker tables
+   · classification bits at ingest (Buy · Sell · Whale $25K+ · Block $100K+ · Sweep · Unusual > 3× avg · Tracked · 1m agg)
+   · allocation-free bitmask filter into a reusable Uint32Array (newest first), pressure strip maths,
+     sub-tab aggregations (holders · top traders · early · DCA) and the AI Bridge tape export */
+const V166 = (() => {
+  const V = {};
+  V.CAP = 2000; V.MAX_SYMS = 32; V.WHALE = 25000; V.BLOCK = 100000; V.SWEEP_MS = 1000; V.SWEEP_N = 3; V.UNUSUAL_X = 3;
+  const B = V.BIT = { BUY: 1, SELL: 2, WHALE: 4, BLOCK: 8, SWEEP: 16, UNUSUAL: 32, TRACKED: 64, AGG: 128 };
+  const SIDES = B.BUY | B.SELL;
+  V.MARKETS = ['stocks', 'crypto', 'onchain'];
+  V.marketOf = (s) => (/^oc:/.test(s) ? 'onchain' : /-(USD|USDT|USDC)$/i.test(s) ? 'crypto' : 'stocks');
+  V.TABS = [['trades', 'Trades'], ['positions', 'Positions'], ['holders', 'Holders / Institutions'], ['top', 'Top Traders / Funds'], ['early', 'Pre / Early'], ['tracking', 'Tracking'], ['dca', 'DCA'], ['orders', 'Orders']];
+  V.CHIPS = [['all', 'All', 0], ['whale', 'Whales ($25K+)', B.WHALE], ['block', 'Blocks ($100K+)', B.BLOCK], ['sweep', 'Sweeps', B.SWEEP], ['buy', 'Buys', B.BUY], ['sell', 'Sells', B.SELL], ['unusual', 'Unusual (>3x)', B.UNUSUAL], ['tracked', 'Tracked', B.TRACKED]];
+  V.chipMask = (ids) => { let m = 0; for (const c of V.CHIPS) if (ids.includes(c[0])) m |= c[2]; return m; };
+
+  /* ══ ring: fixed 2,000-slot circular buffer, no per-print allocation ══ */
+  class Ring {
+    constructor(cap) { this.cap = cap || V.CAP; this.f = new Float64Array(this.cap * 4); this.u = new Uint32Array(this.cap * 2); this.n = 0; this.sum = 0; this.run = 0; this.runSide = 0; this.lastTs = 0; this.lastPx = 0; this.at = 0; }
+    get size() { return Math.min(this.n, this.cap); }
+    slot(seq) { return seq % this.cap; }
+    has(seq) { return seq < this.n && seq >= this.n - this.cap; }
+  }
+  V.Ring = Ring;
+  V.ts = (r, seq) => r.f[(seq % r.cap) * 4]; V.price = (r, seq) => r.f[(seq % r.cap) * 4 + 1]; V.qty = (r, seq) => r.f[(seq % r.cap) * 4 + 2]; V.usd = (r, seq) => r.f[(seq % r.cap) * 4 + 3];
+  V.mask = (r, seq) => r.u[(seq % r.cap) * 2]; V.venue = (r, seq) => r.u[(seq % r.cap) * 2 + 1];
+
+  /* push one print; side 'buy' | 'sell'; ts in ms; returns the sequence number. O(1) except the 3-print sweep back-tag */
+  V.push = (r, ts, price, size, usd, side, venueId, extra) => {
+    if (!(price > 0) || !Number.isFinite(ts)) return -1;
+    const u = usd > 0 ? usd : price * (size > 0 ? size : 0), q = size > 0 ? size : u / price, sd = side === 'sell' ? B.SELL : B.BUY;
+    let m = sd | (extra | 0);
+    if (u >= V.WHALE) m |= B.WHALE; if (u >= V.BLOCK) m |= B.BLOCK;
+    const cnt = r.size; if (cnt >= 20 && u > V.UNUSUAL_X * (r.sum / cnt)) m |= B.UNUSUAL;
+    // sweep: same aggressive side, ≤ 1 s apart, price walking with the aggressor (buys lift, sells hit) for ≥ 3 prints
+    const walk = sd === B.BUY ? price >= r.lastPx : price <= r.lastPx;
+    if (r.runSide === sd && ts - r.lastTs <= V.SWEEP_MS && walk && !(m & B.AGG)) r.run++; else r.run = 1;
+    r.runSide = sd; r.lastTs = ts; r.lastPx = price;
+    if (r.run >= V.SWEEP_N) { m |= B.SWEEP; if (r.run === V.SWEEP_N) for (let k = 1; k < V.SWEEP_N; k++) if (r.has(r.n - k)) r.u[((r.n - k) % r.cap) * 2] |= B.SWEEP; }
+    const s = r.n % r.cap, i = s * 4;
+    if (r.n >= r.cap) r.sum -= r.f[i + 3];
+    r.f[i] = ts; r.f[i + 1] = price; r.f[i + 2] = q; r.f[i + 3] = u; r.u[s * 2] = m; r.u[s * 2 + 1] = venueId >>> 0; r.sum += u;
+    return r.n++;
+  };
+
+  /* ══ bitmask filter: newest first into `out` (Uint32Array of sequence numbers), returns the count ══
+     side chips OR together (Buys + Sells = both), every other chip must all match (Whales + Buys = whale buys) */
+  V.filter = (r, want, minUsd, out, tracked) => {
+    const sw = want & SIDES, ot = want & ~SIDES, lo = Math.max(0, r.n - r.cap), mu = minUsd > 0 ? minUsd : 0; let k = 0;
+    for (let seq = r.n - 1; seq >= lo; seq--) {
+      const s = seq % r.cap; let m = r.u[s * 2]; if (tracked && tracked.has(r.u[s * 2 + 1])) m |= B.TRACKED;
+      if ((m & ot) !== ot || (sw && !(m & sw)) || r.f[s * 4 + 3] < mu) continue;
+      out[k++] = seq;
+    }
+    return k;
+  };
+
+  /* ══ pressure strip: buy vs sell flow ($ and %), net whale / block flow ($25K+), average print size ══ */
+  V.pressure = (r, sinceMs) => {
+    let b = 0, s = 0, wb = 0, ws = 0, n = 0; const lo = Math.max(0, r.n - r.cap);
+    for (let seq = r.n - 1; seq >= lo; seq--) {
+      const sl = seq % r.cap; if (sinceMs && r.f[sl * 4] < sinceMs) break; const u = r.f[sl * 4 + 3], m = r.u[sl * 2]; n++;
+      if (m & B.SELL) { s += u; if (m & B.WHALE) ws += u; } else { b += u; if (m & B.WHALE) wb += u; }
+    }
+    const t = b + s; return { buy: b, sell: s, buyPct: t > 0 ? (b / t) * 100 : 50, sellPct: t > 0 ? (s / t) * 100 : 50, whaleNet: wb - ws, whaleBuy: wb, whaleSell: ws, avg: n ? t / n : 0, n };
+  };
+
+  /* ══ sub-tab aggregations by venue / maker id ══ */
+  V.agg = (r) => {
+    const M = new Map(), lo = Math.max(0, r.n - r.cap);
+    for (let seq = lo; seq < r.n; seq++) {
+      const sl = seq % r.cap, id = r.u[sl * 2 + 1], u = r.f[sl * 4 + 3], q = r.f[sl * 4 + 2], sell = r.u[sl * 2] & B.SELL, t = r.f[sl * 4];
+      let a = M.get(id); if (!a) M.set(id, (a = { id, buy: 0, sell: 0, qb: 0, qs: 0, nb: 0, ns: 0, first: t, last: t, s1: 0, s2: 0, firstPx: r.f[sl * 4 + 1] }));
+      if (sell) { a.sell += u; a.qs += q; a.ns++; } else { a.buy += u; a.qb += q; a.nb++; } a.last = t; a.s1 += u; a.s2 += u * u;
+    }
+    return [...M.values()].map((a) => Object.assign(a, { net: a.buy - a.sell, gross: a.buy + a.sell, n: a.nb + a.ns }));
+  };
+  V.holders = (A, k) => A.filter((a) => a.net > 0).sort((x, y) => y.net - x.net).slice(0, k || 20);
+  V.top = (A, k) => A.slice().sort((x, y) => y.gross - x.gross).slice(0, k || 20);
+  V.early = (A, k) => A.slice().sort((x, y) => x.first - y.first).slice(0, k || 20);
+  // DCA: ≥ 3 one-sided prints with steady size (coefficient of variation ≤ 25%)
+  V.dca = (A, k) => A.filter((a) => a.n >= 3 && (a.nb === 0 || a.ns === 0)).map((a) => { const mu = a.s1 / a.n, sd = Math.sqrt(Math.max(0, a.s2 / a.n - mu * mu)); return Object.assign({}, a, { cv: mu > 0 ? sd / mu : 1, avg: mu, side: a.ns ? 'sell' : 'buy' }); }).filter((a) => a.cv <= 0.25).sort((x, y) => y.gross - x.gross).slice(0, k || 20);
+
+  /* ══ per-market engine: isolated ring maps + venue / maker tables, LRU-capped symbols ══ */
+  V.engine = () => {
+    const E = { m: {}, keep: '' }; // keep: the symbol on screen is never evicted
+    for (const k of V.MARKETS) E.m[k] = { rings: new Map(), ids: new Map(), names: [''], tracked: new Set(), trackedNames: new Set() };
+    E.mk = (sym) => E.m[V.marketOf(sym)];
+    E.vid = (sym, name) => { const M = E.mk(sym), nm = String(name || '').slice(0, 64); let id = M.ids.get(nm); if (id == null) { id = M.names.length; M.names.push(nm); M.ids.set(nm, id); if (M.trackedNames.has(nm)) M.tracked.add(id); } return id; };
+    E.ring = (sym, make) => {
+      const M = E.mk(sym); let r = M.rings.get(sym);
+      if (!r && make) { if (M.rings.size >= V.MAX_SYMS) { let old = null; for (const [k, x] of M.rings) if (k !== E.keep && (!old || x.at < old[1].at)) old = [k, x]; if (old) M.rings.delete(old[0]); } r = new Ring(); M.rings.set(sym, r); }
+      return r || null;
+    };
+    E.ingest = (sym, ts, price, size, usd, side, venue, extra) => { const r = E.ring(sym, true); r.at = Date.now(); return V.push(r, ts, price, size, usd, side, E.vid(sym, venue), extra); };
+    E.name = (sym, id) => E.mk(sym).names[id] || '';
+    E.track = (sym, name, on) => { const M = E.mk(sym), id = E.vid(sym, name); if (on) { M.tracked.add(id); M.trackedNames.add(name); } else { M.tracked.delete(id); M.trackedNames.delete(name); } return on; };
+    E.isTracked = (sym, name) => E.mk(sym).trackedNames.has(name);
+    return E;
+  };
+
+  /* ══ display helpers ══ */
+  V.type = (m) => { const sd = m & B.SELL ? 'Sell' : 'Buy'; return m & B.BLOCK ? 'Block ' + sd : m & B.WHALE ? 'Whale ' + sd : m & B.SWEEP ? 'Sweep ' + sd : sd; };
+  V.cls = (m) => (m & (B.WHALE | B.BLOCK) ? 'gold' : m & B.SWEEP ? 'amb' : m & B.SELL ? 'dn' : 'up');
+  V.tags = (m) => [m & B.BLOCK ? 'BLOCK' : m & B.WHALE ? 'WHALE' : '', m & B.SWEEP ? 'SWEEP' : '', m & B.UNUSUAL ? '>3x' : '', m & B.TRACKED ? 'TRACKED' : '', m & B.AGG ? '1m agg' : ''].filter(Boolean).join(' · ');
+  V.age = (ms, now) => { const s = Math.max(0, Math.round((now - ms) / 1000)); return s < 60 ? s + 's' : s < 3600 ? Math.floor(s / 60) + 'm' : s < 86400 ? Math.floor(s / 3600) + 'h' : Math.floor(s / 86400) + 'd'; };
+  V.money = (v) => { const a = Math.abs(v), sg = v < 0 ? '−' : ''; return sg + '$' + (a >= 1e9 ? (a / 1e9).toFixed(2) + 'B' : a >= 1e6 ? (a / 1e6).toFixed(2) + 'M' : a >= 1e3 ? (a / 1e3).toFixed(1) + 'K' : a.toFixed(0)); };
+
+  /* ══ optional stock boost streams (user's own key): trade messages → [{ sym, price, size, ts(ms), venue }] ══ */
+  V.BOOST_URL = { finnhub: (k) => 'wss://ws.finnhub.io?token=' + encodeURIComponent(k), alpaca: () => 'wss://stream.data.alpaca.markets/v2/iex' };
+  V.parseFinnhub = (raw) => { let j; try { j = JSON.parse(raw); } catch (e) { return []; } if (!j || j.type !== 'trade' || !Array.isArray(j.data)) return []; return j.data.filter((t) => t && t.p > 0 && Number.isFinite(t.t)).map((t) => ({ sym: String(t.s || ''), price: +t.p, size: +t.v || 0, ts: +t.t, venue: 'Finnhub' })); };
+  V.parseAlpaca = (raw) => { let j; try { j = JSON.parse(raw); } catch (e) { return []; } return (Array.isArray(j) ? j : []).filter((t) => t && t.T === 't' && t.p > 0).map((t) => ({ sym: String(t.S || ''), price: +t.p, size: +t.s || 0, ts: Date.parse(t.t) || Date.now(), venue: 'Alpaca' + (t.x ? ' · ' + String(t.x).slice(0, 4) : '') })); };
+  V.tickSide = (price, prev) => (prev > 0 && price < prev ? 'sell' : 'buy'); // no aggressor flag in these feeds: tick rule
+
+  /* ══ AI Bridge export: pressure + top recent whale / block prints ══ */
+  V.aiTape = (E, sym, now, k) => {
+    const r = E.ring(sym), mk = V.marketOf(sym); if (!r || !r.n) return `[ExTerm Tape] ${sym} · ${mk} · no prints yet`;
+    const out = new Uint32Array(r.cap), n = V.filter(r, B.WHALE, 0, out, E.mk(sym).tracked), P = V.pressure(r), lines = [];
+    for (let i = 0; i < Math.min(n, k || 10); i++) { const q = out[i], m = V.mask(r, q); lines.push(`${V.age(V.ts(r, q), now)} ago | ${V.type(m)} | px ${+V.price(r, q).toPrecision(8)} | qty ${+V.qty(r, q).toPrecision(6)} | ${V.money(V.usd(r, q))} | ${E.name(sym, V.venue(r, q)) || '–'}${V.tags(m) ? ' | ' + V.tags(m) : ''}`); }
+    return [`[ExTerm Tape] ${sym} · ${mk} · last ${r.size} prints`, `FLOW: buy ${P.buyPct.toFixed(1)}% (${V.money(P.buy)}) vs sell ${P.sellPct.toFixed(1)}% (${V.money(P.sell)}) · net whale/block ($25K+) ${V.money(P.whaleNet)} · avg print ${V.money(P.avg)}`,
+      `TOP RECENT WHALE / BLOCK PRINTS (${Math.min(n, k || 10)} of ${n}):`, lines.length ? 'AGE | TYPE | PRICE | SIZE | USD | VENUE/MAKER | TAGS\n' + lines.join('\n') : '(none ≥ $25K in the buffer)',
+      'Task: read the aggressor flow and whale/block prints; say whether size is accumulating or distributing, and name the price levels where blocks traded.'].join('\n');
+  };
+
+  V.HIGHLIGHTS = [
+    'Live Transactions drawer on the chart: 2,000-print typed-array tape per symbol for Stocks, Crypto and On-Chain / DEX, 22 pooled rows, < 0.2 ms per frame at 240 Hz',
+    'Tape pressure strip (buy vs. sell $ and %, net whale / block flow $25K+, avg print), hover auto-pause with a gold Paused pill, click a print to pin it on the chart',
+    '8 sub-tabs (Trades · Positions · Holders / Institutions · Top Traders / Funds · Pre / Early · Tracking · DCA · Orders) and bitmask filter chips + min-USD',
+    'Zero-setup public feeds: Coinbase / Kraken / Binance trades 24/7, DEX pool swaps with makers, stock last-sale tape via the launcher (LAST SESSION TAPE when closed); Copy Tape for AI',
+    'Still here from v16.5: AI Bridge tab with the 127.0.0.1/llm-signal firewall, AI-vetted copy-trading and the masked Share Setup Card',
+    'Still here from v16.4 / v16.3: DEX Discovery, anchored VWAP, the Floating Live Execution HUD, two-way fill sync with IBKR / Alpaca / CCXT / Freqtrade bridges, Require Stop-Loss ON and Two-Key Arming',
+  ];
+  return V;
+})();
+if (typeof module === 'object' && module.exports) module.exports = V166;
+
 /* ===== v160.js ===== */
 /* Copyright (c) 2026 ExTerm Labs (@exterm.labs) · Licensed under GNU AGPL-3.0 · https://github.com/uexxx/ExTerm */
 /* ExTerm v16.0 / v16.1 UI: six local external bot bridges, the four-gate live safety lock and the eight fail-safe engines.
@@ -23342,7 +23506,7 @@ const V162UI = (() => {
     m.innerHTML = `<div class="v162-modal"><div class="v162-mh"><svg viewBox="0 0 24 24" aria-hidden="true" class="v162-ic"><path d="M12 2l8 3v6c0 5-3.4 9.3-8 11-4.6-1.7-8-6-8-11V5z" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8.5 12l2.5 2.5 4.5-5" fill="none" stroke="currentColor" stroke-width="1.8"/></svg><div><h2 id="v162BriefT">Launch Safety &amp; Critical Updates</h2><span class="v162-mode ${live ? 'live' : 'paper'}">${live ? 'LIVE BOT ARMED' : 'PAPER'}</span></div></div>
       <section><h3>Zero-custody local routing</h3><p>ExTerm holds no funds and no keys. Live signals go only to a bot you run yourself on <code>127.0.0.1</code> (or an allow-listed private LAN host over HTTPS), signed per session and expiring after 3 seconds.</p></section>
       <section><h3>5-Point Live Safety Checklist</h3><ol class="v162-list">${V162.CHECKLIST.map((x) => `<li>${esc(x)}</li>`).join('')}</ol></section>
-      <section><h3>${esc(typeof V165 !== 'undefined' ? 'v16.5' : typeof V164 !== 'undefined' ? 'v16.4' : typeof V163 !== 'undefined' ? 'v16.3' : 'v16.2')} Release Highlights</h3><ul class="v162-list">${(typeof V165 !== 'undefined' ? V165.HIGHLIGHTS : typeof V164 !== 'undefined' ? V164.HIGHLIGHTS : typeof V163 !== 'undefined' ? V163.HIGHLIGHTS : V162.HIGHLIGHTS).map((x) => `<li>${esc(x)}</li>`).join('')}</ul></section>
+      <section><h3>${esc(typeof V166 !== 'undefined' ? 'v16.6' : typeof V165 !== 'undefined' ? 'v16.5' : typeof V164 !== 'undefined' ? 'v16.4' : typeof V163 !== 'undefined' ? 'v16.3' : 'v16.2')} Release Highlights</h3><ul class="v162-list">${(typeof V166 !== 'undefined' ? V166.HIGHLIGHTS : typeof V165 !== 'undefined' ? V165.HIGHLIGHTS : typeof V164 !== 'undefined' ? V164.HIGHLIGHTS : typeof V163 !== 'undefined' ? V163.HIGHLIGHTS : V162.HIGHLIGHTS).map((x) => `<li>${esc(x)}</li>`).join('')}</ul></section>
       <div class="v162-acts"><button type="button" class="btn pri" data-v162="safe">Continue in Safe Mode (PAPER)</button><button type="button" class="btn" data-v162="bridge">Open Execution Bridge &amp; Safety Settings</button></div>
       <p class="note">Esc continues in Safe Mode.${live ? ' Live routing is armed: Safe Mode flattens and disarms all six slots.' : ''}</p></div>`;
     m.addEventListener('click', (e) => { const b = e.target.closest('[data-v162]'); if (!b) return; if (b.dataset.v162 === 'safe') safe(); else openBridge(); });
@@ -25116,6 +25280,249 @@ const V165UI = (() => {
   return U;
 })();
 if (typeof window !== 'undefined' && typeof document !== 'undefined' && typeof boot === 'function') { const _b165 = boot; boot = async function () { await _b165.apply(this, arguments); try { V165UI.start(); } catch (e) { console.warn('v165 init', e); } }; }
+
+/* ===== v166.js ===== */
+/* Copyright (c) 2026 ExTerm Labs (@exterm.labs) · Licensed under GNU AGPL-3.0 · https://github.com/uexxx/ExTerm */
+/* ExTerm v16.6 UI: Live Transactions drawer. Maths + storage in V166 (v166core.js); this file only wires it in:
+   · ingest: every Feed.trade print (exchange WebSockets incl. the v16.4 Coinbase / Kraken / Binance failover, DEX swaps with
+     makers, the launcher's 500 ms swap tape, any configured stock trade stream) + stock last-sale tape from the launcher's
+     Yahoo proxy (1-minute volume prints; LAST SESSION TAPE when the market is closed; SIM prints in demo mode)
+   · drawer: pressure strip, 8 sub-tabs, bitmask chips + min USD, 22 pooled rows over a virtual scroller, painted from one
+     requestAnimationFrame loop only while the drawer is open (filter + paint are measured: U.perf)
+   · hover auto-pause (gold Paused pill) + manual Pause / Live, click a print → gold pin on the chart, Copy Tape for AI
+   Strict CSP: listeners attached here, rows written with textContent, tables through esc(). */
+const V166UI = (() => {
+  const KEY = 'exterm.v166.cfg', RH = 18, POOL = 22, B = V166.BIT;
+  const U = { E: V166.engine(), open: false, tab: 'trades', chips: [], minUsd: 0, manual: false, hover: false, idx: new Uint32Array(V166.CAP), cnt: 0, sym: '', dirty: true, pins: {}, drawnPins: 0,
+    lastCopy: '', perf: { last: 0, max: 0, avg: 0, frames: 0 }, stock: { sym: '', seen: new Map(), session: '', last: 0, busy: false, prevC: 0 }, raf: 0, stripAt: 0, altAt: 0, rows: [] };
+  const $1 = (s, r) => (r || document).querySelector(s);
+  const paused = () => U.manual || U.hover;
+  const load = () => {
+    let o = null; try { o = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) { o = null; }
+    if (!o || typeof o !== 'object') return;
+    if (V166.TABS.some((t) => t[0] === o.tab)) U.tab = o.tab; if (Array.isArray(o.chips)) U.chips = o.chips.filter((c) => V166.CHIPS.some((x) => x[0] === c && c !== 'all'));
+    if (Number.isFinite(o.minUsd) && o.minUsd >= 0) U.minUsd = o.minUsd; U.open = o.open === true;
+    if (o.tracked && typeof o.tracked === 'object') for (const mk of V166.MARKETS) for (const n of Array.isArray(o.tracked[mk]) ? o.tracked[mk].slice(0, 200) : []) if (typeof n === 'string' && n) U.E.m[mk].trackedNames.add(n.slice(0, 64));
+  };
+  const save = () => { try { const tracked = {}; for (const mk of V166.MARKETS) tracked[mk] = [...U.E.m[mk].trackedNames]; localStorage.setItem(KEY, JSON.stringify({ tab: U.tab, chips: U.chips, minUsd: U.minUsd, open: U.open, tracked })); } catch (e) { /* session only */ } };
+  const fp = (v) => (v > 0 ? (v < 0.01 ? NT.fmtTiny(v) : NT.fmtPrice(v)) : '–');
+  const fq = (v) => (v >= 1e6 ? NT.fmtCompact(v) : v >= 100 ? Math.round(v).toLocaleString('en-US') : +v.toPrecision(4) + '');
+  const short = (s) => (/^(0x)?[0-9a-zA-Z]{30,}$/.test(s) ? s.slice(0, 6) + '…' + s.slice(-4) : s);
+
+  /* ══ ingest ══ */
+  const venueOf = (sym, x) => {
+    if (x && x.who) return String(x.who);
+    const mk = V166.marketOf(sym);
+    if (mk === 'onchain') return (x && (x.dex || x.src)) || 'DEX pool';
+    if (mk === 'crypto') { const f = typeof V164UI !== 'undefined' && V164UI.ex && V164UI.ex.ws && V164UI.ex.sym === sym ? V164UI.ex.name : ''; if (f) return f[0].toUpperCase() + f.slice(1); const a = typeof Providers !== 'undefined' && Providers.active; return (a && (a.name || a.id)) || 'Exchange'; }
+    const s = typeof Stocks !== 'undefined' && Stocks.active; return (s && (s.name || s.id)) || 'Stock feed';
+  };
+  const ingest = (sym, price, size, side, ts, x, extra) => {
+    const now = Date.now(), ms = Math.min(ts > 1e12 ? ts : ts * 1000, now) || now, usd = x && x.usd > 0 ? x.usd : 0;
+    const seq = U.E.ingest(sym, ms, +price, +size || 0, usd, side, venueOf(sym, x), extra);
+    if (seq >= 0 && sym === U.sym) U.dirty = true;
+    return seq;
+  };
+
+  /* stock last-sale tape through the launcher's Yahoo proxy: 1-minute bars → volume prints (new volume only) */
+  const stockPoll = async () => {
+    const sym = typeof ST !== 'undefined' ? ST.sel : '', S = U.stock;
+    if (!sym || V166.marketOf(sym) !== 'stocks' || S.busy || typeof YF === 'undefined' || typeof Stocks === 'undefined') return;
+    if (Stocks.active === StockDemo) { S.session = 'sim'; return; }
+    if (S.sym !== sym) { S.sym = sym; S.seen = new Map(); S.session = ''; S.prevC = 0; }
+    S.busy = true;
+    try {
+      const { meta, rows } = await YF.chart(sym, '1m', '1d'); if (S.sym !== sym) return;
+      const q = typeof yMeta === 'function' ? yMeta(sym, meta) : {}; S.session = q.open === false ? 'last' : 'live'; const venue = q.exch || 'Consolidated';
+      if (boostLive()) { S.last = Date.now(); return; } // the boost stream already prints every trade
+      const lastT = rows.length ? rows[rows.length - 1].t : 0;
+      for (const r of rows) {
+        if (!(r.v > 0) || !(r.c > 0)) continue; const prev = S.seen.get(r.t) || 0; if (r.v <= prev) continue; S.seen.set(r.t, r.v);
+        const side = r.c >= (S.prevC || r.o) ? 'buy' : 'sell'; S.prevC = r.c;
+        ingest(sym, r.c, r.v - prev, side, prev && r.t === lastT && S.session === 'live' ? Date.now() : (r.t + 59) * 1000, { who: venue }, B.AGG);
+      }
+      S.last = Date.now();
+    } catch (e) { /* offline or older launcher: the demo / Feed.trade paths still fill the tape */ } finally { S.busy = false; }
+  };
+  /* optional stock boost: the user's own Finnhub token or Alpaca key (sessionStorage only, like the key vault's default) */
+  const BK = 'exterm.v166.boost', boost = { ws: null, sym: '', live: 0, prev: {} };
+  const bkeys = () => { try { const o = JSON.parse(sessionStorage.getItem(BK) || 'null'); return o && typeof o === 'object' ? o : {}; } catch (e) { return {}; } };
+  const boostStop = () => { if (boost.ws) { try { boost.ws.close(); } catch (e) { /* closed */ } } boost.ws = null; boost.sym = ''; };
+  const boostSync = () => {
+    const sym = ST.sel, k = bkeys(), kind = k.finnhub ? 'finnhub' : k.alpacaKey && k.alpacaSecret ? 'alpaca' : '';
+    if (!kind || V166.marketOf(sym) !== 'stocks') { if (boost.ws) boostStop(); return; } if (boost.ws && boost.sym === sym) return; boostStop();
+    let ws; try { ws = new WebSocket(V166.BOOST_URL[kind](k.finnhub)); } catch (e) { return; } boost.ws = ws; boost.sym = sym;
+    ws.onopen = () => { try { if (kind === 'finnhub') ws.send(JSON.stringify({ type: 'subscribe', symbol: sym })); else { ws.send(JSON.stringify({ action: 'auth', key: k.alpacaKey, secret: k.alpacaSecret })); ws.send(JSON.stringify({ action: 'subscribe', trades: [sym] })); } } catch (e) { /* closed */ } };
+    ws.onmessage = (m) => { if (boost.ws !== ws) return; for (const t of (kind === 'finnhub' ? V166.parseFinnhub : V166.parseAlpaca)(m.data)) { if (t.sym !== sym) continue; boost.live = Date.now(); ingest(sym, t.price, t.size, V166.tickSide(t.price, boost.prev[sym]), t.ts, { who: t.venue }); boost.prev[sym] = t.price; } };
+    ws.onerror = ws.onclose = () => { if (boost.ws === ws) { boost.ws = null; boost.sym = ''; } };
+  };
+  const boostLive = () => Date.now() - boost.live < 15000;
+  const onStockTick = (sym, price) => {
+    if (V166.marketOf(sym) !== 'stocks' || typeof Stocks === 'undefined' || Stocks.active !== StockDemo) return;
+    U.stock.session = 'sim'; const pv = U.stock.lastPx && U.stock.lastPx[sym]; (U.stock.lastPx || (U.stock.lastPx = {}))[sym] = price;
+    ingest(sym, price, Math.round(20 + Math.random() * 400), pv && price < pv ? 'sell' : 'buy', Date.now(), { who: 'SIM' }); // shortcut: demo sizes are random, live stocks use real volume
+  };
+
+  /* ══ drawer DOM ══ */
+  const html = () => `<div class="v166-strip" role="status" aria-live="off">
+      <span class="v166-k">Buy <b class="up" id="v166Buy">–</b></span><span class="v166-bar" aria-hidden="true"><i class="b" id="v166BarB"></i><i class="s" id="v166BarS"></i></span><span class="v166-k">Sell <b class="dn" id="v166Sell">–</b></span>
+      <span class="v166-k">Net Whale/Block ($25K+) <b id="v166Whale">–</b></span><span class="v166-k">Avg Print <b id="v166Avg">–</b></span>
+      <span class="v166-sess" id="v166Sess"></span><span class="sp"></span>
+      <span class="v166-pill" id="v166Pill" hidden>Paused</span>
+      <button type="button" class="btn xs" data-v166a="pause" id="v166Pause">Pause</button>
+      <button type="button" class="btn xs ghost" data-v166a="boost" id="v166BoostBtn" title="Optional: your own Finnhub token or Alpaca key for every stock trade">Stock boost</button>
+      <button type="button" class="btn xs pri" data-v166a="copy">Copy Tape for AI</button>
+      <button type="button" class="btn xs ghost" data-v166a="close" aria-label="Close tape drawer">✕</button></div>
+    <div class="v166-row v166-boost" id="v166Boost" hidden><b>Stock boost</b><input class="in" type="password" autocomplete="off" id="v166Fh" placeholder="Finnhub token"><span class="note">or</span><input class="in" type="password" autocomplete="off" id="v166Ak" placeholder="Alpaca key ID"><input class="in" type="password" autocomplete="off" id="v166As" placeholder="Alpaca secret"><button type="button" class="btn xs" data-v166a="bsave">Save for this session</button><button type="button" class="btn xs ghost" data-v166a="bclear">Clear</button><span class="note">Keys stay in this tab (sessionStorage), never on disk.</span></div>
+    <div class="v166-tabs" role="tablist">${V166.TABS.map((t) => `<button type="button" role="tab" data-v166t="${t[0]}">${esc(t[1])}</button>`).join('')}</div>
+    <div class="v166-chips">${V166.CHIPS.map((c) => `<button type="button" class="v166-chip" data-v166f="${c[0]}">${esc(c[1])}</button>`).join('')}<label class="v166-min">Min $ <input type="number" min="0" step="1000" id="v166Min" class="in" inputmode="numeric"></label><span class="note" id="v166Cnt"></span></div>
+    <div class="v166-list" id="v166List"><div class="v166-head"><span>Age</span><span>Type</span><span>Price</span><span id="v166QtyH">Amount</span><span>Total USD</span><span>Venue / Maker</span><span>Signal Tags</span></div>
+      <div class="v166-body" id="v166Body" tabindex="0" aria-label="Live prints (hover to pause)"><div class="v166-sp" id="v166Sp"></div></div></div>
+    <div class="v166-alt" id="v166Alt" hidden></div>`;
+  const mount = () => {
+    const tb = $1('#tab-markets .toolbar');
+    if (tb && !$1('#v166Btn')) { const b = document.createElement('button'); b.type = 'button'; b.id = 'v166Btn'; b.className = 'btn sm v166-btn'; b.title = 'Live Transactions tape (Stocks · Crypto · On-Chain / DEX)'; b.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true" class="v165-ic"><path d="M4 6h16M4 12h10M4 18h13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg> Tape'; b.addEventListener('click', () => toggle()); const rp = $1('#replayBtn', tb); if (rp) rp.after(b); else tb.appendChild(b); }
+    if ($1('#v166Tape')) return;
+    const d = document.createElement('section'); d.id = 'v166Tape'; d.className = 'v166-drawer'; d.hidden = true; d.setAttribute('aria-label', 'Live Transactions'); d.innerHTML = html(); document.body.appendChild(d);
+    const body = $1('#v166Body', d);
+    for (let i = 0; i < POOL; i++) { const r = document.createElement('div'); r.className = 'v166-r'; r.hidden = true; for (let j = 0; j < 7; j++) r.appendChild(document.createElement('span')); r._seq = -1; body.appendChild(r); U.rows.push(r); }
+    body.addEventListener('mouseenter', () => { U.hover = true; pausePaint(); });
+    body.addEventListener('mouseleave', () => { U.hover = false; pausePaint(); if (!paused()) { body.scrollTop = 0; U.dirty = true; } });
+    body.addEventListener('scroll', () => paint(), { passive: true });
+    body.addEventListener('click', (e) => { const r = e.target.closest('.v166-r'); if (r && r._seq >= 0) pin(r._seq); });
+    d.addEventListener('click', (e) => {
+      const a = e.target.closest('[data-v166a]'), t = e.target.closest('[data-v166t]'), f = e.target.closest('[data-v166f]'), tr = e.target.closest('[data-v166track]');
+      if (a) { const k = a.dataset.v166a; if (k === 'pause') { U.manual = !U.manual; pausePaint(); if (!paused()) U.dirty = true; } else if (k === 'copy') copyTape(); else if (k === 'close') toggle(false); else if (k === 'boost') { const f = $1('#v166Boost'); f.hidden = !f.hidden; } else if (k === 'bsave' || k === 'bclear') { const v = (id) => ($1(id).value || '').trim().slice(0, 200), o = k === 'bsave' ? { finnhub: v('#v166Fh'), alpacaKey: v('#v166Ak'), alpacaSecret: v('#v166As') } : {}; try { if (o.finnhub || o.alpacaKey) sessionStorage.setItem(BK, JSON.stringify(o)); else sessionStorage.removeItem(BK); } catch (x) { /* storage blocked */ } for (const id of ['#v166Fh', '#v166Ak', '#v166As']) $1(id).value = ''; $1('#v166Boost').hidden = true; boostStop(); boostSync(); toast(o.finnhub || o.alpacaKey ? 'Stock boost saved for this session' : 'Stock boost cleared', 'acc'); } else if (k === 'addtrack') { const i = $1('#v166TrackIn'); if (i && i.value.trim()) { track(i.value.trim(), true); i.value = ''; } } }
+      if (t) setTab(t.dataset.v166t);
+      if (f) setChip(f.dataset.v166f);
+      if (tr) track(tr.dataset.v166track, tr.dataset.on !== '1');
+    });
+    $1('#v166Min', d).addEventListener('input', (e) => { const v = +e.target.value; U.minUsd = Number.isFinite(v) && v > 0 ? v : 0; U.dirty = true; refilter(true); save(); });
+    paintChrome();
+  };
+  const toggle = (on) => { U.open = on == null ? !U.open : !!on; save(); show(); };
+  const show = () => {
+    const d = $1('#v166Tape'); if (!d) return; const vis = U.open && typeof curTab !== 'undefined' && curTab === 'markets'; if (d.hidden === vis) d.hidden = !vis;
+    const b = $1('#v166Btn'); if (b) { b.classList.toggle('on', U.open); b.setAttribute('aria-pressed', String(U.open)); }
+    if (vis && !U.raf) { U.dirty = true; U.raf = requestAnimationFrame(frame); }
+  };
+  const setTab = (k) => { if (!V166.TABS.some((t) => t[0] === k)) return; U.tab = k; save(); paintChrome(); U.altAt = 0; U.dirty = true; };
+  const setChip = (k) => { if (k === 'all') U.chips = []; else U.chips = U.chips.includes(k) ? U.chips.filter((c) => c !== k) : U.chips.concat(k); save(); paintChrome(); refilter(true); };
+  const track = (name, on) => { const sym = U.sym || ST.sel; U.E.track(sym, String(name).slice(0, 64), on); save(); U.altAt = 0; refilter(true); paint(true); toast((on ? 'Tracking ' : 'Stopped tracking ') + esc(short(name)), 'acc'); };
+  const paintChrome = () => {
+    const d = $1('#v166Tape'); if (!d) return;
+    for (const b of d.querySelectorAll('[data-v166t]')) { const on = b.dataset.v166t === U.tab; b.classList.toggle('on', on); b.setAttribute('aria-selected', String(on)); }
+    for (const b of d.querySelectorAll('[data-v166f]')) { const on = b.dataset.v166f === 'all' ? !U.chips.length : U.chips.includes(b.dataset.v166f); b.classList.toggle('on', on); b.setAttribute('aria-pressed', String(on)); }
+    const mi = $1('#v166Min', d); if (mi && document.activeElement !== mi) mi.value = U.minUsd ? String(U.minUsd) : '';
+    $1('#v166List', d).hidden = U.tab !== 'trades'; $1('#v166Alt', d).hidden = U.tab === 'trades'; $1('.v166-chips', d).hidden = U.tab !== 'trades' && U.tab !== 'tracking';
+  };
+  const pausePaint = () => { const p = paused(), pill = $1('#v166Pill'), bt = $1('#v166Pause'); if (pill) pill.hidden = !p; if (bt) { bt.textContent = U.manual ? 'Live' : 'Pause'; bt.classList.toggle('on', U.manual); } };
+
+  /* ══ render: one rAF loop while the drawer is visible; filter only when new prints arrive and not paused ══ */
+  const refilter = (force) => {
+    const r = U.E.ring(U.sym); if (!r) { U.cnt = 0; } else if (force || !paused()) U.cnt = V166.filter(r, V166.chipMask(U.chips), U.minUsd, U.idx, U.E.mk(U.sym).tracked);
+    const sp = $1('#v166Sp'); if (sp) sp.style.height = U.cnt * RH + 'px'; const c = $1('#v166Cnt'); if (c) c.textContent = U.cnt + ' / ' + (r ? r.size : 0) + ' prints';
+    paint(false);
+  };
+  // pooled rows are keyed by print sequence: a print already on screen only moves (transform); only new prints write text
+  const place = (row, k, r, now) => { const y = k * RH; if (row._y !== y) { row._y = y; row.style.transform = 'translateY(' + y + 'px)'; } if (row.hidden) row.hidden = false; const age = V166.age(V166.ts(r, row._seq), now); if (row._age !== age) { row._age = age; row.children[0].textContent = age; } };
+  const fill = (row, r, seq, tracked) => {
+    let m = V166.mask(r, seq); const vid = V166.venue(r, seq); if (tracked.has(vid)) m |= B.TRACKED; const c = row.children, nm = U.E.name(U.sym, vid), k = V166.cls(m);
+    c[1].textContent = V166.type(m); c[1].className = k; c[2].textContent = fp(V166.price(r, seq)); c[3].textContent = fq(V166.qty(r, seq)); c[4].textContent = V166.money(V166.usd(r, seq)); c[5].textContent = short(nm) || '–'; c[5].title = nm; c[6].textContent = V166.tags(m); row.className = 'v166-r ' + k;
+    row._seq = seq; row._age = null;
+  };
+  const paint = (force) => {
+    const body = $1('#v166Body'); if (!body) return; const r = U.E.ring(U.sym), now = Date.now(), first = Math.floor(body.scrollTop / RH), tracked = U.E.mk(U.sym || 'x').tracked, want = new Map(), free = [];
+    if (r) for (let k = first; k < Math.min(U.cnt, first + POOL); k++) if (r.has(U.idx[k])) want.set(U.idx[k], k);
+    for (const row of U.rows) { if (!force && row._seq >= 0 && want.has(row._seq)) { place(row, want.get(row._seq), r, now); want.delete(row._seq); } else free.push(row); }
+    for (const [seq, k] of want) { const row = free.pop(); fill(row, r, seq, tracked); place(row, k, r, now); }
+    for (const row of free) { if (!row.hidden) row.hidden = true; row._seq = -1; }
+  };
+  const strip = () => {
+    const r = U.E.ring(U.sym), P = r ? V166.pressure(r) : null, set = (id, t) => { const e = $1(id); if (e && e.textContent !== t) e.textContent = t; };
+    set('#v166Buy', P ? P.buyPct.toFixed(1) + '% · ' + V166.money(P.buy) : '–'); set('#v166Sell', P ? P.sellPct.toFixed(1) + '% · ' + V166.money(P.sell) : '–');
+    set('#v166Whale', P ? V166.money(P.whaleNet) : '–'); set('#v166Avg', P ? V166.money(P.avg) : '–'); const w = $1('#v166Whale'); if (w) w.className = P && P.whaleNet < 0 ? 'dn' : P && P.whaleNet > 0 ? 'up' : '';
+    const bb = $1('#v166BarB'), bs = $1('#v166BarS'); if (bb && P) { bb.style.width = P.buyPct.toFixed(1) + '%'; bs.style.width = P.sellPct.toFixed(1) + '%'; }
+    const mk = V166.marketOf(U.sym || 'x'), S = U.stock, sess = mk === 'stocks' ? (boostLive() ? 'LIVE TAPE · ' + (bkeys().finnhub ? 'Finnhub' : 'Alpaca') : S.session === 'last' ? 'LAST SESSION TAPE' : S.session === 'sim' || (typeof Stocks !== 'undefined' && typeof StockDemo !== 'undefined' && Stocks.active === StockDemo) ? 'SIM TAPE (demo)' : S.session === 'live' ? 'LIVE TAPE · last-sale' : 'STOCK TAPE') : mk === 'crypto' ? 'LIVE 24/7 · ' + venueOf(U.sym) : 'DEX SWAPS · makers';
+    set('#v166Sess', sess); const se = $1('#v166Sess'); if (se) se.classList.toggle('last', S.session === 'last' && mk === 'stocks'); set('#v166QtyH', mk === 'stocks' ? 'Shares' : 'Amount'); const bb2 = $1('#v166BoostBtn'); if (bb2) bb2.hidden = mk !== 'stocks';
+  };
+  const frame = () => {
+    U.raf = 0; const d = $1('#v166Tape'); if (!d || d.hidden) return;
+    const t0 = performance.now(), sym = ST.sel;
+    if (sym !== U.sym) { U.sym = sym; U.E.keep = sym; U.dirty = true; U.manual = false; pausePaint(); const b = $1('#v166Body'); if (b) b.scrollTop = 0; U.altAt = 0; U.stripAt = 0; U.filtAt = 0; }
+    const q4 = t0 - U.stripAt > 250; // strip + ages at 4 Hz; the list re-filters at most 30×/s (the chart keeps its own 240 Hz loop)
+    if (U.tab === 'trades') { if (U.dirty && !paused() && t0 - (U.filtAt || 0) >= 33) { U.dirty = false; U.filtAt = t0; refilter(false); } else if (q4) paint(false); }
+    else if (t0 - U.altAt > 1000 && !paused()) { U.altAt = t0; alt(); }
+    if (q4) { U.stripAt = t0; strip(); }
+    const dt = performance.now() - t0, P = U.perf; P.last = dt; P.max = Math.max(P.max, dt); P.frames++; P.avg += (dt - P.avg) / Math.min(P.frames, 240);
+    U.raf = requestAnimationFrame(frame);
+  };
+
+  /* ══ sub-tabs other than Trades ══ */
+  const tbl = (head, rows, empty) => `<table class="v166-t"><thead><tr>${head.map((h) => `<th>${esc(h)}</th>`).join('')}</tr></thead><tbody>${rows.length ? rows.join('') : `<tr><td colspan="${head.length}" class="note">${esc(empty)}</td></tr>`}</tbody></table>`;
+  const trk = (nm, on) => `<button type="button" class="btn xs ghost" data-v166track="${esc(nm)}" data-on="${on ? 1 : 0}">${on ? 'Untrack' : 'Track'}</button>`;
+  const altHTML = () => {
+    const sym = U.sym, r = U.E.ring(sym), mk = V166.marketOf(sym || 'x'), A = r ? V166.agg(r) : [], nm = (id) => U.E.name(sym, id), by = mk === 'onchain' ? 'maker wallet' : 'venue', now = Date.now();
+    const row = (a, cells) => `<tr>${cells.map((c) => `<td>${esc(c)}</td>`).join('')}<td>${trk(nm(a.id), U.E.isTracked(sym, nm(a.id)))}</td></tr>`;
+    if (U.tab === 'positions') {
+      const rows = []; try { const p = ACC.pos[sym]; if (p && p.qty) { const avg = ACC.avg(sym), m = px(sym); rows.push(`<tr><td>Paper account</td><td>${esc(fq(p.qty))}</td><td>${esc(fp(avg))}</td><td>${esc(fp(m))}</td><td class="${m >= avg ? 'up' : 'dn'}">${esc(V166.money((m - avg) * p.qty))}</td></tr>`); } for (const b of ST.bots || []) { const q = b.account && b.account.pos && b.account.pos[sym]; if (q && q.qty) { const avg = b.account.avg ? b.account.avg(sym) : q.avg || 0, m = px(sym); rows.push(`<tr><td>Bot · ${esc(b.name || b.id)}</td><td>${esc(fq(q.qty))}</td><td>${esc(fp(avg))}</td><td>${esc(fp(m))}</td><td class="${m >= avg ? 'up' : 'dn'}">${esc(V166.money((m - avg) * q.qty))}</td></tr>`); } } } catch (e) { /* no account yet */ }
+      return tbl(['Account', 'Qty', 'Avg', 'Mark', 'Unrealised'], rows, 'No open position in ' + baseOf(sym) + '.');
+    }
+    if (U.tab === 'orders') {
+      const rows = []; try { for (const o of ACC.orders || []) if (o.sym === sym) rows.push(`<tr><td>Limit</td><td class="${o.side === 'buy' ? 'up' : 'dn'}">${esc(o.side)}</td><td>${esc(fp(o.price))}</td><td>${esc(fq(o.size || 0))}</td><td>Paper</td></tr>`); for (const p of ST.pending || []) if (p.sym === sym) rows.push(`<tr><td>Pending signal</td><td>${esc(p.side || '')}</td><td>${esc(fp(p.price || 0))}</td><td>–</td><td>${esc(p.src || 'bot')}</td></tr>`); } catch (e) { /* none */ }
+      return tbl(['Kind', 'Side', 'Price', 'Size', 'Route'], rows, 'No working orders for ' + baseOf(sym) + '.');
+    }
+    if (U.tab === 'holders') return `<p class="note">Net buyers in the last ${r ? r.size : 0} prints, by ${by}${mk === 'stocks' ? ' (institutional 13F data is not free: this is session flow)' : ''}.</p>` + tbl(['Holder (' + by + ')', 'Net $', 'Bought', 'Sold', 'Prints', ''], V166.holders(A).map((a) => row(a, [short(nm(a.id)) || '–', V166.money(a.net), V166.money(a.buy), V166.money(a.sell), a.n])), 'No net buyers yet.');
+    if (U.tab === 'top') return tbl(['Trader / fund (' + by + ')', 'Gross $', 'Net $', 'Buys', 'Sells', ''], V166.top(A).map((a) => row(a, [short(nm(a.id)) || '–', V166.money(a.gross), V166.money(a.net), a.nb, a.ns])), 'No prints yet.');
+    if (U.tab === 'early') return `<p class="note">First ${by}s to trade ${esc(baseOf(sym))} in this buffer${mk === 'stocks' ? ' (regular session bars; pre-market is not in the free feed)' : ''}.</p>` + tbl(['First seen', 'Who', 'First price', 'Net $', 'Prints', ''], V166.early(A).map((a) => row(a, [V166.age(a.first, now) + ' ago', short(nm(a.id)) || '–', fp(a.firstPx), V166.money(a.net), a.n])), 'No prints yet.');
+    if (U.tab === 'dca') return `<p class="note">One-sided ${by}s with ≥ 3 steady-size prints (size varies ≤ 25%).</p>` + tbl(['Who', 'Side', 'Prints', 'Avg print', 'Total $', 'Size var', ''], V166.dca(A).map((a) => row(a, [short(nm(a.id)) || '–', a.side, a.n, V166.money(a.avg), V166.money(a.gross), (a.cv * 100).toFixed(0) + '%'])), 'No DCA pattern yet.');
+    // tracking: tracked names in this market + their recent prints
+    const M = U.E.mk(sym || 'x'), out = new Uint32Array(V166.CAP), n = r ? V166.filter(r, B.TRACKED | V166.chipMask(U.chips), U.minUsd, out, M.tracked) : 0, prints = [];
+    for (let i = 0; i < Math.min(n, 50); i++) { const q = out[i], m = V166.mask(r, q) | B.TRACKED; prints.push(`<tr><td>${esc(V166.age(V166.ts(r, q), now))}</td><td class="${V166.cls(m)}">${esc(V166.type(m))}</td><td>${esc(fp(V166.price(r, q)))}</td><td>${esc(V166.money(V166.usd(r, q)))}</td><td>${esc(short(nm(V166.venue(r, q))))}</td></tr>`); }
+    return `<div class="v166-row"><input class="in" id="v166TrackIn" placeholder="Wallet / maker / venue to track" maxlength="64"><button type="button" class="btn xs" data-v166a="addtrack">Track</button><span class="note">${[...M.trackedNames].map((t) => esc(short(t))).join(' · ') || 'Nothing tracked in ' + esc(mk) + ' yet'}</span></div>` + tbl(['Age', 'Type', 'Price', 'Total USD', 'Who'], prints, 'No prints from tracked wallets / venues yet.');
+  };
+  const alt = () => { const el = $1('#v166Alt'); if (!el || (el.contains(document.activeElement) && document.activeElement.tagName === 'INPUT')) return; const h = altHTML(); if (el._h !== h) { el._h = h; el.innerHTML = h; } };
+
+  /* ══ chart pins + AI export ══ */
+  const pin = (seq) => {
+    const r = U.E.ring(U.sym); if (!r || !r.has(seq)) return; const m = V166.mask(r, seq), p = { t: V166.ts(r, seq) / 1000, price: V166.price(r, seq), usd: V166.usd(r, seq), type: V166.type(m) };
+    const L = U.pins[U.sym] || (U.pins[U.sym] = []); L.push(p); if (L.length > 20) L.shift(); if (typeof chart !== 'undefined' && chart) chart.invalidate();
+    toast(`Pinned ${esc(p.type)} ${esc(V166.money(p.usd))} @ ${esc(fp(p.price))} on the chart`, 'acc'); return p;
+  };
+  const overlay = (g, L, ch) => {
+    if (typeof chart === 'undefined' || ch !== chart || !L || !L.py) return; const P = U.pins[ST.sel]; U.drawnPins = 0; if (!P || !P.length) return;
+    const top = L.y0 + 4, bot = L.y0 + L.mainH - (L.volH || 0) - 6, x0 = L.Lm, xr = L.W - L.Rm; g.save();
+    for (const p of P) {
+      let x = ch.tToX(p.t); const y = L.py(p.price); if (!Number.isFinite(y) || y < top || y > bot) continue; if (!Number.isFinite(x)) x = xr - 8; x = Math.max(x0 + 6, Math.min(xr - 6, x));
+      g.fillStyle = '#D4AF37'; g.strokeStyle = '#0a0a0c'; g.lineWidth = 1; g.beginPath(); g.moveTo(x, y - 7); g.lineTo(x + 6, y); g.lineTo(x, y + 7); g.lineTo(x - 6, y); g.closePath(); g.fill(); g.stroke();
+      g.font = '600 9px ui-monospace, Menlo, Consolas, monospace'; g.textAlign = 'left'; g.textBaseline = 'middle'; g.fillText(V166.money(p.usd), Math.min(x + 9, xr - 44), y); U.drawnPins++;
+    }
+    g.textBaseline = 'alphabetic'; g.restore();
+  };
+  const copyTape = () => {
+    const txt = V166.aiTape(U.E, U.sym || ST.sel, Date.now(), 10); U.lastCopy = txt;
+    if (typeof V165UI !== 'undefined') { V165UI.lastCopy = txt; const pk = $1('#v165Pk'); if (pk) pk.textContent = txt; } // lands in the AI Bridge preview too
+    try { navigator.clipboard.writeText(txt).then(() => toast('Tape copied for AI (top whale / block prints)', 'acc'), () => toast('Tape ready in the AI Bridge preview (clipboard blocked)', 'amb')); } catch (e) { toast('Tape ready in the AI Bridge preview (clipboard blocked)', 'amb'); }
+    return txt;
+  };
+
+  let n = 0;
+  const tick = () => {
+    try {
+      mount(); show(); n++;
+      if (typeof chart !== 'undefined' && chart && !chart.overlays.includes(overlay)) chart.overlays.push(overlay);
+      if (n % 30 === 1 || (U.stock.sym !== ST.sel && V166.marketOf(ST.sel) === 'stocks')) stockPoll(); // 15 s
+      boostSync(); // cheap no-op unless a stock boost key is set, the launcher's stock poll cadence
+    } catch (e) { console.warn('v166', e); }
+  };
+  U.start = () => {
+    load(); if (typeof Feed !== 'undefined' && !Feed._v166) { Feed._v166 = true; Feed.tradeL.push((sym, p, q, side, ts, x) => { try { ingest(sym, p, q, side, ts, x); } catch (e) { /* never break the feed */ } }); Feed.tickL.push((sym, p) => { try { onStockTick(sym, p); } catch (e) { /* demo only */ } }); }
+    tick(); setInterval(tick, 500);
+  };
+  Object.assign(U, { boost, boostSync, ingest, refilter, paint, strip, frame, pin, overlay, copyTape, setTab, setChip, track, toggle, stockPoll, altHTML, paused });
+  return U;
+})();
+if (typeof window !== 'undefined' && typeof document !== 'undefined' && typeof boot === 'function') { const _b166 = boot; boot = async function () { await _b166.apply(this, arguments); try { V166UI.start(); } catch (e) { console.warn('v166 init', e); } }; }
 
 /* ===== boot.js ===== */
 /* Copyright (c) 2026 ExTerm Labs (@exterm.labs) · Licensed under GNU AGPL-3.0 · https://github.com/uexxx/ExTerm */

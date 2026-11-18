@@ -36,7 +36,7 @@ const SHOTS = process.env.EXTERM_SHOTS || '';
 
     // ── 1. briefing + strategies
     await ev(() => V162UI.brief()); await sleep(200);
-    ok('briefing: v16.4 Release Highlights listed and the modal fits 1440×900', await ev(() => { const m = $('#v162Brief'); return !!m && /v16\.[45] Release Highlights/.test(m.textContent) && /Discovery/.test(m.textContent) && m.querySelector('.v162-modal').getBoundingClientRect().bottom <= innerHeight; }));
+    ok('briefing: v16.4 Release Highlights listed and the modal fits 1440×900', await ev(() => { const m = $('#v162Brief'); return !!m && /v16\.[456] Release Highlights/.test(m.textContent) && /Discovery/.test(m.textContent) && m.querySelector('.v162-modal').getBoundingClientRect().bottom <= innerHeight; }));
     await page.keyboard.press('Escape'); await sleep(150);
     ok('pack 5: six structural strategies registered in the page', await ev(() => (NT.PACK5 || []).length === 6 && NT.PACK5.every((id) => NT.strategies[id] && NT.strategies[id].spec)));
 

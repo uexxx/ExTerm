@@ -59,7 +59,7 @@ V.monteCarloAsync(rets, 1000, 7, 100, () => { yields++; return Promise.resolve()
 // ── quant worker message: the worker source carries v15p5core and answers type "quant"
 const W = fs.readFileSync(path.join(__dirname, '..', 'src', 'worker.js'), 'utf8'), B = fs.readFileSync(path.join(__dirname, '..', 'build.py'), 'utf8');
 ok('worker: walk-forward + Monte Carlo run in the backtest worker (type "quant"), worker bundle includes v15p5core.js', /m\.type === 'quant'/.test(W) && /P5\.walkForward/.test(W) && /P5\.monteCarlo/.test(W) && /"v15p5core\.js", (?:"v164core\.js", )?"worker\.js"/.test(B));
-ok('build: v156core.js + v156.js are bundled after v155s.js and before boot.js', /"v155s\.js", "v156core\.js", "v156\.js", "v157core\.js", "v157\.js", "v160core\.js", ("v161core\.js", )?("v162core\.js", )?("v163core\.js", )?("v164core\.js", )?("v165core\.js", )?"v160\.js", ("v161\.js", )?("v162\.js", )?("v163\.js", )?("v164\.js", )?("v165\.js", )?"boot\.js"/.test(B));
+ok('build: v156core.js + v156.js are bundled after v155s.js and before boot.js', /"v155s\.js", "v156core\.js", "v156\.js", "v157core\.js", "v157\.js", "v160core\.js", ("v161core\.js", )?("v162core\.js", )?("v163core\.js", )?("v164core\.js", )?("v165core\.js", )?("v166core\.js", )?"v160\.js", ("v161\.js", )?("v162\.js", )?("v163\.js", )?("v164\.js", )?("v165\.js", )?("v166\.js", )?"boot\.js"/.test(B));
 
 // ── nav
 ok('nav: 1-word English labels (Markets · Flow · DEX · Whales · Lab · Grok · Journal · Learn)', ['markets', 'desk', 'heat', 'whales', 'lab', 'grok', 'journal', 'btnLearn'].map((k) => V.NAV[k]).join() === 'Markets,Flow,DEX,Whales,Lab,Grok,Journal,Learn' && Object.values(V.NAV).every((w) => !/\s/.test(w)));

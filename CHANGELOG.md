@@ -1,6 +1,25 @@
 # Changelog
 
-ExTerm holds no funds and no keys in every version. Up to v15.7 it was paper only; from v16.0 it can send HMAC-signed signals to a bot you run on your own machine, only after four explicit gates, and it starts in PAPER. v16.1 adds eight fail-safe engines on that path; v16.3 closes the loop with ACK + fill sync and a live cockpit; v16.4 adds DEX discovery, a local Copilot and a realistic backtester; v16.5 lets any AI or bot advise through one deterministic firewall.
+ExTerm holds no funds and no keys in every version. Up to v15.7 it was paper only; from v16.0 it can send HMAC-signed signals to a bot you run on your own machine, only after four explicit gates, and it starts in PAPER. v16.1 adds eight fail-safe engines on that path; v16.3 closes the loop with ACK + fill sync and a live cockpit; v16.4 adds DEX discovery, a local Copilot and a realistic backtester; v16.5 lets any AI or bot advise through one deterministic firewall; v16.6 adds a live transactions tape for every market.
+
+## v16.6 — 240 Hz Typed-Array Live Transactions Tape for Stocks, Crypto & On-Chain / DEX — 18 Nov 2026
+
+### Tape engine (`src/v166core.js`)
+- One 2,000-print ring per symbol: `Float64Array` (ts, price, size, total USD) + `Uint32Array` (side bitmask, venue / maker id). O(1) ingest, no per-print allocation; three isolated markets (stocks · crypto · onchain) with their own ring maps and venue tables, up to 32 rings each (least-recent evicted, never the symbol on screen).
+- Classification bits at ingest: Buy · Sell · Whale ($25K+) · Block ($100K+) · Sweep (≥ 3 same-side prints ≤ 1 s apart walking the price) · Unusual (> 3× the buffer average) · 1-minute aggregate; Tracked follows a live venue / maker set. Allocation-free bitmask filter (newest first, side chips OR, others AND, min USD) measured well under 1 ms over 2,000 prints.
+- Pressure maths (buy / sell $ and %, net whale / block flow, average print), sub-tab aggregations (holders by net, top traders by gross, earliest, DCA = one-sided ≥ 3 prints with ≤ 25% size variation) and the AI Bridge tape export.
+
+### Live Transactions drawer (`src/v166.js`, `src/style.css`)
+- **Tape** toolbar button opens a bottom drawer on Markets: pressure strip, session label (LIVE 24/7 · venue / DEX SWAPS · makers / LIVE TAPE / **LAST SESSION TAPE** / SIM TAPE), 8 sub-tabs, 8 filter chips + min USD, and a 22-row pooled virtual list (rows keyed by print sequence, written with `textContent`, re-filtered at most 30×/s from one `requestAnimationFrame` loop that only runs while the drawer is open).
+- Hover auto-pause with a gold Paused pill (the snapshot stays frozen while prints keep arriving), manual Pause / Live, click-to-pin gold chart markers, Copy Tape for AI (also lands in the AI Bridge preview), track / untrack any maker or venue.
+- Feeds: every `Feed.trade` print (exchange WebSockets incl. the Coinbase / Kraken / Binance failover, DEX swaps with makers, the launcher's 500 ms swap tape) plus stock last-sale volume (1-minute bars) from the launcher's Yahoo proxy.
+- Optional **Stock boost**: your own Finnhub token or Alpaca key streams every stock trade (`wss://ws.finnhub.io` or `wss://stream.data.alpaca.markets/v2/iex`, tick-rule side). Keys stay in sessionStorage for the tab only; while the stream is live it replaces the 1-minute prints so volume is never double counted.
+
+### Launcher (`serve.py`)
+- Version 16.6.
+
+### Tests
+- `test/v166.test.js` (46 checks: ring layout, classification, filter speed + correctness, per-frame cost, market isolation, pressure, sub-tabs, AI export, boost parsers, static wiring, CSP, XSS, privacy) and `test/v166_e2e.js` (34 checks against `serve.py`: Stocks, Crypto and On-Chain / DEX drawers, 8 sub-tabs, every chip, hover pause, pins, Copy Tape for AI, LAST SESSION TAPE, zero page / console errors). Older build-order, briefing and version checks accept v16.6.
 
 ## v16.5 — Universal AI Bridge (Grok, ChatGPT, Claude, DeepSeek, Ollama & Custom Bots), AI-Vetted Zero-Custody Copy-Trading & Share Setup Card — 17 Nov 2026
 

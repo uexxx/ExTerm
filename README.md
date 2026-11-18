@@ -1,6 +1,6 @@
 <div align="center">
 
-# ExTerm v16.5
+# ExTerm v16.6
 
 ### The $0, local-first trading workstation that works with any AI or bot: Grok, ChatGPT, Claude, DeepSeek, Local Ollama or your own Python / Node bot. Multi-asset charting at up to 240 Hz, DEX discovery, quant research, AI-vetted copy-trading and a zero-custody live execution cockpit, in one browser tab.
 
@@ -10,10 +10,10 @@ Any AI can now advise: every idea it sends passes the same deterministic firewal
 
 <img src="docs/screenshots/01-markets-live-execution.png" alt="ExTerm Markets terminal at 1440×900: BTC 5m candles with EMA 20 and EMA 50, a session-anchored VWAP, the live tape-delta strip at the top of the chart, an open position with Entry, Stop-Loss and Take-Profit lines and dollar tags on the price axis, the BE break-even pill, the AVWAP toolbar tool, the exchange stream pill and the order ticket" width="100%">
 
-**[30-second launch](#-30-second-local-launch)** · **[What's new](#-whats-new-in-v165)** · **[AI Bridge](#8--universal-ai-bridge--ai-vetted-zero-custody-copy-trading)** · **[Charting](#1--240-hz-multi-asset-charting--direct-order-execution)** · **[Live cockpit](#2--closed-loop-zero-custody-live-execution-cockpit-127001)** · **[DEX & 3D](#3--dex-discovery--pure-canvas-3d-market-structure)** · **[Quant Lab](#4--17-test-quant-lab--strategy-studio-pro)** · **[Copilot](#5--quant--execution-copilot--safe-pine-script-v5)** · **[Global](#6--on-chain-intelligence-32-languages--rtl-and-learn-exterm)** · **[Security](#7--browser-security-hardening--verification)** · **[Release history](#-release-history)**
+**[30-second launch](#-30-second-local-launch)** · **[What's new](#-whats-new-in-v166)** · **[AI Bridge](#8--universal-ai-bridge--ai-vetted-zero-custody-copy-trading)** · **[Charting](#1--240-hz-multi-asset-charting--direct-order-execution)** · **[Live cockpit](#2--closed-loop-zero-custody-live-execution-cockpit-127001)** · **[DEX & 3D](#3--dex-discovery--pure-canvas-3d-market-structure)** · **[Quant Lab](#4--17-test-quant-lab--strategy-studio-pro)** · **[Copilot](#5--quant--execution-copilot--safe-pine-script-v5)** · **[Global](#6--on-chain-intelligence-32-languages--rtl-and-learn-exterm)** · **[Security](#7--browser-security-hardening--verification)** · **[Release history](#-release-history)**
 
 <p>
-  <a href="https://github.com/uexxx/ExTerm/releases/latest"><img src="https://img.shields.io/badge/download-v16.5-D4AF37?style=for-the-badge" alt="Download v16.5"></a>
+  <a href="https://github.com/uexxx/ExTerm/releases/latest"><img src="https://img.shields.io/badge/download-v16.6-D4AF37?style=for-the-badge" alt="Download v16.6"></a>
   <img src="https://img.shields.io/badge/price-%240-2fd08a?style=for-the-badge" alt="$0">
   <img src="https://img.shields.io/badge/indicators-137-D4AF37?style=for-the-badge" alt="137 indicators">
   <img src="https://img.shields.io/badge/backtestable%20strategies-134-CBD5E1?style=for-the-badge" alt="134 backtestable strategies">
@@ -58,6 +58,17 @@ When you choose to go live, ExTerm sends signed intents to **your own** local bo
 exchange or wallet: ExTerm never touches the money.
 
 ---
+
+## 🎯 What's new in v16.6
+
+> **A live transactions tape for every market, on the chart, at 240 Hz.**
+>
+> - 📜 **Live Transactions drawer** (toolbar **Tape** button): a 2,000-print typed-array ring per symbol (`Float64Array` ts / price / size / USD + `Uint32Array` side bitmask / venue) for **Stocks**, **Crypto** and **On-Chain / DEX**, each market's state strictly isolated. Only the visible rows exist: 22 pooled DOM nodes keyed by print, updated at most 30×/s, measured under 0.2 ms per frame.
+> - Columns: **Age · Type** (Buy green · Sell red · Whale / Block gold · Sweep amber) **· Price · Amount / Shares · Total USD · Venue / Maker · Signal Tags**. Hovering the table **auto-pauses** it (gold **Paused** pill); a **Pause / Live** button pins the view.
+> - **Pressure strip:** buy vs. sell flow (% and $), **net whale / block flow ($25K+)** and average print size. **Click any print** to drop a gold marker on the chart; **Copy Tape for AI** sends the top recent whale / block prints to the AI Bridge.
+> - **8 sub-tabs:** Trades · Positions · Holders / Institutions · Top Traders / Funds · Pre / Early · Tracking · DCA · Orders. **Filter chips:** All · Whales ($25K+) · Blocks ($100K+) · Sweeps · Buys · Sells · Unusual (>3x) · Tracked, plus a min-USD box (side chips OR together, the rest AND).
+> - **Zero setup, no API key:** crypto streams the public Coinbase / Kraken / Binance trade feeds 24/7 (with the v16.4 failover); DEX tokens show pool swaps with the maker wallet; stocks show last-sale volume prints through the launcher, labelled **LAST SESSION TAPE** when the market is closed. Optional **Stock boost**: paste your own Finnhub token or Alpaca key (kept for the tab only) to stream every stock trade.
+> - Honest limits: free stock data is 1-minute last-sale volume (not every exchange print), "Holders / Institutions" for stocks is session flow by venue (13F data is not free), and pre-market is not in the free feed.
 
 ## 🎯 What's new in v16.5
 
@@ -222,7 +233,7 @@ ExTerm does not pick a favourite model. The **AI Bridge** tab turns whatever you
 
 ## 📚 Release history
 
-The sections below document every earlier release. All of these capabilities are still in v16.5.
+The sections below document every earlier release. All of these capabilities are still in v16.6.
 
 ## 🎯 What's new in v16.4
 
