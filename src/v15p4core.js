@@ -179,6 +179,28 @@ const P4 = (() => {
     return out;
   };
 
+  /* ── hover card placement: keep the whole box inside the W×H canvas (8 px gutter), never clipped right / bottom ── */
+  P.clampTip = (desiredX, desiredY, tipW, tipH, W, H, pad = 8) => ({
+    x: Math.round(Math.max(pad, Math.min(W - tipW - pad, desiredX))),
+    y: Math.round(Math.max(pad, Math.min(H - tipH - pad, desiredY))),
+  });
+  /* measure a tooltip's box from its text lines with ctx.measureText (+ padding); DOM cards pass offsetWidth/Height instead */
+  P.tipBox = (ctx, lines, lineH = 16, padX = 10, padY = 8) => ({
+    w: Math.ceil(Math.max(0, ...lines.map((s) => ctx.measureText(String(s)).width)) + padX * 2),
+    h: Math.ceil(lines.length * lineH + padY * 2),
+  });
+  /* ── bubble ticker label: font size scaled to fit the full symbol inside the circle ── */
+  P.labelFont = (r, label) => Math.max(9, Math.min(15, Math.floor((r * 1.55) / Math.max(3, String(label).length * 0.62))));
+  /* draw the full ticker centred in the bubble; ellipsize only if it still overflows at the 9 px floor */
+  P.drawLabel = (ctx, label, x, y, r, color = 'rgba(10,12,20,.92)', family = 'Inter, system-ui, sans-serif') => {
+    let s = String(label || '?');
+    const px = P.labelFont(r, s), max = Math.max(8, r * 1.8 - 4);
+    ctx.font = `700 ${px}px ${family}`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillStyle = color;
+    if (ctx.measureText(s).width > max) { while (s.length > 2 && ctx.measureText(s + '…').width > max) s = s.slice(0, -1); s += '…'; }
+    ctx.fillText(s, Math.round(x), Math.round(y));
+    return { px, text: s };
+  };
+
   /* ── responsive layout class from the viewport ── */
   P.layoutFor = (w, touch) => (w < 600 ? 'phone' : w < 1024 && touch ? 'tablet' : w < 900 ? 'tablet' : w < 1366 ? 'half' : 'full');
 

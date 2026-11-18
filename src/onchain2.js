@@ -249,7 +249,7 @@ const Radar = (() => {
         const g = ctx.createRadialGradient(fx - n.r / 3, fy - n.r / 3, 1, fx, fy, n.r); g.addColorStop(0, 'rgba(255,255,255,.35)'); g.addColorStop(0.35, col(n.ch)); g.addColorStop(1, col(n.ch).replace('.85', '.55'));
         ctx.beginPath(); ctx.arc(fx, fy, n.r, 0, Math.PI * 2); ctx.fillStyle = g; ctx.fill();
         if (R.hover === n.s) { ctx.lineWidth = 2; ctx.strokeStyle = '#fff'; ctx.stroke(); }
-        if (n.r > 16) { ctx.fillStyle = 'rgba(10,12,20,.9)'; ctx.font = `700 ${Math.min(14, n.r / 2.4)}px Inter, system-ui, sans-serif`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(String(n.m.s || '?').slice(0, 8), fx, fy); }
+        if (n.r > 13) P4.drawLabel(ctx, n.m.s || '?', fx, fy, n.r, 'rgba(10,12,20,.9)');
       }
       R.anim = requestAnimationFrame(draw);
     };
@@ -258,8 +258,8 @@ const Radar = (() => {
     cv.onmousemove = (e) => {
       const n = hit(e), tip = $('#rdTip'); R.hover = n ? n.s : null; cv.style.cursor = n ? 'pointer' : 'default';
       if (!n) { tip.hidden = true; return; }
-      tip.hidden = false; tip.style.left = Math.min(W - 230, n.fx + n.r + 8) + 'px'; tip.style.top = Math.max(0, n.fy - 40) + 'px';
       tip.innerHTML = `<b>${esc(n.m.s || '?')}</b> <span class="note">${esc((n.m.n || '').slice(0, 24))}</span><div>MC ${n.st.mcap || n.st.fdv ? '$' + NT.fmtCompact(n.st.mcap || n.st.fdv) : '–'} · Liq ${n.st.liq ? '$' + NT.fmtCompact(n.st.liq) : '–'}</div><div>1h <span class="${cls(n.ch)}">${NT.fmtPct(n.ch)}</span> · vol $${NT.fmtCompact(n.st.vol1h || 0)}</div><div>${(n.bp * 100).toFixed(0)}% buys (5m) · ${n.st.created ? age(n.st.created) + ' old' : ''}</div>`;
+      tip.hidden = false; const c = P4.clampTip(n.fx + n.r + 8, n.fy - 40, tip.offsetWidth, tip.offsetHeight, W, Hh); tip.style.left = c.x + 'px'; tip.style.top = c.y + 'px';
     };
     cv.onmouseleave = () => { R.hover = null; const tip = $('#rdTip'); if (tip) tip.hidden = true; };
     cv.onclick = (e) => { const n = hit(e); if (n) openSym(n.s); };

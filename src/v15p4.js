@@ -68,7 +68,7 @@ const P4UI = (() => {
         const sp = sprite(P4.bucket(n.ch, o.scale), n.r, dpr), half = sp.width / dpr / 2;
         ctx.drawImage(sp, fx - half, fy - half, sp.width / dpr, sp.height / dpr);
         if (B.hover === n.id) { ctx.lineWidth = 2; ctx.strokeStyle = '#fff'; ctx.beginPath(); ctx.arc(fx, fy, n.r, 0, Math.PI * 2); ctx.stroke(); }
-        if (n.r > 13) { ctx.fillStyle = 'rgba(10,12,20,.92)'; ctx.font = `700 ${Math.min(14, n.r / 2.3)}px Inter, system-ui, sans-serif`; ctx.fillText(String(n.d.label || n.id).slice(0, 8), fx, fy); }
+        if (n.r > 13) P4.drawLabel(ctx, n.d.label || n.id, fx, fy, n.r);
       }
       if (o.onFrame) o.onFrame(B.nodes);
       B.frames++; if (t - B.t0 >= 1000) { U.fps = Math.round((B.frames * 1000) / (t - B.t0)); B.frames = 0; B.t0 = t; }
@@ -79,7 +79,8 @@ const P4UI = (() => {
     cv.addEventListener('mousemove', (e) => {
       const h = at(e); B.hover = h ? h.id : null; cv.style.cursor = h ? 'pointer' : 'default';
       if (!h) { tip.hidden = true; return; }
-      tip.hidden = false; tip.style.left = Math.min(W - 240, h.x + h.r + 8) + 'px'; tip.style.top = Math.max(0, h.y - 40) + 'px'; tip.innerHTML = o.tip(h.n) + '<div class="note">Shift+click · ⚙ Auto-Setup</div>';
+      tip.innerHTML = o.tip(h.n) + '<div class="note">Shift+click · ⚙ Auto-Setup</div>'; tip.hidden = false;
+      const c = P4.clampTip(h.x + h.r + 8, h.y - 40, tip.offsetWidth, tip.offsetHeight, W, H); tip.style.left = c.x + 'px'; tip.style.top = c.y + 'px';
     });
     cv.addEventListener('mouseleave', () => { B.hover = null; tip.hidden = true; });
     cv.addEventListener('click', (e) => { const h = at(e); if (!h) return; if (e.shiftKey && typeof V151UI !== 'undefined') V151UI.autoSetup(h.id); else o.onPick(h.id); });

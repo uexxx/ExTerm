@@ -155,5 +155,19 @@ ok('CSS: AI Bridge, copy engine and ledger styles with RTL + narrow-screen rules
 ok('privacy: no personal paths, emails, usernames or legacy product name in v16.5 sources', !new RegExp(['[A-Z]:\\\\Users\\\\', '\\/Users\\/', '@gm' + 'ail', 'ro' + 'blo', 'nova' + 'term', 'op' + 'en[- ]?so' + 'urce'].join('|'), 'i').test(ui + core));
 ok('index.html footer reads v16.5', /ExTerm v16\.5 · Official Release/.test(src('index.html')));
 
+// bubble hover cards + ticker labels
+{
+  const P4 = require('../src/v15p4core.js');
+  const c1 = P4.clampTip(880, 600, 220, 120, 900, 640), c2 = P4.clampTip(-50, -20, 220, 120, 900, 640), c3 = P4.clampTip(100, 100, 220, 120, 900, 640);
+  ok('bubbles: hover card clamps inside the canvas (right/bottom 8 px gutter, left/top 8 px, untouched when it fits)', c1.x === 672 && c1.y === 512 && c2.x === 8 && c2.y === 8 && c3.x === 100 && c3.y === 100, JSON.stringify([c1, c2, c3]));
+  const fake = { measureText: (s) => ({ width: s.length * 7 }) }, bx = P4.tipBox(fake, ['capytrade +1.32%', 'click: chart · Shift+click: bracket']);
+  ok('bubbles: tipBox measures the widest line + padding', bx.w === 'click: chart · Shift+click: bracket'.length * 7 + 20 && bx.h === 48, JSON.stringify(bx));
+  ok('bubbles: label font scales 9..15 px with ticker length', P4.labelFont(40, 'BTC') === 15 && P4.labelFont(20, 'CAPYTRADE') === 9 && P4.labelFont(30, 'SOL') === 15 && P4.labelFont(30, 'BONKAI') === 12);
+  const calls = [], ctx = { measureText: (s) => ({ width: s.length * 6 }), fillText: (s, x, y) => calls.push([s, x, y]) };
+  const d1 = P4.drawLabel(ctx, 'CAPYTRADE', 100.4, 50.6, 40), d2 = P4.drawLabel(ctx, 'SUPERLONGTICKERNAME', 0, 0, 14);
+  ok('bubbles: full ticker drawn centred (textAlign center / baseline middle), ellipsis only on overflow', d1.text === 'CAPYTRADE' && ctx.textAlign === 'center' && ctx.textBaseline === 'middle' && calls[0][1] === 100 && calls[0][2] === 51 && d2.text.endsWith('…') && d2.text.length * 6 <= 14 * 1.8 - 4 + 6, JSON.stringify([d1, d2]));
+  ok('bubbles: no hardcoded tooltip width / 8-char label slice left in the bubble views', !/W - 2[34]0|b\.width - 200|\.slice\(0, 8\), f?x|sym\.slice\(0, 8\)/.test(src('v15p4.js') + src('onchain2.js') + src('v164.js')));
+}
+
 const fails = res.filter((r) => r.startsWith('FAIL'));
 console.log(res.join('\n')); console.log(`${res.length - fails.length}/${res.length} passed`); process.exit(fails.length ? 1 : 0);
