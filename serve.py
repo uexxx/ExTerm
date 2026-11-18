@@ -1939,7 +1939,7 @@ class H(http.server.BaseHTTPRequestHandler):
         self._send(404, b"not found", "text/plain")
 
 # ───────── installable app (PWA) ─────────
-MANIFEST = json.dumps({"name": "ExTerm", "short_name": "ExTerm", "start_url": "/", "scope": "/", "display": "standalone", "background_color": "#05060e", "theme_color": "#05060e",
+MANIFEST = json.dumps({"name": "ExTerm", "short_name": "ExTerm", "start_url": "/", "scope": "/", "display": "standalone", "background_color": "#07080B", "theme_color": "#07080B",
                        "description": "Free paper-trading terminal: crypto, stocks, on-chain tokens, bots and backtests.",
                        "icons": [{"src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable"}, {"src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable"}]}).encode()
 # Network-first: the page always comes fresh from the launcher (it carries a per-launch token), the cached copy is only
@@ -1956,7 +1956,7 @@ self.addEventListener('fetch', (e) => {
   }
 });
 """
-ICON_SVG = b'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" rx="112" fill="#0b0d1a"/><path d="M150 380V132l212 248V132" fill="none" stroke="#8b5cf6" stroke-width="56" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+ICON_SVG = b'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" rx="112" fill="#07080B"/><path d="M150 380V132l212 248V132" fill="none" stroke="#F5C84B" stroke-width="56" stroke-linecap="round" stroke-linejoin="round"/></svg>'
 
 def icon_bytes(size):
     for c in (HERE / ("icon-%d.png" % size), HERE / "dist" / ("icon-%d.png" % size), HERE / "brand" / "exterm-icon-512.png"):

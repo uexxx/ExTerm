@@ -10,6 +10,10 @@
 }
 body.mode-stocks{--acc:#10b981;--acc2:#06b6d4;--accA:rgba(16,185,129,.16);--glow:rgba(16,185,129,.35)}
 *{box-sizing:border-box}html,body{height:100%;margin:0}
+/* pre-hydration: until Themes.apply() stamps body[data-theme], paint Obsidian & Gold so the first frame never flashes the old palette */
+html{background:#07080B;color-scheme:dark}
+html body:not([data-theme]){background:#07080B;--bg:#07080B;--bg2:#07080B;--panel:#0F1116;--panel-solid:#0F1116;--panel2:#14161c;--line:rgba(245,200,75,.12);--line2:rgba(245,200,75,.22);--grid:rgba(245,200,75,.055);--text:#FFF0A8;--mut:#a59d8a;--acc:#F5C84B;--acc2:#FFF0A8;--accA:rgba(245,200,75,.13);--glow:rgba(245,200,75,.38);--violet:#F5C84B}
+html body:not([data-theme]) .bgfx{background:#07080B}
 body{background:var(--bg);color:var(--text);font:13px/1.45 var(--sans);display:flex;flex-direction:column;overflow:hidden;-webkit-font-smoothing:antialiased;font-feature-settings:"cv11","ss01"}
 .bgfx{position:fixed;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(900px 500px at 8% -10%,var(--accA),transparent 60%),radial-gradient(800px 500px at 100% 0%,rgba(59,130,246,.08),transparent 60%),linear-gradient(180deg,#070a12,#060810);transition:background .6s var(--ease)}
 button,input,select,textarea{font:inherit;color:inherit}
