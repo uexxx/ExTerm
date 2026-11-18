@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-MBXTHpMv795L/4LbkzIoK+6+107cfyZLUloH5wTRGwI='; worker-src 'self' blob:; media-src 'none'; child-src 'none'; manifest-src 'self'; style-src 'self' https://fonts.googleapis.com; style-src-elem 'self' 'sha256-rgKNIHHV5ulUqMTqptpMB+SP7df5/DIGHp4bTBVZXM0=' https://fonts.googleapis.com; style-src-attr 'unsafe-inline'; img-src 'self' https: data: blob:; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https: wss: http://localhost:* http://127.0.0.1:* ws://localhost:* ws://127.0.0.1:*; object-src 'none'; base-uri 'none'; form-action 'none'; frame-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-FQ6V6jxBANfb8uwbcx7lflaM7UQuBV2ZQEQeswiLXAg='; worker-src 'self' blob:; media-src 'none'; child-src 'none'; manifest-src 'self'; style-src 'self' https://fonts.googleapis.com; style-src-elem 'self' 'sha256-M49zMG9JFTqd2BR+THijcSTy8pA6UIMWET2tHPkOu1I=' https://fonts.googleapis.com; style-src-attr 'unsafe-inline'; img-src 'self' https: data: blob:; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https: wss: http://localhost:* http://127.0.0.1:* ws://localhost:* ws://127.0.0.1:*; object-src 'none'; base-uri 'none'; form-action 'none'; frame-src 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#05060e">
@@ -1792,6 +1792,30 @@ html[dir="rtl"] .v164-tip{direction:rtl}html[dir="rtl"] .v164-pb i{inset:0 0 0 a
 @media (max-width:900px){.v164-body{grid-template-columns:1fr}.v164-zones{grid-template-columns:1fr}.v164-reg{grid-template-columns:1fr}.v164-q{width:100%}}/* v16.4: Discovery sits above the legacy heat views; the DEX tab scrolls instead of squashing either */
 #tab-heat{overflow:auto}#tab-heat>div{height:auto!important;min-height:100%}#tab-heat .v164-dex{flex:none}#tab-heat #heatHost{min-height:460px;flex:none}
 .v164-dh select.in,.v164-dh .btn{width:auto;flex:none}.v164-dh #v164Preset{max-width:200px}.v164-dh .sp{flex:1}
+/* v16.5 AI Bridge tab, ghost-line staging, AI-vetted copy engine, attribution, share card */
+.v165-ic{width:18px;height:18px;flex:none;color:#D4AF37}.v165-ic.lg{width:30px;height:30px}.v165-ni{width:15px;height:15px;vertical-align:-2px;color:currentColor}
+.v165-banner{display:flex;gap:12px;align-items:center;padding:12px 16px;margin:0 0 12px;border:1px solid rgba(212,175,55,.45);border-radius:12px;background:linear-gradient(90deg,rgba(212,175,55,.14),rgba(212,175,55,.03));color:#f3efe2;font-size:13px}
+.v165-banner b{color:#D4AF37}.v165-banner .note{margin-top:3px}
+.v165-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;align-items:start}
+.v165-card{padding:14px;gap:8px;min-width:0}.v165-h{display:flex;align-items:center;gap:8px}.v165-h h3{margin:0;font-size:14px}.v165-card h4{margin:10px 0 4px;font-size:12px;color:var(--mut,#9aa3b5);text-transform:uppercase;letter-spacing:.04em}
+.v165-card textarea{width:100%;resize:vertical;min-height:52px;box-sizing:border-box}
+.v165-pills{display:flex;flex-wrap:wrap;gap:6px}.v165-pill{border:1px solid var(--line2,#2e3649);background:transparent;color:inherit;border-radius:999px;padding:4px 10px;font-size:12px;cursor:pointer}.v165-pill.on{border-color:#D4AF37;color:#D4AF37;background:rgba(212,175,55,.1)}.v165-pills.sm .v165-pill{font-size:11px;padding:3px 9px}
+.v165-acts{display:flex;flex-direction:column;gap:6px}.v165-acts .btn{justify-content:flex-start;text-align:start}
+.v165-row{display:flex;flex-wrap:wrap;gap:6px;align-items:center}.v165-row .sp{flex:1}
+.v165-sw{display:inline-flex;gap:6px;align-items:center;font-size:12px;cursor:pointer}
+.v165-pre{max-height:220px;overflow:auto;white-space:pre-wrap;word-break:break-word;font-size:11px;margin:0}
+.v165-out{font-size:12px}.v165-out p{margin:4px 0}.v165-out .warn{color:#f5b84b}
+.v165-ep{display:flex;flex-direction:column;gap:4px;padding:8px 10px;border:1px dashed rgba(212,175,55,.4);border-radius:8px;font-size:12px}.v165-ep code{color:#D4AF37;word-break:break-all}
+.v165-gl{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}.v165-gl label,.v165-sl{display:flex;flex-direction:column;gap:2px;font-size:11px}.v165-gl input{width:100%;box-sizing:border-box}
+.v165-lock{grid-column:1/-1;font-size:11px;font-weight:700;color:#2fd08a;border:1px solid rgba(47,208,138,.4);border-radius:6px;padding:4px 8px;justify-self:start}
+.v165-thr{display:flex;flex-direction:column;gap:2px;font-size:12px;margin:6px 0}.v165-thr input{accent-color:#D4AF37}
+.v165-tw{max-height:240px;overflow:auto}.v165-t{width:100%;border-collapse:collapse;font-size:11px}.v165-t th,.v165-t td{padding:4px 6px;border-bottom:1px solid var(--line,#232a3b);text-align:start;vertical-align:top}.v165-t th{font-weight:600;color:var(--mut,#9aa3b5)}
+.v165-st-rejected td:nth-child(4),.v165-st-blocked td:nth-child(4){color:#f43f5e}.v165-st-ghost td:nth-child(4),.v165-st-copied td:nth-child(4),.v165-st-slot td:nth-child(4),.v165-st-approved td:nth-child(4){color:#2fd08a}.v165-st-shadow td:nth-child(4){color:#D4AF37}
+.v165-cp{padding:10px 14px;margin:0 0 12px}.v165-cp>summary{cursor:pointer;display:flex;gap:8px;align-items:center;flex-wrap:wrap}.v165-copy{display:flex;flex-direction:column;gap:8px;margin-top:8px}.v165-copy .v165-gl{grid-template-columns:repeat(5,minmax(0,1fr))}
+.v165-led{margin-top:10px;font-size:12px}.v165-share .v165-ic{width:14px;height:14px}
+html[dir="rtl"] .v165-banner,html[dir="rtl"] .v165-h{flex-direction:row-reverse;text-align:right}html[dir="rtl"] .v165-acts .btn{text-align:right}html[dir="rtl"] .v165-t th,html[dir="rtl"] .v165-t td{text-align:right}
+@media (max-width:1180px){.v165-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.v165-copy .v165-gl{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:760px){.v165-grid{grid-template-columns:1fr}.v165-copy .v165-gl,.v165-gl{grid-template-columns:1fr}}
 </style>
 </head>
 <body class="mode-crypto">
@@ -2033,7 +2057,7 @@ html[dir="rtl"] .v164-tip{direction:rtl}html[dir="rtl"] .v164-pb i{inset:0 0 0 a
   <section id="tab-grok" class="tab"><div id="gkHost"></div></section>
 
   <!-- SETTINGS -->
-  <section id="tab-set" class="tab"><div id="setBody"></div><p class="note about-notice">ExTerm v16.4 · Official Release by @exterm.labs · <a href="https://github.com/uexxx/ExTerm" target="_blank" rel="noopener noreferrer">github.com/uexxx/ExTerm</a></p></section>
+  <section id="tab-set" class="tab"><div id="setBody"></div><p class="note about-notice">ExTerm v16.5 · Official Release by @exterm.labs · <a href="https://github.com/uexxx/ExTerm" target="_blank" rel="noopener noreferrer">github.com/uexxx/ExTerm</a></p></section>
 </main>
 
 <aside id="drawer" class="drawer" aria-hidden="true"><div class="dhead"><span id="dTitle"></span><span class="sp"></span><button class="ghost" id="dClose">✕</button></div><div class="dbody" id="dBody"></div></aside>
@@ -22243,6 +22267,434 @@ if (typeof module === 'object' && module.exports) module.exports = V164;
 /* self-register the structural strategies wherever the strategy engine is loaded (page and backtest worker) */
 if (typeof self !== 'undefined' && self.NT && self.NT.Spec) { try { V164.register(self.NT); } catch (e) { /* surfaced by the unit suite */ } }
 
+/* ===== v165core.js ===== */
+/* Copyright (c) 2026 ExTerm Labs (@exterm.labs) · Licensed under GNU AGPL-3.0 · https://github.com/uexxx/ExTerm */
+/* ExTerm v16.5 core (pure, no DOM, Node-testable):
+   · AI Bridge: provider presets (Grok · ChatGPT · Claude · DeepSeek · Local Ollama · Custom Bot), quick-prompt presets,
+     Token-Saver vs Full Quant context packets (chart + order book, on-chain due diligence, watchlist comparison,
+     options IV / liquidations, session post-mortem), token estimate
+   · paste-back loop: plain-English or JSON trade-idea parser, directional stop + ATR validation, R:R maths, ghost lines,
+     $TICKER / Solana / EVM contract extraction + liquidity / mint-authority screen
+   · Pine Script v5 hardening (confirmed bars, no look-ahead, $ risk sizing, mandatory strategy.exit stop,
+     max_intraday_loss, webhook alert), Pine → plain-English rules for the 17-test gate, failure diagnostics for any AI
+   · deterministic AI / bot firewall for 127.0.0.1/llm-signal proposals (mandatory stop, min ATR stop, depth multiple,
+     confidence threshold → PAPER shadow slot, size cut after a loss streak), guardrail profile, attribution stats
+   · AI-vetted zero-custody copy engine: multi-wallet consensus, anti-front-run drift shield, personal $ risk + ATR
+     stop override with TP1/TP2/TP3, exit modes, per-leader daily loss cap + auto-mute, AI vetting gate
+   · share card model (balances and personal data masked), shareable strategy / watchlist JSON, local Python templates */
+const V165 = (() => {
+  const V = {};
+  const fin = Number.isFinite;
+  const num = (v) => { if (v == null || v === '' || typeof v === 'boolean') return null; const n = typeof v === 'number' ? v : parseFloat(String(v).replace(/[$,\s]/g, '')); return fin(n) ? n : null; };
+  const r2 = (x, d = 2) => (fin(x) ? +x.toFixed(d) : null);
+  const sig = (x) => (fin(x) ? +x.toPrecision(8) : null);
+  const clip = (s, n) => String(s == null ? '' : s).replace(/[\u0000-\u001f\u007f]/g, ' ').slice(0, n);
+
+  /* ══ 1. providers + presets ══ */
+  V.PROVIDERS = [['grok', 'Grok'], ['chatgpt', 'ChatGPT'], ['claude', 'Claude'], ['deepseek', 'DeepSeek'], ['ollama', 'Local Ollama'], ['custom', 'Custom Bot']];
+  V.PROVIDER_IDS = V.PROVIDERS.map((p) => p[0]);
+  V.providerName = (id) => (V.PROVIDERS.find((p) => p[0] === id) || V.PROVIDERS[0])[1];
+  const STYLE = {
+    grok: 'Use your live X search for catalysts, but ground every price level in the packet below.',
+    chatgpt: 'Reason step by step, then answer with the JSON block only at the end.',
+    claude: 'Think carefully about risk first; be explicit about what would invalidate the idea.',
+    deepseek: 'Be concise and quantitative; show the arithmetic for the stop and target.',
+    ollama: 'You run offline: use only the numbers in this packet, never invent prices.',
+    custom: 'Machine-readable mode: reply with the JSON object only.',
+  };
+  V.PRESETS = [['chart', 'Chart Setup Check'], ['rug', 'On-Chain Rug & Whale Audit'], ['macro', 'Macro Catalyst & Risk Plan'], ['leak', 'Post-Session Leak Review']];
+  const ASK = {
+    chart: 'Check this chart setup. Is there a valid long or short with a stop beyond 1.5 ATR and at least 1.5R to the first target?',
+    rug: 'Audit this token for rug, honeypot and whale-concentration risk. List red flags first, then a verdict: avoid / watch / tradeable.',
+    macro: 'List the macro catalysts that could move this market in the next 72 hours and give a risk plan (size, stop, no-trade windows).',
+    leak: 'Review this session post-mortem. Find my top 3 execution leaks and give one concrete rule to fix each.',
+  };
+  V.JSON_SPEC = 'If you propose a trade, end with JSON: {"symbol":"SOL","side":"long","entry":0,"stop_loss":0,"tp":[0],"confidence":0-100,"reason":"..."}. stop_loss is mandatory.';
+  V.estTokens = (s) => Math.ceil(String(s || '').length / 4);
+  const ASK_SHORT = { chart: 'Valid long/short? Stop ≥1.5 ATR, ≥1.5R.', rug: 'Rug/whale red flags, then avoid/watch/tradeable.', macro: '72h catalysts + risk plan.', leak: 'Top 3 leaks, 1 fix each.' };
+  V.wrap = (provider, preset, body, mode) => {
+    const p = V.PROVIDER_IDS.includes(provider) ? provider : 'grok', k = ASK[preset] ? preset : 'chart';
+    if (mode === 'saver') return `[ExTerm→${V.providerName(p)}] ${ASK_SHORT[k]} Reply JSON {symbol,side,entry,stop_loss,tp,confidence}; stop_loss required.\n${body}`;
+    return `[ExTerm ${V.providerName(p)} packet · ${(V.PRESETS.find((x) => x[0] === k) || V.PRESETS[0])[1]}]\n${ASK[k]}\n${STYLE[p]}\n${V.JSON_SPEC}\n---\n${body}`;
+  };
+
+  /* ══ 2. indicators for packets ══ */
+  V.ema = (xs, n) => { const k = 2 / (n + 1); let e = null; const out = []; for (const x of xs) { e = e == null ? x : x * k + e * (1 - k); out.push(e); } return out; };
+  V.rsi = (cl, n = 14) => { if (!cl || cl.length < n + 1) return null; let g = 0, l = 0; for (let i = 1; i <= n; i++) { const d = cl[i] - cl[i - 1]; if (d > 0) g += d; else l -= d; } g /= n; l /= n; for (let i = n + 1; i < cl.length; i++) { const d = cl[i] - cl[i - 1]; g = (g * (n - 1) + Math.max(d, 0)) / n; l = (l * (n - 1) + Math.max(-d, 0)) / n; } return l === 0 ? 100 : 100 - 100 / (1 + g / l); };
+  V.atr = (b, n = 14) => { if (!b || b.length < n + 1) return null; let s = 0; for (let i = b.length - n; i < b.length; i++) s += Math.max(b[i].h - b[i].l, Math.abs(b[i].h - b[i - 1].c), Math.abs(b[i].l - b[i - 1].c)); return s / n; };
+  V.trend = (bars) => { const b = (bars || []).filter((x) => x && x.c > 0); if (b.length < 55) return 'n/a'; const cl = b.map((x) => x.c), e20 = V.ema(cl, 20), e50 = V.ema(cl, 50), n = cl.length - 1; const up = e20[n] > e50[n] && cl[n] > e20[n], dn = e20[n] < e50[n] && cl[n] < e20[n]; return up ? 'up' : dn ? 'down' : 'flat'; };
+  V.vwap = (bars) => { let pv = 0, vv = 0; for (const b of bars || []) { const v = b.v > 0 ? b.v : 0; pv += ((b.h + b.l + b.c) / 3) * v; vv += v; } return vv > 0 ? pv / vv : null; };
+  V.walls = (book, n = 3) => { if (!book || !Array.isArray(book.bids) || !Array.isArray(book.asks)) return null; const top = (a) => a.filter((l) => +l[0] > 0 && +l[1] > 0).map((l) => ({ p: +l[0], usd: +l[0] * +l[1] })).sort((x, y) => y.usd - x.usd).slice(0, n); return { bids: top(book.bids), asks: top(book.asks) }; };
+  V.chartStats = (bars) => {
+    const b = (bars || []).filter((x) => x && x.c > 0); if (b.length < 20) return null; const cl = b.map((x) => x.c), n = cl.length - 1;
+    const e20 = V.ema(cl, 20)[n], e50 = cl.length >= 50 ? V.ema(cl, 50)[n] : null;
+    return { last: cl[n], ema20: e20, ema50: e50, rsi: V.rsi(cl, 14), atr: V.atr(b, 14), chg: cl.length > 1 ? (cl[n] / cl[0] - 1) * 100 : 0 };
+  };
+
+  /* ══ 3. context packets (Token-Saver ≈ 120 tokens vs Full Quant) ══ */
+  const f = (x) => (x == null || !fin(+x) ? '–' : Math.abs(x) >= 1000 ? (+x).toFixed(0) : Math.abs(x) >= 1 ? (+x).toFixed(2) : (+x).toPrecision(4));
+  const usd = (x) => { if (x == null || !fin(+x)) return '–'; const a = Math.abs(x); return (x < 0 ? '−' : '') + '$' + (a >= 1e9 ? (a / 1e9).toFixed(2) + 'B' : a >= 1e6 ? (a / 1e6).toFixed(2) + 'M' : a >= 1e3 ? (a / 1e3).toFixed(1) + 'k' : a.toFixed(0)); };
+  const pc = (x) => (x == null || !fin(+x) ? '–' : (x >= 0 ? '+' : '') + (+x).toFixed(2) + '%');
+  V.packetChart = (c, mode) => {
+    const x = c || {}, tr = x.trend || {}, st = x.stats || {}, w = x.walls;
+    const tl = ['1m', '5m', '1h', '4h'].map((k) => `${k} ${tr[k] || 'n/a'}`).join(' · ');
+    const avd = x.avwap > 0 && st.last > 0 ? ((st.last / x.avwap - 1) * 100) : null;
+    if (mode !== 'full') return [`${x.sym || '?'} ${x.tf || ''} px ${f(st.last)}`, `trend ${tl}`, `EMA20 ${f(st.ema20)} EMA50 ${f(st.ema50)} RSI ${f(st.rsi)} ATR ${f(st.atr)}`, `AVWAP ${pc(avd)} · tape10s ${usd(x.t10)} · tape60s ${usd(x.t60)}`, w ? `walls bid ${w.bids.map((l) => f(l.p)).join('/') || '–'} ask ${w.asks.map((l) => f(l.p)).join('/') || '–'}` : 'walls –'].join('\n');
+    return [`SYMBOL: ${x.sym || '?'} · TIMEFRAME: ${x.tf || ''} · LAST: ${f(st.last)} · CHANGE (window): ${pc(st.chg)}`, `TREND (EMA20 vs EMA50 + close): ${tl}`,
+      `EMA 20: ${f(st.ema20)} · EMA 50: ${f(st.ema50)} · RSI 14: ${f(st.rsi)} · ATR 14: ${f(st.atr)} (1.5 ATR stop = ${f(st.atr * 1.5)})`,
+      `AVWAP: ${f(x.avwap)} (${x.avKind || 'session'} anchor, distance ${pc(avd)})`, `TAPE DELTA: 10s ${usd(x.t10)} · 60s ${usd(x.t60)} (positive = aggressive buyers)`,
+      `3D LIQUIDITY WALLS: bids ${w ? w.bids.map((l) => `${f(l.p)} (${usd(l.usd)})`).join(', ') || 'none' : 'no book'} · asks ${w ? w.asks.map((l) => `${f(l.p)} (${usd(l.usd)})`).join(', ') || 'none' : 'no book'}`,
+      `RULES: never place a trade without a stop-loss; stop must be ≥ 1.5 ATR away; size by $ risk, not notional.`].join('\n');
+  };
+  V.packetOnchain = (t, mode) => {
+    const x = t || {}, mint = x.mint == null ? 'unknown' : x.mint ? 'ACTIVE (can print supply)' : 'renounced', lp = x.lpLocked == null ? 'unknown' : x.lpLocked ? 'locked/burned' : 'UNLOCKED';
+    if (mode !== 'full') return [`${x.sym || '?'} ${x.chain || ''} px ${f(x.price)}`, `liq ${usd(x.liq)} fdv ${usd(x.fdv)} vol5m ${usd(x.v5m)} 1h ${usd(x.v1h)} 24h ${usd(x.v24)}`, `holders ${x.holders || '–'} top10 ${x.top10 != null ? f(x.top10) + '%' : '–'} mint ${x.mint == null ? '?' : x.mint ? 'ON' : 'off'} LP ${x.lpLocked == null ? '?' : x.lpLocked ? 'locked' : 'open'} 4h ${x.struct4h || 'n/a'}`].join('\n');
+    return [`TOKEN: ${x.sym || '?'} on ${x.chain || '?'} · contract ${x.addr || '–'} · price ${f(x.price)}`, `LIQUIDITY: ${usd(x.liq)} · FDV: ${usd(x.fdv)} · liq/FDV ${x.liq > 0 && x.fdv > 0 ? f((x.liq / x.fdv) * 100) + '%' : '–'}`,
+      `VOLUME: 5m ${usd(x.v5m)} · 1h ${usd(x.v1h)} · 24h ${usd(x.v24)}`, `HOLDERS: ${x.holders || '–'} · TOP-10 CONCENTRATION: ${x.top10 != null ? f(x.top10) + '%' : '–'}`, `MINT AUTHORITY: ${mint} · LP: ${lp}`, `4H STRUCTURE: ${x.struct4h || 'n/a'}`,
+      'RULES: flag active mint authority, unlocked LP, top-10 > 30% or liquidity < $50k as unsafe.'].join('\n');
+  };
+  V.packetWatch = (rows, mode) => {
+    const R = (rows || []).filter((r) => r && r.sym).slice(0, 5); if (!R.length) return 'WATCHLIST: empty';
+    const head = mode === 'full' ? 'SYMBOL | LAST | 24H | TREND 1H | RSI | ATR%' : 'sym|px|24h|trend|rsi';
+    return ['WATCHLIST COMPARISON (top ' + R.length + ')', head].concat(R.map((r) => mode === 'full' ? `${r.sym} | ${f(r.last)} | ${pc(r.chg)} | ${r.trend || 'n/a'} | ${f(r.rsi)} | ${r.atr > 0 && r.last > 0 ? f((r.atr / r.last) * 100) + '%' : '–'}` : `${r.sym}|${f(r.last)}|${pc(r.chg)}|${r.trend || '-'}|${r.rsi != null ? Math.round(r.rsi) : '-'}`)).join('\n');
+  };
+  V.packetOptions = (o, mode) => {
+    const x = o || {}, L = (x.liqs || []).slice(0, mode === 'full' ? 6 : 3);
+    return [`${mode === 'full' ? 'OPTIONS IV / WHALE LIQUIDATIONS' : 'IV/liq'} · ${x.sym || '?'} px ${f(x.price)}`, `ATM IV ${x.iv != null ? f(x.iv) + '%' : 'n/a'} · skew ${x.skew != null ? f(x.skew) : 'n/a'} · max-pain ${f(x.maxPain)} · pin ${f(x.pin)}`,
+      `liquidation magnets: ${L.length ? L.map((l) => `${f(l.p)} ${l.side || ''} ${usd(l.usd)}`).join(', ') : 'none tracked'}`].join('\n');
+  };
+  V.packetPost = (s, mode) => {
+    const x = s || {}, A = x.attr || {};
+    const row = (k, l) => { const a = A[k]; return a && a.n ? `${l} ${a.n} trades · win ${f(a.win)}% · PF ${a.pf == null ? '∞' : f(a.pf)} · slip ${f(a.bps)} bps` : `${l} 0 trades`; };
+    const lines = [`SESSION POST-MORTEM (privacy-masked: no balances, no account ids, no keys)`, `receipts ${x.receipts || 0} · blocked ${x.blocked || 0} · rejected AI proposals ${x.rejected || 0}`, row('manual', 'Manual'), row('quant', 'Quant'), row('ai', 'AI Bridge'), row('copy', 'Copy')];
+    if (mode === 'full') lines.push(`leaks: ${(x.leaks || []).map((l) => `${l.k} ×${l.n}`).join(', ') || 'none found'}`, 'ASK: rank my leaks by $ impact and give one rule per leak.');
+    return lines.join('\n');
+  };
+
+  /* ══ 4. paste-back: plain English or JSON → trade idea ══ */
+  const SIDE = { long: 'long', buy: 'long', bull: 'long', bullish: 'long', short: 'short', sell: 'short', bear: 'short', bearish: 'short' };
+  const NOT_SYM = new Set(['AT', 'THE', 'AND', 'STOP', 'LOSS', 'TARGET', 'TP', 'SL', 'ENTRY', 'BUY', 'SELL', 'LONG', 'SHORT', 'IF', 'ON', 'WITH', 'NEAR', 'AROUND', 'FROM', 'TO', 'USD', 'PRICE', 'LIMIT', 'MARKET', 'A', 'AN']);
+  const pick = (o, ks) => { for (const k of ks) if (o[k] != null) return o[k]; return null; };
+  const jsonBlock = (t) => { const s = String(t); const fence = /```(?:json)?\s*([\s\S]*?)```/i.exec(s); const cand = fence ? fence[1] : s; const i = cand.indexOf('{'), j = cand.lastIndexOf('}'); if (i < 0 || j <= i) return null; try { const o = JSON.parse(cand.slice(i, j + 1)); return o && typeof o === 'object' ? (Array.isArray(o) ? o[0] : o) : null; } catch (e) { return null; } };
+  V.normIdea = (o) => {
+    if (!o || typeof o !== 'object') return null;
+    const sideRaw = String(pick(o, ['side', 'direction', 'action', 'bias']) || '').toLowerCase().trim(), side = SIDE[sideRaw] || null;
+    let tp = pick(o, ['tp', 'take_profit', 'takeProfit', 'target', 'targets', 'tps']); tp = (Array.isArray(tp) ? tp : tp == null ? [] : [tp]).map(num).filter((x) => x > 0).slice(0, 3);
+    let conf = num(pick(o, ['confidence', 'conf', 'probability'])); if (conf != null && conf > 0 && conf <= 1) conf *= 100;
+    const sym = String(pick(o, ['symbol', 'ticker', 'asset', 'pair', 'sym']) || '').replace(/^\$/, '').trim().slice(0, 140);
+    const sl = pick(o, ['stop_loss', 'stopLoss', 'stop', 'sl', 'invalidation']);
+    return { symbol: sym, side, entry: num(pick(o, ['entry', 'entry_price', 'entryPrice', 'price', 'limit'])), stop_loss: sl == null ? null : num(sl), tp, confidence: conf == null ? null : Math.max(0, Math.min(100, conf)), reason: clip(pick(o, ['reason', 'rationale', 'thesis', 'why']) || '', 300), source: clip(pick(o, ['source', 'provider', 'model', 'bot']) || '', 40) };
+  };
+  V.parseIdea = (text) => {
+    const t = String(text || '').slice(0, 20000); if (!t.trim()) return null;
+    const j = jsonBlock(t); if (j) { const n = V.normIdea(j); if (n && n.side && n.symbol) return Object.assign(n, { via: 'json' }); }
+    const s = t.replace(/\*\*|__/g, ' ').replace(/[–—]/g, '-');
+    const NUM = '\\$?\\s*(\\d+(?:,\\d{3})*(?:\\.\\d+)?)';
+    let side = null, sym = '', m;
+    if ((m = /\b(long|short|buy|sell)\b\s+(?:the\s+)?\$?([A-Za-z][A-Za-z0-9]{1,11}(?:[-/](?:USDT?|USDC|USD))?)\b/i.exec(s)) && !NOT_SYM.has(m[2].toUpperCase())) { side = SIDE[m[1].toLowerCase()]; sym = m[2]; }
+    if (!sym && (m = /\$([A-Za-z][A-Za-z0-9]{1,11})\b/.exec(s))) sym = m[1];
+    if (!side && (m = /\b(long|short|buy|sell|bullish|bearish)\b/i.exec(s))) side = SIDE[m[1].toLowerCase()];
+    const grab = (rx) => { const x = rx.exec(s); return x ? num(x[1]) : null; };
+    const entry = grab(new RegExp('(?:\\bentry(?:\\s*price)?|\\benter|\\b(?:long|short|buy|sell)\\b[^\\n,.;]{0,24}?\\b(?:at|@|near|around)|\\b(?:at|@))\\s*[:=]?\\s*' + NUM, 'i'));
+    const stop = grab(new RegExp('\\b(?:stop(?:[-\\s]*loss)?|sl|invalidation)\\b\\s*(?:at|@|:|=|of|below|above)?\\s*' + NUM, 'i'));
+    const tpm = new RegExp('\\b(?:targets?|tp\\d?|take[-\\s]*profit)\\b\\s*(?:at|@|:|=|of)?\\s*' + NUM + '((?:\\s*(?:,|/|and|then|&)\\s*(?:tp\\d\\s*[:=]?\\s*)?\\$?\\s*\\d+(?:,\\d{3})*(?:\\.\\d+)?)*)', 'i').exec(s);
+    let tp = []; if (tpm) { tp = [num(tpm[1])].concat([...String(tpm[2] || '').replace(/tp\d\s*[:=]?/gi, ' ').matchAll(/\d+(?:,\d{3})*(?:\.\d+)?/g)].map((x) => num(x[0])).filter((x) => x != null)); }
+    if (!tp.length || tp.length < 3) { const more = s.match(/\btp\s*([123])\s*[:=@]?\s*\$?\s*(\d+(?:,\d{3})*(?:\.\d+)?)/gi); if (more) for (const x of more) { const v = num(x.replace(/^tp\s*[123]\s*[:=@]?/i, '')); if (v > 0 && !tp.includes(v)) tp.push(v); } }
+    tp = tp.filter((x) => x > 0).slice(0, 3);
+    let conf = grab(/\bconfidence\b\s*[:=]?\s*(\d+(?:\.\d+)?)\s*%?/i); if (conf != null && conf <= 1) conf *= 100;
+    if (!side || !sym || !(entry > 0)) return null;
+    return { symbol: sym.toUpperCase(), side, entry, stop_loss: stop, tp, confidence: conf, reason: clip(s.trim(), 300), source: '', via: 'text' };
+  };
+  V.rr = (side, entry, sl, tp) => { const risk = Math.abs(entry - sl); if (!(risk > 0) || !(tp > 0)) return null; const rew = side === 'short' ? entry - tp : tp - entry; return rew > 0 ? rew / risk : null; };
+  /* directional stop + ATR distance check for a pasted idea (ghost lines are drawn only for a directional stop) */
+  V.checkIdea = (idea, atr, minAtr = 1.5) => {
+    const I = idea || {}, out = { ok: false, errors: [], warns: [], rr: [], atrs: null }, d = I.side === 'short' ? -1 : 1;
+    if (!I.side) out.errors.push('No direction (long / short) found.');
+    if (!(I.entry > 0)) out.errors.push('No entry price found.');
+    if (!(I.stop_loss > 0)) out.errors.push('No stop-loss: every ExTerm idea needs one.');
+    else if (I.entry > 0 && (I.stop_loss - I.entry) * d >= 0) out.errors.push(d > 0 ? 'Wrong-way stop: a long stop must sit below entry.' : 'Wrong-way stop: a short stop must sit above entry.');
+    for (const t of I.tp || []) if (I.entry > 0 && (t - I.entry) * d <= 0) out.errors.push(`Target ${t} is on the losing side of entry.`);
+    if (out.errors.length) return out;
+    const risk = Math.abs(I.entry - I.stop_loss); if (atr > 0) { out.atrs = risk / atr; if (out.atrs < minAtr) out.warns.push(`Stop is ${out.atrs.toFixed(2)} ATR away (< ${minAtr} ATR): likely inside normal noise.`); }
+    out.rr = (I.tp || []).map((t) => V.rr(I.side, I.entry, I.stop_loss, t));
+    if (!(I.tp || []).length) out.warns.push('No target: R:R badge shows risk only.');
+    out.ok = true; return out;
+  };
+  V.ghost = (idea, riskUsd) => {
+    const I = idea, R = riskUsd > 0 ? riskUsd : 100, lines = [{ k: 'entry', label: 'AI Entry', p: I.entry }, { k: 'sl', label: 'AI Stop', p: I.stop_loss, usd: -R }];
+    (I.tp || []).forEach((t, i) => { const rr = V.rr(I.side, I.entry, I.stop_loss, t); lines.push({ k: 'tp', label: (I.tp.length > 1 ? 'TP' + (i + 1) : 'TP'), p: t, rr: rr == null ? null : r2(rr), usd: rr == null ? null : r2(rr * R) }); });
+    return { sym: I.symbol, side: I.side, lines, qty: I.entry > 0 && I.stop_loss > 0 ? R / Math.abs(I.entry - I.stop_loss) : 0, risk: R };
+  };
+  V.badge = (l) => l.k === 'entry' ? `${l.label} ${sig(l.p)}` : l.k === 'sl' ? `${l.label} ${sig(l.p)} · −$${Math.abs(l.usd).toFixed(0)}` : `${l.label} ${sig(l.p)}${l.rr != null ? ' · ' + l.rr.toFixed(2) + 'R' : ''}${l.usd != null ? ' · +$' + l.usd.toFixed(0) : ''}`;
+
+  /* ══ 5. $TICKER + contract extraction and safety screen ══ */
+  const B58 = '[1-9A-HJ-NP-Za-km-z]';
+  V.extract = (text) => {
+    const s = String(text || '').slice(0, 50000), tick = new Set(), sol = new Set(), evm = new Set(); let m;
+    const rt = /(?:^|[^A-Za-z0-9_$])\$([A-Za-z][A-Za-z0-9]{1,9})\b/g; while ((m = rt.exec(s))) { const u = m[1].toUpperCase(); if (!/^\d/.test(u)) tick.add(u); }
+    const re = /\b0x[a-fA-F0-9]{40}\b/g; while ((m = re.exec(s))) evm.add(m[0].toLowerCase());
+    const rs = new RegExp('(?:^|[^A-Za-z0-9])(' + B58 + '{32,44})(?![A-Za-z0-9])', 'g'); while ((m = rs.exec(s))) { const a = m[1]; if (/[a-z]/.test(a) && /[A-Z]/.test(a) && /\d/.test(a)) sol.add(a); }
+    return { tickers: [...tick].slice(0, 20), solana: [...sol].slice(0, 10), evm: [...evm].slice(0, 10) };
+  };
+  V.MIN_LIQ = 50000;
+  V.screen = (items, info, minLiq = V.MIN_LIQ) => {
+    const ok = [], bad = [];
+    for (const it of items || []) {
+      const i = (info || {})[it.id] || null;
+      if (it.kind === 'ticker') { if (i && i.sym) ok.push({ id: it.id, sym: i.sym, kind: it.kind }); else bad.push({ id: it.id, why: 'no liquid market found' }); continue; }
+      if (!i) { bad.push({ id: it.id, why: 'safety data unavailable (unknown = unsafe)' }); continue; }
+      if (i.mint) { bad.push({ id: it.id, why: 'active mint authority' }); continue; }
+      if (!(i.liq >= minLiq)) { bad.push({ id: it.id, why: `liquidity ${usd(i.liq)} < ${usd(minLiq)}` }); continue; }
+      if (!i.sym) { bad.push({ id: it.id, why: 'no tradable pool' }); continue; }
+      ok.push({ id: it.id, sym: i.sym, kind: it.kind, liq: i.liq });
+    }
+    return { ok, bad };
+  };
+
+  /* ══ 6. Pine Script v5 hardening + diagnostics ══ */
+  V.PINE_RULES = [['barstate.isconfirmed', /barstate\.isconfirmed/], ['lookahead_off', /lookahead\s*=\s*barmerge\.lookahead_off/], ['$ risk sizing', /riskUsd/], ['strategy.exit stop-loss', /strategy\.exit\([^)]*stop\s*=/], ['max_intraday_loss', /strategy\.risk\.max_intraday_loss\(/], ['127.0.0.1 webhook JSON', /alert_message|alert\(/]];
+  /* lookahead rule: every request.security call says lookahead_off (a script with no higher-timeframe call cannot look ahead) */
+  const secOk = (s) => { const calls = s.match(/request\.security\([^\n]*/g) || []; return calls.every((c) => /lookahead\s*=\s*barmerge\.lookahead_off/.test(c)); };
+  V.pineCheck = (src) => { const s = String(src || ''); const rows = V.PINE_RULES.map(([k, rx]) => ({ k, ok: k === 'lookahead_off' ? secOk(s) : rx.test(s) })); return { ok: rows.every((r) => r.ok) && !/lookahead_on/.test(s), rows, repaint: /lookahead\s*=\s*barmerge\.lookahead_on/.test(s) }; };
+  V.hardenPine = (src, opt) => {
+    const O = Object.assign({ risk: 100, stopPct: 2, maxLoss: 300 }, opt || {}), changes = [];
+    let s = String(src || '').replace(/\r\n?/g, '\n').slice(0, 60000); if (!s.trim()) return { src: '', changes: ['empty script'] };
+    if (!/^\s*\/\/\s*@version\s*=\s*5/m.test(s)) { s = s.replace(/^\s*\/\/\s*@version\s*=\s*\d+\s*\n?/m, ''); s = '//@version=5\n' + s; changes.push('set //@version=5'); }
+    if (/lookahead\s*=\s*barmerge\.lookahead_on/.test(s)) { s = s.replace(/lookahead\s*=\s*barmerge\.lookahead_on/g, 'lookahead = barmerge.lookahead_off'); changes.push('lookahead_on → lookahead_off (no future data)'); }
+    s = s.replace(/request\.security\(([^()]*(?:\([^()]*\)[^()]*)*)\)/g, (m0, inner) => (/lookahead\s*=/.test(inner) ? m0 : (changes.push('request.security: explicit lookahead_off'), `request.security(${inner}, lookahead = barmerge.lookahead_off)`)));
+    const L = s.split('\n'); let decl = L.findIndex((l) => /^\s*strategy\s*\(/.test(l));
+    if (decl < 0) { const vi = L.findIndex((l) => /@version/.test(l)); L.splice(vi + 1, 0, 'strategy("AI strategy (ExTerm hardened)", overlay = true, process_orders_on_close = true, initial_capital = 10000, commission_type = strategy.commission.percent, commission_value = 0.1, slippage = 2)'); decl = vi + 1; changes.push('added strategy() declaration with fees + slippage'); }
+    let end = decl; let depth = 0; for (let i = decl; i < L.length; i++) { for (const ch of L[i]) { if (ch === '(') depth++; else if (ch === ')') depth--; } end = i; if (depth <= 0) break; }
+    const add = []; let joined = L.join('\n');
+    if (!/riskUsd/.test(joined)) { add.push(`riskUsd = input.float(${O.risk}, "Risk per trade ($)", minval = 1)`); changes.push('$ risk input (riskUsd)'); }
+    if (!/stopPct/.test(joined)) add.push(`stopPct = input.float(${O.stopPct}, "Stop-loss %", minval = 0.1)`);
+    if (!/strategy\.risk\.max_intraday_loss\(/.test(joined)) { add.push(`strategy.risk.max_intraday_loss(${O.maxLoss}, strategy.cash)`); changes.push('strategy.risk.max_intraday_loss'); }
+    if (add.length) L.splice(end + 1, 0, ...add);
+    for (let i = 0; i < L.length; i++) {
+      const m = /^(\s*)(strategy\.entry\s*\((.*))$/.exec(L[i]); if (!m) continue;
+      let line = m[2]; if (!/qty\s*=/.test(line) && /\)\s*$/.test(line)) { line = line.replace(/\)\s*$/, ', qty = riskUsd / (close * stopPct / 100))'); changes.push('entry sized by $ risk'); }
+      const prev = (L[i - 1] || ''); if (/barstate\.isconfirmed/.test(prev) || /barstate\.isconfirmed/.test(line)) { L[i] = m[1] + line; continue; }
+      L[i] = `${m[1]}if barstate.isconfirmed\n${m[1]}    ${line}`; changes.push('entry gated on barstate.isconfirmed');
+    }
+    s = L.join('\n'); joined = s;
+    if (!/strategy\.exit\([^)]*stop\s*=/.test(joined)) { s += '\n// ExTerm mandatory stop-loss\nif strategy.position_size > 0\n    strategy.exit("ExTerm SL", stop = strategy.position_avg_price * (1 - stopPct / 100))\nif strategy.position_size < 0\n    strategy.exit("ExTerm SL short", stop = strategy.position_avg_price * (1 + stopPct / 100))'; changes.push('mandatory strategy.exit stop-loss'); }
+    if (!/alert_message|alert\(/.test(s)) { s += '\n// 127.0.0.1 webhook JSON (route through ExTerm, never straight to an exchange)\nif barstate.isconfirmed and strategy.position_size != strategy.position_size[1]\n    alert(\'{"source":"pine","symbol":"\' + syminfo.ticker + \'","side":"\' + (strategy.position_size > 0 ? "long" : strategy.position_size < 0 ? "short" : "flat") + \'","entry":\' + str.tostring(close) + \',"stop_loss":\' + str.tostring(strategy.position_size > 0 ? close * (1 - stopPct / 100) : close * (1 + stopPct / 100)) + \'}\', alert.freq_once_per_bar_close)'; changes.push('webhook alert JSON'); }
+    return { src: s, changes: [...new Set(changes)] };
+  };
+  /* Pine → plain-English rules (fed to the v16.4 natural-language → safe spec translator, then the 17-test gate) */
+  V.pineToText = (src) => {
+    const s = String(src || ''), parts = [], ent = (s.match(/strategy\.entry\s*\(\s*"[^"]*"\s*,\s*strategy\.(long|short)/) || [])[1] || 'long';
+    const vars = {}; for (const m of s.matchAll(/^\s*(\w+)\s*=\s*(ta\.\w+\([^\n]*\))\s*$/gm)) vars[m[1]] = m[2];
+    const x = s.replace(/\b(\w+)\b/g, (w) => (vars[w] ? vars[w] : w));
+    let m;
+    if ((m = /ta\.rsi\(\s*close\s*,\s*(\d+)\s*\)\s*<\s*(\d+)/.exec(x))) parts.push(`rsi ${m[1]} below ${m[2]}`);
+    if ((m = /ta\.rsi\(\s*close\s*,\s*(\d+)\s*\)\s*>\s*(\d+)/.exec(x))) parts.push(`rsi ${m[1]} above ${m[2]}`);
+    if ((m = /ta\.crossover\(\s*close\s*,\s*ta\.(ema|sma)\(\s*close\s*,\s*(\d+)\s*\)\s*\)/.exec(x))) parts.push(`price crosses above ${m[1]} ${m[2]}`);
+    if ((m = /close\s*>\s*ta\.(ema|sma)\(\s*close\s*,\s*(\d+)\s*\)/.exec(x))) parts.push(`price above ${m[1]} ${m[2]}`);
+    if ((m = /ta\.crossunder\(\s*close\s*,\s*ta\.(ema|sma)\(\s*close\s*,\s*(\d+)\s*\)\s*\)/.exec(x))) parts.push(`price crosses below ${m[1]} ${m[2]}`);
+    if (/close\s*>\s*ta\.vwap/.test(x)) parts.push('price above vwap');
+    if ((m = /ta\.highest\(\s*high\s*,\s*(\d+)\s*\)/.exec(x)) && /close\s*>|crossover\(\s*close/.test(x)) parts.push(`breakout of ${m[1]} bar high`);
+    if (/volume\s*>\s*ta\.sma\(\s*volume/.test(x)) parts.push('volume above average');
+    if (/ta\.crossover\(\s*macdLine\s*,\s*signalLine|ta\.crossover\(\s*macd/.test(x)) parts.push('macd crosses above signal');
+    const sp = /stopPct\s*=\s*input\.float\(\s*(\d+(?:\.\d+)?)/.exec(s) || /\(1\s*-\s*(\d*\.\d+)\s*\)/.exec(s), tp = /(?:tpPct|targetPct|takePct)\s*=\s*input\.float\(\s*(\d+(?:\.\d+)?)/.exec(s);
+    if (sp) parts.push(`stop ${+sp[1] < 1 && /\(1\s*-/.test(sp[0]) ? +(sp[1] * 100).toFixed(2) : sp[1]}%`); if (tp) parts.push(`target ${tp[1]}%`);
+    return { text: (ent === 'short' ? 'short when ' : 'buy when ') + parts.join(' and '), rules: parts.length };
+  };
+  V.diagnostics = (r) => {
+    const x = r || {}, checks = x.checks || [], fails = checks.filter((c) => c.status !== 'pass'), pc0 = x.pine || null;
+    const lines = [`[ExTerm 17-test validation · ${x.name || 'strategy'} · ${x.sym || ''} ${x.tf || ''}]`, `grade ${x.grade || '?'} · ${checks.filter((c) => c.status === 'pass').length}/${checks.length || 17} gates passed`];
+    if (pc0) lines.push('Pine safety: ' + pc0.rows.map((q) => `${q.ok ? 'OK' : 'MISSING'} ${q.k}`).join(' · '));
+    for (const c of fails) lines.push(`${c.status === 'fail' ? 'FAIL' : 'WARN'} · ${c.name}: got ${c.value != null ? c.value : '–'}; rule ${c.rule || '–'}${c.why ? ' (' + String(c.why).slice(0, 140) + ')' : ''}`);
+    lines.push('Refine the Pine v5 script to fix the failures above. Keep barstate.isconfirmed, lookahead_off, $ risk sizing, strategy.exit stop and max_intraday_loss. Do not curve-fit: change logic, not magic numbers.');
+    return lines.join('\n');
+  };
+
+  /* ══ 7. deterministic AI / bot firewall ══ */
+  V.GUARD_DEF = () => ({ mandatorySL: true, minAtr: 1.0, depthMult: 0, threshold: 60, cutAfter: 0, cutPct: 50, shadow: false, route: 'ghost', slot: 1, riskUsd: 100 });
+  V.GUARD_AI = () => ({ mandatorySL: true, minAtr: 1.5, depthMult: 3, threshold: 75, cutAfter: 2, cutPct: 50, shadow: true, route: 'ghost', slot: 1, riskUsd: 100 });
+  V.lossStreak = (pnls) => { let n = 0; for (let i = (pnls || []).length - 1; i >= 0; i--) { if (pnls[i] < 0) n++; else break; } return n; };
+  V.firewall = (p, ctx, g) => {
+    const G = Object.assign(V.GUARD_DEF(), g || {}), C = ctx || {}, I = V.normIdea(p) || {}, why = [], d = I.side === 'short' ? -1 : 1;
+    if (!I.symbol || !/^[A-Za-z0-9:$._/-]{1,140}$/.test(I.symbol)) why.push('bad or missing symbol');
+    if (!I.side) why.push('side must be long / short / buy / sell');
+    if (!(I.entry > 0)) why.push('entry price missing');
+    if (!(I.stop_loss > 0)) { if (G.mandatorySL) why.push('stop_loss missing (Mandatory Stop-Loss is ON)'); }
+    else if (I.entry > 0 && (I.stop_loss - I.entry) * d >= 0) why.push(d > 0 ? 'wrong-way stop: long stop_loss must be below entry' : 'wrong-way stop: short stop_loss must be above entry');
+    for (const t of I.tp || []) if (I.entry > 0 && (t - I.entry) * d <= 0) why.push('take-profit on the losing side of entry');
+    if (why.length) return { ok: false, route: 'reject', reasons: why, idea: I };
+    const risk = I.stop_loss > 0 ? Math.abs(I.entry - I.stop_loss) : 0, atrs = C.atr > 0 && risk > 0 ? risk / C.atr : null;
+    if (G.minAtr > 0 && atrs != null && atrs < G.minAtr) return { ok: false, route: 'reject', reasons: [`stop ${atrs.toFixed(2)} ATR away < min ${G.minAtr} ATR`], idea: I, atrs };
+    let riskUsd = G.riskUsd > 0 ? G.riskUsd : 100; const notes = [];
+    const streak = V.lossStreak(C.pnls); if (G.cutAfter > 0 && streak >= G.cutAfter) { riskUsd *= 1 - G.cutPct / 100; notes.push(`${streak} losses in a row: size cut ${G.cutPct}%`); }
+    const qty = risk > 0 ? riskUsd / risk : 0, notional = qty * I.entry;
+    if (G.depthMult > 0 && C.depth > 0 && C.depth < G.depthMult * notional) return { ok: false, route: 'reject', reasons: [`book depth ${usd(C.depth)} < ${G.depthMult}× order ${usd(notional)}`], idea: I, atrs };
+    if (G.depthMult > 0 && !(C.depth > 0)) notes.push('depth unknown: not checked');
+    const conf = I.confidence == null ? 0 : I.confidence, rr = (I.tp || []).length ? V.rr(I.side, I.entry, I.stop_loss, I.tp[0]) : null;
+    const low = conf < G.threshold, route = low ? (G.shadow ? 'shadow' : 'reject') : (G.route === 'slot' ? 'slot' : 'ghost');
+    if (low) notes.push(`confidence ${conf}% < ${G.threshold}% threshold${G.shadow ? ': PAPER shadow slot' : ''}`);
+    return { ok: route !== 'reject', route, reasons: low && !G.shadow ? [`confidence ${conf}% < ${G.threshold}% threshold`] : [], notes, idea: I, atrs, riskUsd, qty, notional, rr, slot: Math.max(1, Math.min(6, G.slot | 0 || 1)) };
+  };
+  /* shadow tracking: has a PAPER shadow idea hit its stop or first target? */
+  V.shadowStep = (s, lo, hi) => {
+    if (!s || s.done) return s; const d = s.side === 'short' ? -1 : 1, tp = (s.tp || [])[0];
+    const hitSl = d > 0 ? lo <= s.stop_loss : hi >= s.stop_loss, hitTp = tp > 0 && (d > 0 ? hi >= tp : lo <= tp);
+    if (hitSl) return Object.assign({}, s, { done: true, r: -1, outcome: 'stop' }); if (hitTp) return Object.assign({}, s, { done: true, r: V.rr(s.side, s.entry, s.stop_loss, tp), outcome: 'target' });
+    return s;
+  };
+
+  /* ══ 8. attribution (Manual vs Quant vs AI Bridge vs Copy) ══ */
+  V.srcClass = (src) => { const s = String(src || ''); if (/^ai/.test(s)) return 'ai'; if (/^copy/.test(s)) return 'copy'; if (/^bot:|^quant|^bot$/.test(s)) return 'quant'; return 'manual'; };
+  V.attribution = (rows) => {
+    const out = {}; for (const k of ['manual', 'quant', 'ai', 'copy']) out[k] = { n: 0, wins: 0, gw: 0, gl: 0, bpsN: 0, bpsS: 0 };
+    for (const r of rows || []) { if (!r) continue; const o = out[V.srcClass(r.src)]; if (fin(r.pnl)) { o.n++; if (r.pnl > 0) { o.wins++; o.gw += r.pnl; } else o.gl -= r.pnl; } if (fin(r.bps)) { o.bpsN++; o.bpsS += r.bps; } }
+    for (const k in out) { const o = out[k]; o.win = o.n ? (o.wins / o.n) * 100 : 0; o.pf = o.gl > 0 ? o.gw / o.gl : o.gw > 0 ? null : 0; o.bps = o.bpsN ? o.bpsS / o.bpsN : 0; }
+    return out;
+  };
+  V.slipBps = (side, signal, fill) => (signal > 0 && fill > 0 ? ((side === 'short' || side === 'sell' ? signal - fill : fill - signal) / signal) * 1e4 : null);
+
+  /* ══ 9. AI-vetted zero-custody copy engine ══ */
+  V.COPY_DEF = () => ({ on: true, vet: false, vetMin: 75, win: 900, minWallets: 2, riskUsd: 100, minAtr: 1.5, stopPct: 0, maxDrift: 2.5, driftAtr: 1.0, shadow: true, exit: 'first', dayCap: 200, muted: {} });
+  V.WINDOWS = [[300, '5m'], [900, '15m'], [3600, '1h']];
+  V.consensus = (fills, sym, side, now, win, min) => {
+    const W = win > 0 ? win : 900, M = Math.max(2, min | 0 || 2), F = (fills || []).filter((x) => x && x.sym === sym && x.side === side && fin(x.ts) && now - x.ts <= W && x.ts <= now + 5 && x.price > 0);
+    const by = new Map(); for (const x of F) if (!by.has(x.addr) || by.get(x.addr).ts < x.ts) by.set(x.addr, x);
+    const L = [...by.values()]; if (L.length < M) return { fire: false, wallets: L.map((x) => x.addr), n: L.length };
+    const px = L.reduce((s, x) => s + x.price, 0) / L.length, last = L.reduce((a, x) => (x.ts > a.ts ? x : a), L[0]);
+    return { fire: true, wallets: L.map((x) => x.addr), n: L.length, leaderPx: px, lastPx: last.price, ts: last.ts };
+  };
+  V.drift = (side, leaderPx, price, maxPct, atr, atrMult) => {
+    if (!(leaderPx > 0) || !(price > 0)) return { ok: false, why: 'no leader fill or live price' };
+    const d = side === 'short' ? -1 : 1, mv = ((price - leaderPx) / leaderPx) * 100 * d, atrs = atr > 0 ? ((price - leaderPx) * d) / atr : null;
+    if (mv > maxPct) return { ok: false, pct: mv, atrs, why: `price already moved ${mv.toFixed(2)}% past the leader fill (max ${maxPct}%)` };
+    if (atrMult > 0 && atrs != null && atrs > atrMult) return { ok: false, pct: mv, atrs, why: `price already ${atrs.toFixed(2)} ATR past the leader fill (max ${atrMult} ATR)` };
+    return { ok: true, pct: mv, atrs };
+  };
+  V.copyPlan = (side, entry, atr, riskUsd, minAtr, stopPct) => {
+    if (!(entry > 0)) return null; const d = side === 'short' ? -1 : 1, distA = atr > 0 ? (minAtr || 1.5) * atr : 0, distP = stopPct > 0 ? entry * stopPct / 100 : 0, dist = Math.max(distA, distP, entry * 0.002);
+    const stop = entry - d * dist, qty = (riskUsd > 0 ? riskUsd : 100) / dist;
+    return { side, entry, stop: sig(stop), tp: [1, 2, 3].map((k) => sig(entry + d * k * dist)), qty, usd: qty * entry, risk: riskUsd > 0 ? riskUsd : 100, dist };
+  };
+  V.dayPnl = (rows, addr, now) => { const day = Math.floor(now / 86400); return (rows || []).filter((r) => r && r.leader === addr && fin(r.pnl) && Math.floor(r.ts / 86400) === day).reduce((s, r) => s + r.pnl, 0); };
+  V.vetOk = (cfg, vet) => { if (!cfg || !cfg.vet) return { ok: true }; if (!vet) return { ok: false, why: 'AI vetting gate is ON: no AI approval for this wallet yet' }; if (!vet.approve) return { ok: false, why: 'AI vetting rejected this wallet' }; return vet.confidence >= (cfg.vetMin || 75) ? { ok: true } : { ok: false, why: `AI confidence ${vet.confidence}% < ${cfg.vetMin || 75}%` }; };
+  V.copyDecide = (o) => {
+    const c = Object.assign(V.COPY_DEF(), o.cfg || {}), now = o.now, cons = V.consensus(o.fills, o.sym, o.side, now, c.win, c.minWallets);
+    if (!cons.fire) return { act: 'wait', why: `${cons.n}/${Math.max(2, c.minWallets)} wallets within ${c.win / 60}m`, cons };
+    const muted = cons.wallets.filter((a) => c.muted && c.muted[a] === Math.floor(now / 86400)); if (muted.length && cons.n - muted.length < Math.max(2, c.minWallets)) return { act: 'block', status: 'muted', why: 'leader muted for today (daily loss cap)', cons };
+    for (const a of cons.wallets) { const v = V.vetOk(c, (o.vets || {})[a]); if (!v.ok) return { act: 'block', status: 'vet', why: v.why, cons }; }
+    const dr = V.drift(o.side, cons.leaderPx, o.price, c.maxDrift, o.atr, c.driftAtr); if (!dr.ok) return { act: 'block', status: 'drift', why: 'Anti-Front-Run Drift Shield: ' + dr.why, cons, drift: dr };
+    const plan = V.copyPlan(o.side, o.price, o.atr, c.riskUsd, c.minAtr, c.stopPct);
+    return { act: c.shadow ? 'shadow' : 'copy', cons, drift: dr, plan, exit: c.exit };
+  };
+  V.EXITS = [['mirror', 'Mirror Leader Exit'], ['independent', 'Independent ExTerm Trailing/TP Exit'], ['first', 'Whichever Triggers First']];
+  V.exitNow = (mode, leaderExited, ownHit) => (mode === 'mirror' ? !!leaderExited : mode === 'independent' ? !!ownHit : !!(leaderExited || ownHit));
+  V.walletPacket = (w, mode) => {
+    const x = w || {}, s = x.stats || {};
+    const lines = [`[ExTerm wallet profile · ${x.short || 'wallet'}]`, `style ${x.tag || 'n/a'} · alpha ${x.alpha != null ? f(x.alpha) : 'n/a'} · win ${s.win != null ? f(s.win * (s.win <= 1 ? 100 : 1)) + '%' : 'n/a'} · trades ${s.n || 0} · avg hold ${s.hold || 'n/a'}`, `open positions: ${(x.positions || []).slice(0, mode === 'full' ? 8 : 3).map((p) => `${p.coin} ${p.side} ${usd(p.ntl)}`).join(', ') || 'none'}`];
+    if (mode === 'full') lines.push(`flags: ${(x.flags || []).join(', ') || 'none'}`);
+    lines.push('Reply JSON only: {"kind":"wallet_vet","wallet":"<address>","approve":true|false,"confidence":0-100,"reason":"..."}');
+    return lines.join('\n');
+  };
+
+  /* ══ 10. share card (masked) + shareable JSON ══ */
+  const PRIVATE = /balance|equity|cash|account|acct|email|user(name)?|wallet|addr|key|secret|token|qty|size|usd|pnl\$|name/i;
+  V.cardModel = (s) => {
+    const x = s || {}, m = { brand: 'ExTerm', sym: clip(String(x.sym || '').replace(/^oc:[^:]+:/, ''), 24), tf: clip(x.tf || '', 6), side: x.side === 'short' ? 'SHORT' : 'LONG', source: clip(x.source || 'Manual', 28), entry: sig(+x.entry), sl: sig(+x.sl), tp: (x.tp || []).map((t) => sig(+t)).filter((t) => t > 0).slice(0, 3), rr: x.rr != null ? r2(+x.rr) : V.rr(x.side, +x.entry, +x.sl, (x.tp || [])[0]) != null ? r2(V.rr(x.side, +x.entry, +x.sl, (x.tp || [])[0])) : null, masked: 'Balances & personal data masked' };
+    m.lines = [`${m.sym} · ${m.tf} · ${m.side}`, `R:R ${m.rr != null ? m.rr.toFixed(2) : '–'} · ${m.source}`, `Entry ${m.entry ?? '–'}`, `Stop ${m.sl ?? '–'}`].concat(m.tp.map((t, i) => `TP${i + 1} ${t}`)).concat([m.masked]);
+    return m;
+  };
+  V.cardLeaks = (texts, secrets) => (texts || []).filter((t) => (secrets || []).some((sx) => sx && String(t).includes(String(sx))));
+  V.PRIVATE_RX = PRIVATE;
+  V.shareJSON = (o) => {
+    const x = o || {}, passed = x.passed | 0, total = x.total | 0 || 17;
+    const out = { exterm: '16.5', kind: x.spec ? 'strategy' : 'watchlist', label: `Validated in ExTerm (${passed}/${total} Gates Passed)`, grade: x.grade || null, created: x.ts ? new Date(x.ts).toISOString().slice(0, 10) : null };
+    if (x.spec) out.spec = x.spec; if (x.watchlist) out.watchlist = (x.watchlist || []).filter((s) => typeof s === 'string' && s.length < 140).slice(0, 50);
+    return JSON.stringify(out, null, 2);
+  };
+
+  /* ══ 11. ~45-line local Python starter templates (keys + funds stay with you; ExTerm only sees a proposal) ══ */
+  const POST = `def post_to_exterm(idea):
+    """Send one proposal to ExTerm's 127.0.0.1 firewall. It never reaches an exchange from here."""
+    req = urllib.request.Request(EXTERM + "/llm-signal", data=json.dumps(idea).encode(), method="POST",
+                                 headers={"Content-Type": "application/json", "X-ExTerm-Bridge": BRIDGE_KEY})
+    try:
+        with urllib.request.urlopen(req, timeout=10) as r:
+            return json.loads(r.read())
+    except urllib.error.HTTPError as e:  # 422 = rejected by the firewall (no stop, wrong-way stop, ...)
+        return json.loads(e.read() or b"{}")
+`;
+  const HEAD = (title, extra) => `#!/usr/bin/env python3
+# ${title} -> ExTerm AI Bridge (127.0.0.1). Standard library only. Your exchange keys and funds never touch the AI or ExTerm.
+import json, os, pathlib, re, sys, urllib.error, urllib.request
+EXTERM = os.environ.get("EXTERM_URL", "http://127.0.0.1:8765")
+KEYFILE = pathlib.Path.home() / ".exterm" / "bridge.key"
+BRIDGE_KEY = os.environ.get("EXTERM_BRIDGE_KEY") or (KEYFILE.read_text().strip() if KEYFILE.exists() else "")
+${extra}
+PROMPT = """You are a disciplined trading assistant. Use ONLY the ExTerm context below.
+Reply with one JSON object: {"symbol","side":"long|short","entry","stop_loss","tp":[...],"confidence":0-100,"reason"}.
+stop_loss is mandatory and must sit on the losing side of entry, at least 1.5 ATR away.
+"""
+`;
+  const TAIL = (fn) => `
+${POST}
+def main():
+    context = sys.stdin.read() if not sys.stdin.isatty() else input("Paste an ExTerm context packet, then Enter: ")
+    text = ${fn}(PROMPT + "\\n" + context)
+    m = re.search(r"\\{.*\\}", text, re.S)
+    if not m:
+        sys.exit("The model returned no JSON proposal: nothing sent.")
+    idea = json.loads(m.group(0))
+    idea["source"] = SOURCE
+    print(json.dumps(post_to_exterm(idea), indent=2))
+
+if __name__ == "__main__":
+    main()
+`;
+  V.TEMPLATES = {
+    grok: HEAD('Grok (xAI)', 'XAI_KEY = os.environ.get("XAI_API_KEY", "")\nMODEL = os.environ.get("XAI_MODEL", "grok-4")\nSOURCE = "grok"') + `
+def ask_model(prompt):
+    body = {"model": MODEL, "messages": [{"role": "user", "content": prompt}], "temperature": 0.2}
+    req = urllib.request.Request("https://api.x.ai/v1/chat/completions", data=json.dumps(body).encode(), method="POST",
+                                 headers={"Content-Type": "application/json", "Authorization": "Bearer " + XAI_KEY})
+    with urllib.request.urlopen(req, timeout=90) as r:
+        return json.loads(r.read())["choices"][0]["message"]["content"]
+` + TAIL('ask_model'),
+    cloud: HEAD('ChatGPT / Claude / DeepSeek', 'PROVIDER = os.environ.get("AI_PROVIDER", "openai")  # openai | anthropic | deepseek\nAPI_KEY = os.environ.get("AI_API_KEY", "")\nMODEL = os.environ.get("AI_MODEL", {"openai": "gpt-5", "anthropic": "claude-sonnet-5-5", "deepseek": "deepseek-chat"}.get(PROVIDER, "gpt-5"))\nSOURCE = PROVIDER') + `
+def ask_model(prompt):
+    if PROVIDER == "anthropic":
+        url, hdr = "https://api.anthropic.com/v1/messages", {"x-api-key": API_KEY, "anthropic-version": "2023-06-01"}
+        body = {"model": MODEL, "max_tokens": 800, "messages": [{"role": "user", "content": prompt}]}
+    else:
+        base = "https://api.deepseek.com" if PROVIDER == "deepseek" else "https://api.openai.com/v1"
+        url, hdr = base + "/chat/completions", {"Authorization": "Bearer " + API_KEY}
+        body = {"model": MODEL, "messages": [{"role": "user", "content": prompt}]}
+    req = urllib.request.Request(url, data=json.dumps(body).encode(), method="POST", headers=dict(hdr, **{"Content-Type": "application/json"}))
+    with urllib.request.urlopen(req, timeout=90) as r:
+        j = json.loads(r.read())
+    return j["content"][0]["text"] if PROVIDER == "anthropic" else j["choices"][0]["message"]["content"]
+` + TAIL('ask_model'),
+    ollama: HEAD('100% offline local Ollama', 'OLLAMA = os.environ.get("OLLAMA_URL", "http://127.0.0.1:11434")\nMODEL = os.environ.get("OLLAMA_MODEL", "llama3.1")\nSOURCE = "ollama"') + `
+def ask_model(prompt):
+    body = {"model": MODEL, "messages": [{"role": "user", "content": prompt}], "format": "json", "stream": False}
+    req = urllib.request.Request(OLLAMA + "/api/chat", data=json.dumps(body).encode(), method="POST",
+                                 headers={"Content-Type": "application/json"})
+    with urllib.request.urlopen(req, timeout=300) as r:  # no internet needed: model + ExTerm both on this computer
+        return json.loads(r.read())["message"]["content"]
+` + TAIL('ask_model'),
+  };
+  V.TEMPLATE_NAMES = [['grok', 'Grok xAI'], ['cloud', 'ChatGPT / Claude / DeepSeek'], ['ollama', '100% Offline Local Ollama']];
+
+  V.HIGHLIGHTS = [
+    'AI Bridge tab: one-click context packets for Grok, ChatGPT, Claude, DeepSeek, Local Ollama or any custom bot (Token-Saver ≈ 120 tokens or Full Quant)',
+    'Paste any AI trade idea (plain English or JSON): directional stop + ATR check, dashed ghost lines with live R:R and $ badges on the chart',
+    'AI ticker / contract paste-box with a $50k liquidity and mint-authority screen, Pine v5 hardening + 17-test gate + failure diagnostics for any AI',
+    '127.0.0.1/llm-signal firewall for local AIs and bots: mandatory stop, min 1.5 ATR, depth check, confidence threshold → PAPER shadow slot, loss-streak size cut',
+    'AI-vetted zero-custody copy-trading (consensus, drift shield, $ risk + ATR stop, TP1–TP3, exit modes), Human vs. AI attribution and a masked Share Setup Card',
+    'Still here from v16.4 / v16.3: DEX Discovery, anchored VWAP, the Floating Live Execution HUD, two-way ACK + fill sync with IBKR / Alpaca / CCXT / Freqtrade bridges, Require Stop-Loss ON and Two-Key Arming',
+  ];
+  return V;
+})();
+if (typeof module === 'object' && module.exports) module.exports = V165;
+
 /* ===== v160.js ===== */
 /* Copyright (c) 2026 ExTerm Labs (@exterm.labs) · Licensed under GNU AGPL-3.0 · https://github.com/uexxx/ExTerm */
 /* ExTerm v16.0 / v16.1 UI: six local external bot bridges, the four-gate live safety lock and the eight fail-safe engines.
@@ -22853,7 +23305,7 @@ const V162UI = (() => {
     m.innerHTML = `<div class="v162-modal"><div class="v162-mh"><svg viewBox="0 0 24 24" aria-hidden="true" class="v162-ic"><path d="M12 2l8 3v6c0 5-3.4 9.3-8 11-4.6-1.7-8-6-8-11V5z" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8.5 12l2.5 2.5 4.5-5" fill="none" stroke="currentColor" stroke-width="1.8"/></svg><div><h2 id="v162BriefT">Launch Safety &amp; Critical Updates</h2><span class="v162-mode ${live ? 'live' : 'paper'}">${live ? 'LIVE BOT ARMED' : 'PAPER'}</span></div></div>
       <section><h3>Zero-custody local routing</h3><p>ExTerm holds no funds and no keys. Live signals go only to a bot you run yourself on <code>127.0.0.1</code> (or an allow-listed private LAN host over HTTPS), signed per session and expiring after 3 seconds.</p></section>
       <section><h3>5-Point Live Safety Checklist</h3><ol class="v162-list">${V162.CHECKLIST.map((x) => `<li>${esc(x)}</li>`).join('')}</ol></section>
-      <section><h3>${esc(typeof V164 !== 'undefined' ? 'v16.4' : typeof V163 !== 'undefined' ? 'v16.3' : 'v16.2')} Release Highlights</h3><ul class="v162-list">${(typeof V164 !== 'undefined' ? V164.HIGHLIGHTS : typeof V163 !== 'undefined' ? V163.HIGHLIGHTS : V162.HIGHLIGHTS).map((x) => `<li>${esc(x)}</li>`).join('')}</ul></section>
+      <section><h3>${esc(typeof V165 !== 'undefined' ? 'v16.5' : typeof V164 !== 'undefined' ? 'v16.4' : typeof V163 !== 'undefined' ? 'v16.3' : 'v16.2')} Release Highlights</h3><ul class="v162-list">${(typeof V165 !== 'undefined' ? V165.HIGHLIGHTS : typeof V164 !== 'undefined' ? V164.HIGHLIGHTS : typeof V163 !== 'undefined' ? V163.HIGHLIGHTS : V162.HIGHLIGHTS).map((x) => `<li>${esc(x)}</li>`).join('')}</ul></section>
       <div class="v162-acts"><button type="button" class="btn pri" data-v162="safe">Continue in Safe Mode (PAPER)</button><button type="button" class="btn" data-v162="bridge">Open Execution Bridge &amp; Safety Settings</button></div>
       <p class="note">Esc continues in Safe Mode.${live ? ' Live routing is armed: Safe Mode flattens and disarms all six slots.' : ''}</p></div>`;
     m.addEventListener('click', (e) => { const b = e.target.closest('[data-v162]'); if (!b) return; if (b.dataset.v162 === 'safe') safe(); else openBridge(); });
@@ -24230,6 +24682,403 @@ const V164UI = (() => {
   return U;
 })();
 if (typeof window !== 'undefined' && typeof document !== 'undefined' && typeof boot === 'function') { const _b164 = boot; boot = async function () { await _b164.apply(this, arguments); try { V164UI.start(); } catch (e) { console.warn('v164 init', e); } }; }
+
+/* ===== v165.js ===== */
+/* Copyright (c) 2026 ExTerm Labs (@exterm.labs) · Licensed under GNU AGPL-3.0 · https://github.com/uexxx/ExTerm */
+/* ExTerm v16.5 UI. Maths in V165 (v165core.js); this file only wires it into the existing app:
+   · AI Bridge tab (3 cards): Copy Live Context for Any AI · Paste & Verify AI Output · Live 127.0.0.1 AI & Bot Firewall
+   · chart: dashed AI ghost lines with R:R and $ axis badges (pinned ▲/▼ when off screen), 1-click staging, Share Setup Card
+   · receipts: polls the launcher's /api/llm-signal queue, runs the deterministic firewall, routes to ghost lines, the PAPER
+     shadow slot or an armed slot (paper fill; the v16.0–16.4 four-gate cockpit still decides anything live)
+   · Whales tab: AI-Vetted Copy Engine (consensus, drift shield, $ risk + ATR stop, exit modes, per-leader cap, AI vetting)
+   · Signed Receipt Ledger: Human vs. AI / Bot attribution + Share Setup Card button
+   Strict CSP: listeners attached here, every dynamic string through esc(). */
+const V165UI = (() => {
+  const KEY = 'exterm.v165.cfg';
+  const U = { cfg: null, ghosts: {}, drawn: null, receipts: [], seq: -1, counts: { accepted: 0, rejected: 0 }, shadow: [], slip: [], vets: {}, fills: [], copyLog: [], copyDone: new Set(), copyPos: {}, leaderPnl: [],
+    key: null, lastCopy: '', lastClip: '', clipDenied: false, pine: { src: '', changes: [] }, lastVal: null, lastIdea: null, card: null, cardTexts: [], polling: false, stats: { ghosts: 0, rejected: 0, shadow: 0, routed: 0, copies: 0, blocks: 0 } };
+  const $1 = (s, r) => (r || document).querySelector(s);
+  const DEF = () => ({ provider: 'grok', preset: 'chart', mode: 'saver', tpl: 'grok', autoClip: false, guard: V165.GUARD_DEF(), copy: V165.COPY_DEF() });
+  const load = () => {
+    let o = null; try { o = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) { o = null; } const d = DEF();
+    if (o && typeof o === 'object') {
+      if (V165.PROVIDER_IDS.includes(o.provider)) d.provider = o.provider; if (V165.PRESETS.some((p) => p[0] === o.preset)) d.preset = o.preset; if (o.mode === 'full' || o.mode === 'saver') d.mode = o.mode; if (V165.TEMPLATES[o.tpl]) d.tpl = o.tpl; d.autoClip = o.autoClip === true;
+      for (const [src, dst] of [[o.guard, d.guard], [o.copy, d.copy]]) if (src && typeof src === 'object') for (const k of Object.keys(dst)) if (k !== 'muted' && typeof src[k] === typeof dst[k]) dst[k] = src[k];
+      if (o.copy && o.copy.muted && typeof o.copy.muted === 'object') for (const [a, v] of Object.entries(o.copy.muted)) if (/^\w{20,80}$/.test(a) && Number.isInteger(v)) d.copy.muted[a] = v;
+    }
+    d.guard.mandatorySL = true; // never switchable: the launcher rejects unstopped proposals anyway
+    U.cfg = d;
+  };
+  const save = () => { try { localStorage.setItem(KEY, JSON.stringify(U.cfg)); } catch (e) { /* session only */ } };
+  const fp = (v) => (v > 0 ? (v < 0.01 ? NT.fmtTiny(v) : NT.fmtPrice(v)) : '–');
+  const svg = (d, c) => `<svg viewBox="0 0 24 24" aria-hidden="true" class="${c || 'v165-ic'}">${d}</svg>`;
+  const IC = {
+    bridge: '<path d="M3 15c3-6 15-6 18 0M3 15h18M7 15v4M17 15v4M12 9.5V19" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>',
+    ctx: '<rect x="4" y="4" width="12" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8 8h5M8 11h5M8 14h3M18 8v12H8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>',
+    paste: '<path d="M8 4h8v3H8zM6 6H5v14h14V6h-1M8 12l3 3 5-6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>',
+    shield: '<path d="M12 3l7 3v5c0 5-3 8-7 10-4-2-7-5-7-10V6z" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M9 12l2 2 4-4" fill="none" stroke="currentColor" stroke-width="1.6"/>',
+    share: '<circle cx="6" cy="12" r="2.5" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="18" cy="6" r="2.5" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="18" cy="18" r="2.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8.2 10.8l7.6-3.6M8.2 13.2l7.6 3.6" stroke="currentColor" stroke-width="1.6"/>',
+    copy: '<path d="M4 17l5-5 4 3 7-8M15 7h5v5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>',
+  };
+  const copyText = (txt, what) => { U.lastCopy = txt; try { navigator.clipboard.writeText(txt).then(() => toast(esc(what) + ' copied', 'acc'), () => toast(esc(what) + ' ready below (clipboard blocked: select and copy it)', 'amb')); } catch (e) { toast(esc(what) + ' ready below (clipboard blocked)', 'amb'); } };
+  const led = (kind, o) => { try { if (typeof V160UI !== 'undefined' && V160UI.led) V160UI.led(kind, o); } catch (e) { /* ledger optional */ } };
+
+  /* ══ data helpers ══ */
+  const storeBars = (sym, tf, n) => { try { const s = getStore(sym, tf); if (s.candles.length < (n || 60) && s.load && !s.loading) s.load(Math.max(200, n || 60)); return s.candles.slice(-600); } catch (e) { return []; } };
+  const barsOf = (sym) => (typeof chart !== 'undefined' && chart && sym === ST.sel && chart.data && chart.data.length >= 30 ? chart.data.slice(-600) : storeBars(sym, sym === ST.sel ? ST.tf : '1h', 120));
+  const bookOf = (sym) => (typeof V163UI !== 'undefined' && V163UI.books && V163UI.books[sym]) || (typeof P5UI !== 'undefined' && P5UI.book && P5UI.book.sym === sym ? P5UI.book : null);
+  const depthOf = (sym, p0) => { const b = bookOf(sym); if (!b || !Array.isArray(b.bids) || !Array.isArray(b.asks) || !(p0 > 0)) return 0; let d = 0; for (const l of b.bids.concat(b.asks)) if (Math.abs(+l[0] / p0 - 1) <= 0.02) d += +l[0] * (+l[1] || 0); return d; };
+  const atrOf = (sym) => V165.atr(barsOf(sym).filter((x) => x && x.c > 0), 14);
+  const modeOf = (s) => (/^oc:/.test(s) ? 'onchain' : /-(USD|USDT|USDC)$/i.test(s) ? 'crypto' : 'stocks');
+  const symOfCoin = (c) => String(c || '').toUpperCase() + '-USD';
+  const resolve = (raw) => {
+    const s = String(raw || '').trim(); if (!s) return null; if (/^oc:/i.test(s)) return 'oc:' + s.slice(3); if (/-(USD|USDT|USDC)$/i.test(s)) return s.toUpperCase();
+    try { const c = resolveSym(s.replace(/[/](USDT?|USDC)$/i, ''), 'crypto'); if (c) return c; } catch (e) { /* not crypto */ }
+    try { const k = resolveSym(s, 'stocks'); if (k) return k; } catch (e) { /* not a stock */ }
+    return /^[A-Z]{2,6}$/i.test(s) ? s.toUpperCase() + '-USD' : null;
+  };
+  const openSym = (sym) => { showTab('markets'); const m = modeOf(sym); if (ST.mode !== m && typeof setMode === 'function') setMode(m, sym); else if (ST.sel !== sym) selectSym(sym); };
+
+  /* ══ context packets ══ */
+  const ctxChart = () => {
+    const sym = ST.sel, bars = barsOf(sym), now = Date.now(), tr = {};
+    for (const tf of ['1m', '5m', '1h', '4h']) tr[tf] = V165.trend(tf === ST.tf ? bars : storeBars(sym, tf, 60));
+    let avwap = null, avKind = 'session'; const a = typeof V164UI !== 'undefined' && V164UI.av ? V164UI.av[sym] : null;
+    if (a && bars.length) { const i = bars.findIndex((b) => b.t >= a.t); if (i >= 0) { const av = V164.avwap(bars, i); avwap = av[av.length - 1]; avKind = a.kind || 'anchor'; } }
+    if (!(avwap > 0)) avwap = V165.vwap(bars.slice(-96));
+    const tape = typeof V164UI !== 'undefined' ? V164UI.tape : [], t10 = V164.tapeDelta(tape, now, 10), t60 = V164.tapeDelta(tape, now, 60);
+    return { sym: baseOf(sym), tf: ST.tf, trend: tr, stats: V165.chartStats(bars) || {}, avwap, avKind, t10: t10.ratio == null ? null : t10.delta, t60: t60.ratio == null ? null : t60.delta, walls: V165.walls(bookOf(sym), 3) };
+  };
+  const ctxChain = () => {
+    const sym = ST.sel, oc = /^oc:/.test(sym) && typeof OC !== 'undefined', st = oc ? OC.stats[sym] || {} : {}, me = oc ? OC.meta[sym] || {} : {}, p0 = oc && OC.parse ? OC.parse(sym) : null;
+    return { sym: oc ? (me.s || baseOf(sym)) : baseOf(sym) + ' (not an on-chain token: open one from the DEX tab for full due diligence)', chain: p0 ? p0.chain : '', addr: me.addr || (p0 ? p0.pool : ''), price: px(sym), liq: st.liq, fdv: st.fdv || st.mcap, v5m: st.vol5m, v1h: st.vol1h, v24: st.vol24, holders: st.holders, top10: me.top10, mint: me.mintOff == null ? null : !me.mintOff, lpLocked: me.lpLocked == null ? null : !!me.lpLocked, struct4h: V165.trend(storeBars(sym, '4h', 60)) };
+  };
+  const ctxWatch = () => (ST.watch || []).slice(0, 5).map((s) => { const b = storeBars(s, '1h', 60); return { sym: baseOf(s), last: px(s), chg: chg24(s), trend: V165.trend(b), rsi: V165.rsi(b.map((x) => x.c), 14), atr: V165.atr(b, 14) }; });
+  const ctxOpt = () => {
+    const sym = ST.sel, liqs = []; try { if (typeof LeaderUI !== 'undefined' && LeaderUI.det) for (const d of LeaderUI.det.values()) for (const m of d.magnets || []) if (symOfCoin(m.coin) === sym) liqs.push({ p: m.px || m.price || m.liq, side: m.side, usd: m.ntl || m.usd }); } catch (e) { /* leaderboards optional */ }
+    const ch = typeof P5UI !== 'undefined' && P5UI.chain && P5UI.chain.sym === sym ? P5UI.chain : null;
+    return { sym: baseOf(sym), price: px(sym), iv: ch && ch.atmIv, skew: ch && ch.skew, maxPain: ch && ch.maxPain, pin: ch && ch.pin, liqs: liqs.filter((l) => l.p > 0).sort((a, b) => (b.usd || 0) - (a.usd || 0)) };
+  };
+  const attrRows = () => {
+    const rows = []; try { for (const t of ACC.trades || []) if (t.side === 'sell' && Number.isFinite(t.pnl)) rows.push({ src: t.src, pnl: t.pnl }); for (const b of ST.bots || []) for (const t of (b.account && b.account.trades) || []) if (t.side === 'sell' && Number.isFinite(t.pnl)) rows.push({ src: 'quant', pnl: t.pnl }); } catch (e) { /* no account yet */ }
+    return rows.concat(U.slip);
+  };
+  const ctxPost = () => { const L = typeof V160UI !== 'undefined' ? V160UI.ledger || [] : [], F = typeof V163C !== 'undefined' ? V163C.fills : []; let leaks = []; try { leaks = V164.leaks(L, F).findings || []; } catch (e) { leaks = []; } return { receipts: L.length, blocked: typeof V160UI !== 'undefined' && V160UI.stats ? V160UI.stats.blocked : 0, rejected: U.counts.rejected, attr: V165.attribution(attrRows()), leaks }; };
+  const packet = (k) => {
+    const m = U.cfg.mode, body = k === 'pkChart' ? V165.packetChart(ctxChart(), m) : k === 'pkChain' ? V165.packetOnchain(ctxChain(), m) : k === 'pkWatch' ? V165.packetWatch(ctxWatch(), m) : k === 'pkOpt' ? V165.packetOptions(ctxOpt(), m) : V165.packetPost(ctxPost(), m);
+    return V165.wrap(U.cfg.provider, k === 'pkChain' && U.cfg.preset === 'chart' ? 'rug' : k === 'pkPost' && U.cfg.preset === 'chart' ? 'leak' : U.cfg.preset, body, m);
+  };
+
+  /* ══ ghost lines ══ */
+  const setGhost = (idea, source, switchChart) => {
+    const sym = resolve(idea.symbol); if (!sym) return { ok: false, errors: ['Unknown symbol “' + idea.symbol + '”'] };
+    const chk = V165.checkIdea(idea, atrOf(sym), U.cfg.guard.minAtr); if (!chk.ok) return chk;
+    const g = V165.ghost(Object.assign({}, idea, { symbol: sym }), U.cfg.guard.riskUsd); g.source = source || 'AI'; g.at = Date.now(); g.idea = Object.assign({}, idea, { symbol: sym }); g.check = chk;
+    U.ghosts[sym] = g; U.stats.ghosts++; U.lastIdea = g.idea;
+    if (switchChart) openSym(sym); if (typeof chart !== 'undefined' && chart) chart.invalidate();
+    return Object.assign({}, chk, { sym, ghost: g });
+  };
+  const overlay = (g, L, ch) => {
+    if (typeof chart === 'undefined' || ch !== chart || !L || !L.py) return; const G = U.ghosts[ST.sel]; if (!G) { U.drawn = null; return; }
+    const top = L.y0 + 4, bot = L.y0 + L.mainH - (L.volH || 0) - 6, x0 = L.Lm, xr = L.W - L.Rm, col = { entry: '#D4AF37', sl: '#f43f5e', tp: '#2fd08a' }, badges = [];
+    g.save(); g.lineWidth = 1.4;
+    for (const l of G.lines) {
+      const y0 = L.py(l.p); if (!Number.isFinite(y0)) continue; const off = y0 < top ? 'up' : y0 > bot ? 'dn' : '', y = Math.max(top, Math.min(bot, y0));
+      if (!off) { g.setLineDash([7, 5]); g.strokeStyle = col[l.k]; g.globalAlpha = 0.9; g.beginPath(); g.moveTo(x0, y); g.lineTo(xr, y); g.stroke(); }
+      const txt = (off === 'up' ? '▲ ' : off === 'dn' ? '▼ ' : '') + V165.badge(l); badges.push(txt);
+      g.setLineDash([]); g.globalAlpha = 1; g.font = '600 10px ui-monospace, Menlo, Consolas, monospace'; const w = g.measureText(txt).width + 10, bx = Math.max(x0 + 2, xr - w - 4);
+      g.fillStyle = 'rgba(10,10,12,.88)'; g.fillRect(bx, y - 8, w, 16); g.strokeStyle = col[l.k]; g.lineWidth = 1; g.strokeRect(bx + 0.5, y - 7.5, w - 1, 15); g.fillStyle = col[l.k]; g.textAlign = 'left'; g.textBaseline = 'middle'; g.fillText(txt, bx + 5, y); g.textBaseline = 'alphabetic'; g.lineWidth = 1.4;
+    }
+    g.setLineDash([]); g.globalAlpha = 0.85; g.fillStyle = '#D4AF37'; g.font = '600 10px Inter, system-ui, sans-serif'; g.textAlign = 'left'; g.fillText(`AI ghost · ${G.source} · ${G.side.toUpperCase()}`, x0 + 6, bot - 4); g.restore();
+    U.drawn = { sym: ST.sel, n: badges.length, badges, at: Date.now() };
+  };
+  const stage = () => {
+    const G = U.ghosts[ST.sel] || (U.lastIdea && U.ghosts[U.lastIdea.symbol]); if (!G) { toast('Paste an AI trade idea first', 'amb'); return false; }
+    if (G.side !== 'long') { toast('The paper ticket stages longs; this short stays as ghost lines (route shorts through your own bot on 127.0.0.1).', 'amb', 7000); return false; }
+    if (typeof ChartTrade === 'undefined') return false; const e = G.idea; openSym(G.sym);
+    ChartTrade.draft = { sym: G.sym, entry: e.entry, sl: e.stop_loss, tp: (e.tp || [])[0] || e.entry + 2 * (e.entry - e.stop_loss), usd: Math.max(1, +(G.qty * e.entry).toFixed(2)) }; ChartTrade.changed(false);
+    toast(`Staged on the chart: ${esc(baseOf(G.sym))} entry ${esc(fp(e.entry))}, stop ${esc(fp(e.stop_loss))}, $${esc(G.risk)} risk. Nothing is placed until you confirm.`, 'acc', 7000); return true;
+  };
+
+  /* ══ firewall receipts (launcher queue) ══ */
+  const rcRow = (o) => { U.receipts.unshift(Object.assign({ t: Date.now() }, o)); if (U.receipts.length > 60) U.receipts.length = 60; };
+  const lossPnls = () => (ACC.trades || []).filter((t) => t.side === 'sell' && Number.isFinite(t.pnl) && /^ai/.test(t.src || '')).map((t) => t.pnl);
+  const handle = (rc, history) => {
+    const P = rc.proposal || {}, src = P.source || 'bot', base = { id: rc.id, sig: String(rc.sig || '').slice(0, 16), src };
+    if (rc.status === 'rejected') { U.counts.rejected++; U.stats.rejected++; rcRow(Object.assign(base, { sym: P.symbol || P.wallet || '?', side: P.side || '', status: 'rejected', why: (rc.reasons || []).join('; ') })); if (!history) led('ai-bridge', { status: 'rejected', key: rc.id, sig: rc.sig, detail: `${src}: ${P.symbol || '?'} ${(rc.reasons || []).join('; ')}` }); return; }
+    U.counts.accepted++;
+    if (P.kind === 'wallet_vet') { U.vets[P.wallet] = { approve: !!P.approve, confidence: +P.confidence || 0, src, at: Date.now() }; rcRow(Object.assign(base, { sym: P.wallet.slice(0, 6) + '…' + P.wallet.slice(-4), side: 'vet', status: P.approve ? 'approved' : 'vetoed', why: `${P.confidence}% · ${P.reason || ''}` })); if (!history) led('ai-bridge', { status: 'vet', key: rc.id, sig: rc.sig, detail: `${src} wallet vet ${P.wallet.slice(0, 10)}…: ${P.approve ? 'approve' : 'veto'} ${P.confidence}%` }); return; }
+    if (history) { rcRow(Object.assign(base, { sym: P.symbol, side: P.side, status: 'history', why: 'received before this page opened (not re-routed)' })); return; }
+    const sym = resolve(P.symbol), px0 = sym ? px(sym) : null, fw = V165.firewall(Object.assign({}, P, { symbol: sym || P.symbol }), { atr: sym ? atrOf(sym) : null, depth: sym ? depthOf(sym, px0 || P.entry) : 0, pnls: lossPnls() }, U.cfg.guard);
+    const rr = fw.rr != null ? fw.rr.toFixed(2) + 'R' : '–';
+    if (!sym || !fw.ok) { U.stats.rejected++; U.counts.rejected++; const why = !sym ? 'unknown symbol' : fw.reasons.join('; '); rcRow(Object.assign(base, { sym: P.symbol, side: P.side, status: 'rejected', why, rr })); led('ai-bridge', { status: 'rejected', key: rc.id, sig: rc.sig, detail: `${src}: ${P.symbol} ${why}` }); return; }
+    if (fw.route === 'shadow') { U.stats.shadow++; U.shadow.unshift(Object.assign({}, fw.idea, { symbol: sym, src, ts: Date.now(), done: false })); if (U.shadow.length > 100) U.shadow.length = 100; rcRow(Object.assign(base, { sym, side: P.side, status: 'shadow', why: (fw.notes || []).join('; '), rr })); led('ai-bridge', { status: 'paper-shadow', key: rc.id, sig: rc.sig, detail: `${src}: ${baseOf(sym)} ${P.side} conf ${P.confidence || 0}% → PAPER shadow slot` }); return; }
+    const gr = setGhost(fw.idea, 'AI Bridge · ' + src, false); if (!gr.ok) { rcRow(Object.assign(base, { sym, side: P.side, status: 'rejected', why: (gr.errors || []).join('; ') })); return; }
+    if (fw.route === 'slot') {
+      if (P.side === 'long' && px0 > 0) { const t = ACC.buy(sym, px0, Math.min(fw.notional, ACC.cash), Date.now(), { src: 'ai-bridge', slPx: fw.idea.stop_loss, tpPx: (fw.idea.tp || [])[0], reason: 'AI Bridge · ' + src }); if (t) { U.stats.routed++; U.slip.push({ src: 'ai-bridge', bps: V165.slipBps('long', P.entry, t.price) }); try { saveState(); } catch (e) { /* state */ } } }
+      rcRow(Object.assign(base, { sym, side: P.side, status: 'slot ' + fw.slot, why: P.side === 'long' ? `paper fill, $${fw.riskUsd.toFixed(0)} risk${(fw.notes || []).length ? ' · ' + fw.notes.join('; ') : ''}` : 'short: ghost lines only (paper ticket is long-only)', rr }));
+      led('ai-bridge', { status: 'routed', slot: fw.slot, key: rc.id, sig: rc.sig, detail: `${src}: ${baseOf(sym)} ${P.side} → Slot ${fw.slot} · $${fw.riskUsd.toFixed(0)} risk · ${rr}` }); return;
+    }
+    rcRow(Object.assign(base, { sym, side: P.side, status: 'ghost', why: `ghost lines · $${fw.riskUsd.toFixed(0)} risk${(fw.notes || []).length ? ' · ' + fw.notes.join('; ') : ''}`, rr }));
+    led('ai-bridge', { status: 'ghost', key: rc.id, sig: rc.sig, detail: `${src}: ${baseOf(sym)} ${P.side} entry ${P.entry} stop ${P.stop_loss} · ${rr}` });
+    if (ST.sel !== sym) toast(`AI Bridge: ${esc(src)} ghost lines ready on ${esc(baseOf(sym))} (${esc(rr)})`, 'acc');
+  };
+  const poll = async () => {
+    if (U.polling || typeof J === 'undefined' || !J.proxy) return; U.polling = true;
+    try { const r = await J.get('/api/llm-signal?since=' + Math.max(0, U.seq), { timeout: 3000 }); if (r && Array.isArray(r.items)) { const first = U.seq < 0; for (const rc of r.items) if (rc && rc.seq > U.seq) handle(rc, first); U.seq = Math.max(U.seq, +r.seq || 0); if (curTab === 'bridge') paintRc(); } }
+    catch (e) { /* launcher off or older */ } finally { U.polling = false; }
+  };
+  const shadowStep = () => { for (let i = 0; i < U.shadow.length; i++) { const s = U.shadow[i]; if (s.done) continue; const p = px(s.symbol); if (p > 0) U.shadow[i] = V165.shadowStep(s, p, p); } };
+
+  /* ══ AI Bridge tab ══ */
+  const pills = (list, attr, cur) => list.map(([k, l]) => `<button type="button" class="v165-pill${k === cur ? ' on' : ''}" data-${attr}="${esc(k)}" aria-pressed="${k === cur}">${esc(l)}</button>`).join('');
+  const tabHTML = () => `<div class="v165-banner" role="note">${svg(IC.bridge, 'v165-ic lg')}<div><b>Works With Any AI or Bot:</b> Grok · ChatGPT · Claude · DeepSeek · Local Ollama · Custom Python/Node Bots<div class="note">Zero custody: your exchange keys and funds stay outside both the AI and ExTerm. Every idea passes the same deterministic firewall.</div></div></div>
+    <div class="v165-grid">
+    <section class="panel v165-card" id="v165C1" aria-labelledby="v165H1"><div class="v165-h">${svg(IC.ctx)}<h3 id="v165H1">Copy Live Context for Any AI</h3></div><p class="note">1-click hallucination-free market grounding: real numbers from your chart, book and ledger.</p>
+      <div class="v165-pills" role="group" aria-label="AI provider" id="v165Prov"></div>
+      <div class="v165-pills sm" role="group" aria-label="Quick prompt presets" id="v165Pre"></div>
+      <div class="seg v165-mode" role="group" aria-label="Packet size" id="v165Mode"></div>
+      <div class="v165-acts">${[['pkChart', 'Copy Chart + Order-Book Packet'], ['pkChain', 'Copy On-Chain Due-Diligence Packet'], ['pkWatch', 'Copy Multi-Symbol Watchlist Comparison Packet'], ['pkOpt', 'Copy Options IV / Whale Liquidation Packet'], ['pkPost', 'Copy Session Post-Mortem Packet']].map(([k, l]) => `<button type="button" class="btn sm" data-v165a="${k}">${esc(l)}</button>`).join('')}</div>
+      <div class="note" id="v165Tok" role="status" aria-live="polite"></div><pre class="v161-pre mono v165-pre" id="v165Pk" tabindex="0" aria-label="Context packet preview"></pre></section>
+    <section class="panel v165-card" id="v165C2" aria-labelledby="v165H2"><div class="v165-h">${svg(IC.paste)}<h3 id="v165H2">Paste &amp; Verify AI Output</h3></div><p class="note">Zero-code paste-back loop: any AI's answer becomes checked ghost lines, a screened watchlist or a hardened script.</p>
+      <label class="note" for="v165Idea">AI trade idea (plain English or JSON)</label><textarea class="in" id="v165Idea" rows="3" placeholder="Long SOL at 142.50, stop 138.00, target 154.00"></textarea>
+      <div class="v165-row"><button type="button" class="btn sm pri" data-v165a="idea">Paste AI Trade Idea → Instant Chart Ghost Lines</button><button type="button" class="btn sm" data-v165a="clip">Read clipboard</button><label class="v165-sw"><input type="checkbox" id="v165Auto"> Auto-Watch Clipboard for AI Trade Ideas</label></div>
+      <div id="v165IdeaOut" class="v165-out" role="status" aria-live="polite"></div>
+      <label class="note" for="v165Tk">AI Ticker / Contract Paste-Box ($TICKER, Solana or EVM addresses)</label><textarea class="in" id="v165Tk" rows="2" placeholder="Paste any AI or X-search answer: $WIF, $JUP, 0x…"></textarea>
+      <div class="v165-row"><button type="button" class="btn sm" data-v165a="tickers">Screen &amp; Add Survivors to Watchlist</button><span class="note">drops &lt; $50k liquidity and active mint authority</span></div><div id="v165TkOut" class="v165-out" role="status" aria-live="polite"></div>
+      <label class="note" for="v165Pine">Pine Script v5 from any AI</label><textarea class="in mono" id="v165Pine" rows="4" placeholder="//@version=5 …"></textarea>
+      <div class="v165-row"><button type="button" class="btn sm" data-v165a="harden">Paste &amp; Harden AI Pine Script v5</button><button type="button" class="btn sm pri" data-v165a="pval">1-Click 17-Test Quant Validation</button><button type="button" class="btn sm" data-v165a="pdiag">Copy Failure Diagnostics for AI</button><button type="button" class="btn sm" data-v165a="sjson">Copy Shareable Strategy / Watchlist JSON</button></div>
+      <div id="v165PineChk" class="v164-chk"></div><div id="v165PineOut" class="v165-out" role="status" aria-live="polite"></div><pre class="v161-pre mono v165-pre" id="v165PineSrc" tabindex="0" aria-label="Hardened Pine source" hidden></pre></section>
+    <section class="panel v165-card" id="v165C3" aria-labelledby="v165H3"><div class="v165-h">${svg(IC.shield)}<h3 id="v165H3">Live 127.0.0.1 AI &amp; Bot Firewall</h3></div><p class="note">Grok · OpenAI · Anthropic · Ollama · CCXT · Freqtrade · Alpaca · Interactive Brokers bots POST proposals here; ExTerm decides.</p>
+      <div class="v165-ep"><code id="v165Ep">POST http://127.0.0.1:${esc(location.port || 8765)}/llm-signal</code><span class="note">header X-ExTerm-Bridge: <span id="v165Key" class="mono">••••••••</span></span><button type="button" class="btn xs" data-v165a="keyCopy">Copy bridge key</button></div>
+      <div class="v165-row"><button type="button" class="btn sm pri" data-v165a="guard">Apply AI Live Guardrail Profile</button><button type="button" class="btn sm" data-v165a="share">${svg(IC.share)} Share Setup Card</button></div>
+      <div class="v165-guard" id="v165Guard"></div>
+      <h4>Receipts</h4><div class="v165-tw"><table class="v165-t" id="v165Rc"><thead><tr><th>Time</th><th>Source</th><th>Idea</th><th>Status</th><th>R:R</th><th>Detail</th><th>Sig</th></tr></thead><tbody></tbody></table></div>
+      <h4>Human vs. AI / Bot Execution Attribution</h4><div id="v165Attr"></div>
+      <h4>Local Python starter templates</h4><div class="seg" role="group" aria-label="Template" id="v165Tpls"></div><pre class="v161-pre mono v165-pre" id="v165Tpl" tabindex="0" aria-label="Python template"></pre><button type="button" class="btn xs" data-v165a="tplCopy">Copy template</button></section>
+    </div>`;
+  let tab = null;
+  const mountTab = () => {
+    if (tab && tab.isConnected) return tab; const main = $1('main'), nav = $1('#nav'); if (!main || !nav) return null;
+    if (!$1('#nav button[data-tab="bridge"]')) {
+      const nb = document.createElement('button'); nb.type = 'button'; nb.dataset.tab = 'bridge'; nb.id = 'v165Nav'; nb.innerHTML = `<span class="ni">${svg(IC.bridge, 'v165-ni')}</span>AI Bridge`;
+      const g = $1('#nav button[data-tab="grok"]'); if (g) { g.after(nb); if (g.style.order) nb.style.order = String((parseInt(g.style.order, 10) || 0) + 1); if (g.dataset.g) nb.dataset.g = g.dataset.g; } else nav.appendChild(nb);
+      nb.addEventListener('click', () => showTab('bridge'));
+    }
+    tab = document.createElement('section'); tab.id = 'tab-bridge'; tab.className = 'tab v165-tab'; tab.innerHTML = tabHTML(); main.appendChild(tab);
+    tab.addEventListener('click', onClick); tab.addEventListener('change', onChange); tab.addEventListener('input', onInput);
+    TABS.bridge = { show: () => paint(), render: () => {} };
+    paint(); return tab;
+  };
+  const guardHTML = () => { const G = U.cfg.guard, n = (k, l, step, min, max) => `<label><span>${esc(l)}</span><input class="in mono" type="number" data-v165g="${k}" value="${esc(G[k])}" step="${step}" min="${min}" max="${max}"></label>`;
+    return `<div class="v165-gl"><span class="v165-lock" title="Always on">Mandatory Stop-Loss ON</span>${n('minAtr', 'Min stop (× ATR)', 0.1, 0, 10)}${n('depthMult', 'Liquidity depth ≥ × order', 0.5, 0, 50)}${n('cutAfter', 'Size cut after N losses', 1, 0, 20)}${n('cutPct', 'Size cut %', 5, 0, 90)}${n('riskUsd', '$ risk per idea', 10, 1, 1e6)}</div>
+      <label class="v165-thr"><span>AI Confidence Threshold <b id="v165ThrV">${esc(G.threshold)}%</b></span><input type="range" min="0" max="100" step="1" id="v165Thr" value="${esc(G.threshold)}" aria-label="AI confidence threshold"></label>
+      <div class="v165-row"><label class="v165-sw"><input type="checkbox" data-v165g="shadow"${G.shadow ? ' checked' : ''}> AI Shadow Slot (PAPER mode first)</label><div class="seg" role="group" aria-label="High-confidence route">${[['ghost', 'Ghost lines'], ['slot', 'Armed slot']].map(([k, l]) => `<button type="button" data-v165r="${k}" class="${G.route === k ? 'on' : ''}">${l}</button>`).join('')}</div><label class="v165-sl"><span>Slot</span><select class="in" data-v165g="slot">${[1, 2, 3, 4, 5, 6].map((i) => `<option value="${i}"${G.slot === i ? ' selected' : ''}>Slot ${i}</option>`).join('')}</select></label></div>`; };
+  const attrHTML = () => { const A = V165.attribution(attrRows()), row = (k, l) => { const a = A[k]; return `<tr data-v165attr="${k}"><td>${esc(l)}</td><td class="mono">${esc(a.n)}</td><td class="mono">${esc(a.n ? a.win.toFixed(1) + '%' : '–')}</td><td class="mono">${esc(a.n ? (a.pf == null ? '∞' : a.pf.toFixed(2)) : '–')}</td><td class="mono">${esc(a.bpsN ? a.bps.toFixed(1) : '–')}</td></tr>`; };
+    return `<table class="v165-t v165-attr"><thead><tr><th>Source</th><th>Trades</th><th>Win rate</th><th>Profit factor</th><th>Slippage bps</th></tr></thead><tbody>${row('manual', 'Manual')}${row('quant', 'Quant')}${row('ai', 'AI Bridge')}${row('copy', 'Copy (AI-vetted)')}</tbody></table>`; };
+  const paintRc = () => { const tb = $1('#v165Rc tbody'); if (!tb) return; tb.innerHTML = U.receipts.length ? U.receipts.slice(0, 25).map((r) => `<tr class="v165-st-${esc(String(r.status).split(' ')[0])}" data-v165rc="${esc(r.id)}"><td class="mono">${esc(new Date(r.t).toLocaleTimeString())}</td><td>${esc(r.src)}</td><td class="mono">${esc(baseOf(String(r.sym || '')))} ${esc(r.side || '')}</td><td><b>${esc(r.status)}</b></td><td class="mono">${esc(r.rr || '–')}</td><td>${esc(r.why || '')}</td><td class="mono">${esc(r.sig || '')}</td></tr>`).join('') : '<tr><td colspan="7" class="note">No proposals yet. Run a starter template or POST JSON to the endpoint above.</td></tr>'; const at = $1('#v165Attr'); if (at) at.innerHTML = attrHTML(); };
+  const paint = () => {
+    if (!tab) return; const c = U.cfg;
+    $1('#v165Prov', tab).innerHTML = pills(V165.PROVIDERS, 'v165p', c.provider); $1('#v165Pre', tab).innerHTML = pills(V165.PRESETS, 'v165q', c.preset);
+    $1('#v165Mode', tab).innerHTML = [['saver', 'Token-Saver (~120 tokens)'], ['full', 'Full Quant']].map(([k, l]) => `<button type="button" data-v165m="${k}" class="${c.mode === k ? 'on' : ''}" aria-pressed="${c.mode === k}">${l}</button>`).join('');
+    $1('#v165Tpls', tab).innerHTML = V165.TEMPLATE_NAMES.map(([k, l]) => `<button type="button" data-v165t="${k}" class="${c.tpl === k ? 'on' : ''}">${esc(l)}</button>`).join('');
+    const tp = $1('#v165Tpl', tab), src = V165.TEMPLATES[c.tpl].replace('http://127.0.0.1:8765', 'http://127.0.0.1:' + (location.port || 8765)); if (tp.textContent !== src) tp.textContent = src;
+    $1('#v165Auto', tab).checked = c.autoClip; $1('#v165Guard', tab).innerHTML = guardHTML(); paintRc(); keyLoad();
+  };
+  const keyLoad = async () => { if (U.key || typeof J === 'undefined' || !J.proxy) return; try { const r = await J.get('/api/llm-signal/key', { timeout: 3000 }); if (r && r.key) { U.key = r.key; const k = $1('#v165Key'); if (k) k.textContent = r.key.slice(0, 4) + '••••' + r.key.slice(-2); } } catch (e) { /* launcher off */ } };
+  const ideaOut = (h) => { const o = $1('#v165IdeaOut'); if (o) o.innerHTML = h; };
+  const runIdea = (text, source) => {
+    const idea = V165.parseIdea(text); if (!idea) { ideaOut('<p class="dn">No trade idea found. It needs a direction, a symbol and an entry, e.g. “Long SOL at 142.50, stop 138.00, target 154.00”, or JSON with symbol / side / entry / stop_loss / tp.</p>'); return null; }
+    const r = setGhost(idea, source || V165.providerName(U.cfg.provider), true);
+    if (!r.ok) { ideaOut(`<p class="dn"><b>Not plotted.</b> ${r.errors.map((e) => esc(e)).join(' ')}</p>`); return r; }
+    const g = r.ghost; ideaOut(`<p><b>${esc(baseOf(r.sym))} ${esc(idea.side.toUpperCase())}</b> · entry <b class="mono">${esc(fp(idea.entry))}</b> · stop <b class="mono">${esc(fp(idea.stop_loss))}</b>${(idea.tp || []).map((t, i) => ` · TP${i + 1} <b class="mono">${esc(fp(t))}</b> (${r.rr[i] != null ? esc(r.rr[i].toFixed(2)) + 'R' : '–'})`).join('')}${r.atrs != null ? ` · stop ${esc(r.atrs.toFixed(2))} ATR` : ''}</p>${r.warns.map((w) => `<p class="warn note">⚠ ${esc(w)}</p>`).join('')}<p class="note">Dashed ghost lines are on the chart with $ badges for a $${esc(g.risk)} risk. Nothing is placed.</p><div class="v165-row"><button type="button" class="btn sm pri" data-v165a="stage">Stage on ticket</button><button type="button" class="btn sm" data-v165a="share">Share Setup Card</button><button type="button" class="btn sm" data-v165a="clear">Clear ghost lines</button></div>`);
+    return r;
+  };
+  const tkOut = (h) => { const o = $1('#v165TkOut'); if (o) o.innerHTML = h; };
+  U.tokenInfo = async (it) => {
+    if (it.kind === 'ticker') { const s = resolve(it.id); return s && px(s) > 0 ? { sym: s } : null; }
+    if (typeof Safety === 'undefined' || !Safety.scan) return null;
+    const r = await Safety.scan(it.id, it.kind === 'evm' ? 'eth' : 'solana').catch(() => null); if (!r) return null;
+    const pair = r.pair || r.dex || {}, liq = +((pair.liquidity && pair.liquidity.usd) || r.liq || 0), mint = r.mint ? !!r.mint.mintAuthority : (r.checks || []).some((c) => c.id === 'mint' && c.status === 'fail');
+    const pool = pair.pairAddress, chain = pair.chainId === 'ethereum' ? 'eth' : pair.chainId; return { liq, mint, sym: pool && chain ? `oc:${chain}:${pool}` : null };
+  };
+  const runTickers = async () => {
+    const ex = V165.extract(($1('#v165Tk') || {}).value), items = ex.tickers.map((id) => ({ id, kind: 'ticker' })).concat(ex.solana.map((id) => ({ id, kind: 'solana' })), ex.evm.map((id) => ({ id, kind: 'evm' })));
+    if (!items.length) { tkOut('<p class="note">No $TICKER or contract address found.</p>'); return null; }
+    tkOut(`<p class="note shimmer">Screening ${esc(items.length)} item${items.length > 1 ? 's' : ''}…</p>`); const info = {};
+    await Promise.all(items.map(async (it) => { try { info[it.id] = await U.tokenInfo(it); } catch (e) { info[it.id] = null; } }));
+    const r = V165.screen(items, info), added = [];
+    for (const o of r.ok) if (o.sym && !ST.watch.includes(o.sym) && modeOf(o.sym) === ST.mode) { ST.watch.push(o.sym); added.push(o.sym); }
+    if (added.length) { try { renderWatch(); saveState(); Feed.subscribe(added); } catch (e) { /* watchlist */ } }
+    const other = r.ok.filter((o) => !added.includes(o.sym));
+    tkOut(`<p><b>${esc(r.ok.length)} survivor${r.ok.length === 1 ? '' : 's'}</b>${added.length ? ` · added to this watchlist: ${added.map((s) => esc(baseOf(s))).join(', ')}` : ''}${other.length ? ` · other market or already listed: ${other.map((o) => esc(baseOf(o.sym))).join(', ')}` : ''}</p>${r.bad.length ? `<ul class="v164-ul">${r.bad.map((b) => `<li class="warn"><span class="mono">${esc(b.id.length > 14 ? b.id.slice(0, 6) + '…' + b.id.slice(-4) : b.id)}</span>: ${esc(b.why)}</li>`).join('')}</ul>` : ''}`);
+    return Object.assign(r, { added });
+  };
+  const pineOut = (h) => { const o = $1('#v165PineOut'); if (o) o.innerHTML = h; };
+  const paintPineChk = (src) => { const ck = V165.pineCheck(src), c = $1('#v165PineChk'); if (c) c.innerHTML = ck.rows.map((r) => `<span class="${r.ok ? 'ok' : 'bad'}">${r.ok ? '✓' : '✗'} ${esc(r.k)}</span>`).join('') + (ck.repaint ? '<span class="bad">✗ look-ahead</span>' : '<span class="ok">✓ no repaint</span>'); return ck; };
+  const harden = () => {
+    const raw = ($1('#v165Pine') || {}).value || ''; if (!raw.trim()) { pineOut('<p class="note">Paste a Pine Script v5 strategy from any AI first.</p>'); return null; }
+    const h = V165.hardenPine(raw, { risk: U.cfg.guard.riskUsd }); U.pine = h; const pre = $1('#v165PineSrc'); if (pre) { pre.hidden = false; pre.textContent = h.src; } const ck = paintPineChk(h.src);
+    pineOut(`<p><b>Hardened</b> · ${esc(h.changes.length)} fix${h.changes.length === 1 ? '' : 'es'} applied${ck.ok ? ' · all 6 safety rules pass' : ''}.</p><ul class="v164-ul">${h.changes.map((c) => `<li>${esc(c)}</li>`).join('')}</ul><button type="button" class="btn xs" data-v165a="pcopy">Copy hardened script</button>`); return h;
+  };
+  const validatePine = async () => {
+    const h = U.pine.src ? U.pine : harden(); if (!h || !h.src) return null; const t = V165.pineToText(h.src), r = V164.nlToSpec(t.text);
+    if (!r.ok || !t.rules) { pineOut('<p class="dn">Could not map this script\'s entry rules to the backtester (supported: RSI, EMA/SMA cross or above, VWAP, N-bar breakout, volume, MACD). Copy the diagnostics and ask your AI to use those building blocks.</p>'); U.lastVal = { name: 'unmapped script', checks: [], grade: 'n/a', sym: baseOf(ST.sel), tf: ST.tf }; return null; }
+    const v = NT.Spec.validate(r.spec); if (!v.ok) { pineOut(`<p class="dn">${esc(v.errors[0])}</p>`); return null; }
+    const spec = Object.assign({}, v.spec, { name: 'AI Pine: ' + t.text.slice(0, 40) }); let id; try { id = NT.Spec.register(spec); } catch (e) { pineOut(`<p class="dn">${esc(e.message)}</p>`); return null; }
+    const tf = ST.tf && NT.TF[ST.tf] ? ST.tf : '1h'; pineOut(`<p class="note shimmer">Running the 17-test validation gate on ${esc(baseOf(ST.sel))} ${esc(tf)} (rules: ${esc(t.text)})…</p>`);
+    try {
+      const c = await History.get(ST.sel, NT.TF[tf], 3000); if (!c || c.length < 300) throw new Error('Validation needs at least 300 candles of history.');
+      const res = await BTW.run({ type: 'validate', strat: id, params: {}, candles: c, o: { cash: 10000, fee: ST.settings.fee / 100, slip: ST.settings.slip / 100, tfSec: NT.TF[tf] } }), val = res.v || res, checks = val.checks || [], passed = checks.filter((x) => x.status === 'pass').length;
+      U.lastVal = { name: spec.name, spec, checks, grade: val.grade, sym: baseOf(ST.sel), tf, passed, total: checks.length || 17, ts: Date.now() };
+      const bad = checks.filter((x) => x.status !== 'pass');
+      pineOut(`<div class="v164-grade"><span class="grade big g-${esc(String(val.grade).toLowerCase())}">${esc(val.grade)}</span><div><b>${esc(spec.name)}</b><div class="note">${esc(passed)}/${esc(checks.length)} gates passed · ${esc(val.verdict || '')}</div></div></div>${bad.length ? `<ul class="v164-ul">${bad.slice(0, 8).map((x) => `<li class="${x.status === 'fail' ? 'bad' : 'warn'}"><b>${esc(x.name)}</b>: ${esc(x.value)}</li>`).join('')}</ul>` : ''}`);
+      return U.lastVal;
+    } catch (e) { pineOut(`<p class="dn">${esc(e.message || e)}</p>`); return null; }
+  };
+  const shareJson = () => { const V = U.lastVal; const txt = V165.shareJSON(V && V.spec ? { spec: V.spec, passed: V.passed, total: V.total, grade: V.grade, ts: V.ts } : { watchlist: ST.watch, passed: 0, total: 17 }); copyText(txt, V && V.spec ? 'Shareable strategy JSON' : 'Shareable watchlist JSON'); return txt; };
+
+  /* ══ Share Setup Card (Obsidian & Gold, balances and personal data masked) ══ */
+  const setupNow = () => {
+    const G = U.ghosts[ST.sel]; if (G) return { sym: ST.sel, tf: ST.tf, side: G.side, entry: G.idea.entry, sl: G.idea.stop_loss, tp: G.idea.tp, source: G.source };
+    const p = ACC.pos[ST.sel]; if (p && p.qty > 0) return { sym: ST.sel, tf: ST.tf, side: 'long', entry: p.cost / p.qty, sl: p.sl, tp: p.tp ? [p.tp] : [], source: 'Manual' };
+    const d = typeof ChartTrade !== 'undefined' && ChartTrade.draft && ChartTrade.draft.sym === ST.sel ? ChartTrade.draft : null; if (d) return { sym: ST.sel, tf: ST.tf, side: 'long', entry: d.entry, sl: d.sl, tp: d.tp ? [d.tp] : [], source: 'Manual draft' };
+    return { sym: ST.sel, tf: ST.tf, side: 'long', entry: px(ST.sel), sl: null, tp: [], source: 'Chart' };
+  };
+  U.shareCard = (setup, noDownload) => {
+    const S = setup || setupNow(), m = V165.cardModel(S), W = 1200, H = 675, cv = document.createElement('canvas'); cv.width = W; cv.height = H; const g = cv.getContext('2d'), texts = [];
+    const T = (s, x, y, font, color, align) => { g.font = font; g.fillStyle = color; g.textAlign = align || 'left'; g.fillText(s, x, y); texts.push(String(s)); };
+    const bg = g.createLinearGradient(0, 0, W, H); bg.addColorStop(0, '#0b0b0f'); bg.addColorStop(1, '#16130a'); g.fillStyle = bg; g.fillRect(0, 0, W, H);
+    g.strokeStyle = '#D4AF37'; g.lineWidth = 3; g.strokeRect(18, 18, W - 36, H - 36);
+    T('ExTerm', 56, 92, '800 48px Inter, system-ui, sans-serif', '#D4AF37'); T('Setup Card', 56, 128, '600 20px Inter, system-ui, sans-serif', '#c9c3ad');
+    T(`${m.sym}  ·  ${m.tf}  ·  ${m.side}`, W - 56, 92, '700 34px Inter, system-ui, sans-serif', '#f3efe2', 'right'); T(`R:R ${m.rr != null ? m.rr.toFixed(2) : '–'}  ·  ${m.source}`, W - 56, 128, '600 20px Inter, system-ui, sans-serif', '#D4AF37', 'right');
+    const bars = barsOf(S.sym || ST.sel).slice(-120).filter((b) => b && b.c > 0), lv = [m.entry, m.sl].concat(m.tp).filter((x) => x > 0);
+    const x0 = 56, x1 = W - 300, y0 = 170, y1 = H - 90, all = bars.map((b) => b.c).concat(lv), lo = all.length ? Math.min(...all) : 0, hi = all.length ? Math.max(...all) : 1, py = (p) => y1 - ((p - lo) / ((hi - lo) || 1)) * (y1 - y0);
+    if (bars.length > 1) { g.strokeStyle = '#e8e2cc'; g.lineWidth = 2; g.beginPath(); bars.forEach((b, i) => { const x = x0 + (i / (bars.length - 1)) * (x1 - x0); if (i) g.lineTo(x, py(b.c)); else g.moveTo(x, py(b.c)); }); g.stroke(); }
+    const line = (p, c, l) => { if (!(p > 0)) return; g.setLineDash([10, 7]); g.strokeStyle = c; g.lineWidth = 2; g.beginPath(); g.moveTo(x0, py(p)); g.lineTo(x1, py(p)); g.stroke(); g.setLineDash([]); T(`${l} ${p}`, x1 + 16, py(p) + 7, '700 20px ui-monospace, Menlo, Consolas, monospace', c); };
+    line(m.entry, '#D4AF37', 'Entry'); line(m.sl, '#f43f5e', 'Stop'); m.tp.forEach((t, i) => line(t, '#2fd08a', 'TP' + (i + 1)));
+    T(m.masked, 56, H - 44, '500 16px Inter, system-ui, sans-serif', '#8f8a78'); T('Paper-first · zero custody · ExTerm', W - 56, H - 44, '500 16px Inter, system-ui, sans-serif', '#8f8a78', 'right');
+    const url = cv.toDataURL('image/png'); U.card = { url, model: m }; U.cardTexts = texts;
+    if (!noDownload) { try { const a = document.createElement('a'); a.href = url; a.download = `exterm-setup-${m.sym.replace(/[^\w-]/g, '')}-${m.tf}.png`; document.body.appendChild(a); a.click(); a.remove(); toast('⬇ Share Setup Card saved (balances and personal data masked)', 'acc'); } catch (e) { toast('Downloads are blocked here', 'amb'); } }
+    return { url, model: m, texts };
+  };
+
+  /* ══ events ══ */
+  const onClick = async (e) => {
+    const p = e.target.closest('[data-v165p]'); if (p) { U.cfg.provider = p.dataset.v165p; save(); paint(); return; }
+    const q = e.target.closest('[data-v165q]'); if (q) { U.cfg.preset = q.dataset.v165q; save(); paint(); return; }
+    const m = e.target.closest('[data-v165m]'); if (m) { U.cfg.mode = m.dataset.v165m; save(); paint(); return; }
+    const t = e.target.closest('[data-v165t]'); if (t) { U.cfg.tpl = t.dataset.v165t; save(); paint(); return; }
+    const r = e.target.closest('[data-v165r]'); if (r) { U.cfg.guard.route = r.dataset.v165r; save(); paint(); return; }
+    const b = e.target.closest('[data-v165a]'); if (!b) return; const k = b.dataset.v165a;
+    if (/^pk/.test(k)) { const txt = packet(k), pre = $1('#v165Pk'); if (pre) pre.textContent = txt; const tk = $1('#v165Tok'); if (tk) tk.textContent = `≈ ${V165.estTokens(txt)} tokens · ${V165.providerName(U.cfg.provider)} · ${U.cfg.mode === 'full' ? 'Full Quant' : 'Token-Saver'}`; copyText(txt, b.textContent.replace(/^Copy /, '')); return; }
+    if (k === 'idea') { runIdea(($1('#v165Idea') || {}).value); return; }
+    if (k === 'clip') { try { const txt = await navigator.clipboard.readText(); $1('#v165Idea').value = txt.slice(0, 20000); runIdea(txt); } catch (x) { toast('Clipboard read was blocked: paste into the box instead', 'amb'); } return; }
+    if (k === 'stage') { stage(); return; }
+    if (k === 'clear') { delete U.ghosts[ST.sel]; if (U.lastIdea) delete U.ghosts[U.lastIdea.symbol]; if (typeof chart !== 'undefined' && chart) chart.invalidate(); ideaOut(''); return; }
+    if (k === 'tickers') { await runTickers(); return; }
+    if (k === 'harden') { harden(); return; }
+    if (k === 'pcopy') { copyText(U.pine.src, 'Hardened Pine Script v5'); return; }
+    if (k === 'pval') { await validatePine(); return; }
+    if (k === 'pdiag') { const txt = V165.diagnostics(Object.assign({}, U.lastVal || { name: 'not validated yet' }, { pine: V165.pineCheck(U.pine.src || ($1('#v165Pine') || {}).value) })); copyText(txt, 'Failure diagnostics'); pineOut(`<pre class="v161-pre mono v165-pre">${esc(txt)}</pre>`); return; }
+    if (k === 'sjson') { shareJson(); return; }
+    if (k === 'guard') { U.cfg.guard = Object.assign(U.cfg.guard, V165.GUARD_AI(), { riskUsd: U.cfg.guard.riskUsd }); save(); paint(); toast('AI Live Guardrail Profile applied: mandatory stop, ≥ 1.5 ATR, ≥ 3× depth, 75% confidence, 50% size cut after 2 losses, AI Shadow Slot on', 'acc', 7000); return; }
+    if (k === 'share') { U.shareCard(); return; }
+    if (k === 'keyCopy') { await keyLoad(); if (U.key) copyText(U.key, 'Bridge key'); else toast('Start ExTerm with the launcher to get a bridge key', 'amb'); return; }
+    if (k === 'tplCopy') copyText(($1('#v165Tpl') || {}).textContent || '', 'Python template');
+  };
+  const onChange = (e) => {
+    const x = e.target; if (x.id === 'v165Auto') { U.cfg.autoClip = x.checked; U.clipDenied = false; save(); toast(x.checked ? 'Auto-Watch Clipboard on: copied AI trade ideas become ghost lines while ExTerm has focus' : 'Auto-Watch Clipboard off'); return; }
+    const k = x.dataset && x.dataset.v165g; if (!k) return; const G = U.cfg.guard;
+    if (k === 'shadow') G.shadow = x.checked; else if (k === 'slot') G.slot = Math.max(1, Math.min(6, +x.value | 0)); else { const v = parseFloat(x.value); if (Number.isFinite(v) && v >= 0) G[k] = v; }
+    save();
+  };
+  const onInput = (e) => { if (e.target.id === 'v165Thr') { U.cfg.guard.threshold = Math.max(0, Math.min(100, +e.target.value | 0)); const v = $1('#v165ThrV'); if (v) v.textContent = U.cfg.guard.threshold + '%'; save(); } };
+  const clipWatch = async () => {
+    if (!U.cfg.autoClip || U.clipDenied || document.hidden || !document.hasFocus() || !navigator.clipboard || !navigator.clipboard.readText) return;
+    try { const t = await navigator.clipboard.readText(); if (!t || t === U.lastClip || t === U.lastCopy) return; U.lastClip = t; if (V165.parseIdea(t)) { const box = $1('#v165Idea'); if (box) box.value = t.slice(0, 20000); runIdea(t, 'Clipboard'); } }
+    catch (x) { U.clipDenied = true; toast('Clipboard watching needs clipboard permission: allow it or paste manually', 'amb'); }
+  };
+
+  /* ══ AI-Vetted Copy Engine (Whales tab) ══ */
+  let cp = null;
+  const copyHTML = () => { const C = U.cfg.copy, n = (k, l, step) => `<label><span>${esc(l)}</span><input class="in mono" type="number" data-v165c="${k}" value="${esc(C[k])}" step="${step}" min="0"></label>`;
+    return `<summary>${svg(IC.copy)} <b>AI-Vetted Copy Engine</b> <span class="note">zero custody · consensus · drift shield · $ risk + ATR stop · paper-first</span></summary><div class="v165-copy">
+      <div class="v165-row"><label class="v165-sw"><input type="checkbox" data-v165c="on"${C.on ? ' checked' : ''}> Engine on</label><label class="v165-sw"><input type="checkbox" data-v165c="vet"${C.vet ? ' checked' : ''}> AI Wallet &amp; Trade Vetting Gate (≥ ${esc(C.vetMin)}% via 127.0.0.1/llm-signal)</label><label class="v165-sw"><input type="checkbox" data-v165c="shadow"${C.shadow ? ' checked' : ''}> Copy Shadow Mode (PAPER log only)</label></div>
+      <div class="v165-row"><span class="note">Multi-Wallet Consensus window</span><div class="seg" role="group" aria-label="Consensus window">${V165.WINDOWS.map(([s, l]) => `<button type="button" data-v165cw="${s}" class="${C.win === s ? 'on' : ''}">${l}</button>`).join('')}</div>${n('minWallets', 'Min wallets', 1)}</div>
+      <div class="v165-gl">${n('riskUsd', '$ risk per copy', 10)}${n('minAtr', 'Min stop (× ATR)', 0.1)}${n('maxDrift', 'Max entry drift %', 0.1)}${n('driftAtr', 'Max drift (× ATR)', 0.1)}${n('dayCap', 'Per-leader daily loss cap $', 10)}</div>
+      <div class="v165-row"><span class="note">Exit mode</span><div class="seg" role="group" aria-label="Exit mode">${V165.EXITS.map(([k, l]) => `<button type="button" data-v165cx="${k}" class="${C.exit === k ? 'on' : ''}">${esc(l)}</button>`).join('')}</div></div>
+      <div class="v165-row"><select class="in" id="v165Lead" aria-label="Leader wallet"></select><button type="button" class="btn sm" data-v165ca="packet">Copy Wallet Profile Packet for AI</button></div>
+      <div class="v165-tw"><table class="v165-t" id="v165CopyLog"><thead><tr><th>Time</th><th>Market</th><th>Wallets</th><th>Decision</th><th>Detail</th></tr></thead><tbody></tbody></table></div></div>`; };
+  const mountCopy = () => {
+    const t = $1('#tab-whales'); if (!t) return null; if (cp && cp.isConnected) return cp;
+    cp = document.createElement('details'); cp.id = 'v165Copy'; cp.className = 'panel v165-cp'; cp.innerHTML = copyHTML(); t.insertBefore(cp, t.firstChild);
+    cp.addEventListener('click', onCopyClick); cp.addEventListener('change', onCopyChange); paintCopy(); return cp;
+  };
+  const leaders = () => { const out = []; try { if (typeof LeaderUI !== 'undefined' && LeaderUI.det) for (const [a, d] of LeaderUI.det) out.push({ addr: a, d }); } catch (e) { /* none */ } return out.slice(0, 40); };
+  const paintCopy = () => {
+    if (!cp) return; const sel = $1('#v165Lead', cp); if (sel) { const L = leaders(), cur = sel.value; const h = L.length ? L.map((x) => `<option value="${esc(x.addr)}">${esc(x.addr.slice(0, 6) + '…' + x.addr.slice(-4))}${x.d.tag ? ' · ' + esc(x.d.tag) : ''}</option>`).join('') : '<option value="">Open the Perp Leaderboard to load wallets</option>'; if (sel._h !== h) { sel._h = h; sel.innerHTML = h; if (cur) sel.value = cur; } }
+    const tb = $1('#v165CopyLog tbody', cp); if (tb) tb.innerHTML = U.copyLog.length ? U.copyLog.slice(0, 20).map((r) => `<tr class="v165-st-${esc(r.act)}"><td class="mono">${esc(new Date(r.t).toLocaleTimeString())}</td><td class="mono">${esc(baseOf(r.sym))} ${esc(r.side)}</td><td class="mono">${esc(r.n)}</td><td><b>${esc(r.act)}</b></td><td>${esc(r.why)}</td></tr>`).join('') : '<tr><td colspan="5" class="note">Waiting for 2+ tracked wallets to enter the same market and direction inside the window.</td></tr>';
+  };
+  const onCopyClick = (e) => {
+    const C = U.cfg.copy, w = e.target.closest('[data-v165cw]'); if (w) { C.win = +w.dataset.v165cw; save(); cp.innerHTML = copyHTML(); cp.open = true; paintCopy(); return; }
+    const x = e.target.closest('[data-v165cx]'); if (x) { C.exit = x.dataset.v165cx; save(); cp.innerHTML = copyHTML(); cp.open = true; paintCopy(); return; }
+    const a = e.target.closest('[data-v165ca]'); if (a && a.dataset.v165ca === 'packet') { const addr = ($1('#v165Lead', cp) || {}).value, d = addr && typeof LeaderUI !== 'undefined' && LeaderUI.det ? LeaderUI.det.get(addr) : null; if (!d) { toast('Load a leaderboard wallet first', 'amb'); return; } copyText(V165.walletPacket({ short: addr.slice(0, 6) + '…' + addr.slice(-4), tag: d.tag, stats: { win: d.stats && d.stats.winRate, n: d.stats && d.stats.n }, positions: (d.positions || []).map((p) => ({ coin: p.coin, side: p.side, ntl: p.ntl })), flags: [d.tilt && d.tilt.flag ? 'tilted' : ''].filter(Boolean) }, U.cfg.mode).replace('<address>', addr), 'Wallet profile packet'); }
+  };
+  const onCopyChange = (e) => { const x = e.target, k = x.dataset && x.dataset.v165c; if (!k) return; const C = U.cfg.copy; if (x.type === 'checkbox') C[k] = x.checked; else { const v = parseFloat(x.value); if (Number.isFinite(v) && v >= 0) C[k] = k === 'minWallets' ? Math.max(2, Math.round(v)) : v; } save(); };
+  const copyLog = (o) => { U.copyLog.unshift(Object.assign({ t: Date.now() }, o)); if (U.copyLog.length > 50) U.copyLog.length = 50; paintCopy(); };
+  /* leader fills: { addr, sym, side: long|short, price, ts (unix s), exit? } from the leaderboard poller (or tests) */
+  U.leaderFill = (f) => { if (!f || !f.addr || !f.sym || !(f.price > 0)) return false; const k = f.addr + '|' + f.sym + '|' + f.side + '|' + f.ts + '|' + (f.exit ? 'x' : 'o'); if (U.fills.some((x) => x.k === k)) return false; U.fills.push(Object.assign({ k }, f)); if (U.fills.length > 400) U.fills.splice(0, U.fills.length - 300); return true; };
+  const harvest = () => { for (const { addr, d } of leaders()) for (const f of d.fills || []) { const open = /^Open/.test(f.dir), close = /^Close/.test(f.dir); if (!open && !close) continue; U.leaderFill({ addr, sym: symOfCoin(f.coin), side: /Long/.test(f.dir) ? 'long' : 'short', price: +f.px || +f.price, ts: (f.t || 0) / 1000, exit: close }); } };
+  U.copyEval = (nowS) => {
+    const C = U.cfg.copy; if (!C.on) return []; const now = nowS || Date.now() / 1000, out = [], groups = new Map();
+    for (const f of U.fills) if (!f.exit && now - f.ts <= C.win) groups.set(f.sym + '|' + f.side, f);
+    for (const f of groups.values()) {
+      const p = px(f.sym), dec = V165.copyDecide({ fills: U.fills.filter((x) => !x.exit), sym: f.sym, side: f.side, price: p, atr: atrOf(f.sym), now, cfg: C, vets: U.vets }); if (dec.act === 'wait') continue;
+      const key = f.sym + '|' + f.side + '|' + dec.cons.wallets.slice().sort().join(','); if (U.copyDone.has(key)) continue; U.copyDone.add(key); out.push(dec);
+      const base = { sym: f.sym, side: f.side, n: dec.cons.n };
+      if (dec.act === 'block') { U.stats.blocks++; copyLog(Object.assign(base, { act: 'blocked', why: dec.why })); led('copy', { status: 'blocked', detail: `Copy ${baseOf(f.sym)} ${f.side} (${dec.cons.n} wallets): ${dec.why}` }); toast('🛡 ' + esc(dec.why), 'amb', 7000); continue; }
+      const pl = dec.plan, plan = `$${pl.risk.toFixed(0)} risk · qty ${pl.qty.toPrecision(4)} · stop ${pl.stop} · TP1 ${pl.tp[0]} / TP2 ${pl.tp[1]} / TP3 ${pl.tp[2]}`, vetd = C.vet ? 'AI-vetted' : 'unvetted';
+      if (dec.act === 'shadow' || f.side !== 'long') { U.stats.shadow++; U.shadow.unshift({ symbol: f.sym, side: f.side, entry: pl.entry, stop_loss: pl.stop, tp: pl.tp, src: 'copy', ts: Date.now(), done: false }); copyLog(Object.assign(base, { act: 'shadow', why: plan + (f.side !== 'long' && dec.act !== 'shadow' ? ' (short: paper shadow, ticket is long-only)' : '') })); led('copy', { status: 'paper-shadow', detail: `Copy ${baseOf(f.sym)} ${f.side} · ${dec.cons.n} wallets · ${plan} · attribution Copy (${vetd})` }); continue; }
+      const t = ACC.buy(f.sym, p, Math.min(pl.usd, ACC.cash), Date.now(), { src: 'copy', slPx: pl.stop, tpPx: pl.tp[0], reason: `copy consensus (${dec.cons.n} wallets)` });
+      if (!t) { copyLog(Object.assign(base, { act: 'blocked', why: 'paper account could not fill (cash)' })); continue; }
+      U.stats.copies++; U.copyPos[f.sym] = { leaders: dec.cons.wallets, plan: pl, exit: C.exit, ts: now, side: f.side }; U.slip.push({ src: 'copy', bps: V165.slipBps('long', dec.cons.leaderPx, t.price) }); try { saveState(); } catch (x) { /* state */ }
+      copyLog(Object.assign(base, { act: 'copied', why: plan })); led('copy', { status: 'filled', detail: `Copy BUY ${baseOf(f.sym)} · ${dec.cons.n} wallets · ${plan} · drift ${dec.drift.pct.toFixed(2)}% · attribution Copy (${vetd})` }); toast(`🪞 Copy consensus: ${esc(baseOf(f.sym))} long, ${esc(plan)}`, 'acc', 7000);
+    }
+    return out;
+  };
+  const copyExits = () => {
+    const C = U.cfg.copy, now = Date.now() / 1000, day = Math.floor(now / 86400);
+    for (const [sym, P] of Object.entries(U.copyPos)) {
+      if (ACC.qty(sym) > 0) { const left = U.fills.some((f) => f.exit && f.sym === sym && P.leaders.includes(f.addr) && f.ts >= P.ts); if (left && V165.exitNow(P.exit, true, false)) { const p = px(sym); if (p > 0) ACC.sell(sym, p, null, Date.now(), { src: 'copy', reason: 'mirror leader exit' }); } continue; }
+      const last = [...(ACC.trades || [])].reverse().find((t) => t.sym === sym && t.side === 'sell'); delete U.copyPos[sym]; if (!last || !Number.isFinite(last.pnl)) continue;
+      for (const a of P.leaders) { U.leaderPnl.push({ leader: a, pnl: last.pnl / P.leaders.length, ts: now }); if (V165.dayPnl(U.leaderPnl, a, now) <= -C.dayCap) { C.muted[a] = day; save(); led('copy', { status: 'muted', detail: `Leader ${a.slice(0, 8)}… auto-muted for today: daily copy loss cap $${C.dayCap} hit` }); toast(`Leader ${esc(a.slice(0, 8))}… auto-muted for today (loss cap)`, 'amb'); } }
+    }
+  };
+
+  /* ══ ledger attribution + share buttons ══ */
+  const ledgerExtras = () => {
+    const wrap = $1('.v161-ledwrap'); if (!wrap) return; let box = $1('#v165LedAttr');
+    if (!box) { box = document.createElement('div'); box.id = 'v165LedAttr'; box.className = 'v165-led'; wrap.after(box); box.addEventListener('click', (e) => { if (e.target.closest('[data-v165l="share"]')) U.shareCard(); }); }
+    const h = `<div class="v165-row"><b>Human vs. AI / Bot Execution Attribution</b><span class="sp"></span><button type="button" class="btn xs" data-v165l="share">${svg(IC.share)} Share Setup Card</button></div>${attrHTML()}`; if (box._h !== h) { box._h = h; box.innerHTML = h; }
+  };
+  const toolbar = () => { const tb = $1('#tab-markets .toolbar'); if (!tb || $1('#v165ShareBtn')) return; const b = document.createElement('button'); b.type = 'button'; b.id = 'v165ShareBtn'; b.className = 'btn xs ghost v165-share'; b.title = 'Share Setup Card (PNG, balances masked)'; b.setAttribute('aria-label', 'Share Setup Card'); b.innerHTML = svg(IC.share); b.addEventListener('click', () => U.shareCard()); tb.appendChild(b); };
+  const attach = () => { if (typeof chart === 'undefined' || !chart) return; if (!chart.overlays.includes(overlay)) chart.overlays.push(overlay); };
+
+  let n = 0;
+  const tick = () => {
+    try {
+      mountTab(); attach(); toolbar(); n++;
+      if (n % 2 === 0) poll(); if (n % 4 === 0) { shadowStep(); clipWatch(); copyExits(); if ($1('.v161-ledwrap')) ledgerExtras(); }
+      if (typeof curTab !== 'undefined' && curTab === 'whales') { mountCopy(); if (n % 6 === 0) paintCopy(); }
+      if (n % 30 === 0) { harvest(); U.copyEval(); }
+    } catch (e) { console.warn('v165', e); }
+  };
+  U.start = () => { load(); tick(); setInterval(tick, 500); };
+  Object.assign(U, { setGhost, runIdea, runTickers, harden, validatePine, shareJson, packet, overlay, stage, handle, poll, mountTab, mountCopy, paint, tick, ctxChart, resolve, ledgerExtras });
+  return U;
+})();
+if (typeof window !== 'undefined' && typeof document !== 'undefined' && typeof boot === 'function') { const _b165 = boot; boot = async function () { await _b165.apply(this, arguments); try { V165UI.start(); } catch (e) { console.warn('v165 init', e); } }; }
 
 /* ===== boot.js ===== */
 /* Copyright (c) 2026 ExTerm Labs (@exterm.labs) · Licensed under GNU AGPL-3.0 · https://github.com/uexxx/ExTerm */

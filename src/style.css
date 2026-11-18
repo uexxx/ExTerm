@@ -1778,3 +1778,27 @@ html[dir="rtl"] .v164-tip{direction:rtl}html[dir="rtl"] .v164-pb i{inset:0 0 0 a
 @media (max-width:900px){.v164-body{grid-template-columns:1fr}.v164-zones{grid-template-columns:1fr}.v164-reg{grid-template-columns:1fr}.v164-q{width:100%}}/* v16.4: Discovery sits above the legacy heat views; the DEX tab scrolls instead of squashing either */
 #tab-heat{overflow:auto}#tab-heat>div{height:auto!important;min-height:100%}#tab-heat .v164-dex{flex:none}#tab-heat #heatHost{min-height:460px;flex:none}
 .v164-dh select.in,.v164-dh .btn{width:auto;flex:none}.v164-dh #v164Preset{max-width:200px}.v164-dh .sp{flex:1}
+/* v16.5 AI Bridge tab, ghost-line staging, AI-vetted copy engine, attribution, share card */
+.v165-ic{width:18px;height:18px;flex:none;color:#D4AF37}.v165-ic.lg{width:30px;height:30px}.v165-ni{width:15px;height:15px;vertical-align:-2px;color:currentColor}
+.v165-banner{display:flex;gap:12px;align-items:center;padding:12px 16px;margin:0 0 12px;border:1px solid rgba(212,175,55,.45);border-radius:12px;background:linear-gradient(90deg,rgba(212,175,55,.14),rgba(212,175,55,.03));color:#f3efe2;font-size:13px}
+.v165-banner b{color:#D4AF37}.v165-banner .note{margin-top:3px}
+.v165-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;align-items:start}
+.v165-card{padding:14px;gap:8px;min-width:0}.v165-h{display:flex;align-items:center;gap:8px}.v165-h h3{margin:0;font-size:14px}.v165-card h4{margin:10px 0 4px;font-size:12px;color:var(--mut,#9aa3b5);text-transform:uppercase;letter-spacing:.04em}
+.v165-card textarea{width:100%;resize:vertical;min-height:52px;box-sizing:border-box}
+.v165-pills{display:flex;flex-wrap:wrap;gap:6px}.v165-pill{border:1px solid var(--line2,#2e3649);background:transparent;color:inherit;border-radius:999px;padding:4px 10px;font-size:12px;cursor:pointer}.v165-pill.on{border-color:#D4AF37;color:#D4AF37;background:rgba(212,175,55,.1)}.v165-pills.sm .v165-pill{font-size:11px;padding:3px 9px}
+.v165-acts{display:flex;flex-direction:column;gap:6px}.v165-acts .btn{justify-content:flex-start;text-align:start}
+.v165-row{display:flex;flex-wrap:wrap;gap:6px;align-items:center}.v165-row .sp{flex:1}
+.v165-sw{display:inline-flex;gap:6px;align-items:center;font-size:12px;cursor:pointer}
+.v165-pre{max-height:220px;overflow:auto;white-space:pre-wrap;word-break:break-word;font-size:11px;margin:0}
+.v165-out{font-size:12px}.v165-out p{margin:4px 0}.v165-out .warn{color:#f5b84b}
+.v165-ep{display:flex;flex-direction:column;gap:4px;padding:8px 10px;border:1px dashed rgba(212,175,55,.4);border-radius:8px;font-size:12px}.v165-ep code{color:#D4AF37;word-break:break-all}
+.v165-gl{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}.v165-gl label,.v165-sl{display:flex;flex-direction:column;gap:2px;font-size:11px}.v165-gl input{width:100%;box-sizing:border-box}
+.v165-lock{grid-column:1/-1;font-size:11px;font-weight:700;color:#2fd08a;border:1px solid rgba(47,208,138,.4);border-radius:6px;padding:4px 8px;justify-self:start}
+.v165-thr{display:flex;flex-direction:column;gap:2px;font-size:12px;margin:6px 0}.v165-thr input{accent-color:#D4AF37}
+.v165-tw{max-height:240px;overflow:auto}.v165-t{width:100%;border-collapse:collapse;font-size:11px}.v165-t th,.v165-t td{padding:4px 6px;border-bottom:1px solid var(--line,#232a3b);text-align:start;vertical-align:top}.v165-t th{font-weight:600;color:var(--mut,#9aa3b5)}
+.v165-st-rejected td:nth-child(4),.v165-st-blocked td:nth-child(4){color:#f43f5e}.v165-st-ghost td:nth-child(4),.v165-st-copied td:nth-child(4),.v165-st-slot td:nth-child(4),.v165-st-approved td:nth-child(4){color:#2fd08a}.v165-st-shadow td:nth-child(4){color:#D4AF37}
+.v165-cp{padding:10px 14px;margin:0 0 12px}.v165-cp>summary{cursor:pointer;display:flex;gap:8px;align-items:center;flex-wrap:wrap}.v165-copy{display:flex;flex-direction:column;gap:8px;margin-top:8px}.v165-copy .v165-gl{grid-template-columns:repeat(5,minmax(0,1fr))}
+.v165-led{margin-top:10px;font-size:12px}.v165-share .v165-ic{width:14px;height:14px}
+html[dir="rtl"] .v165-banner,html[dir="rtl"] .v165-h{flex-direction:row-reverse;text-align:right}html[dir="rtl"] .v165-acts .btn{text-align:right}html[dir="rtl"] .v165-t th,html[dir="rtl"] .v165-t td{text-align:right}
+@media (max-width:1180px){.v165-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.v165-copy .v165-gl{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:760px){.v165-grid{grid-template-columns:1fr}.v165-copy .v165-gl,.v165-gl{grid-template-columns:1fr}}

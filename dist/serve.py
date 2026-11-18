@@ -89,7 +89,7 @@ class NoRedirect(urllib.request.HTTPRedirectHandler):
 NOTIFY_OPENER = urllib.request.build_opener(NoRedirect(), urllib.request.HTTPSHandler(context=CTX))
 LOCAL_OPENER = urllib.request.build_opener(NoRedirect(), urllib.request.HTTPHandler())
 
-VERSION = "16.4"
+VERSION = "16.5"
 STARTED = time.time()
 CACHE_STATS = {"hits": 0, "total": 0}  # /api/feed symbols answered from RAM vs asked for (Grok telemetry strip)
 OLD_DATA_DIR = pathlib.Path.home() / (".nova" + "term")  # pre-v15 data folder, moved to ~/.exterm on first start
@@ -1552,6 +1552,95 @@ class SwapTape:
 SWAPS = SwapTape()
 
 
+# ───────── v16.5 AI Bridge: 127.0.0.1/llm-signal (any local AI or trading bot → ExTerm's deterministic risk firewall) ─────────
+# Zero custody: a proposal is only ever an idea. It is schema-checked and stop-checked here, signed into a receipt, and queued
+# for the page, which applies the rest of the firewall (min ATR stop, depth, confidence threshold → PAPER shadow slot, loss-streak
+# size cut) and then draws ghost lines or hands it to the existing four-gate live cockpit. Nothing here talks to an exchange.
+LLM_SYM_RX = __import__("re").compile(r"^[A-Za-z0-9:$._/-]{1,140}$")
+LLM_ADDR_RX = __import__("re").compile(r"^(0x[a-fA-F0-9]{40}|[1-9A-HJ-NP-Za-km-z]{32,44})$")
+LLM_SIDES = {"long": "long", "buy": "long", "short": "short", "sell": "short"}
+
+
+def _llm_num(v):
+    if v is None or isinstance(v, bool): return None
+    try:
+        x = float(v) if isinstance(v, (int, float)) else float(str(v).replace(",", "").replace("$", "").strip())
+    except (TypeError, ValueError):
+        return None
+    return x if x == x and abs(x) != float("inf") else None
+
+
+def llm_check(j):
+    """Structural firewall shared by every caller. Returns (normalized proposal, reasons). Empty reasons = accepted."""
+    why = []
+    if str(j.get("kind") or "trade") == "wallet_vet":
+        w = str(j.get("wallet") or "")[:80]
+        conf = _llm_num(j.get("confidence"))
+        if conf is not None and 0 < conf <= 1: conf *= 100
+        if not LLM_ADDR_RX.match(w): why.append("wallet must be an EVM or Solana address")
+        if conf is None or not 0 <= conf <= 100: why.append("confidence must be 0-100")
+        return {"kind": "wallet_vet", "wallet": w.lower() if w.startswith("0x") else w, "approve": j.get("approve") is True, "confidence": conf,
+                "reason": str(j.get("reason") or "")[:300], "source": str(j.get("source") or "")[:40]}, why
+    sym = str(j.get("symbol") or j.get("ticker") or "").lstrip("$").strip()
+    side = LLM_SIDES.get(str(j.get("side") or j.get("direction") or j.get("action") or "").lower().strip())
+    entry = _llm_num(j.get("entry", j.get("price")))
+    sl = _llm_num(j.get("stop_loss", j.get("stop", j.get("sl"))))
+    tp = j.get("tp", j.get("take_profit", j.get("targets")))
+    tp = [x for x in (_llm_num(t) for t in (tp if isinstance(tp, list) else [] if tp is None else [tp])[:3]) if x is not None]
+    conf = _llm_num(j.get("confidence"))
+    if conf is not None and 0 < conf <= 1: conf *= 100
+    if not LLM_SYM_RX.match(sym): why.append("bad or missing symbol")
+    if side is None: why.append("side must be long / short / buy / sell")
+    if entry is None or entry <= 0: why.append("entry price missing")
+    if sl is None or sl <= 0: why.append("stop_loss missing: every proposal needs a stop-loss")
+    elif entry and side == "long" and sl >= entry: why.append("wrong-way stop: long stop_loss must be below entry")
+    elif entry and side == "short" and sl <= entry: why.append("wrong-way stop: short stop_loss must be above entry")
+    if entry and any((side == "long" and t <= entry) or (side == "short" and t >= entry) for t in tp): why.append("take-profit on the losing side of entry")
+    if conf is not None and not 0 <= conf <= 100: why.append("confidence must be 0-100")
+    return {"kind": "trade", "symbol": sym[:140], "side": side, "entry": entry, "stop_loss": sl, "tp": tp, "confidence": None if conf is None else round(min(100, max(0, conf)), 1),
+            "reason": str(j.get("reason") or "")[:300], "source": str(j.get("source") or j.get("provider") or j.get("model") or "bot")[:40]}, why
+
+
+class LlmBridge:
+    MAX = 300
+
+    def __init__(self):
+        self.lock = threading.Lock(); self.q = []; self.seq = 0; self.rl = _Bucket(60); self.counts = {"accepted": 0, "rejected": 0}
+        self.key = (os.environ.get("EXTERM_BRIDGE_KEY") or "").strip() or self._load_key()
+
+    def _load_key(self):
+        p = DATA_DIR / "bridge.key"
+        try:
+            k = p.read_text(encoding="utf-8").strip()
+            if len(k) >= 24: return k
+        except OSError:
+            pass
+        k = secrets.token_urlsafe(24)
+        try:
+            DATA_DIR.mkdir(parents=True, exist_ok=True); p.write_text(k + "\n", encoding="utf-8")
+            try: os.chmod(p, 0o600)
+            except OSError: pass
+        except OSError:
+            pass  # read-only home: the key lives for this launch only
+        return k
+
+    def submit(self, j):
+        prop, why = llm_check(j)
+        with self.lock:
+            self.seq += 1
+            rc = {"id": secrets.token_hex(6), "seq": self.seq, "ts": round(time.time(), 3), "status": "rejected" if why else "accepted", "reasons": why, "proposal": prop}
+            rc["sig"] = _hmac.new(self.key.encode(), json.dumps(rc, sort_keys=True, separators=(",", ":")).encode(), "sha256").hexdigest()
+            self.q.append(rc); del self.q[:-self.MAX]; self.counts[rc["status"]] += 1
+        return rc
+
+    def since(self, seq):
+        with self.lock:
+            return {"seq": self.seq, "items": [r for r in self.q if r["seq"] > seq][-100:], "counts": dict(self.counts)}
+
+
+LLM = None
+
+
 class H(http.server.BaseHTTPRequestHandler):
     def log_message(self, fmt, *a):
         pass
@@ -1594,7 +1683,7 @@ class H(http.server.BaseHTTPRequestHandler):
             return self._send(429, b'{"error":"local rate limit"}')
         try:
             if p == "/api/caps" and method == "GET":
-                return self._send(200, json.dumps({"version": VERSION, "alerts": ALERTS is not None, "bots": BOTS is not None, "ollama": ollama_up(), "state": STATE is not None, "feed": FEED is not None, "intel": INTEL is not None, "update": "--no-update-check" not in sys.argv}).encode())
+                return self._send(200, json.dumps({"version": VERSION, "alerts": ALERTS is not None, "bots": BOTS is not None, "ollama": ollama_up(), "state": STATE is not None, "feed": FEED is not None, "intel": INTEL is not None, "llm": LLM is not None, "update": "--no-update-check" not in sys.argv}).encode())
             if p == "/api/update" and method == "GET":
                 if "--no-update-check" in sys.argv: return self._send(503, b'{"error":"update check is off"}')
                 return self._send(200, json.dumps(update_info()).encode())
@@ -1658,6 +1747,16 @@ class H(http.server.BaseHTTPRequestHandler):
                     if not BOT_ID_RX.match(bid): raise ValueError("bad bot id")
                     if p.endswith("delete"): BOTS.remove(bid); return self._send(200, b'{"ok":true}')
                     t = BOTS.close(bid); return self._send(200, json.dumps({"ok": True, "trade": t}).encode())
+                return self._send(404, b'{"error":"not found"}')
+            if p.startswith("/api/llm-signal"):  # v16.5 AI Bridge: the page pulls queued receipts and reads its bridge key (token-gated)
+                if LLM is None: return self._send(503, b'{"error":"the AI Bridge endpoint is off"}')
+                if p == "/api/llm-signal" and method == "GET":
+                    try: since = int((urllib.parse.parse_qs(urllib.parse.urlparse(self.path).query).get("since") or ["0"])[0][:12])
+                    except ValueError: since = 0
+                    return self._send(200, json.dumps(LLM.since(since)).encode())
+                if p == "/api/llm-signal/key" and method == "GET": return self._send(200, json.dumps({"key": LLM.key, "endpoint": "http://127.0.0.1:%d/llm-signal" % PORT, "header": "X-ExTerm-Bridge"}).encode())
+                if p == "/api/llm-signal" and method == "POST":
+                    rc = LLM.submit(self._json_body(16 * 1024)); return self._send(200 if rc["status"] == "accepted" else 422, json.dumps({"ok": rc["status"] == "accepted", "receipt": rc}).encode())
                 return self._send(404, b'{"error":"not found"}')
             if p == "/api/notify" and method == "POST":  # wallet-tracker / social alerts from the page -> your Telegram / Discord
                 if ALERTS is None: return self._send(503, b'{"error":"notifications are off"}')
@@ -1774,6 +1873,9 @@ class H(http.server.BaseHTTPRequestHandler):
             if not _hmac.compare_digest(self.headers.get("X-ExTerm") or "", TOKEN):
                 return self._send(403, b"missing header", "text/plain")
             return self._send(200, b"exterm-proxy", "text/plain")
+        if p == "/llm-signal":  # usage hint for bot authors (never the key)
+            return self._send(200, json.dumps({"ok": LLM is not None, "post": "/llm-signal", "header": "X-ExTerm-Bridge", "keyfile": "~/.exterm/bridge.key",
+                                               "schema": {"symbol": "SOL", "side": "long|short", "entry": 0, "stop_loss": 0, "tp": [0], "confidence": "0-100", "reason": "", "source": ""}}).encode())
         if p == "/proxy":
             return self._proxy("GET")
         if p.startswith("/api/"):
@@ -1804,9 +1906,27 @@ class H(http.server.BaseHTTPRequestHandler):
         except Exception as e:
             self._send(502, json.dumps({"error": str(e)}).encode())
 
+    def _llm_signal(self):
+        """v16.5 universal AI / bot proposal endpoint. Loopback only, no browser origins (_local_ok), bridge key or session token."""
+        if LLM is None: return self._send(503, b'{"error":"the AI Bridge endpoint is off"}')
+        if self.client_address[0] not in ("127.0.0.1", "::1", "::ffff:127.0.0.1"): return self._send(403, b'{"error":"loopback only"}')
+        if not (_hmac.compare_digest(self.headers.get("X-ExTerm-Bridge") or "", LLM.key) or self._token_ok()):
+            return self._send(403, b'{"error":"missing or wrong X-ExTerm-Bridge key (see the AI Bridge tab or ~/.exterm/bridge.key)"}')
+        if not LLM.rl.ok(): return self._send(429, b'{"error":"too many proposals (max 60 a minute)"}')
+        try:
+            j = self._json_body(16 * 1024)
+        except ValueError as e:
+            return self._send(400, json.dumps({"error": str(e)[:120]}).encode())
+        except Exception:
+            return self._send(400, b'{"error":"body must be a JSON object"}')
+        rc = LLM.submit(j)
+        return self._send(200 if rc["status"] == "accepted" else 422, json.dumps({"ok": rc["status"] == "accepted", "receipt": rc}).encode())
+
     def do_POST(self):
         if not self._local_ok():
             return
+        if urllib.parse.urlparse(self.path).path == "/llm-signal":
+            return self._llm_signal()
         if urllib.parse.urlparse(self.path).path == "/hook":
             return self._hook()
         if urllib.parse.urlparse(self.path).path == "/proxy":
@@ -1830,7 +1950,7 @@ self.addEventListener('activate', (e) => { e.waitUntil(caches.keys().then((ks) =
 self.addEventListener('fetch', (e) => {
   const u = new URL(e.request.url);
   if (e.request.method !== 'GET' || u.origin !== location.origin) return;
-  if (/^\\/(api|proxy|ollama|hook)(\\/|$|\\?)/.test(u.pathname)) return;
+  if (/^\\/(api|proxy|ollama|hook|llm-signal)(\\/|$|\\?)/.test(u.pathname)) return;
   if (e.request.mode === 'navigate' || u.pathname === '/' || /\\.(png|webmanifest)$/.test(u.pathname)) {
     e.respondWith(fetch(e.request).then((r) => { if (r.ok) { const cp = r.clone(); caches.open(C).then((c) => c.put(e.request, cp)); } return r; }).catch(() => caches.match(e.request).then((m) => m || new Response('ExTerm is offline: start the launcher again.', { status: 503, headers: { 'Content-Type': 'text/plain' } }))));
   }
@@ -2019,6 +2139,8 @@ if __name__ == "__main__":
         threading.Thread(target=INTEL.run, daemon=True, name="intel").start()
     if "--no-leaderboards" not in sys.argv:
         HL = HLCache(offline="--offline" in sys.argv)
+    if "--no-llm-signal" not in sys.argv:
+        LLM = LlmBridge()
     if FEED is not None:
         if ALERTS:
             _slow = ALERTS.fetch

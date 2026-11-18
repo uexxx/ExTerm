@@ -44,7 +44,7 @@ const kinds = (k) => R.got.filter((p) => p.kind === k);
 
     // ── 1. launch safety briefing on every fresh boot
     await page.goto(BASE + '/'); await booted();
-    ok('briefing: appears on a fresh launch (PAPER) with checklist, highlights and both actions', await waitFor(() => { const m = $('#v162Brief'); return m && m.querySelectorAll('ol.v162-list li').length === 5 && /v16\.[234] Release Highlights/.test(m.textContent) && /127\.0\.0\.1/.test(m.textContent) && !!m.querySelector('[data-v162="safe"]') && !!m.querySelector('[data-v162="bridge"]') && /PAPER/.test(m.querySelector('.v162-mode').textContent); }, null, 8000));
+    ok('briefing: appears on a fresh launch (PAPER) with checklist, highlights and both actions', await waitFor(() => { const m = $('#v162Brief'); return m && m.querySelectorAll('ol.v162-list li').length === 5 && /v16\.[2345] Release Highlights/.test(m.textContent) && /127\.0\.0\.1/.test(m.textContent) && !!m.querySelector('[data-v162="safe"]') && !!m.querySelector('[data-v162="bridge"]') && /PAPER/.test(m.querySelector('.v162-mode').textContent); }, null, 8000));
     ok('briefing: focus lands on Continue in Safe Mode, modal fits 1440×900', await ev(() => document.activeElement && document.activeElement.dataset.v162 === 'safe' && $('#v162Brief .v162-modal').getBoundingClientRect().bottom <= innerHeight));
     await clean(); await shot('v16.2-launch-safety-briefing.png');
     await page.keyboard.press('Escape'); await sleep(200);

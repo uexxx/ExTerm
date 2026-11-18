@@ -1,23 +1,25 @@
 <div align="center">
 
-# ExTerm v16.4
+# ExTerm v16.5
 
-### The $0, local-first trading workstation: multi-asset charting at up to 240 Hz, DEX discovery, quant research, 3D market structure, a context-aware Copilot and a zero-custody live execution cockpit, in one browser tab.
+### The $0, local-first trading workstation that works with any AI or bot: Grok, ChatGPT, Claude, DeepSeek, Local Ollama or your own Python / Node bot. Multi-asset charting at up to 240 Hz, DEX discovery, quant research, AI-vetted copy-trading and a zero-custody live execution cockpit, in one browser tab.
 
 **Your money never leaves your broker, exchange or wallet.** ExTerm holds no funds and no keys: it paper-trades by default, and live
 signals go only to a bot you run yourself on `127.0.0.1`, signed, checked by ten risk engines and locked behind four gates.
+Any AI can now advise: every idea it sends passes the same deterministic firewall before it can even become a line on your chart.
 
 <img src="docs/screenshots/01-markets-live-execution.png" alt="ExTerm Markets terminal at 1440×900: BTC 5m candles with EMA 20 and EMA 50, a session-anchored VWAP, the live tape-delta strip at the top of the chart, an open position with Entry, Stop-Loss and Take-Profit lines and dollar tags on the price axis, the BE break-even pill, the AVWAP toolbar tool, the exchange stream pill and the order ticket" width="100%">
 
-**[30-second launch](#-30-second-local-launch)** · **[What's new](#-whats-new-in-v164)** · **[Charting](#1--240-hz-multi-asset-charting--direct-order-execution)** · **[Live cockpit](#2--closed-loop-zero-custody-live-execution-cockpit-127001)** · **[DEX & 3D](#3--dex-discovery--pure-canvas-3d-market-structure)** · **[Quant Lab](#4--17-test-quant-lab--strategy-studio-pro)** · **[Copilot](#5--quant--execution-copilot--safe-pine-script-v5)** · **[Global](#6--on-chain-intelligence-32-languages--rtl-and-learn-exterm)** · **[Security](#7--browser-security-hardening--verification)** · **[Release history](#-release-history)**
+**[30-second launch](#-30-second-local-launch)** · **[What's new](#-whats-new-in-v165)** · **[AI Bridge](#8--universal-ai-bridge--ai-vetted-zero-custody-copy-trading)** · **[Charting](#1--240-hz-multi-asset-charting--direct-order-execution)** · **[Live cockpit](#2--closed-loop-zero-custody-live-execution-cockpit-127001)** · **[DEX & 3D](#3--dex-discovery--pure-canvas-3d-market-structure)** · **[Quant Lab](#4--17-test-quant-lab--strategy-studio-pro)** · **[Copilot](#5--quant--execution-copilot--safe-pine-script-v5)** · **[Global](#6--on-chain-intelligence-32-languages--rtl-and-learn-exterm)** · **[Security](#7--browser-security-hardening--verification)** · **[Release history](#-release-history)**
 
 <p>
-  <a href="https://github.com/uexxx/ExTerm/releases/latest"><img src="https://img.shields.io/badge/download-v16.4-D4AF37?style=for-the-badge" alt="Download v16.4"></a>
+  <a href="https://github.com/uexxx/ExTerm/releases/latest"><img src="https://img.shields.io/badge/download-v16.5-D4AF37?style=for-the-badge" alt="Download v16.5"></a>
   <img src="https://img.shields.io/badge/price-%240-2fd08a?style=for-the-badge" alt="$0">
   <img src="https://img.shields.io/badge/indicators-137-D4AF37?style=for-the-badge" alt="137 indicators">
   <img src="https://img.shields.io/badge/backtestable%20strategies-134-CBD5E1?style=for-the-badge" alt="134 backtestable strategies">
   <img src="https://img.shields.io/badge/languages-32%20%2B%20RTL-CBD5E1?style=for-the-badge" alt="32 languages plus RTL">
   <img src="https://img.shields.io/badge/custody-zero-2fd08a?style=for-the-badge" alt="zero custody">
+  <img src="https://img.shields.io/badge/works%20with-any%20AI%20or%20bot-D4AF37?style=for-the-badge" alt="works with any AI or bot">
 </p>
 <p>
   <a href="https://www.instagram.com/exterm.labs"><img src="https://img.shields.io/badge/Instagram-@exterm.labs-E4405F?style=for-the-badge&logo=instagram&logoColor=white" alt="Instagram @exterm.labs"></a>
@@ -57,19 +59,21 @@ exchange or wallet: ExTerm never touches the money.
 
 ---
 
-## 🎯 What's new in v16.4
+## 🎯 What's new in v16.5
 
-> **Chart precision, DEX Discovery, a context-aware Copilot and a realistic backtester.**
+> **One AI Bridge for every model and bot, AI-vetted copy-trading, and a share card that never leaks your balance.**
 >
-> - 🕯 **Zero-volume bar re-anchoring** in the core 1s–15s rollover (no flat `Vol 0.00` bars on any market), **full-depth on-chain candles** on every timeframe (`limit=1000`; 30m, 12h, 1w and 1M aggregated from the nearest GeckoTerminal unit) and an edge-to-edge viewport for young tokens.
-> - 🔁 **Multi-exchange stream failover** (Kraken · Coinbase · Binance public trades, after a 1.5 s stall) and a **500 ms DEX swap tape** in the launcher, de-duplicated by transaction hash.
-> - ⚓ **AVWAP tool** on the chart toolbar (click, session open, last swing) and a live **tape-delta + book micro-imbalance strip**.
-> - 🧭 **DEX tab Discovery**: Scanner, Tiles, Bubbles and Buy Pressure on one **strictly isolated** dataset per market pill (Crypto · Stocks · On-chain), a GMGN-style filter drawer with presets, unified pills, a Top Movers rail, `/` search, keyboard navigation and **Export Filtered Basket → Quant Lab**.
-> - 📐 **6 structural strategies** (Opening Range Breakout, Anchored VWAP Pullback, Volatility Squeeze Expansion, Liquidity Sweep Reversal, Regime-Filtered Z-Score Reversion, Funding & Basis Divergence) graded by the 17-test lab, plus a **safe Pine Script v5 template library**.
-> - 🤖 **Quant & Execution Copilot** (no API key): chart reader, plain English → safe strategy + Pine v5 + 17-test validation, pre-trade stop auditor, ledger leak detector and one-click action pills.
-> - 🧪 **Strategy Studio Pro**: drag-and-drop node builder, depth-aware slippage, ≤ 10-symbol portfolio, Flash Crash / FOMC / Thin Weekend stress, walk-forward decay matrix, replay on chart, standalone Python / Node bot export, shadow drift, regime auto-switcher and a multi-slot router.
+> - 🌉 **AI Bridge tab** (`Works With Any AI or Bot: Grok · ChatGPT · Claude · DeepSeek · Local Ollama · Custom Python/Node Bots`), three clean cards.
+> - 📋 **Copy Live Context for Any AI**: provider pills, four quick-prompt presets (Chart Setup Check · On-Chain Rug & Whale Audit · Macro Catalyst & Risk Plan · Post-Session Leak Review), **Token-Saver (~120 tokens)** or **Full Quant** packets: chart + order book (price, 1m/5m/1h/4h trend, EMA 20/50, RSI, ATR, AVWAP distance, 10s/60s tape delta, liquidity walls), on-chain due diligence, a watchlist comparison table, options IV / whale liquidations and a privacy-masked session post-mortem.
+> - 👻 **Paste & Verify AI Output**: paste plain English (`Long SOL at 142.50, stop 138.00, target 154.00`) or JSON from any AI and get **dashed ghost lines on the chart with live R:R and $ badges** (2.56R in that example) after a directional stop + ATR check; optional **Auto-Watch Clipboard**; an **AI Ticker / Contract Paste-Box** that drops tokens under $50k liquidity or with an active mint authority; **Paste & Harden AI Pine Script v5** → **1-Click 17-Test Quant Validation** → **Copy Failure Diagnostics for AI**.
+> - 🛡 **Live 127.0.0.1 AI & Bot Firewall**: local AIs and bots (Grok, OpenAI, Anthropic, Ollama, CCXT, Freqtrade, Alpaca, Interactive Brokers) POST proposals to `http://127.0.0.1:8765/llm-signal`; unstopped or wrong-way ideas get a signed **422 error receipt**; **Apply AI Live Guardrail Profile** (Mandatory Stop-Loss ON · Min 1.5× ATR · ≥ 3× liquidity depth · 75% confidence · 50% size cut after 2 losses · AI Shadow Slot); low-confidence ideas go to a **PAPER shadow slot** first.
+> - 🧮 **Human vs. AI / Bot attribution** in the Signed Receipt Ledger (Manual · Quant · AI Bridge · Copy: win rate, profit factor, slippage bps) and three switchable **~45-line Python starter templates** (Grok xAI · ChatGPT / Claude / DeepSeek · 100% offline Ollama).
+> - 🪞 **AI-Vetted Copy Engine** (Whales tab): AI wallet & trade vetting gate (≥ 75%), **Multi-Wallet Consensus Trigger** (2+ wallets, 5m / 15m / 1h), personal **$ Risk + min 1.5× ATR stop** with TP1 / TP2 / TP3, **Anti-Front-Run Drift Shield** (default 2.5% or 1.0× ATR), Copy Shadow Mode, three exit modes and a per-leader daily loss cap with auto-mute.
+> - 🖼 **Share Setup Card**: an Obsidian & Gold PNG of the setup (symbol, timeframe, R:R, source, Entry / SL / TP) with balances and personal data masked, plus **Copy Shareable Strategy / Watchlist JSON** labelled with the real gate count.
 >
-> Full notes: [`CHANGELOG.md`](CHANGELOG.md) · earlier versions: [Release history](#-release-history)
+> Full notes: [`CHANGELOG.md`](CHANGELOG.md) · launch material: [`docs/LAUNCH-KIT.md`](docs/LAUNCH-KIT.md) · earlier versions: [Release history](#-release-history)
+
+<img src="docs/screenshots/05-ai-bridge-copy-firewall.png" alt="The AI Bridge tab at 1440×900: the gold Works With Any AI or Bot banner, Card 1 with provider pills (Grok, ChatGPT, Claude, DeepSeek, Local Ollama, Custom Bot), quick-prompt presets, the Token-Saver / Full Quant switch and a copied chart packet, Card 2 with the AI trade-idea, ticker and Pine Script boxes, and Card 3 with the 127.0.0.1 llm-signal endpoint, the Apply AI Live Guardrail Profile button and the guardrail controls" width="100%">
 
 ---
 
@@ -190,15 +194,49 @@ and ExTerm reconciles it.
 - **Local storage encryption:** an **AES-256-GCM** key vault (PBKDF2-SHA256), encrypted `.exterm` backups and an AES-256-GCM
   session snapshot.
 - **Locked-down launcher:** localhost only, fresh session token every launch, Origin + Host checks, rate limits, a proxy
-  allow-list; the new `/api/swaps` tape answers from RAM and fetches upstream at most every 4 s per pool.
+  allow-list; the `/api/swaps` tape answers from RAM and fetches upstream at most every 4 s per pool; `/llm-signal` takes
+  loopback callers with the bridge key only and never forwards anything to an exchange.
 - **Verify every download** against `SHA256SUMS.txt` (see [below](#-how-to-verify-official-builds)), or use **Settings →
   Verify build integrity**.
+
+### 8 · Universal AI Bridge & AI-vetted zero-custody copy-trading
+
+ExTerm does not pick a favourite model. The **AI Bridge** tab turns whatever you already use into a grounded, checked co-pilot.
+
+- **Grounding out:** one click copies a packet of real numbers (chart, book, on-chain, watchlist, options, post-mortem) shaped
+  for the provider you pick. Token-Saver keeps a chart packet near 120 tokens; Full Quant adds every field and the rules.
+- **Ideas back in:** paste the answer (plain English or JSON). ExTerm parses symbol, side, entry, stop and targets, refuses
+  a missing or wrong-way stop, warns when the stop sits inside 1.5 ATR, and draws **ghost lines** with R:R and $ badges.
+  One click stages a long on the ticket. Nothing is ever placed for you.
+- **Bots and local models:** `POST http://127.0.0.1:8765/llm-signal` with the `X-ExTerm-Bridge` key (shown in the tab,
+  stored in `~/.exterm/bridge.key`). The launcher accepts loopback callers only, refuses browser origins, checks the schema
+  and the stop, signs a receipt (HMAC-SHA256) and queues it; the page then applies the guardrail profile and routes the idea
+  to ghost lines, the PAPER shadow slot or an armed slot (a paper fill; the four-gate live cockpit still decides anything real).
+- **Copy-trading with your rules, not theirs:** leaderboard wallets only trigger a copy when 2+ of them agree inside your
+  window, price has not run more than your drift limit past their fill, your AI (optionally) approves the wallet, and the
+  size comes from **your** $ risk and an ATR stop.
+- **Templates:** three standard-library Python starters (Grok xAI · ChatGPT / Claude / DeepSeek · offline Ollama). Your
+  exchange keys and funds stay outside both the AI and ExTerm.
 
 ---
 
 ## 📚 Release history
 
-The sections below document every earlier release. All of these capabilities are still in v16.4.
+The sections below document every earlier release. All of these capabilities are still in v16.5.
+
+## 🎯 What's new in v16.4
+
+> **Chart precision, DEX Discovery, a context-aware Copilot and a realistic backtester.**
+>
+> - 🕯 **Zero-volume bar re-anchoring** in the core 1s–15s rollover (no flat `Vol 0.00` bars on any market), **full-depth on-chain candles** on every timeframe (`limit=1000`; 30m, 12h, 1w and 1M aggregated from the nearest GeckoTerminal unit) and an edge-to-edge viewport for young tokens.
+> - 🔁 **Multi-exchange stream failover** (Kraken · Coinbase · Binance public trades, after a 1.5 s stall) and a **500 ms DEX swap tape** in the launcher, de-duplicated by transaction hash.
+> - ⚓ **AVWAP tool** on the chart toolbar (click, session open, last swing) and a live **tape-delta + book micro-imbalance strip**.
+> - 🧭 **DEX tab Discovery**: Scanner, Tiles, Bubbles and Buy Pressure on one **strictly isolated** dataset per market pill (Crypto · Stocks · On-chain), a GMGN-style filter drawer with presets, unified pills, a Top Movers rail, `/` search, keyboard navigation and **Export Filtered Basket → Quant Lab**.
+> - 📐 **6 structural strategies** (Opening Range Breakout, Anchored VWAP Pullback, Volatility Squeeze Expansion, Liquidity Sweep Reversal, Regime-Filtered Z-Score Reversion, Funding & Basis Divergence) graded by the 17-test lab, plus a **safe Pine Script v5 template library**.
+> - 🤖 **Quant & Execution Copilot** (no API key): chart reader, plain English → safe strategy + Pine v5 + 17-test validation, pre-trade stop auditor, ledger leak detector and one-click action pills.
+> - 🧪 **Strategy Studio Pro**: drag-and-drop node builder, depth-aware slippage, ≤ 10-symbol portfolio, Flash Crash / FOMC / Thin Weekend stress, walk-forward decay matrix, replay on chart, standalone Python / Node bot export, shadow drift, regime auto-switcher and a multi-slot router.
+>
+> Full notes: [`CHANGELOG.md`](CHANGELOG.md) · earlier versions: [Release history](#-release-history)
 
 ## 🎯 What's new in v16.3
 

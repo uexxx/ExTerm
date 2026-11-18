@@ -50,7 +50,7 @@ const kinds = (k) => R.got.filter((p) => p.kind === k);
     // ── 1. defaults + briefing
     ok('defaults: Require Stop-Loss ON, entries not paused, Two-Key optional (off), cues on', await ev(() => V163UI.cfg.requireSL === true && V160UI.requireSL === true && V163C.c.paused === false && V163C.c.twoKey === false && V163C.c.cues === true));
     await ev(() => V162UI.brief()); await sleep(200);
-    ok('briefing: Launch Safety & Critical Updates lists the v16.3 highlights (HUD, two-way sync, Two-Key)', await ev(() => { const m = $('#v162Brief'); return !!m && /v16\.[34] Release Highlights/.test(m.textContent) && /HUD/.test(m.textContent) && /Freqtrade/.test(m.textContent) && /Two-Key Arming/.test(m.textContent) && m.querySelector('.v162-modal').getBoundingClientRect().bottom <= innerHeight; }));
+    ok('briefing: Launch Safety & Critical Updates lists the v16.3 highlights (HUD, two-way sync, Two-Key)', await ev(() => { const m = $('#v162Brief'); return !!m && /v16\.[345] Release Highlights/.test(m.textContent) && /HUD/.test(m.textContent) && /Freqtrade/.test(m.textContent) && /Two-Key Arming/.test(m.textContent) && m.querySelector('.v162-modal').getBoundingClientRect().bottom <= innerHeight; }));
     await page.keyboard.press('Escape'); await sleep(150);
 
     // ── 2. ticket: $ risk sizer, Chase Limit, liquidation pill, countdown, copy setup
