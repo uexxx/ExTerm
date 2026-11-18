@@ -234,14 +234,18 @@ const Radar = (() => {
       if (!document.body.contains(cv)) { cancelAnimationFrame(R.anim); return; }
       ctx.clearRect(0, 0, W, Hh);
       ctx.strokeStyle = 'rgba(148,163,200,.12)'; ctx.setLineDash([4, 6]); ctx.beginPath(); ctx.moveTo(0, 30 + (Hh - 70) / 2); ctx.lineTo(W, 30 + (Hh - 70) / 2); ctx.stroke(); ctx.setLineDash([]);
-      for (const n of nodes) { n.x += (n.tx - n.x) * 0.06; n.y += (n.ty - n.y) * 0.06; } // ease toward the target…
-      for (let i = 0; i < nodes.length; i++) for (let j = i + 1; j < nodes.length; j++) { // …and push overlapping bubbles apart
-        const a = nodes[i], b2 = nodes[j], dx = b2.x - a.x, dy = b2.y - a.y, d = Math.hypot(dx, dy) || 0.01, min = a.r + b2.r + 3;
-        if (d < min) { const k = ((min - d) / d) * 0.5; a.x -= dx * k; a.y -= dy * k; b2.x += dx * k; b2.y += dy * k; }
+      for (const n of nodes) { // damped spring toward the target (hard damping + sleep deadzone, no oscillation)…
+        n.vx = ((n.vx || 0) + (n.tx - n.x) * 0.0072) * 0.82; n.vy = ((n.vy || 0) + (n.ty - n.y) * 0.0072) * 0.82;
+        if (Math.hypot(n.vx, n.vy) < 0.08) { n.vx = 0; n.vy = 0; }
+        n.x += n.vx; n.y += n.vy;
       }
-      for (const n of nodes) { // keep inside the canvas, then a gentle float
+      for (let i = 0; i < nodes.length; i++) for (let j = i + 1; j < nodes.length; j++) { // …and softly separate overlaps
+        const a = nodes[i], b2 = nodes[j], dx = b2.x - a.x, dy = b2.y - a.y, d = Math.hypot(dx, dy) || 0.01, min = a.r + b2.r + 3;
+        if (d < min) { const k = ((min - d) / d) * 0.28; a.x -= dx * k; a.y -= dy * k; b2.x += dx * k; b2.y += dy * k; }
+      }
+      for (const n of nodes) { // keep inside the canvas (no per-frame float: settled bubbles stay still)
         n.x = Math.max(n.r + 2, Math.min(W - n.r - 2, n.x)); n.y = Math.max(n.r + 2, Math.min(Hh - n.r - 22, n.y));
-        const fx = n.x + Math.sin(t / 900 + n.r) * 1.5, fy = n.y + Math.cos(t / 1100 + n.r) * 1.5; n.fx = fx; n.fy = fy; R.pos.set(n.s, { x: n.x, y: n.y });
+        const fx = n.x, fy = n.y; n.fx = fx; n.fy = fy; R.pos.set(n.s, { x: n.x, y: n.y });
         const g = ctx.createRadialGradient(fx - n.r / 3, fy - n.r / 3, 1, fx, fy, n.r); g.addColorStop(0, 'rgba(255,255,255,.35)'); g.addColorStop(0.35, col(n.ch)); g.addColorStop(1, col(n.ch).replace('.85', '.55'));
         ctx.beginPath(); ctx.arc(fx, fy, n.r, 0, Math.PI * 2); ctx.fillStyle = g; ctx.fill();
         if (R.hover === n.s) { ctx.lineWidth = 2; ctx.strokeStyle = '#fff'; ctx.stroke(); }

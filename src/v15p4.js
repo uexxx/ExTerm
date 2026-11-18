@@ -64,7 +64,7 @@ const P4UI = (() => {
       ctx.strokeStyle = 'rgba(148,163,200,.14)'; ctx.setLineDash([4, 6]); ctx.beginPath(); ctx.moveTo(0, H / 2 - 8); ctx.lineTo(W, H / 2 - 8); ctx.stroke(); ctx.setLineDash([]);
       ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
       for (const n of B.nodes) {
-        const fx = n.x + Math.sin(t / 900 + n.r) * 1.2, fy = n.y + Math.cos(t / 1100 + n.r) * 1.2; n.fx = fx; n.fy = fy;
+        const fx = n.x, fy = n.y; n.fx = fx; n.fy = fy; // no per-frame float: settled bubbles stay still
         const sp = sprite(P4.bucket(n.ch, o.scale), n.r, dpr), half = sp.width / dpr / 2;
         ctx.drawImage(sp, fx - half, fy - half, sp.width / dpr, sp.height / dpr);
         if (B.hover === n.id) { ctx.lineWidth = 2; ctx.strokeStyle = '#fff'; ctx.beginPath(); ctx.arc(fx, fy, n.r, 0, Math.PI * 2); ctx.stroke(); }

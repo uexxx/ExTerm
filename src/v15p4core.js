@@ -75,13 +75,19 @@ const P4 = (() => {
       return { id: x.id, r, tx: pad + r + fx * Math.max(1, W - 2 * (pad + r)), ty: pad + r + (1 - bp) * Math.max(1, H - 2 * (pad + r) - 16), bp, ch: chs[i], d: x };
     });
   };
-  /* one relaxation pass over a uniform grid (O(n) on average): ease to the target, push overlaps apart, keep inside */
+  /* one relaxation pass over a uniform grid (O(n) on average): damped spring to the target, soft overlap separation,
+     keep inside. Velocity is damped hard (×0.82 per tick) and snapped to zero below 0.08 px/tick, and overlaps are
+     resolved at a 0.28 factor (not a 0.5 hard bounce), so packed bubbles settle instead of oscillating. */
+  P.DAMP = 0.82; P.SEP = 0.28; P.SLEEP = 0.08;
   P.relax = (nodes, W, H, ease = 0.08) => {
     let cell = 8; for (const n of nodes) if (n.r * 2 > cell) cell = n.r * 2;
-    const grid = new Map(), key = (cx, cy) => cx * 73856093 ^ cy * 19349663;
+    const grid = new Map(), key = (cx, cy) => cx * 73856093 ^ cy * 19349663, spring = ease * 0.12;
     for (const n of nodes) {
       if (!fin(n.x)) { n.x = n.tx; n.y = n.ty; }
-      n.x += (n.tx - n.x) * ease; n.y += (n.ty - n.y) * ease;
+      if (!fin(n.vx)) { n.vx = 0; n.vy = 0; }
+      n.vx = (n.vx + (n.tx - n.x) * spring) * P.DAMP; n.vy = (n.vy + (n.ty - n.y) * spring) * P.DAMP;
+      if (Math.hypot(n.vx, n.vy) < P.SLEEP) { n.vx = 0; n.vy = 0; }
+      n.x += n.vx; n.y += n.vy;
       const k = key(Math.floor(n.x / cell), Math.floor(n.y / cell)); let b = grid.get(k); if (!b) grid.set(k, (b = [])); b.push(n);
     }
     let overlaps = 0;
@@ -92,7 +98,7 @@ const P4 = (() => {
         for (const b of b0) {
           if (b === a || b.id < a.id) continue;
           const ddx = b.x - a.x, ddy = b.y - a.y, d = Math.hypot(ddx, ddy) || 0.01, min = a.r + b.r + 1.5;
-          if (d < min) { overlaps++; const k = ((min - d) / d) * 0.5; a.x -= ddx * k; a.y -= ddy * k; b.x += ddx * k; b.y += ddy * k; }
+          if (d < min) { overlaps++; const k = ((min - d) / d) * P.SEP; a.x -= ddx * k; a.y -= ddy * k; b.x += ddx * k; b.y += ddy * k; }
         }
       }
     }

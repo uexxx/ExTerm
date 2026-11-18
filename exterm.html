@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-FQ6V6jxBANfb8uwbcx7lflaM7UQuBV2ZQEQeswiLXAg='; worker-src 'self' blob:; media-src 'none'; child-src 'none'; manifest-src 'self'; style-src 'self' https://fonts.googleapis.com; style-src-elem 'self' 'sha256-M49zMG9JFTqd2BR+THijcSTy8pA6UIMWET2tHPkOu1I=' https://fonts.googleapis.com; style-src-attr 'unsafe-inline'; img-src 'self' https: data: blob:; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https: wss: http://localhost:* http://127.0.0.1:* ws://localhost:* ws://127.0.0.1:*; object-src 'none'; base-uri 'none'; form-action 'none'; frame-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-pTXU0Kt93pU/tFegDHYlROimhrjI5H5Hn67mUaMqNsM='; worker-src 'self' blob:; media-src 'none'; child-src 'none'; manifest-src 'self'; style-src 'self' https://fonts.googleapis.com; style-src-elem 'self' 'sha256-M49zMG9JFTqd2BR+THijcSTy8pA6UIMWET2tHPkOu1I=' https://fonts.googleapis.com; style-src-attr 'unsafe-inline'; img-src 'self' https: data: blob:; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https: wss: http://localhost:* http://127.0.0.1:* ws://localhost:* ws://127.0.0.1:*; object-src 'none'; base-uri 'none'; form-action 'none'; frame-src 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#05060e">
@@ -12847,14 +12847,18 @@ const Radar = (() => {
       if (!document.body.contains(cv)) { cancelAnimationFrame(R.anim); return; }
       ctx.clearRect(0, 0, W, Hh);
       ctx.strokeStyle = 'rgba(148,163,200,.12)'; ctx.setLineDash([4, 6]); ctx.beginPath(); ctx.moveTo(0, 30 + (Hh - 70) / 2); ctx.lineTo(W, 30 + (Hh - 70) / 2); ctx.stroke(); ctx.setLineDash([]);
-      for (const n of nodes) { n.x += (n.tx - n.x) * 0.06; n.y += (n.ty - n.y) * 0.06; } // ease toward the target…
-      for (let i = 0; i < nodes.length; i++) for (let j = i + 1; j < nodes.length; j++) { // …and push overlapping bubbles apart
-        const a = nodes[i], b2 = nodes[j], dx = b2.x - a.x, dy = b2.y - a.y, d = Math.hypot(dx, dy) || 0.01, min = a.r + b2.r + 3;
-        if (d < min) { const k = ((min - d) / d) * 0.5; a.x -= dx * k; a.y -= dy * k; b2.x += dx * k; b2.y += dy * k; }
+      for (const n of nodes) { // damped spring toward the target (hard damping + sleep deadzone, no oscillation)…
+        n.vx = ((n.vx || 0) + (n.tx - n.x) * 0.0072) * 0.82; n.vy = ((n.vy || 0) + (n.ty - n.y) * 0.0072) * 0.82;
+        if (Math.hypot(n.vx, n.vy) < 0.08) { n.vx = 0; n.vy = 0; }
+        n.x += n.vx; n.y += n.vy;
       }
-      for (const n of nodes) { // keep inside the canvas, then a gentle float
+      for (let i = 0; i < nodes.length; i++) for (let j = i + 1; j < nodes.length; j++) { // …and softly separate overlaps
+        const a = nodes[i], b2 = nodes[j], dx = b2.x - a.x, dy = b2.y - a.y, d = Math.hypot(dx, dy) || 0.01, min = a.r + b2.r + 3;
+        if (d < min) { const k = ((min - d) / d) * 0.28; a.x -= dx * k; a.y -= dy * k; b2.x += dx * k; b2.y += dy * k; }
+      }
+      for (const n of nodes) { // keep inside the canvas (no per-frame float: settled bubbles stay still)
         n.x = Math.max(n.r + 2, Math.min(W - n.r - 2, n.x)); n.y = Math.max(n.r + 2, Math.min(Hh - n.r - 22, n.y));
-        const fx = n.x + Math.sin(t / 900 + n.r) * 1.5, fy = n.y + Math.cos(t / 1100 + n.r) * 1.5; n.fx = fx; n.fy = fy; R.pos.set(n.s, { x: n.x, y: n.y });
+        const fx = n.x, fy = n.y; n.fx = fx; n.fy = fy; R.pos.set(n.s, { x: n.x, y: n.y });
         const g = ctx.createRadialGradient(fx - n.r / 3, fy - n.r / 3, 1, fx, fy, n.r); g.addColorStop(0, 'rgba(255,255,255,.35)'); g.addColorStop(0.35, col(n.ch)); g.addColorStop(1, col(n.ch).replace('.85', '.55'));
         ctx.beginPath(); ctx.arc(fx, fy, n.r, 0, Math.PI * 2); ctx.fillStyle = g; ctx.fill();
         if (R.hover === n.s) { ctx.lineWidth = 2; ctx.strokeStyle = '#fff'; ctx.stroke(); }
@@ -15397,13 +15401,19 @@ const P4 = (() => {
       return { id: x.id, r, tx: pad + r + fx * Math.max(1, W - 2 * (pad + r)), ty: pad + r + (1 - bp) * Math.max(1, H - 2 * (pad + r) - 16), bp, ch: chs[i], d: x };
     });
   };
-  /* one relaxation pass over a uniform grid (O(n) on average): ease to the target, push overlaps apart, keep inside */
+  /* one relaxation pass over a uniform grid (O(n) on average): damped spring to the target, soft overlap separation,
+     keep inside. Velocity is damped hard (×0.82 per tick) and snapped to zero below 0.08 px/tick, and overlaps are
+     resolved at a 0.28 factor (not a 0.5 hard bounce), so packed bubbles settle instead of oscillating. */
+  P.DAMP = 0.82; P.SEP = 0.28; P.SLEEP = 0.08;
   P.relax = (nodes, W, H, ease = 0.08) => {
     let cell = 8; for (const n of nodes) if (n.r * 2 > cell) cell = n.r * 2;
-    const grid = new Map(), key = (cx, cy) => cx * 73856093 ^ cy * 19349663;
+    const grid = new Map(), key = (cx, cy) => cx * 73856093 ^ cy * 19349663, spring = ease * 0.12;
     for (const n of nodes) {
       if (!fin(n.x)) { n.x = n.tx; n.y = n.ty; }
-      n.x += (n.tx - n.x) * ease; n.y += (n.ty - n.y) * ease;
+      if (!fin(n.vx)) { n.vx = 0; n.vy = 0; }
+      n.vx = (n.vx + (n.tx - n.x) * spring) * P.DAMP; n.vy = (n.vy + (n.ty - n.y) * spring) * P.DAMP;
+      if (Math.hypot(n.vx, n.vy) < P.SLEEP) { n.vx = 0; n.vy = 0; }
+      n.x += n.vx; n.y += n.vy;
       const k = key(Math.floor(n.x / cell), Math.floor(n.y / cell)); let b = grid.get(k); if (!b) grid.set(k, (b = [])); b.push(n);
     }
     let overlaps = 0;
@@ -15414,7 +15424,7 @@ const P4 = (() => {
         for (const b of b0) {
           if (b === a || b.id < a.id) continue;
           const ddx = b.x - a.x, ddy = b.y - a.y, d = Math.hypot(ddx, ddy) || 0.01, min = a.r + b.r + 1.5;
-          if (d < min) { overlaps++; const k = ((min - d) / d) * 0.5; a.x -= ddx * k; a.y -= ddy * k; b.x += ddx * k; b.y += ddy * k; }
+          if (d < min) { overlaps++; const k = ((min - d) / d) * P.SEP; a.x -= ddx * k; a.y -= ddy * k; b.x += ddx * k; b.y += ddy * k; }
         }
       }
     }
@@ -15569,7 +15579,7 @@ const P4UI = (() => {
       ctx.strokeStyle = 'rgba(148,163,200,.14)'; ctx.setLineDash([4, 6]); ctx.beginPath(); ctx.moveTo(0, H / 2 - 8); ctx.lineTo(W, H / 2 - 8); ctx.stroke(); ctx.setLineDash([]);
       ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
       for (const n of B.nodes) {
-        const fx = n.x + Math.sin(t / 900 + n.r) * 1.2, fy = n.y + Math.cos(t / 1100 + n.r) * 1.2; n.fx = fx; n.fy = fy;
+        const fx = n.x, fy = n.y; n.fx = fx; n.fy = fy; // no per-frame float: settled bubbles stay still
         const sp = sprite(P4.bucket(n.ch, o.scale), n.r, dpr), half = sp.width / dpr / 2;
         ctx.drawImage(sp, fx - half, fy - half, sp.width / dpr, sp.height / dpr);
         if (B.hover === n.id) { ctx.lineWidth = 2; ctx.strokeStyle = '#fff'; ctx.beginPath(); ctx.arc(fx, fy, n.r, 0, Math.PI * 2); ctx.stroke(); }
