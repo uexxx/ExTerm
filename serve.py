@@ -1837,7 +1837,7 @@ class H(http.server.BaseHTTPRequestHandler):
                 return
             self._send(e.code, (e.read(65536) if e.fp else b"") or b'{"error":"local model error"}')
         except Exception:
-            self._send(502, b'{"error":"Ollama isn't running on this computer (start it, then try again)"}')
+            self._send(502, b'{"error":"Ollama isn\'t running on this computer (start it, then try again)"}')
 
     def _proxy(self, method):
         q = urllib.parse.parse_qs(urllib.parse.urlparse(self.path).query)
