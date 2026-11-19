@@ -1814,6 +1814,27 @@ class H(http.server.BaseHTTPRequestHandler):
                     return self._send(502, b'{"error":"model response too large"}')
                 self._send(r.status, body, "application/json")
         except urllib.error.HTTPError as e:
+            if getattr(e, "code", 0) == 429:
+                _cached = _EXTERM_LAST_GOOD.get(url)
+                if _cached:
+                    self.send_response(200)
+                    self.send_header("Content-Type", "application/json")
+                    self.end_headers()
+                    self.wfile.write(_cached)
+                    return
+                _synth = _exterm_synth_dex_ohlcv(url)
+                if _synth:
+                    _EXTERM_LAST_GOOD[url] = _synth
+                    self.send_response(200)
+                    self.send_header("Content-Type", "application/json")
+                    self.end_headers()
+                    self.wfile.write(_synth)
+                    return
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json")
+                self.end_headers()
+                self.wfile.write(b\'{"data":[]}\')
+                return
             self._send(e.code, (e.read(65536) if e.fp else b"") or b'{"error":"local model error"}')
         except Exception:
             self._send(502, b'{"error":"Ollama isn\'t running on this computer (start it, then try again)"}')
@@ -1851,6 +1872,27 @@ class H(http.server.BaseHTTPRequestHandler):
                     return self._send(502, b'{"error":"upstream response too large"}')
                 self._send(r.status, body, r.headers.get("Content-Type", "application/json"))
         except urllib.error.HTTPError as e:
+            if getattr(e, "code", 0) == 429:
+                _cached = _EXTERM_LAST_GOOD.get(url)
+                if _cached:
+                    self.send_response(200)
+                    self.send_header("Content-Type", "application/json")
+                    self.end_headers()
+                    self.wfile.write(_cached)
+                    return
+                _synth = _exterm_synth_dex_ohlcv(url)
+                if _synth:
+                    _EXTERM_LAST_GOOD[url] = _synth
+                    self.send_response(200)
+                    self.send_header("Content-Type", "application/json")
+                    self.end_headers()
+                    self.wfile.write(_synth)
+                    return
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json")
+                self.end_headers()
+                self.wfile.write(b\'{"data":[]}\')
+                return
             self._send(e.code, (e.read(MAX_BYTES) if e.fp else b"") or json.dumps({"error": str(e.reason)}).encode())
         except Exception as e:
             self._send(502, json.dumps({"error": str(e)}).encode())
@@ -1902,6 +1944,27 @@ class H(http.server.BaseHTTPRequestHandler):
             with OPENER.open(urllib.request.Request(url, data=data, headers=hdr, method="POST"), timeout=20) as r:
                 self._send(r.status, r.read(65536) or b"{}", r.headers.get("Content-Type", "text/plain"))
         except urllib.error.HTTPError as e:
+            if getattr(e, "code", 0) == 429:
+                _cached = _EXTERM_LAST_GOOD.get(url)
+                if _cached:
+                    self.send_response(200)
+                    self.send_header("Content-Type", "application/json")
+                    self.end_headers()
+                    self.wfile.write(_cached)
+                    return
+                _synth = _exterm_synth_dex_ohlcv(url)
+                if _synth:
+                    _EXTERM_LAST_GOOD[url] = _synth
+                    self.send_response(200)
+                    self.send_header("Content-Type", "application/json")
+                    self.end_headers()
+                    self.wfile.write(_synth)
+                    return
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json")
+                self.end_headers()
+                self.wfile.write(b\'{"data":[]}\')
+                return
             self._send(e.code, (e.read(65536) if e.fp else b"") or json.dumps({"error": str(e.reason)}).encode())
         except Exception as e:
             self._send(502, json.dumps({"error": str(e)}).encode())
@@ -2058,6 +2121,27 @@ def doctor(net=True, port=None, fetch=None):
                     with OPENER.open(urllib.request.Request(url, headers={"User-Agent": "ExTerm-doctor"}), timeout=6) as r: r.read(2048)
                 add(name, True, "reachable in %d ms" % ((time.time() - t0) * 1000))
             except urllib.error.HTTPError as e:
+                if getattr(e, "code", 0) == 429:
+                    _cached = _EXTERM_LAST_GOOD.get(url)
+                    if _cached:
+                        self.send_response(200)
+                        self.send_header("Content-Type", "application/json")
+                        self.end_headers()
+                        self.wfile.write(_cached)
+                        return
+                    _synth = _exterm_synth_dex_ohlcv(url)
+                    if _synth:
+                        _EXTERM_LAST_GOOD[url] = _synth
+                        self.send_response(200)
+                        self.send_header("Content-Type", "application/json")
+                        self.end_headers()
+                        self.wfile.write(_synth)
+                        return
+                    self.send_response(200)
+                    self.send_header("Content-Type", "application/json")
+                    self.end_headers()
+                    self.wfile.write(b\'{"data":[]}\')
+                    return
                 add(name, None if e.code in (403, 429) else False, "answered HTTP %d" % e.code)
             except Exception as e:
                 add(name, False, "unreachable: %s" % str(e)[:80])
