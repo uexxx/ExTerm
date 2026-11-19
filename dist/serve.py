@@ -1833,11 +1833,11 @@ class H(http.server.BaseHTTPRequestHandler):
                 self.send_response(200)
                 self.send_header("Content-Type", "application/json")
                 self.end_headers()
-                self.wfile.write(b\'{"data":[]}\')
+                self.wfile.write(b'{"data":[]}')
                 return
             self._send(e.code, (e.read(65536) if e.fp else b"") or b'{"error":"local model error"}')
         except Exception:
-            self._send(502, b'{"error":"Ollama isn\'t running on this computer (start it, then try again)"}')
+            self._send(502, b'{"error":"Ollama isn't running on this computer (start it, then try again)"}')
 
     def _proxy(self, method):
         q = urllib.parse.parse_qs(urllib.parse.urlparse(self.path).query)
@@ -1891,7 +1891,7 @@ class H(http.server.BaseHTTPRequestHandler):
                 self.send_response(200)
                 self.send_header("Content-Type", "application/json")
                 self.end_headers()
-                self.wfile.write(b\'{"data":[]}\')
+                self.wfile.write(b'{"data":[]}')
                 return
             self._send(e.code, (e.read(MAX_BYTES) if e.fp else b"") or json.dumps({"error": str(e.reason)}).encode())
         except Exception as e:
@@ -1963,7 +1963,7 @@ class H(http.server.BaseHTTPRequestHandler):
                 self.send_response(200)
                 self.send_header("Content-Type", "application/json")
                 self.end_headers()
-                self.wfile.write(b\'{"data":[]}\')
+                self.wfile.write(b'{"data":[]}')
                 return
             self._send(e.code, (e.read(65536) if e.fp else b"") or json.dumps({"error": str(e.reason)}).encode())
         except Exception as e:
@@ -2140,7 +2140,7 @@ def doctor(net=True, port=None, fetch=None):
                     self.send_response(200)
                     self.send_header("Content-Type", "application/json")
                     self.end_headers()
-                    self.wfile.write(b\'{"data":[]}\')
+                    self.wfile.write(b'{"data":[]}')
                     return
                 add(name, None if e.code in (403, 429) else False, "answered HTTP %d" % e.code)
             except Exception as e:
