@@ -29,6 +29,7 @@ const post = (body, key) => new Promise((resolve) => {
   try {
     const ctx = await b.newContext({ viewport: { width: 1440, height: 900 }, acceptDownloads: true });
     await ctx.route('**/*', (r) => (r.request().url().startsWith(BASE) ? r.continue() : r.abort()));
+    await ctx.routeWebSocket((u) => !/^wss?:\/\/(127\.0\.0\.1|localhost)[:/]/.test(String(u)), (ws) => ws.close()); // offline: no outside WebSockets either
     const page = await ctx.newPage(); page.setDefaultTimeout(10000);
     page.on('pageerror', (e) => errs.push(e.message)); page.on('dialog', (d) => { errs.push('DIALOG ' + d.message()); d.dismiss(); });
     page.on('console', (m) => { const t = m.text(); if ((m.type() === 'error' && /Content Security Policy|Refused to/.test(t)) || /^v165 |^v165 init/.test(t)) errs.push('CONSOLE ' + t); });

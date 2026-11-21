@@ -6,3 +6,12 @@ node_modules/
 .DS_Store
 # release archives are attached to GitHub Releases, not committed
 *.zip
+*.apk
+*.idsig
+# signing keys never live in the repo (tools/build_apk.py keeps them under %LOCALAPPDATA%\ExTerm)
+*.jks
+*.keystore
+# local agent / editor tool state
+.omc/
+**/.omc/
+.serena/

@@ -19,6 +19,7 @@ const PORT = 8785, BASE = 'http://localhost:' + PORT, DATA = fs.mkdtempSync(path
   const b = await chromium.launch({ executablePath: process.env.CHROME_PATH || '/usr/bin/google-chrome', args: ['--no-sandbox'] });
   const ctx = await b.newContext({ viewport: { width: 1500, height: 920 }, acceptDownloads: true });
   await ctx.route('**/*', (r) => (r.request().url().startsWith(BASE) ? r.continue() : r.abort()));
+  await ctx.routeWebSocket((u) => !/^wss?:\/\/(127\.0\.0\.1|localhost)[:/]/.test(String(u)), (ws) => ws.close()); // offline: no outside WebSockets either
   const page = await ctx.newPage(); page.setDefaultTimeout(8000);
   const watch = (p, tag) => { p.on('pageerror', (e) => errs.push(tag + ' ' + e.message)); p.on('dialog', (d) => { errs.push('DIALOG ' + d.message()); d.dismiss(); }); p.on('console', (m) => { if (m.type() === 'error' && /Content Security Policy|Refused to/.test(m.text())) errs.push('CSP ' + m.text()); }); };
   watch(page, 'main');

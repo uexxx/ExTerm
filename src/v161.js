@@ -1,4 +1,4 @@
-/* Copyright (c) 2026 ExTerm Labs (@exterm.labs) · Licensed under GNU AGPL-3.0 · https://github.com/uexxx/ExTerm */
+/* Copyright (c) 2026 ExTerm Labs. All Rights Reserved. Free for personal, non-commercial use. Copying, modifying, reverse-engineering, cloning, or redistributing source or derivative works without express written permission from ExTerm Labs is strictly prohibited. */
 /* ExTerm v16.1 UI: chart click / drag trading polish, ExTerm Chart Context Menu, Precision Range Measure Dragger,
    journal discipline attribution.
    · chart.priceToY / chart.yToPrice: one exact mapping for clicks, drags, menus and the measure ruler

@@ -1,4 +1,4 @@
-/* Copyright (c) 2026 ExTerm Labs (@exterm.labs) · Licensed under GNU AGPL-3.0 · https://github.com/uexxx/ExTerm */
+/* Copyright (c) 2026 ExTerm Labs. All Rights Reserved. Free for personal, non-commercial use. Copying, modifying, reverse-engineering, cloning, or redistributing source or derivative works without express written permission from ExTerm Labs is strictly prohibited. */
 /* ExTerm v16.2 UI: launch safety briefing (every start), Max Daily Loss ($) auto-flatten, live-only workspace
    (body.live-bot-armed) and the MARKET CLOSED · LAST SESSION badge. Logic in V162 (v162core.js); routing, kill and the
    receipt ledger stay in V160UI. Strict CSP: listeners attached here, every dynamic string through esc(). */

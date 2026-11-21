@@ -294,13 +294,13 @@ const OC = (() => {
   }
 
   /* ---------- live trades for the selected pool (tape) ---------- */
-  O.trades = async (sym) => {
+  O.trades = async (sym, opt) => { // opt.noWait: never sit out a rate-limit cool-down (chart seeding must not block on optional swaps)
     const p = O.parse(sym); if (!p) return [];
     if (p.chain === 'sim') {
       const px0 = O.simPx[sym] || 1, now = Date.now() / 1000;
       return Array.from({ length: 6 }, (_, i) => ({ side: Math.random() > 0.47 ? 'buy' : 'sell', p: px0 * (1 + (Math.random() - 0.5) * 0.004), q: Math.round(1e3 + Math.random() * 9e5) / (px0 > 1 ? 1000 : 1), usd: 20 + Math.random() * 4000, ts: now - i * 3, tx: 'sim' + Math.random().toString(36).slice(2), who: '' }));
     }
-    const r = await gt(`/networks/${p.chain}/pools/${p.pool}/trades`);
+    const r = await gt(`/networks/${p.chain}/pools/${p.pool}/trades`, 0, { noWait: !!(opt && opt.noWait) });
     return ((r && r.data) || []).map((d) => {
       const a = d.attributes || {}, buy = a.kind === 'buy';
       return { side: buy ? 'buy' : 'sell', p: +(buy ? a.price_to_in_usd : a.price_from_in_usd) || 0, q: +(buy ? a.to_token_amount : a.from_token_amount) || 0, usd: +a.volume_in_usd || 0, ts: Date.parse(a.block_timestamp) / 1000 || Date.now() / 1000, tx: txt(a.tx_hash, 100), who: /^[A-Za-z0-9]{20,64}$/.test(a.tx_from_address || '') ? a.tx_from_address : '' };

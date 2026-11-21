@@ -67,7 +67,7 @@ const V = require('../src/v160core.js');
   // ── build + static
   const rd = (f) => fs.readFileSync(path.join(__dirname, '..', f), 'utf8');
   const B = rd('build.py'), HTML = rd('src/index.html');
-  ok('build: v160core.js + v160.js bundled after v157.js and before boot.js', /"v157\.js", "v160core\.js", ("v161core\.js", )?("v162core\.js", )?("v163core\.js", )?("v164core\.js", )?("v165core\.js", )?("v166core\.js", )?"v160\.js", ("v161\.js", )?("v162\.js", )?("v163\.js", )?("v164\.js", )?("v165\.js", )?("v166\.js", )?"boot\.js"/.test(B));
+  ok('build: v160core.js + v160.js bundled after v157.js and before boot.js', /"v157\.js", "v160core\.js", ("v161core\.js", )?("v162core\.js", )?("v163core\.js", )?("v164core\.js", )?("v165core\.js", )?("v166core\.js", )?("v170core\.js", )?"v160\.js", ("v161\.js", )?("v162\.js", )?("v163\.js", )?("v164\.js", )?("v165\.js", )?("v166\.js", )?("v170\.js", )?"boot\.js"/.test(B));
   ok('csp: default-src none kept; connect-src permits plain http / ws only on loopback', /default-src 'none'/.test(HTML) && /ws:\/\/127\.0\.0\.1:\*/.test(HTML) && !/connect-src[^;]*\shttp:\s/.test(HTML) && !/connect-src[^;]*\sws:\s/.test(HTML));
   const SRC = ['src/v160core.js', 'src/v160.js'].map((x) => [x, rd(x)]);
   ok('static: no inline handlers, eval, new Function or non-loopback URLs in v16.0 modules', SRC.every(([, x]) => !/\son[a-z]+\s*=\s*["'`]/i.test(x.replace(/\/\*[\s\S]*?\*\//g, '')) && !/\beval\(|new Function\(|import\s*\(/.test(x) && !/(https?|wss?):\/\/(?!127\.0\.0\.1|localhost|github\.com\/uexxx)[a-z0-9]/i.test(x)));

@@ -31,7 +31,9 @@ const P3 = require('../src/v15p3core.js');
   s.applyAgg({ t: 110, o: 11.2, h: 11.3, l: 11.1, c: 11.25, v: 2 });
   ok('worker-folded second opening a bar anchors too', s.candles[2].o === 10.9 && s.candles[2].l === 10.9 && s.candles[2].h === 11.3);
   const q = new CandleStore('DOGE-USD', '5s'); q.candles = [{ t: 100, o: 1, h: 1, l: 1, c: 1, v: 1 }]; q.applyTick(1.2, 1, 117);
-  ok('quiet 5s buckets become flat bars at the prior close (continuous time)', q.candles.map((k) => k.t).join(',') === '100,105,110,115' && q.candles[1].v === 0 && q.candles[2].c === 1 && q.candles[3].o === 1 && q.candles[3].c === 1.2, JSON.stringify(q.candles));
+  // v16.4 contract (see v164.test.js "quiet seconds are never back-filled"): no flat Vol-0 bars for quiet 5s buckets; the
+  // next traded bucket still opens at the prior close, so the series stays gap-free in price.
+  ok('quiet 5s buckets are not back-filled; the next traded bar opens at the prior close', q.candles.map((k) => k.t).join(',') === '100,115' && q.candles[1].o === 1 && q.candles[1].l === 1 && q.candles[1].c === 1.2 && q.candles[1].v === 1, JSON.stringify(q.candles));
   const m = new CandleStore('BTC-USD', '1m'); m.candles = [{ t: 60, o: 10, h: 10.5, l: 9.9, c: 10.4, v: 3 }]; m.applyTick(10.9, 1, 121);
   ok('1m and above keep the real first-trade open (TradingView behaviour)', m.candles[1].o === 10.9);
   const r = NT.bodyRect(100, 100, 50.3, 8);

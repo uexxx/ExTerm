@@ -44,6 +44,14 @@ self.onmessage = (e) => {
       if (m.type === 'evolve') post({ done: true, ev: V153.evolve(m.candles, st, m.params, m.o, pg) });
       else if (m.type === 'synth') post({ done: true, syn: V153.synthTest(m.candles, st, m.params, m.o, pg) });
       else post({ done: true, crises: Object.keys(V153.CRISES).map((k) => V153.crisisTest(m.candles, st, m.params, k, m.o)) });
+    } else if (typeof V170 !== 'undefined' && /^v170/.test(m.type || '')) { // v17.0: typed-array jobs, results handed back zero-copy
+      const xfer = (o, bufs) => self.postMessage(Object.assign({ id: m.id, done: true }, o), bufs);
+      if (m.type === 'v170scan') { const idx = V170.scanColumns(m.formula, m.cols, m.data, m.n); xfer({ idx }, [idx.buffer]); }
+      else if (m.type === 'v170sort') { const idx = V170.sortIndex(m.data, m.k, m.col, m.n, !!m.desc); xfer({ idx }, [idx.buffer]); }
+      else if (m.type === 'v170csv') { const r = V170.parseCSV(m.text); xfer({ f: r.f, n: r.n, error: r.error }, [r.f.buffer]); }
+      else if (m.type === 'v170depth') post({ done: true, depth: V170.depthBuckets(m.books, m.bucket) });
+      else if (m.type === 'v170bt') { const st = NT.strategies[m.strat]; if (!st) throw new Error('unknown strategy'); const r = NT.backtest(V170.unpack(m.f), st, m.params, m.o); post({ done: true, res: slim(r, !!m.keepEq) }); }
+      else throw new Error('unknown v170 job');
     }
   } catch (err) { post({ done: true, error: err.message || String(err) }); }
 };

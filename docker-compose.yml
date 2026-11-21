@@ -1,0 +1,33 @@
+# Copyright (c) 2026 ExTerm Labs. All Rights Reserved. Free for personal, non-commercial use. Copying, modifying, reverse-engineering, cloning, or redistributing source or derivative works without express written permission from ExTerm Labs is strictly prohibited.
+# ExTerm v17.0 on a home PC or a $4-5/mo Linux VPS:   docker compose up -d   ·   logs: docker compose logs -f
+# Crash recovery: the launcher's own watchdog restarts any of the 3 daemon processes; Docker restarts the container if the
+# launcher itself dies or fails its health check. The UI is published on the host's loopback only (http://localhost:8765);
+# reach it from elsewhere through an SSH tunnel or Tailscale, never by exposing the port to the internet.
+services:
+  exterm:
+    build: .
+    image: exterm-daemon:17.0
+    container_name: exterm-daemon
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8765:8765"
+    volumes:
+      - exterm-data:/data
+    environment:
+      - EXTERM_DATA=/data
+      - EXTERM_BIND=0.0.0.0
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+    cap_drop: [ALL]
+    mem_limit: 512m
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request,sys; r=urllib.request.urlopen(urllib.request.Request('http://127.0.0.1:8765/manifest.webmanifest', headers={'Host':'localhost:8765'}), timeout=4); sys.exit(0 if r.status==200 else 1)"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+volumes:
+  exterm-data:

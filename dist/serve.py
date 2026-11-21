@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# Copyright (c) 2026 ExTerm Labs (@exterm.labs) · Licensed under GNU AGPL-3.0 · https://github.com/uexxx/ExTerm
+# Copyright (c) 2026 ExTerm Labs. All Rights Reserved. Free for personal, non-commercial use. Copying, modifying, reverse-engineering, cloning, or redistributing source or derivative works without express written permission from ExTerm Labs is strictly prohibited.
 """ExTerm launcher: serves the app at http://localhost:8765 and provides a small
 CORS proxy (/proxy?u=...) for the public market-data APIs, in case your browser blocks
 direct requests. Standard library only. Usage:  python3 serve.py [port]   ·   health check:  python3 serve.py --doctor [--offline]"""
@@ -7,7 +7,13 @@ import http.server, hashlib, json, time, os, pathlib, shutil, socket, ssl, subpr
 
 ARGS = [a for a in sys.argv[1:] if not a.startswith("--")]
 PORT = int(ARGS[0]) if ARGS else 8765
-NO_BROWSER = "--no-browser" in sys.argv
+HEADLESS = "--headless" in sys.argv  # v17.0: 24/7 boxes / Docker: never open a browser
+NO_BROWSER = "--no-browser" in sys.argv or HEADLESS
+LAN = "--lan" in sys.argv  # v17.0: phone pairing over Wi-Fi / Tailscale (QR code); off by default
+DAEMON = "--bot-daemon" in sys.argv  # v17.0: 3-process 24/7 daemon (exterm_ops.py)
+OPS = None  # exterm_ops, imported only for --lan / --bot-daemon
+SUP = None  # daemon supervisor
+PAIR = ""  # --lan pairing secret (fresh per launch)
 HERE = pathlib.Path(__file__).resolve().parent
 APP = HERE / "exterm.html"
 if not APP.exists():
@@ -50,7 +56,7 @@ def hook_target_ok(url):
     return u.scheme == "https" and _private_ip(host) and (host + ":" + str(port)) in _hook_lan()
 ALLOW_SUFFIX = (".helius-rpc.com", ".quiknode.pro", ".alchemy.com", ".ankr.com", ".chainstack.com", ".syndica.io", ".shyft.to", ".extrnode.com")
 CTX = ssl.create_default_context()
-import secrets, hmac as _hmac, threading, re
+import secrets, hmac as _hmac, threading, re, io as _io
 from concurrent.futures import ThreadPoolExecutor
 from collections import deque
 TOKEN = secrets.token_urlsafe(24)  # fresh per launch; injected into the page, required on every proxy call
@@ -81,6 +87,225 @@ class SafeRedirect(urllib.request.HTTPRedirectHandler):
 
 OPENER = urllib.request.build_opener(SafeRedirect(), urllib.request.HTTPSHandler(context=CTX))
 
+# --- v17.0 upstream shield: last-good cache + single-flight coalescing + per-host 429 cooldown -------------------
+# _EXTERM_LAST_GOOD[url]       = (timestamp, body_bytes, content_type)   last 200 OK of a credential-free GET
+# _EXTERM_INFLIGHT[key]        = _Flight                                  one upstream call shared by identical requests
+# _EXTERM_HOST_COOLDOWN[host]  = {"until", "n", "since", "logged"}        exponential backoff after 429 / network errors
+_EXTERM_LAST_GOOD = {}
+_EXTERM_INFLIGHT = {}
+_EXTERM_HOST_COOLDOWN = {}
+_EXTERM_SHIELD_LOCK = threading.Lock()
+_EXTERM_LAST_GOOD_MAX = 512
+_CRED_HEADERS = ("Authorization", "x-api-key", "X-MBX-APIKEY", "API-Key", "API-Sign", "X-BAPI-API-KEY", "X-BAPI-SIGN",
+                 "APCA-API-KEY-ID", "APCA-API-SECRET-KEY")
+
+class UpstreamBlocked(Exception):
+    """Raised instead of (or after) an upstream call: host in cooldown, 429, or network failure."""
+    def __init__(self, status, retry_after, reason):
+        super().__init__(reason); self.status = status; self.retry_after = retry_after; self.reason = reason
+
+class _Flight:
+    __slots__ = ("ev", "result", "error")
+    def __init__(self):
+        self.ev = threading.Event(); self.result = None; self.error = None
+
+def _shield_note(host, msg):
+    """At most one concise line per host per cooldown window: no tracebacks, no log storms."""
+    with _EXTERM_SHIELD_LOCK:
+        cd = _EXTERM_HOST_COOLDOWN.get(host)
+        if cd is not None:
+            if cd["logged"] >= cd["since"]:
+                return
+            cd["logged"] = time.time()
+    try:
+        sys.stderr.write("[ExTerm] %s: %s\n" % (host, msg)); sys.stderr.flush()
+    except Exception:
+        pass
+
+def _shield_strike(host, retry_after=None, net=False):
+    """Register a 429 / network failure; returns seconds of cooldown. Honours Retry-After when the upstream sends one."""
+    with _EXTERM_SHIELD_LOCK:
+        now = time.time()
+        cd = _EXTERM_HOST_COOLDOWN.get(host)
+        if cd is None or now > cd["until"] + 120:  # 2 quiet minutes after the last window forgive old strikes
+            cd = {"until": 0.0, "n": 0, "logged": -1.0, "since": now}
+            _EXTERM_HOST_COOLDOWN[host] = cd
+        if now < cd["until"]:  # already cooling: a burst of parallel 429s is ONE strike (only Retry-After may extend the window)
+            if retry_after: cd["until"] = max(cd["until"], now + min(600.0, retry_after))
+            return cd["until"] - now
+        cd["n"] += 1
+        wait = min(60.0 if net else 300.0, (1.0 if net else 2.0) * (2 ** min(cd["n"] - 1, 10)))
+        if retry_after:
+            wait = max(wait, min(600.0, retry_after))
+        if now >= cd["until"]:
+            cd["since"] = now  # a new window: allow one new log line
+        cd["until"] = max(cd["until"], now + wait)
+        return cd["until"] - now
+
+def _shield_clear(host):
+    with _EXTERM_SHIELD_LOCK:
+        _EXTERM_HOST_COOLDOWN.pop(host, None)
+
+def _shield_cooldown_left(host):
+    with _EXTERM_SHIELD_LOCK:
+        cd = _EXTERM_HOST_COOLDOWN.get(host)
+        return max(0.0, cd["until"] - time.time()) if cd else 0.0
+
+def _retry_after_secs(headers):
+    try:
+        v = headers.get("Retry-After") if headers is not None else None
+        return float(v) if v else None
+    except (TypeError, ValueError):
+        return None  # HTTP-date form: our own backoff applies
+
+def shield_stale(url):
+    with _EXTERM_SHIELD_LOCK:
+        return _EXTERM_LAST_GOOD.get(url)
+
+def _shield_remember(url, body, ctype):
+    with _EXTERM_SHIELD_LOCK:
+        _EXTERM_LAST_GOOD.pop(url, None)
+        _EXTERM_LAST_GOOD[url] = (time.time(), body, ctype)
+        while len(_EXTERM_LAST_GOOD) > _EXTERM_LAST_GOOD_MAX:  # insertion-ordered: evict the oldest
+            _EXTERM_LAST_GOOD.pop(next(iter(_EXTERM_LAST_GOOD)))
+
+import http.client as _hc
+class _ConnPool:
+    """Persistent keep-alive HTTPS connections per allow-listed host (no TLS handshake per request). Anything that is not a
+    plain answer (redirects) is handed back to the caller, which re-issues it through OPENER and its SafeRedirect policy."""
+    MAX_IDLE = 4
+    IDLE_SEC = 8.0  # CDNs drop idle keep-alives silently; reusing a dead one would hang until the timeout instead of failing fast
+    def __init__(self): self.idle = {}; self.lock = threading.Lock(); self.stats = {"new": 0, "reused": 0, "expired": 0}
+    def _get(self, host):
+        now = time.time(); dead = []
+        with self.lock:
+            q = self.idle.get(host) or []
+            while q:
+                conn, t = q.pop()
+                if now - t <= self.IDLE_SEC: self.stats["reused"] += 1; break
+                dead.append(conn); self.stats["expired"] += 1
+            else:
+                conn = None
+            if conn is None: self.stats["new"] += 1
+        for d in dead: d.close()
+        if conn is not None: return conn, True
+        return _hc.HTTPSConnection(host, timeout=30, context=CTX), False
+    def _put(self, host, conn):
+        with self.lock:
+            q = self.idle.setdefault(host, [])
+            if len(q) < self.MAX_IDLE: q.append((conn, time.time())); return
+        conn.close()
+    def request(self, url, method, data, hdr, timeout, max_bytes):
+        """(status, headers, body) or None when the caller must fall back to OPENER (redirect / non-https)."""
+        u = urllib.parse.urlparse(url)
+        if u.scheme != "https" or u.port not in (None, 443): return None
+        path = (u.path or "/") + ("?" + u.query if u.query else "")
+        for attempt in (0, 1):  # one retry on a connection the server had already closed
+            conn, reused = self._get(u.hostname); conn.timeout = timeout
+            try:
+                h = dict(hdr); h.setdefault("Connection", "keep-alive")
+                conn.request(method, path, body=data, headers=h)
+                r = conn.getresponse(); body = r.read(max_bytes + 1)
+                if r.will_close: conn.close()
+                else: self._put(u.hostname, conn)
+                if 300 <= r.status < 400: return None
+                return r.status, r.headers, body
+            except (_hc.RemoteDisconnected, ConnectionResetError, BrokenPipeError, _hc.CannotSendRequest, _hc.BadStatusLine):
+                conn.close()
+                if not reused or attempt: raise
+            except Exception:
+                conn.close(); raise
+POOL = _ConnPool()
+
+def pack_ohlcv(host, body):
+    """Compact array-of-arrays [[t,o,h,l,c,v], ...] (t in seconds, 10 significant digits) from the candle formats ExTerm proxies:
+    Binance klines (12 columns), Coinbase [t,l,h,o,c,v], Kraken OHLC, Bybit kline, GeckoTerminal ohlcv_list. None if unknown."""
+    try: j = json.loads(body)
+    except Exception: return None
+    rows = None; h = (host or "").lower()
+    if h.endswith("binance.com") and isinstance(j, list): rows = [[k[0] / 1000, k[1], k[2], k[3], k[4], k[5]] for k in j]
+    elif h == "api.exchange.coinbase.com" and isinstance(j, list): rows = [[k[0], k[3], k[2], k[1], k[4], k[5]] for k in j]
+    elif h == "api.kraken.com" and isinstance(j, dict):
+        res = j.get("result") or {}; key = next((k for k in res if k != "last"), None)
+        if key: rows = [[k[0], k[1], k[2], k[3], k[4], k[6]] for k in res[key]]
+    elif h.endswith("bybit.com") and isinstance(j, dict): rows = [[int(k[0]) / 1000, k[1], k[2], k[3], k[4], k[5]] for k in ((j.get("result") or {}).get("list") or [])]
+    elif h == "api.geckoterminal.com" and isinstance(j, dict): rows = (((j.get("data") or {}).get("attributes") or {}).get("ohlcv_list"))
+    if not rows: return None
+    out = []
+    for k in rows:
+        try: out.append([int(float(k[0]))] + [float("%.10g" % float(x)) for x in k[1:6]])
+        except (TypeError, ValueError, IndexError): continue
+    out.sort(key=lambda r: r[0])
+    return json.dumps(out, separators=(",", ":")).encode()
+
+def shield_fetch(url, method="GET", data=None, hdr=None, timeout=30, max_bytes=None, opener=None):
+    """Fetch through the shield. Identical concurrent requests share ONE upstream call.
+    Returns (status, body, content_type). Raises urllib.error.HTTPError (non-429 upstream error; body in .exterm_body)
+    or UpstreamBlocked (429, host cooling down, network failure)."""
+    hdr = hdr or {}; max_bytes = max_bytes or MAX_BYTES; opener = opener or OPENER
+    host = (urllib.parse.urlparse(url).hostname or "").lower()
+    left = _shield_cooldown_left(host)
+    if left > 0:
+        raise UpstreamBlocked(429, left, "upstream rate-limited; cooling down")
+    cred = sorted((k.lower(), str(hdr[k])) for k in hdr if k in _CRED_HEADERS)
+    key = hashlib.sha256(repr((method, url, data or b"", cred)).encode("utf-8", "surrogateescape")).hexdigest()
+    with _EXTERM_SHIELD_LOCK:
+        fl = _EXTERM_INFLIGHT.get(key); leader = fl is None
+        if leader:
+            fl = _EXTERM_INFLIGHT[key] = _Flight()
+    if not leader:
+        fl.ev.wait(timeout + 5)
+        if fl.error is not None:
+            raise fl.error
+        if fl.result is None:
+            raise UpstreamBlocked(504, 2.0, "shared upstream call timed out")
+        return fl.result
+    try:
+        try:
+            pooled = POOL.request(url, method, data, hdr, timeout, max_bytes) if opener is OPENER else None
+            if pooled is not None:
+                st, rh, body = pooled
+                if st >= 400: raise urllib.error.HTTPError(url, st, rh.get("Reason", "") or str(st), rh, _io.BytesIO(body))
+                if len(body) > max_bytes: raise UpstreamBlocked(502, 0, "upstream response too large")
+                res = (st, body, rh.get("Content-Type", "application/json"))
+            else:
+                req = urllib.request.Request(url, data=data, headers=hdr, method=method)
+                with opener.open(req, timeout=timeout) as r:
+                    body = r.read(max_bytes + 1)
+                    if len(body) > max_bytes:
+                        raise UpstreamBlocked(502, 0, "upstream response too large")
+                    res = (r.status, body, r.headers.get("Content-Type", "application/json"))
+            _shield_clear(host)
+            if res[0] == 200 and method == "GET" and not cred:
+                _shield_remember(url, res[1], res[2])
+            fl.result = res
+            return res
+        except urllib.error.HTTPError as e:
+            if e.code == 429:
+                wait = _shield_strike(host, _retry_after_secs(e.headers))
+                _shield_note(host, "HTTP 429, cooling down %.0fs (serving last-good data meanwhile)" % wait)
+                err = UpstreamBlocked(429, wait, "upstream rate-limited (HTTP 429)")
+            else:
+                try:
+                    body = e.read(min(max_bytes, 1024 * 1024)) if e.fp else b""
+                except Exception:
+                    body = b""
+                err = urllib.error.HTTPError(e.url, e.code, e.reason, e.headers, None); err.exterm_body = body
+            fl.error = err
+            raise err
+        except UpstreamBlocked as e:
+            fl.error = e; raise
+        except Exception as e:
+            wait = _shield_strike(host, net=True)
+            _shield_note(host, "network error (%s), backing off %.0fs" % (type(e).__name__, wait))
+            err = UpstreamBlocked(502, wait, "upstream unreachable: %s" % str(e)[:100])
+            fl.error = err
+            raise err
+    finally:
+        with _EXTERM_SHIELD_LOCK:
+            _EXTERM_INFLIGHT.pop(key, None)
+        fl.ev.set()
+
 class NoRedirect(urllib.request.HTTPRedirectHandler):
     """Notifications and the local-model bridge never follow redirects (a redirect could point anywhere)."""
     def redirect_request(self, req, fp, code, msg, headers, newurl):
@@ -89,7 +314,7 @@ class NoRedirect(urllib.request.HTTPRedirectHandler):
 NOTIFY_OPENER = urllib.request.build_opener(NoRedirect(), urllib.request.HTTPSHandler(context=CTX))
 LOCAL_OPENER = urllib.request.build_opener(NoRedirect(), urllib.request.HTTPHandler())
 
-VERSION = "16.6"
+VERSION = "17.0"
 STARTED = time.time()
 CACHE_STATS = {"hits": 0, "total": 0}  # /api/feed symbols answered from RAM vs asked for (Grok telemetry strip)
 OLD_DATA_DIR = pathlib.Path.home() / (".nova" + "term")  # pre-v15 data folder, moved to ~/.exterm on first start
@@ -1645,25 +1870,39 @@ class H(http.server.BaseHTTPRequestHandler):
     def log_message(self, fmt, *a):
         pass
 
-    def _send(self, code, body, ctype="application/json"):
-        self.send_response(code)
-        self.send_header("Content-Type", ctype)
-        self.send_header("Cache-Control", "no-store")
-        for k, v in SEC_HEADERS.items():
-            self.send_header(k, v)
-        self.end_headers()
-        self.wfile.write(body)
+    def _send(self, code, body, ctype="application/json", extra=None):
+        try:
+            self.send_response(code)
+            self.send_header("Content-Type", ctype)
+            self.send_header("Cache-Control", "no-store")
+            for k, v in SEC_HEADERS.items():
+                self.send_header(k, v)
+            for k, v in (extra or {}).items():
+                self.send_header(k, v)
+            self.end_headers()
+            self.wfile.write(body)
+        except (BrokenPipeError, ConnectionResetError, ConnectionAbortedError):
+            pass  # the tab went away mid-response: nothing to report
 
     def _local_ok(self):
-        """Security: reject DNS-rebinding (foreign Host) and cross-site requests (foreign Origin)."""
+        """Security: reject DNS-rebinding (foreign Host) and cross-site requests (foreign Origin).
+        --lan also accepts private / Tailscale IP literals and *.ts.net (never arbitrary DNS names), with Origin == Host."""
         host = (self.headers.get("Host") or "").rsplit(":", 1)[0].strip("[]").lower()
-        if host not in ("localhost", "127.0.0.1", "::1"):
+        if not (host in ("localhost", "127.0.0.1", "::1") or (LAN and OPS is not None and OPS.lan_host_ok(host))):
             self._send(421, b"misdirected request", "text/plain"); return False
         origin = self.headers.get("Origin")
         ou = urllib.parse.urlparse(origin) if origin else None
-        if origin and not (ou.scheme == "http" and ou.hostname in ("localhost", "127.0.0.1", "::1") and ou.port == PORT):
+        okh = ("localhost", "127.0.0.1", "::1") + ((host,) if LAN else ())
+        if origin and not (ou.scheme == "http" and ou.hostname in okh and ou.port == PORT):
             self._send(403, b'{"error":"cross-origin request blocked"}'); return False
         return True
+
+    def _loopback(self):
+        ip = self.client_address[0]
+        if ip in ("127.0.0.1", "::1", "::ffff:127.0.0.1"): return True
+        # Docker (EXTERM_BIND=0.0.0.0, no --lan): the host's loopback arrives through the bridge gateway (172.17.0.1 …); the compose
+        # file publishes the port on the host's 127.0.0.1 only, so a private source here is the host itself
+        return not LAN and os.environ.get("EXTERM_BIND") == "0.0.0.0" and _private_ip(ip)
 
     def _token_ok(self):
         return _hmac.compare_digest(self.headers.get("X-ExTerm") or "", TOKEN)
@@ -1691,6 +1930,19 @@ class H(http.server.BaseHTTPRequestHandler):
                 bots = BOTS.public()["bots"] if BOTS is not None else []
                 return self._send(200, json.dumps({"version": VERSION, "uptime": int(time.time() - STARTED), "cache": dict(CACHE_STATS), "polls": FEED.polls if FEED is not None else 0,
                                                    "bots": {"total": len(bots), "active": sum(1 for b in bots if b.get("active")), "lastBar": max([b.get("lastBar") or 0 for b in bots] or [0])}}).encode())
+            if p.startswith("/api/daemon"):  # v17.0: 24/7 daemon status + Wake-Up digest; arming only from this computer
+                if not DAEMON or OPS is None: return self._send(503, b'{"error":"start the launcher with --bot-daemon"}')
+                if p == "/api/daemon" and method == "GET":
+                    return self._send(200, json.dumps(OPS.status(DATA_DIR, SUP)).encode())
+                if not self._loopback(): return self._send(403, b'{"error":"arming is only possible on the computer running the daemon"}')
+                if p == "/api/daemon/arm" and method == "POST":
+                    rec = OPS.arm(DATA_DIR, self._json_body(8 * 1024)); return self._send(200, json.dumps({"armed": True, "armedAt": rec["ts"], "cashCap": rec["cashCap"], "maxSlipBps": rec["maxSlipBps"]}).encode())
+                if p == "/api/daemon/disarm" and method == "POST":
+                    OPS.disarm(DATA_DIR); return self._send(200, b'{"armed":false}')
+                return self._send(404, b'{"error":"not found"}')
+            if p == "/api/pair" and method == "GET":  # --lan: the URL behind the QR (loopback page only)
+                if not (LAN and self._loopback()): return self._send(404, b'{"error":"not in --lan mode"}')
+                return self._send(200, json.dumps({"url": pair_url(), "qr": "/pair.svg", "ips": OPS.lan_ips()}).encode())
             if p == "/api/integrity" and method == "GET":  # Settings -> Verify build integrity: on-disk files vs SHA256SUMS.txt
                 return self._send(200, json.dumps(integrity()).encode())
             if p == "/api/doctor" and method == "GET":  # read-only health checks for Settings -> Field Manual -> System Doctor
@@ -1814,27 +2066,6 @@ class H(http.server.BaseHTTPRequestHandler):
                     return self._send(502, b'{"error":"model response too large"}')
                 self._send(r.status, body, "application/json")
         except urllib.error.HTTPError as e:
-            if getattr(e, "code", 0) == 429:
-                _cached = _EXTERM_LAST_GOOD.get(url)
-                if _cached:
-                    self.send_response(200)
-                    self.send_header("Content-Type", "application/json")
-                    self.end_headers()
-                    self.wfile.write(_cached)
-                    return
-                _synth = _exterm_synth_dex_ohlcv(url)
-                if _synth:
-                    _EXTERM_LAST_GOOD[url] = _synth
-                    self.send_response(200)
-                    self.send_header("Content-Type", "application/json")
-                    self.end_headers()
-                    self.wfile.write(_synth)
-                    return
-                self.send_response(200)
-                self.send_header("Content-Type", "application/json")
-                self.end_headers()
-                self.wfile.write(b'{"data":[]}')
-                return
             self._send(e.code, (e.read(65536) if e.fp else b"") or b'{"error":"local model error"}')
         except Exception:
             self._send(502, b'{"error":"Ollama isn\'t running on this computer (start it, then try again)"}')
@@ -1865,42 +2096,36 @@ class H(http.server.BaseHTTPRequestHandler):
             if self.headers.get(k):
                 hdr[k] = self.headers[k]
         try:
-            req = urllib.request.Request(url, data=data, headers=hdr, method=method)
-            with OPENER.open(req, timeout=30) as r:
-                body = r.read(MAX_BYTES + 1)
-                if len(body) > MAX_BYTES:
-                    return self._send(502, b'{"error":"upstream response too large"}')
-                self._send(r.status, body, r.headers.get("Content-Type", "application/json"))
+            status, body, ctype = shield_fetch(url, method, data, hdr, timeout=30)
+            if status == 200 and (self.headers.get("X-ExTerm-Pack") or "").lower() == "ohlcv":  # v17.0 compact candles (~65% smaller)
+                packed = pack_ohlcv(host, body)
+                if packed is not None:
+                    return self._send(200, packed, "application/json", {"X-ExTerm-Cache": "LIVE", "X-ExTerm-Packed": "ohlcv"})
+            self._send(status, body, ctype, {"X-ExTerm-Cache": "LIVE"})
+        except UpstreamBlocked as e:
+            ra = str(max(1, int(e.retry_after + 0.999)))
+            stale = shield_stale(url) if method == "GET" else None  # never replay a stale answer to a POST
+            if stale and e.status in (429, 502, 504):
+                age = max(0, int(time.time() - stale[0]))
+                return self._send(200, stale[1], stale[2], {"X-ExTerm-Cache": "STALE", "X-ExTerm-Stale-Age": str(age), "Retry-After": ra})
+            self._send(e.status, json.dumps({"error": e.reason, "rateLimited": e.status == 429, "retryAfter": int(ra), "host": host}).encode(),
+                       "application/json", {"Retry-After": ra, "X-ExTerm-Cache": "MISS"})
         except urllib.error.HTTPError as e:
-            if getattr(e, "code", 0) == 429:
-                _cached = _EXTERM_LAST_GOOD.get(url)
-                if _cached:
-                    self.send_response(200)
-                    self.send_header("Content-Type", "application/json")
-                    self.end_headers()
-                    self.wfile.write(_cached)
-                    return
-                _synth = _exterm_synth_dex_ohlcv(url)
-                if _synth:
-                    _EXTERM_LAST_GOOD[url] = _synth
-                    self.send_response(200)
-                    self.send_header("Content-Type", "application/json")
-                    self.end_headers()
-                    self.wfile.write(_synth)
-                    return
-                self.send_response(200)
-                self.send_header("Content-Type", "application/json")
-                self.end_headers()
-                self.wfile.write(b'{"data":[]}')
-                return
-            self._send(e.code, (e.read(MAX_BYTES) if e.fp else b"") or json.dumps({"error": str(e.reason)}).encode())
+            self._send(e.code, getattr(e, "exterm_body", b"") or json.dumps({"error": str(e.reason)}).encode())
         except Exception as e:
-            self._send(502, json.dumps({"error": str(e)}).encode())
+            self._send(502, json.dumps({"error": str(e)[:200]}).encode())
 
     def do_GET(self):
         if not self._local_ok():
             return
         p = urllib.parse.urlparse(self.path).path
+        if p in ("/", "/index.html", "/exterm.html") and not self._loopback():  # --lan: a phone must present this launch's pairing secret
+            q = urllib.parse.parse_qs(urllib.parse.urlparse(self.path).query)
+            if not (LAN and PAIR and _hmac.compare_digest((q.get("pair") or [""])[0], PAIR)):
+                return self._send(403, b"<!doctype html><meta name=viewport content='width=device-width'><body style='font:16px system-ui;background:#07080B;color:#F5C84B;padding:24px'>Scan the pairing QR code shown by ExTerm on your computer.</body>", "text/html; charset=utf-8")
+        if p == "/pair.svg":  # the pairing QR, shown only on the computer itself
+            if not (LAN and OPS is not None and self._loopback()): return self._send(404, b"not found", "text/plain")
+            return self._send(200, OPS.qr_svg(pair_url()).encode(), "image/svg+xml")
         if p in ("/", "/index.html", "/exterm.html"):
             page = APP.read_bytes().replace(b'<meta name="referrer"', b'<meta name="nt-token" content="' + TOKEN.encode() + b'">\n<meta name="referrer"', 1)
             return self._send(200, page, "text/html; charset=utf-8")
@@ -1944,27 +2169,6 @@ class H(http.server.BaseHTTPRequestHandler):
             with OPENER.open(urllib.request.Request(url, data=data, headers=hdr, method="POST"), timeout=20) as r:
                 self._send(r.status, r.read(65536) or b"{}", r.headers.get("Content-Type", "text/plain"))
         except urllib.error.HTTPError as e:
-            if getattr(e, "code", 0) == 429:
-                _cached = _EXTERM_LAST_GOOD.get(url)
-                if _cached:
-                    self.send_response(200)
-                    self.send_header("Content-Type", "application/json")
-                    self.end_headers()
-                    self.wfile.write(_cached)
-                    return
-                _synth = _exterm_synth_dex_ohlcv(url)
-                if _synth:
-                    _EXTERM_LAST_GOOD[url] = _synth
-                    self.send_response(200)
-                    self.send_header("Content-Type", "application/json")
-                    self.end_headers()
-                    self.wfile.write(_synth)
-                    return
-                self.send_response(200)
-                self.send_header("Content-Type", "application/json")
-                self.end_headers()
-                self.wfile.write(b'{"data":[]}')
-                return
             self._send(e.code, (e.read(65536) if e.fp else b"") or json.dumps({"error": str(e.reason)}).encode())
         except Exception as e:
             self._send(502, json.dumps({"error": str(e)}).encode())
@@ -2121,27 +2325,6 @@ def doctor(net=True, port=None, fetch=None):
                     with OPENER.open(urllib.request.Request(url, headers={"User-Agent": "ExTerm-doctor"}), timeout=6) as r: r.read(2048)
                 add(name, True, "reachable in %d ms" % ((time.time() - t0) * 1000))
             except urllib.error.HTTPError as e:
-                if getattr(e, "code", 0) == 429:
-                    _cached = _EXTERM_LAST_GOOD.get(url)
-                    if _cached:
-                        self.send_response(200)
-                        self.send_header("Content-Type", "application/json")
-                        self.end_headers()
-                        self.wfile.write(_cached)
-                        return
-                    _synth = _exterm_synth_dex_ohlcv(url)
-                    if _synth:
-                        _EXTERM_LAST_GOOD[url] = _synth
-                        self.send_response(200)
-                        self.send_header("Content-Type", "application/json")
-                        self.end_headers()
-                        self.wfile.write(_synth)
-                        return
-                    self.send_response(200)
-                    self.send_header("Content-Type", "application/json")
-                    self.end_headers()
-                    self.wfile.write(b'{"data":[]}')
-                    return
                 add(name, None if e.code in (403, 429) else False, "answered HTTP %d" % e.code)
             except Exception as e:
                 add(name, False, "unreachable: %s" % str(e)[:80])
@@ -2192,6 +2375,11 @@ def run_doctor():
     return 1 if bad else 0
 
 
+def pair_url():
+    """--lan: the URL a phone opens (Tailscale address first: its traffic is WireGuard-encrypted end to end)."""
+    ips = OPS.lan_ips() if OPS is not None else []
+    return "http://%s:%d/?pair=%s" % (ips[0] if ips else "127.0.0.1", PORT, PAIR)
+
 def free_port(start):
     for p in range(start, start + 20):
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
@@ -2204,7 +2392,12 @@ if __name__ == "__main__":
     if "--doctor" in sys.argv:
         sys.exit(run_doctor())
     PORT = free_port(PORT)
-    srv = http.server.ThreadingHTTPServer(("127.0.0.1", PORT), H)
+    if LAN or DAEMON:
+        import exterm_ops as OPS
+    # --lan listens on every interface (phones pair with a per-launch secret); EXTERM_BIND=0.0.0.0 is for Docker, where the
+    # compose file publishes the port on the host's 127.0.0.1 only and the Host-header check still admits loopback names only
+    bind = "0.0.0.0" if LAN or os.environ.get("EXTERM_BIND") == "0.0.0.0" else "127.0.0.1"
+    srv = http.server.ThreadingHTTPServer((bind, PORT), H)
     if not (os.environ.get("EXTERM_DATA") or os.environ.get("NOVATERM_DATA")) and migrate_data_dir():
         print("Moved your saved data from %s to %s" % (OLD_DATA_DIR, DATA_DIR))
     if "--no-alerts" not in sys.argv:
@@ -2212,10 +2405,21 @@ if __name__ == "__main__":
         threading.Thread(target=ALERTS.run, daemon=True).start()
     if "--no-state" not in sys.argv:
         STATE = StateStore()
-    if "--no-bots" not in sys.argv:
+    if DAEMON:  # the 24/7 loops run in three supervised processes; this process serves the UI and edits bot configs
+        SUP = OPS.Supervisor(DATA_DIR)
+        threading.Thread(target=SUP.run, daemon=True, name="watchdog").start()
+        BOTS = OPS.shared_bots_class(sys.modules[__name__])(notify=None)
+        _cmd_db = OPS.db(DATA_DIR); _cmd_lock = threading.Lock()
+        def _cmd(cmd, arg):
+            with _cmd_lock: OPS.command(_cmd_db, cmd, arg)
+        BOTS.cmd = _cmd
+        print("24/7 daemon: ingest · bots (10-gate risk firewall) · webhook dispatcher  (data: %s)" % DATA_DIR)
+    elif "--no-bots" not in sys.argv:
         BOTS = BgBots(notify=(ALERTS.send if ALERTS else None))
         threading.Thread(target=BOTS.run, daemon=True).start()
-    if "--no-feed" not in sys.argv:  # keeps running with no browser open: bots' and alerts' symbols are always watched
+    if DAEMON:
+        pass  # the ingest process owns the price feed
+    elif "--no-feed" not in sys.argv:  # keeps running with no browser open: bots' and alerts' symbols are always watched
         FEED = PriceFeed(extra=lambda: [a.get("sym") for a in list(ALERTS.alerts if ALERTS else []) if a.get("active")] + [b.get("sym") for b in list(BOTS.bots if BOTS else []) if b.get("active")])
         threading.Thread(target=FEED.run, daemon=True, name="feed").start()
     if "--no-intel" not in sys.argv and "--offline" not in sys.argv:
@@ -2231,6 +2435,13 @@ if __name__ == "__main__":
             ALERTS.fetch = lambda sym: FEED.price(sym) or _slow(sym)  # fresh cached price first, direct call as fallback
     url = f"http://localhost:{PORT}"
     print(f"ExTerm running at {url}  (keep this window open · Ctrl+C to stop)")
+    if LAN:
+        PAIR = secrets.token_urlsafe(18)
+        pu = pair_url()
+        print("\nPhone pairing (same Wi-Fi or Tailscale): scan this QR code, or open " + pu)
+        try: print(OPS.qr_ascii(pu))
+        except UnicodeEncodeError: print("(this console can't draw the QR code: open %s/pair.svg on this computer)" % url)
+        print("Plain HTTP on your network: prefer Tailscale (encrypted). The pairing secret changes every launch.\n")
     if not NO_BROWSER:
         print("Opening in " + open_in_chrome(url))
     try:

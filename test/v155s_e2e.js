@@ -18,6 +18,7 @@ const PORT = 8806, BASE = 'http://localhost:' + PORT, DATA = fs.mkdtempSync(path
   try {
     const ctx = await b.newContext({ viewport: { width: 1440, height: 900 } });
     await ctx.route('**/*', (r) => (r.request().url().startsWith(BASE) ? r.continue() : r.abort()));
+    await ctx.routeWebSocket((u) => !/^wss?:\/\/(127\.0\.0\.1|localhost)[:/]/.test(String(u)), (ws) => ws.close()); // offline: no outside WebSockets either
     const page = await ctx.newPage(); page.setDefaultTimeout(10000);
     page.on('pageerror', (e) => errs.push(e.message)); page.on('dialog', (d) => { errs.push('DIALOG ' + d.message()); d.dismiss(); });
     page.on('console', (m) => { if (m.type() === 'error' && /Content Security Policy|Refused to/.test(m.text())) errs.push('CSP ' + m.text()); });

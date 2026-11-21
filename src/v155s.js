@@ -1,4 +1,4 @@
-/* Copyright (c) 2026 ExTerm Labs (@exterm.labs) · Licensed under GNU AGPL-3.0 · https://github.com/uexxx/ExTerm */
+/* Copyright (c) 2026 ExTerm Labs. All Rights Reserved. Free for personal, non-commercial use. Copying, modifying, reverse-engineering, cloning, or redistributing source or derivative works without express written permission from ExTerm Labs is strictly prohibited. */
 /* ExTerm v15.5 screen restructures. Every existing control is wrapped or moved, never re-implemented, so its listeners,
    ids and data feeds keep working:
    1. Pro Desk → Order Flow: 2-column split (DOM ladder + tape-velocity bar | tabbed CVD & Absorption · Anchored VWAP &

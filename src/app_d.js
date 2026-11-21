@@ -20,11 +20,12 @@ function applyModeChrome() {
 }
 function setMode(m, sel) {
   if (m !== 'crypto' && m !== 'stocks' && m !== 'onchain') return;
+  const seq = setMode.seq = (setMode.seq || 0) + 1; // a later mode choice cancels a still-loading first on-chain visit
   if (m === 'onchain') {
     const k = ST.mk.onchain || (ST.mk.onchain = { watch: [], sel: null, tf: '5m' });
     if (!sel && (!k.sel || !k.watch.length)) { // first visit: fill the watchlist with today's trending pools, then switch
-      if (setMode.busy) return; setMode.busy = true; toast('Loading trending on-chain tokens…');
-      OC.discover('trending').then((syms) => { const top = syms.slice(0, 10); if (!k.watch.length) k.watch = top.slice(); k.sel = k.sel || top[0]; }).catch(() => {}).finally(() => { setMode.busy = false; if (k.sel) setMode('onchain'); else toast('No on-chain tokens available right now', 'amb'); });
+      if (setMode.busy) { setMode.pend = seq; return; } setMode.busy = true; setMode.pend = 0; toast('Loading trending on-chain tokens…');
+      OC.discover('trending').then((syms) => { const top = syms.slice(0, 10); if (!k.watch.length) k.watch = top.slice(); k.sel = k.sel || top[0]; }).catch(() => {}).finally(() => { setMode.busy = false; if (setMode.seq !== seq && setMode.seq !== setMode.pend) return; if (k.sel) setMode('onchain'); else toast('No on-chain tokens available right now', 'amb'); });
       return;
     }
     if (sel && !k.watch.includes(sel) && ST.mode !== 'onchain') k.watch.unshift(sel);

@@ -18,13 +18,14 @@ def fresh(rel, now=None):
     return serve.update_info(fetch=fetch, now=now or time.time()), seen
 
 ok("version is 15.x or later", re.match(r"^1[5-9]\.\d+$", serve.VERSION) is not None)
-r, seen = fresh({"tag_name": "v16.9", "html_url": REL + "v16.9", "body": "Faster radar\n\n- fixes"})
-ok("a newer release is reported", r["newer"] is True and r["latest"] == "16.9" and r["current"] == serve.VERSION and r["url"] == REL + "v16.9", r)
+r, seen = fresh({"tag_name": "v99.9", "html_url": REL + "v99.9", "body": "Faster radar\n\n- fixes"})
+ok("a newer release is reported", r["newer"] is True and r["latest"] == "99.9" and r["current"] == serve.VERSION and r["url"] == REL + "v99.9", r)
 ok("it asks only the fixed GitHub API URL", seen == ["https://api.github.com/repos/%s/releases/latest" % serve.UPDATE_REPO], seen)
 ok("notes are flattened to one plain line", r["notes"] == "Faster radar - fixes", r["notes"])
 r, _ = fresh({"tag_name": "13.9", "html_url": REL + "13.9"}); ok("an older release is not newer", r["newer"] is False and r["latest"] == "13.9")
 r, _ = fresh({"tag_name": "v" + serve.VERSION, "html_url": REL + "v" + serve.VERSION}); ok("the same version is not newer", r["newer"] is False)
-r, _ = fresh({"tag_name": "v16.10", "html_url": REL + "v16.10"}); ok("16.10 counts as newer than 16.0 (numeric, not text)", r["newer"] is True)
+_maj = serve.VERSION.split(".")[0]
+r, _ = fresh({"tag_name": "v%s.10" % _maj, "html_url": REL + "v%s.10" % _maj}); ok("X.10 counts as newer than X.0 (numeric, not text)", r["newer"] is True)
 for bad_url in ["https://evil.example/releases/x", "javascript:alert(1)", "https://github.com/someone-else/exterm/releases/x", "http://github.com/%s/releases/x" % serve.UPDATE_REPO]:
     r, _ = fresh({"tag_name": "v99", "html_url": bad_url})
     ok("a release link off the project's GitHub is rejected (%s)" % bad_url[:30], r["newer"] is False and r["url"] is None)

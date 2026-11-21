@@ -1,4 +1,4 @@
-/* Copyright (c) 2026 ExTerm Labs (@exterm.labs) · Licensed under GNU AGPL-3.0 · https://github.com/uexxx/ExTerm */
+/* Copyright (c) 2026 ExTerm Labs. All Rights Reserved. Free for personal, non-commercial use. Copying, modifying, reverse-engineering, cloning, or redistributing source or derivative works without express written permission from ExTerm Labs is strictly prohibited. */
 /* ExTerm v16.0 / v16.1 UI: six local external bot bridges, the four-gate live safety lock and the eight fail-safe engines.
    · Grok tab → Execution Bridge panel (six adapter slots, heartbeat latency, per-slot HMAC secret, receiver schema,
      Test Signal Payload dry-run); Settings tab → status card that opens it

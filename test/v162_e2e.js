@@ -33,6 +33,7 @@ const kinds = (k) => R.got.filter((p) => p.kind === k);
     // this suite checks the start-up briefing, so it presents itself as a normal (non-automated) browser
     await ctx.addInitScript(() => { Object.defineProperty(Navigator.prototype, 'webdriver', { get: () => false }); });
     await ctx.route('**/*', (r) => { const u = r.request().url(); return u.startsWith(BASE) || u.startsWith(RECV) ? r.continue() : r.abort(); });
+    await ctx.routeWebSocket((u) => !/^wss?:\/\/(127\.0\.0\.1|localhost)[:/]/.test(String(u)), (ws) => ws.close()); // offline: no outside WebSockets either
     const page = await ctx.newPage(); page.setDefaultTimeout(10000);
     page.on('pageerror', (e) => errs.push(e.message)); page.on('dialog', (d) => { errs.push('DIALOG ' + d.message()); d.dismiss(); });
     page.on('console', (m) => { const t = m.text(); if ((m.type() === 'error' && /Content Security Policy|Refused to/.test(t)) || /^v16[012] /.test(t)) errs.push('CONSOLE ' + t); });

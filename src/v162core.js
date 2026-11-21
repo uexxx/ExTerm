@@ -1,4 +1,4 @@
-/* Copyright (c) 2026 ExTerm Labs (@exterm.labs) · Licensed under GNU AGPL-3.0 · https://github.com/uexxx/ExTerm */
+/* Copyright (c) 2026 ExTerm Labs. All Rights Reserved. Free for personal, non-commercial use. Copying, modifying, reverse-engineering, cloning, or redistributing source or derivative works without express written permission from ExTerm Labs is strictly prohibited. */
 /* ExTerm v16.2 core (pure, no DOM): sub-minute history seeding, minimum price span, daily-loss breach test,
    launch briefing content and the live-only workspace map. UI in v162.js. */
 const V162 = (() => {

@@ -1,0 +1,14 @@
+{
+  "name": "exterm",
+  "version": "17.0.0",
+  "description": "ExTerm — local-first multi-asset trading workstation",
+  "private": true,
+  "license": "UNLICENSED",
+  "author": "ExTerm Labs",
+  "homepage": "https://github.com/uexxx/ExTerm",
+  "scripts": {
+    "build": "python build.py",
+    "build:harden": "python build.py --harden",
+    "serve": "python serve.py"
+  }
+}

@@ -1,16 +1,18 @@
 #!/usr/bin/env python3
-# Copyright (c) 2026 ExTerm Labs (@exterm.labs) · Licensed under GNU AGPL-3.0 · https://github.com/uexxx/ExTerm
+# Copyright (c) 2026 ExTerm Labs. All Rights Reserved. Free for personal, non-commercial use. Copying, modifying, reverse-engineering, cloning, or redistributing source or derivative works without express written permission from ExTerm Labs is strictly prohibited.
 """Inline CSS + JS into one self-contained HTML file: dist/exterm.html"""
 import pathlib
 root = pathlib.Path(__file__).parent
 src = root / "src"
 html = (src / "index.html").read_text(encoding="utf-8")
 css = (src / "style.css").read_text(encoding="utf-8")
-order = ["disksync.js", "core.js", "strategies2.js", "stratspec.js", "strategies3.js", "strategies4.js", "validate.js", "data.js", "stocks.js", "solana.js", "dex.js", "sec.js", "keyvault.js", "onchain.js", "safety.js", "charts.js","indicators.js","orderflow.js","indpick.js","picker.js","fx3d.js", "themes.js", "app_a.js", "app_b.js", "builder.js", "app_d.js", "app_c.js","social.js","app_e.js","workspace.js","journal.js","challenge.js","copilot.js","replay.js","pro.js","localai.js","v12.js", "v13core.js", "v14core.js", "perps.js", "onchain2.js", "walletpro.js", "socialpro.js", "bgbots.js", "v13.js", "v14.js", "v15core.js", "v15p2core.js", "v15p2.js", "v15p3core.js", "grok.js", "world.js", "v15p4core.js", "v15p4.js", "v15p5core.js", "v15p5.js", "v151core.js", "v151.js", "i18n.js", "v152core.js", "v152.js", "v153core.js", "v153.js", "v154core.js", "learn_academy.js", "leaderboards.js", "v154_core_upgrades.js", "v155core.js", "v155.js", "v155s.js", "v156core.js", "v156.js", "v157core.js", "v157.js", "v160core.js", "v161core.js", "v162core.js", "v163core.js", "v164core.js", "v165core.js", "v166core.js", "v160.js", "v161.js", "v162.js", "v163.js", "v164.js", "v165.js", "v166.js", "boot.js"]
+order = ["disksync.js", "core.js", "strategies2.js", "stratspec.js", "strategies3.js", "strategies4.js", "validate.js", "data.js", "stocks.js", "solana.js", "dex.js", "sec.js", "keyvault.js", "onchain.js", "safety.js", "charts.js","indicators.js","orderflow.js","indpick.js","picker.js","fx3d.js", "themes.js", "app_a.js", "app_b.js", "builder.js", "app_d.js", "app_c.js","social.js","app_e.js","workspace.js","journal.js","challenge.js","copilot.js","replay.js","pro.js","localai.js","v12.js", "v13core.js", "v14core.js", "perps.js", "onchain2.js", "walletpro.js", "socialpro.js", "bgbots.js", "v13.js", "v14.js", "v15core.js", "v15p2core.js", "v15p2.js", "v15p3core.js", "grok.js", "world.js", "v15p4core.js", "v15p4.js", "v15p5core.js", "v15p5.js", "v151core.js", "v151.js", "i18n.js", "v152core.js", "v152.js", "v153core.js", "v153.js", "v154core.js", "learn_academy.js", "leaderboards.js", "v154_core_upgrades.js", "v155core.js", "v155.js", "v155s.js", "v156core.js", "v156.js", "v157core.js", "v157.js", "v160core.js", "v161core.js", "v162core.js", "v163core.js", "v164core.js", "v165core.js", "v166core.js", "v170core.js", "v160.js", "v161.js", "v162.js", "v163.js", "v164.js", "v165.js", "v166.js", "v170.js", "boot.js"]
+V17_PRO = ["v170pro.js", "v170app.js", "v170mob.js"]  # v17.0 Phases 2–5: pure core, then the UI wrappers; they wrap boot(), so they load right before boot.js
+order = order[:order.index("boot.js")] + V17_PRO + order[order.index("boot.js"):]
 js = "\n".join(f"/* ===== {n} ===== */\n" + (src / n).read_text(encoding="utf-8") for n in order if (src / n).exists())
 wallets = (src / "wallets.json").read_text(encoding="utf-8")
 import json as _json
-worker_src = "\n".join((src / f).read_text(encoding="utf-8") for f in ("core.js", "strategies2.js", "stratspec.js", "strategies3.js", "strategies4.js", "validate.js", "v153core.js", "v15p5core.js", "v164core.js", "worker.js"))
+worker_src = "\n".join((src / f).read_text(encoding="utf-8") for f in ("core.js", "strategies2.js", "stratspec.js", "strategies3.js", "strategies4.js", "validate.js", "v153core.js", "v15p5core.js", "v164core.js", "v170core.js", "worker.js"))
 js = "const WORKER_SRC = " + _json.dumps(worker_src) + ";\n" + js
 js = "const DEFAULT_WALLETS = " + wallets.strip() + ";\n" + js
 _community = []
@@ -49,7 +51,7 @@ dist.mkdir(exist_ok=True)
 assert "script-src 'sha256-" in out and "default-src 'none'" in out, "CSP not pinned"
 print(f"built dist/{'exterm.min.html' if HARDEN else 'exterm.html'}  {len(out)/1024:.0f} KB")
 import shutil as _sh
-for _f in ("serve.py", "serve.ps1"):  # LF-normalised: git ships LF blobs, so SHA256SUMS must hash the LF bytes (a CRLF checkout would not match)
+for _f in ("serve.py", "serve.ps1", "exterm_ops.py", "Dockerfile", "docker-compose.yml"):  # LF-normalised: git ships LF blobs, so SHA256SUMS must hash the LF bytes (a CRLF checkout would not match)
     (dist / _f).write_bytes((root / _f).read_bytes().replace(b"\r\n", b"\n"))
 if not HARDEN:  # the top-level copy is what serve.py serves first and what people double-click: keep it in sync
     _sh.copy(dist / "exterm.html", root / "exterm.html")
@@ -64,7 +66,7 @@ if _icon.exists():
         _sh.copy(_icon, dist / "icon-192.png")
 # release integrity: SHA-256 of every shipped file, so anyone can check a download wasn't tampered with
 _sums = []
-for _f in ("exterm.html", "exterm.min.html", "serve.py", "serve.ps1", "icon-192.png", "icon-512.png"):
+for _f in ("exterm.html", "exterm.min.html", "serve.py", "serve.ps1", "exterm_ops.py", "Dockerfile", "docker-compose.yml", "icon-192.png", "icon-512.png"):
     _p = dist / _f
     if _p.exists():
         _sums.append(hashlib.sha256(_p.read_bytes()).hexdigest() + "  " + _f)

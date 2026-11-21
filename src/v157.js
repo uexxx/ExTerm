@@ -1,4 +1,4 @@
-/* Copyright (c) 2026 ExTerm Labs (@exterm.labs) · Licensed under GNU AGPL-3.0 · https://github.com/uexxx/ExTerm */
+/* Copyright (c) 2026 ExTerm Labs. All Rights Reserved. Free for personal, non-commercial use. Copying, modifying, reverse-engineering, cloning, or redistributing source or derivative works without express written permission from ExTerm Labs is strictly prohibited. */
 /* ExTerm v15.7 UI: sub-second true-form candles + five pure-canvas 3D views. Wraps existing pieces (ids, feeds and
    listeners stay intact):
    · every live trade lands in a 15-minute Float64Array ring of 1s bars (V157.rings), so a fresh 1s / 5s / 10s chart is

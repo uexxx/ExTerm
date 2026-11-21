@@ -1,4 +1,4 @@
-/* Copyright (c) 2026 ExTerm Labs (@exterm.labs) · Licensed under GNU AGPL-3.0 · https://github.com/uexxx/ExTerm */
+/* Copyright (c) 2026 ExTerm Labs. All Rights Reserved. Free for personal, non-commercial use. Copying, modifying, reverse-engineering, cloning, or redistributing source or derivative works without express written permission from ExTerm Labs is strictly prohibited. */
 /* ExTerm v15.5 UI: zero-clutter workspace. Compact header (Ctrl+K search pill, quiet status dots, ⋯ More menu, Simple | Pro,
    Reset Clean View), grouped nav, slim chart toolbar (4 timeframe pills, Overlays ▾, AI Lens ▾, drawing rail), Zen Chart
    Focus (F / « »), Smart Order Rules accordion + inline risk slider, Favorite-4 quick bar, smart context highlights,

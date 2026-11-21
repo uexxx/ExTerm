@@ -1,4 +1,4 @@
-/* Copyright (c) 2026 ExTerm Labs (@exterm.labs) · Licensed under GNU AGPL-3.0 · https://github.com/uexxx/ExTerm */
+/* Copyright (c) 2026 ExTerm Labs. All Rights Reserved. Free for personal, non-commercial use. Copying, modifying, reverse-engineering, cloning, or redistributing source or derivative works without express written permission from ExTerm Labs is strictly prohibited. */
 /* ExTerm v15.7 core (pure, Node-testable): a pre-allocated Float64Array ring of 1-second OHLCV bars per symbol (15 minutes,
    no per-tick allocation), local 1s → 5s / 10s rollup with gapless open = prior close, sub-10s candle geometry (≥ 4px body,
    2px gap, ≥ 2.5px body height) and the perspective maths behind the five pure-canvas 3D views. */

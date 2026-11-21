@@ -1,4 +1,4 @@
-/* Copyright (c) 2026 ExTerm Labs (@exterm.labs) · Licensed under GNU AGPL-3.0 · https://github.com/uexxx/ExTerm */
+/* Copyright (c) 2026 ExTerm Labs. All Rights Reserved. Free for personal, non-commercial use. Copying, modifying, reverse-engineering, cloning, or redistributing source or derivative works without express written permission from ExTerm Labs is strictly prohibited. */
 /* ExTerm v16.4 UI. Maths in V164 (v164core.js); this file only wires it into the existing app:
    · chart: multi-exchange trade-stream failover, 500 ms DEX swap tape (launcher), ⚓ AVWAP toolbar tool (click / session /
      swing anchors), live tape-delta + book micro-imbalance strip, backtest trade replay markers, young-token viewport fit

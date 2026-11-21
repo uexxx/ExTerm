@@ -1,0 +1,40 @@
+# Copyright (c) 2026 ExTerm Labs. All Rights Reserved.
+# Builds ExTerm-v17.0-android.apk (Gradle-free: aapt2 → javac → d8 → zipalign → apksigner) on every tag and on demand.
+# Signing: set the EXTERM_KEYSTORE_PASS repository secret for a stable key; without it each run signs with a throwaway key.
+name: build-android-apk
+on:
+  workflow_dispatch:
+  push:
+    tags: ['v*']
+permissions:
+  contents: read
+jobs:
+  apk:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Android SDK packages
+        run: |
+          yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses > /dev/null
+          "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "platforms;android-34" "build-tools;34.0.0"
+      - name: Build the hardened single-file app
+        run: |
+          sudo npm i --prefix /opt/npm-tools esbuild@0.24.0
+          pip install pillow
+          python build.py --harden
+      - name: Build and sign the APK
+        env:
+          EXTERM_KEYSTORE: ${{ runner.temp }}/exterm-ci.jks
+          EXTERM_KEYSTORE_PASS: ${{ secrets.EXTERM_KEYSTORE_PASS || github.run_id }}
+        run: python tools/build_apk.py --html dist/exterm.min.html --out dist/ExTerm-v17.0-android.apk
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ExTerm-v17.0-android
+          path: dist/ExTerm-v17.0-android.apk

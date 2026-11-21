@@ -1,4 +1,4 @@
-/* Copyright (c) 2026 ExTerm Labs (@exterm.labs) · Licensed under GNU AGPL-3.0 · https://github.com/uexxx/ExTerm */
+/* Copyright (c) 2026 ExTerm Labs. All Rights Reserved. Free for personal, non-commercial use. Copying, modifying, reverse-engineering, cloning, or redistributing source or derivative works without express written permission from ExTerm Labs is strictly prohibited. */
 /* ExTerm v15.6 core (pure, Node-testable): compact shorthand numbers ($1.43M, +48.2%, $0.0₅48) with exact tooltips, 44px
    sparkline geometry, option Greeks for the inspector rail, virtual-window maths for long tables, O(1) latest-bar indicator
    patching (only the forming bar is recomputed) and a chunked, seed-identical Monte Carlo that yields to the frame loop. */

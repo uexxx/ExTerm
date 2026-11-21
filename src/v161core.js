@@ -1,4 +1,4 @@
-/* Copyright (c) 2026 ExTerm Labs (@exterm.labs) · Licensed under GNU AGPL-3.0 · https://github.com/uexxx/ExTerm */
+/* Copyright (c) 2026 ExTerm Labs. All Rights Reserved. Free for personal, non-commercial use. Copying, modifying, reverse-engineering, cloning, or redistributing source or derivative works without express written permission from ExTerm Labs is strictly prohibited. */
 /* ExTerm v16.1 core (pure, Node-testable): bot fail-safe engines and chart maths.
    · outbound schema validator + Max Single-Order Notional fat-finger firewall
    · spread circuit breaker (Execution Shield) · consecutive-loss cooldown (Tilt & Drawdown Guard)

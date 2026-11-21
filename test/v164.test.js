@@ -94,7 +94,7 @@ ok('every structural strategy backtests on the real engine and carries a stop', 
 const vg = NT.validate(cand, NT.strategies[ids[0]], {}, {});
 ok('17-test validation gate grades a structural strategy', vg && vg.checks.length === 17 && /^[A-F]$/.test(vg.grade), vg && vg.grade);
 ok('Funding & Basis strategy is a short with an honest proxy description', NT.strategies.q5_basis.short === true && /no funding history/.test(NT.strategies.q5_basis.spec.desc));
-ok('worker bundle includes v164core.js so pack 5 runs off-thread', /"v15p5core\.js", "v164core\.js", "worker\.js"/.test(src('build.py')) && /self\.NT\.Spec\) \{ try \{ V164\.register\(self\.NT\)/.test(src('v164core.js')));
+ok('worker bundle includes v164core.js so pack 5 runs off-thread', /"v15p5core\.js", "v164core\.js", (?:"v170core\.js", )?"worker\.js"/.test(src('build.py')) && /self\.NT\.Spec\) \{ try \{ V164\.register\(self\.NT\)/.test(src('v164core.js')));
 
 // Pine templates
 ok('Pine v5 library: every template is confirmed-bar, no look-ahead, $ risk sized, strategy.exit stop, max_intraday_loss, webhook JSON', V.PINE_LIB.length === 6 && V.PINE_LIB.every((k) => { const c2 = V.pineCheck(V.pine(k)); return c2.ok && !c2.repaint && /^\/\/@version=5/.test(V.pine(k)) && /127\.0\.0\.1/.test(V.pine(k)); }));
@@ -139,7 +139,7 @@ ok('backtest trade replay markers', V.markers([{ ts: 1700000000000, price: 1, si
 
 // static wiring / CSP / privacy
 const ui = src('v164.js'), core = src('v164core.js'), B = src('build.py'), css = src('style.css');
-ok('build: v164core.js after v163core.js, v164.js after v163.js, before boot.js', /"v163core\.js", "v164core\.js", (?:"v165core\.js", )?(?:"v166core\.js", )?"v160\.js"/.test(B) && /"v163\.js", "v164\.js", (?:"v165\.js", )?(?:"v166\.js", )?"boot\.js"/.test(B));
+ok('build: v164core.js after v163core.js, v164.js after v163.js, before boot.js', /"v163core\.js", "v164core\.js", (?:"v165core\.js", )?(?:"v166core\.js", )?(?:"v170core\.js", )?"v160\.js"/.test(B) && /"v163\.js", "v164\.js", (?:"v165\.js", )?(?:"v166\.js", )?(?:"v170\.js", )?"boot\.js"/.test(B));
 ok('v16.0 router: Multi-Slot Strategy Router hook (default slot 6)', /U\.slotFor\(bot\) : 6/.test(src('v160.js')) && /V160UI\.slotFor = \(bot\) => V164\.route/.test(ui));
 ok('briefing lists the v16.4 highlights', /V164\.HIGHLIGHTS/.test(src('v162.js')) && V.HIGHLIGHTS.length >= 5);
 ok('UI: discovery isolates rows by mode and syncs the legacy heat views to the market pill', /return V164\.isolate\(out, m\)/.test(ui) && /ST\.heat\.asset = m/.test(ui));
@@ -149,7 +149,7 @@ ok('XSS: toasts with dynamic text escape it', !/toast\(`[^`]*\$\{(?!esc\()[^`]*`
 ok('XSS: table / list cells go through esc()', !/<td>\$\{(?!esc\(|cell\(|r\.decay|statRow)/.test(ui));
 ok('CSS: discovery, copilot, studio styles present with RTL rules', ['.v164-dex', '.v164-t', '.v164-tile', '.v164-pb', '.v164-cop', '.v164-stu', '.v164-zone', 'html[dir="rtl"] .v164-tip'].every((k) => css.includes(k)));
 ok('privacy: no personal paths, emails, usernames or legacy product name in v16.4 sources', !new RegExp(['[A-Z]:\\\\Users\\\\', '\\/Users\\/', '@gm' + 'ail', 'ro' + 'blo', 'nova' + 'term', 'op' + 'en[- ]?so' + 'urce'].join('|'), 'i').test(ui + core));
-ok('launcher points at the ExTerm repository for update checks', /UPDATE_REPO = "uexxx\/ExTerm"/.test(src('serve.py')) && /VERSION = "16\.[456]"/.test(src('serve.py')));
+ok('launcher points at the ExTerm repository for update checks', /UPDATE_REPO = "uexxx\/ExTerm"/.test(src('serve.py')) && /VERSION = "(16\.[456]|1[7-9]\.\d+)"/.test(src('serve.py')));
 
 const fails = res.filter((r) => r.startsWith('FAIL'));
 console.log(res.join('\n')); console.log(`${res.length - fails.length}/${res.length} passed`); process.exit(fails.length ? 1 : 0);

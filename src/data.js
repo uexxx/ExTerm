@@ -472,7 +472,7 @@ const TFX = {
     const P = providerFor(sym);
     if (tf < 60) {
       if (isStock(sym)) { if (typeof Stocks !== 'undefined' && Stocks.active === StockDemo) return simCandles(sym, (StockDemo.init(sym), StockDemo.px[sym]), tf, n, 0.55); return TFX.seedHist(sym, tf, n, await TFX.stockSub(sym, tf, n).catch(() => [])); }
-      if (isOnchain(sym)) { if (OC.parse(sym).chain === 'sim') return OC.candles(sym, tf, n); let tr = []; try { tr = TFX.fromTrades((await OC.trades(sym)).map((x) => ({ t: x.ts, p: x.p, q: x.q })), tf).slice(-n); } catch (e) { /* no swaps yet */ } return TFX.seedHist(sym, tf, n, tr); }
+      if (isOnchain(sym)) { if (OC.parse(sym).chain === 'sim') return OC.candles(sym, tf, n); let tr = []; try { tr = TFX.fromTrades((await OC.trades(sym, { noWait: true })).map((x) => ({ t: x.ts, p: x.p, q: x.q })), tf).slice(-n); } catch (e) { /* no swaps yet */ } return TFX.seedHist(sym, tf, n, tr); }
       if (P === Demo || P.id === 'demo') return P.candles(sym, tf, n);
       try {
         // one REST pull per symbol per 20 s, shared by 1s / 5s / 15s / 30s (Coinbase rate limits), merged with the live WebSocket trades

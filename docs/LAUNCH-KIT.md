@@ -5,7 +5,7 @@ Setup Card**. Copy, trim and post. Every claim below matches what ships in v16.5
 
 - **Download:** https://github.com/uexxx/ExTerm/releases/latest
 - **Handles:** X [@ExTermLabs](https://x.com/ExTermLabs) · Instagram [@exterm.labs](https://www.instagram.com/exterm.labs)
-- **Hero image:** `docs/screenshots/05-ai-bridge-copy-firewall.png` (1440×900)
+- **Hero image:** `docs/screenshots/01-markets-terminal.png` (1440×900 at 2×)
 - **Brand colours:** Obsidian `#0b0b0f` · Gold `#D4AF37` · Profit `#2fd08a` · Loss `#f43f5e`
 
 ### Ground rules for every post

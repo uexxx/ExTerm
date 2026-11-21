@@ -1,4 +1,4 @@
-/* Copyright (c) 2026 ExTerm Labs (@exterm.labs) · Licensed under GNU AGPL-3.0 · https://github.com/uexxx/ExTerm */
+/* Copyright (c) 2026 ExTerm Labs. All Rights Reserved. Free for personal, non-commercial use. Copying, modifying, reverse-engineering, cloning, or redistributing source or derivative works without express written permission from ExTerm Labs is strictly prohibited. */
 /* ExTerm v16.6 core (pure, no DOM, Node-testable): typed-array live tape engine.
    · one ring per symbol, 2,000 prints: Float64Array [ts, price, size, totalUsd] + Uint32Array [sideMask, venueId]
    · three strictly isolated markets (stocks · crypto · onchain): separate ring maps and venue / maker tables

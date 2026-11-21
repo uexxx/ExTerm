@@ -1,4 +1,4 @@
-/* Copyright (c) 2026 ExTerm Labs (@exterm.labs) · Licensed under GNU AGPL-3.0 · https://github.com/uexxx/ExTerm */
+/* Copyright (c) 2026 ExTerm Labs. All Rights Reserved. Free for personal, non-commercial use. Copying, modifying, reverse-engineering, cloning, or redistributing source or derivative works without express written permission from ExTerm Labs is strictly prohibited. */
 /* ExTerm v15.5 core (pure, Node-testable): Bot Net Profit hero maths, "What Changed?" run diff, Ctrl+K feature index +
    fuzzy search, Simple | Pro workspace groups, smart context defaults per asset class, Favorite-4 quick bar, debounce. */
 const V155 = (() => {

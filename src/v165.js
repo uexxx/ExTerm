@@ -1,4 +1,4 @@
-/* Copyright (c) 2026 ExTerm Labs (@exterm.labs) · Licensed under GNU AGPL-3.0 · https://github.com/uexxx/ExTerm */
+/* Copyright (c) 2026 ExTerm Labs. All Rights Reserved. Free for personal, non-commercial use. Copying, modifying, reverse-engineering, cloning, or redistributing source or derivative works without express written permission from ExTerm Labs is strictly prohibited. */
 /* ExTerm v16.5 UI. Maths in V165 (v165core.js); this file only wires it into the existing app:
    · AI Bridge tab (3 cards): Copy Live Context for Any AI · Paste & Verify AI Output · Live 127.0.0.1 AI & Bot Firewall
    · chart: dashed AI ghost lines with R:R and $ axis badges (pinned ▲/▼ when off screen), 1-click staging, Share Setup Card
