@@ -24,7 +24,7 @@ ALLOW = {  # only these public API hosts can be proxied
     "eth.llamarpc.com", "1rpc.io", "cloudflare-eth.com", "blockchain.info", "mempool.space",
     "router.huggingface.co", "openrouter.ai", "api.openai.com",
     "query1.finance.yahoo.com", "query2.finance.yahoo.com",
-    "api.mainnet-beta.solana.com", "solana-rpc.publicnode.com", "solana.drpc.org", "solana.api.onfinality.io", "api.dexscreener.com", "api.geckoterminal.com", "api.binance.com", "testnet.binance.vision", "api.bybit.com", "api.hyperliquid.xyz", "www.okx.com", "api-testnet.bybit.com", "api.alpaca.markets", "paper-api.alpaca.markets", "data.alpaca.markets", "api.x.com", "api.twitter.com", "api.stocktwits.com", "www.reddit.com",
+    "api.mainnet-beta.solana.com", "solana-rpc.publicnode.com", "solana.drpc.org", "solana.api.onfinality.io", "api.dexscreener.com", "lite-api.jup.ag", "api.geckoterminal.com", "api.binance.com", "testnet.binance.vision", "api.bybit.com", "api.hyperliquid.xyz", "www.okx.com", "api-testnet.bybit.com", "api.alpaca.markets", "paper-api.alpaca.markets", "data.alpaca.markets", "api.x.com", "api.twitter.com", "api.stocktwits.com", "www.reddit.com",
     "api.worldmonitor.app", "api.x.ai", "stats-data.hyperliquid.xyz",
     "data.solanatracker.io", "api.helius.xyz", "api.rugcheck.xyz", "www.sec.gov", "data.sec.gov", "efts.sec.gov", "feeds.finance.yahoo.com", "production.dataviz.cnn.io",
 }
@@ -131,12 +131,12 @@ def _shield_strike(host, retry_after=None, net=False):
             cd = {"until": 0.0, "n": 0, "logged": -1.0, "since": now}
             _EXTERM_HOST_COOLDOWN[host] = cd
         if now < cd["until"]:  # already cooling: a burst of parallel 429s is ONE strike (only Retry-After may extend the window)
-            if retry_after: cd["until"] = max(cd["until"], now + min(600.0, retry_after))
+            if retry_after: cd["until"] = max(cd["until"], now + min(60.0, retry_after))
             return cd["until"] - now
         cd["n"] += 1
-        wait = min(60.0 if net else 300.0, (1.0 if net else 2.0) * (2 ** min(cd["n"] - 1, 10)))
+        wait = min(60.0, (1.0 if net else 2.0) * (2 ** min(cd["n"] - 1, 10)))  # v17.1: never sit out more than 60 s (the page fails over to the next provider meanwhile)
         if retry_after:
-            wait = max(wait, min(600.0, retry_after))
+            wait = max(wait, min(60.0, retry_after))
         if now >= cd["until"]:
             cd["since"] = now  # a new window: allow one new log line
         cd["until"] = max(cd["until"], now + wait)
@@ -314,7 +314,7 @@ class NoRedirect(urllib.request.HTTPRedirectHandler):
 NOTIFY_OPENER = urllib.request.build_opener(NoRedirect(), urllib.request.HTTPSHandler(context=CTX))
 LOCAL_OPENER = urllib.request.build_opener(NoRedirect(), urllib.request.HTTPHandler())
 
-VERSION = "17.0"
+VERSION = "17.1"
 STARTED = time.time()
 CACHE_STATS = {"hits": 0, "total": 0}  # /api/feed symbols answered from RAM vs asked for (Grok telemetry strip)
 OLD_DATA_DIR = pathlib.Path.home() / (".nova" + "term")  # pre-v15 data folder, moved to ~/.exterm on first start

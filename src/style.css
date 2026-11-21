@@ -2041,3 +2041,65 @@ body.x17-amoled,body.x17-amoled .bgfx,body.x17-amoled #top,body.x17-amoled #nav,
   #tab-markets .side-col{display:block;max-height:calc(100vh - 70px);overflow:auto}
   .x17-dock{height:46px}.x17-dock button span{font-size:15px}
 }
+
+/* ══════════ ExTerm v17.1 · 2-row header, WCAG AAA tokens, context strip, stale lock, chart 3D, Neural Core ══════════ */
+body.x171[data-theme="obsidian"],body.x171[data-theme="gold"],body.x171:not([data-theme]){--bg:#07080B;--bg2:#07080B;--panel:#0D1117;--panel-solid:#0D1117;--panel2:#161B22;--text:#F8FAFC;--mut:#94A3B8;--meta:#94A3B8;--line:rgba(148,163,184,.18);--line2:rgba(148,163,184,.28);--x17-bg:#07080B;--x17-card:#0D1117}
+body.x171[data-theme="obsidian"] .panel,body.x171[data-theme="gold"] .panel,body.x171[data-theme="obsidian"] .x17-card,body.x171[data-theme="gold"] .x17-card{background:#0D1117}
+body.x171[data-theme="obsidian"] .panel>h3,body.x171[data-theme="gold"] .panel>h3,body.x171 .x17-card>h3,body.x171 .p5-p .ph{background:#161B22;color:#F8FAFC}
+body.x171 :is(.note,.lbl,.tag,small,th,.x17-kpi span,.x17-f span,.v164-fp button){font-size:max(11px,1em)}
+body.x171 :is(.note,.lbl,th,.x17-kpi span){color:#94A3B8}
+body.x171 .x17-kpi b,body.x171 .eqbox b,body.x171 #qPrice{color:#F8FAFC}
+/* 4 bars → 2 crisp rows: the scrolling ticker duplicates the bottom strip, the group captions duplicate the tabs */
+body.x171 #ticker{display:none!important}
+body.x171 #nav.v155-nav{height:34px!important;padding-top:2px;padding-bottom:2px;align-items:center;flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden;scrollbar-width:none}
+body.x171 #nav.v155-nav::-webkit-scrollbar{display:none}
+body.x171 #nav.v155-nav>*{align-self:center;max-height:30px;flex:0 0 auto}
+body.x171 #nav>button[data-gkey]::before{display:none!important;content:none}
+body.x171 .x17-reach{height:30px;gap:3px}
+body.x171 .x17-reach .x17-rc{flex:0 0 auto}
+body.x171.x171-offchart #x17Tools{display:none}
+.x171-flat{flex:0 0 auto;display:inline-flex;align-items:center;gap:5px;height:24px;padding:0 9px;border-radius:7px;border:1px solid #FF5C6C;background:rgba(255,92,108,.10);color:#FFD6DB;font:800 11px/1 Inter,system-ui,sans-serif;letter-spacing:.04em;cursor:pointer;white-space:nowrap}
+.x171-flat:hover,.x171-flat:focus-visible{background:#FF5C6C;color:#07080B;outline:none}
+#x17Reach .x171-flat{margin-left:6px}
+.x171-ctx{display:none;flex:0 0 auto;align-items:center;gap:8px;height:24px;padding:0 10px;border-radius:7px;border:1px solid rgba(245,200,75,.35);background:#0D1117;color:#F8FAFC;font:600 11px/1 Inter,system-ui,sans-serif;white-space:nowrap;cursor:pointer}
+.x171-ctx b{color:#F5C84B}.x171-ctx i{width:1px;height:12px;background:rgba(148,163,184,.35)}.x171-ctx .up{color:#5EF0B0}.x171-ctx .dn{color:#FF8A96}.x171-ctx .note{color:#94A3B8}
+body.x171.x171-offchart .x171-ctx{display:inline-flex}
+.x171-flatm{display:none}
+/* stale-feed lock */
+.x171-stale-pill{display:inline-flex;align-items:center;height:26px;padding:0 10px;border-radius:999px;background:#FF5C6C;color:#07080B;font:800 11px/1 Inter,system-ui,sans-serif;letter-spacing:.06em;animation:x171blink 1s steps(2,start) infinite}
+.x171-stale-pill[hidden]{display:none}
+body.x171-stale #srcPill{display:none}
+@keyframes x171blink{to{background:#8B1E2B;color:#FFD6DB}}
+.x171-delayed{position:absolute;top:44%;left:50%;transform:translate(-50%,-50%) rotate(-8deg);z-index:6;pointer-events:none;padding:8px 18px;border:3px solid #FF5C6C;border-radius:8px;color:#FF5C6C;font:900 28px/1 Inter,system-ui,sans-serif;letter-spacing:.12em;background:rgba(7,8,11,.55)}
+.x171-delayed[hidden]{display:none}
+/* ticket: estimated price impact */
+.x171-impact{margin:-2px 0 6px;font:600 11px/1.3 var(--mono);color:#94A3B8}.x171-impact.warn{color:#FFB547}
+/* search any stock / coin / CA inside every tool */
+.x171-search{display:flex;align-items:center;gap:6px;margin:0 0 10px;padding:6px 8px;border:1px solid rgba(245,200,75,.28);border-radius:10px;background:#0D1117;flex-wrap:wrap}
+.x171-search>span:first-child{color:#F5C84B;font-size:14px}
+.x171-search input{flex:1 1 240px;min-width:0;height:30px;background:#07080B;color:#F8FAFC;border:1px solid rgba(148,163,184,.25)}
+.x171-search .x171-act{color:#94A3B8;font:600 11px/1 var(--mono);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:260px}
+.x171-deriv{margin:8px 0 10px}.x171-deriv[hidden]{display:none}
+.x171-qc .row{flex-wrap:wrap;gap:6px}.x171-qc input{flex:1 1 220px;min-width:0}
+.x171-mono{display:inline-grid;place-items:center;width:18px;height:18px;border-radius:50%;background:hsl(var(--h,40) 55% 22%);color:hsl(var(--h,40) 90% 80%);font:800 8.5px/1 Inter,system-ui,sans-serif;border:1px solid hsl(var(--h,40) 60% 45%);flex:0 0 auto}
+/* universal main-chart 3D */
+.x171-3d.on{background:#F5C84B;color:#07080B;border-color:#F5C84B}
+.x171-d3w{position:absolute;z-index:5;background:#07080B;border-radius:8px;overflow:hidden}.x171-d3w[hidden]{display:none}
+.x171-d3w canvas{width:100%;height:100%;display:block;cursor:grab;touch-action:none}.x171-d3w canvas:active{cursor:grabbing}
+.x171-d3bar{position:absolute;top:8px;right:8px}
+.x171-d3lbl{position:absolute;left:10px;top:10px;color:#F5C84B;font:600 11px/1 Inter,system-ui,sans-serif;pointer-events:none}
+/* Bot Fleet: balanced columns, Neural Core fills its column */
+.x17-cols.x171-fleetcols{grid-template-columns:minmax(0,1fr) minmax(0,1.25fr)}
+.x171-corecard{display:flex;flex-direction:column;min-height:min(72vh,640px)}
+.x171-corecard canvas{flex:1 1 auto;width:100%;min-height:360px;border-radius:10px;background:#07080B;display:block}
+.x171-corebar{gap:8px;flex-wrap:wrap;margin-bottom:8px}
+.x171-tele{margin-top:6px;color:#94A3B8;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media (max-width:1100px){.x17-cols.x171-fleetcols{grid-template-columns:1fr}}
+@media (max-width:819px){
+  .x171-flatm{display:grid;place-items:center;position:fixed;left:10px;bottom:calc(66px + env(safe-area-inset-bottom));z-index:8001;width:40px;height:40px;padding:0;border-radius:50%;font-size:17px;box-shadow:0 4px 14px rgba(0,0,0,.5)}
+  .x171-search{margin:0 0 8px}.x171-search .x171-act{display:none}.x171-search button[data-x171="active"]{font-size:11px}
+  .x171-corecard{min-height:auto}.x171-corecard canvas{min-height:300px}
+  .x171-delayed{font-size:18px}
+}
+body.x171 .x17-bpill,body.x171 #x17BriefPill{white-space:nowrap;flex-direction:row;gap:4px;line-height:1}
+body.x171 .x17-reach .x17-mic{white-space:nowrap}

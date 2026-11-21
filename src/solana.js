@@ -15,7 +15,7 @@ const Sol = (() => {
     'whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3uctyCc': 'Orca', 'LBUZKhRxPF3XUpBCjp4YzTKgLccjZhTSDM9YuVaPwxo': 'Meteora', 'cpamdpZCGKUy5JxQXB4dcpGPiikHawvSWAd6mEn1sGG': 'Meteora',
     'dbcij3LWUppWqq96dh6gJWwBifmcGfLSB5D4DuSMaqN': 'Meteora DBC', 'JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4': 'Jupiter',
   };
-  const PUBLIC = ['https://solana-rpc.publicnode.com', 'https://api.mainnet-beta.solana.com', 'https://solana.drpc.org', 'https://solana.api.onfinality.io/public'];
+  const PUBLIC = ['https://api.mainnet-beta.solana.com', 'https://solana.drpc.org', 'https://solana.api.onfinality.io/public', 'https://solana-rpc.publicnode.com']; // v17.1: publicnode last (shared rate limits, frequent SSLError)
   const PUBLIC_WS = 'wss://solana-rpc.publicnode.com';
   let rpcI = 0, loopT = null, balT = null, tokT = null, simT = null, txT = null, busyPoll = false, cool = {}, tokQ = new Set(), txQ = [], txBusy = 0, sock = null, subMap = {}, seenSig = new Set(), reqId = 1;
   S.WSOL = WSOL; S.health = {}; S.firstN = 3; S.queueTokens = (ms) => { for (const m of ms || []) tokQ.add(m); };

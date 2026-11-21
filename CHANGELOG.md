@@ -2,6 +2,23 @@
 
 ExTerm holds no funds and no keys in every version. Up to v15.7 it was paper only; from v16.0 it can send HMAC-signed signals to a bot you run on your own machine, only after four explicit gates, and it starts in PAPER. v16.1 adds eight fail-safe engines on that path; v16.3 closes the loop with ACK + fill sync and a live cockpit; v16.4 adds DEX discovery, a local Copilot and a realistic backtester; v16.5 lets any AI or bot advise through one deterministic firewall; v16.6 adds a live transactions tape for every market.
 
+## v17.1 — Two-Row Header, Global Ledger, Real Slippage, Copilot Everywhere, Chart 3D, Neural Core, Stale-Feed Lock — 21 Nov 2026
+
+- UI: the header bars go from four to two rows (64 px total). The ticker and group captions are gone, and 3D, AI Bridge and Quant Lab no longer have duplicate Reach chips.
+  Also: AAA contrast tokens, an 11 px minimum font size, subscript sub-penny prices, monogram token avatars, a live context strip on every non-chart workspace, and Esc to close modals.
+- Ledger: `window.__EXTERM_LEDGER` (IndexedDB) holds positions, orders, NET BE, partial take-profits and trailing high-water marks, and is checked on every tick in any tab. The bus and ledger logs use ring buffers.
+- Fills: price impact from an AMM `x·y=k` model (DEX) or an L2 depth walk (CEX / stocks), applied above 5 bps and shown in the ticket as Est. Price Impact.
+- `Shift+Esc` / ⏻ FLATTEN ALL closes every position, cancels every order, stops every bot and clears the co-pilot queue.
+- Drawings are anchored to (epoch ms, price).
+- Copilot: Quick-Connect (auto-detect Ollama, or paste a Grok / Claude / DeepSeek / OpenAI key). Claude uses the native Messages API (`claude-opus-5-5`).
+  The prompt carries the full live context, replies get 1-click action pills, and a deterministic local analyst answers whenever no model is reachable.
+- Every analytical tool has a "Search any stock, coin, or paste meme coin CA…" bar. Derivs & Arb works for any symbol: cross-DEX pools, cross-exchange funding / OI, and stock spread + options stats.
+- 3D is a toggle on the main chart toolbar (the standalone 3D tab is removed; `showTab('d3')` now opens the chart with 3D on).
+- Bot Fleet: the Neural Core replaces the torus and the two columns are balanced. The Bubble Map fills ~85% of the viewport and redraws on resize.
+- Data: Jupiter price failover for Solana pools, publicnode moved last in the RPC order, and launcher 429 / Retry-After cooldowns capped at 60 s.
+  If every provider fails for more than 5 s, the STALE FEED · Xs pill and DELAYED DATA stamp appear and bots and live execution are locked.
+- Tests: `test/v171.test.js` (39) and 15 new desktop + phone checks in `test/v17pro_e2e.js` (54 / 54).
+
 ## v17.0 — Edge-Coach, Bot Fleet, Academy, 10-Language Picker, Mobile App & Android APK — 21 Nov 2026
 
 ### Licence

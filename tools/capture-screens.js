@@ -33,9 +33,9 @@ const SHOTS = [];
     await shot('02-quant-lab-edge-coach.png');
     await ev(() => { const r = document.querySelector('#x17RR'); if (r) r.scrollIntoView({ block: 'start' }); });
     await shot('03-rr-heatmap-prop-firm.png');
-    // 04 Bot Fleet
-    await ev(() => { showTab('fleet'); V17App.cfg.mode = 'copilot'; V17App.Fleet.demo(); V17App.Fleet.propose(); V17App.Fleet.paint(); V17App.Fleet.evolve(); document.querySelector('#tab-fleet').scrollTop = 0; });
-    await shot('04-bot-fleet-torus.png', 1200);
+    // 04 pulse
+    await ev(() => { showTab('pulse'); V17App.Pulse.events(); V17App.Pulse.debate(); const s = document.querySelector('#x17Shock'); s.value = '-6'; s.dispatchEvent(new Event('input', { bubbles: true })); });
+    await shot('04-pulse-event-backtester.png');
     // 05 arming wizard (step 2: zero-overdraft cap)
     await ev(() => { const W = V17App.Wizard; W.open(); W.st.ack = true; W.step = 1; W.st.settled = '25000'; W.st.cap = '5000'; W.paint(); });
     await sleep(300); await p.screenshot({ path: path.join(OUT, '05-arming-wizard.png') }); SHOTS.push('05-arming-wizard.png'); console.log('shot 05-arming-wizard.png');
@@ -50,12 +50,12 @@ const SHOTS = [];
     // 08 futures
     await ev(() => { showTab('futs'); });
     await shot('08-futures-volume-profile.png');
-    // 09 pulse
-    await ev(() => { showTab('pulse'); V17App.Pulse.events(); V17App.Pulse.debate(); const s = document.querySelector('#x17Shock'); s.value = '-6'; s.dispatchEvent(new Event('input', { bubbles: true })); });
-    await shot('09-pulse-event-backtester.png');
-    // 10 3D
-    await ev(() => { showTab('d3'); V17App.D3.show(); });
-    await shot('10-3d-order-blocks.png');
+    // 09 universal main-chart 3D (toolbar pill, any symbol): volume prisms, Bullion Gold order-block wireframes, L2 particles
+    await ev(() => { showTab('markets'); V171UI.chart3d.toggle(true); });
+    await shot('09-3d-volumetric-order-blocks.png', 1200); await ev(() => V171UI.chart3d.toggle(false));
+    // 10 Bot Fleet: Terminal & Bot Neural Core wired to window.__EXTERM_BUS
+    await ev(() => { showTab('fleet'); V17App.cfg.mode = 'copilot'; V17App.Fleet.demo(); V17App.Fleet.propose(); V17App.Fleet.paint(); V17App.Fleet.evolve(); document.querySelector('#tab-fleet').scrollTop = 0; for (let i = 0; i < 8; i++) setTimeout(() => window.__EXTERM_BUS.emit(['fill', 'win', 'bot', 'ai', 'loss', 'trail', 'fill', 'bot'][i], { node: V171UI.core.NODES[i % 6], side: i % 2 ? 'sell' : 'buy', text: ['demo BUY filled', 'TP hit +', 'evolution gen 20', 'copilot answered', 'SL hit -', 'trail raised', 'paper fill', 'co-pilot queued'][i], src: 'fleet' }), 150 * i); });
+    await shot('10-bot-fleet-neural-torus.png', 1300); await ev(() => { V17App.cfg.mode = 'paper'; V17App.save(); });
     // 11 academy (with a drill)
     await ev(() => { V17Mob.drillGen(); showTab('academy'); });
     await shot('11-academy.png');
@@ -74,7 +74,7 @@ const SHOTS = [];
     await ph.waitForFunction(() => typeof V17Mob !== 'undefined' && V17Mob.mounted && typeof chart !== 'undefined' && chart && chart.data.length > 100 && !!document.querySelector('#x17Dock'), null, { timeout: 90000 });
     await ph.evaluate(() => { for (const x of document.querySelectorAll('#langGate, #walkCard, #p2Brief, #v162Brief, #x17Brief, #v170Clip')) x.remove(); for (const t of document.querySelectorAll('#toasts > *')) t.remove(); V17App.Brief.plot(); const a = document.querySelector('.x17-arcm'); a.click(); });
     await sleep(1500); await ph.evaluate(() => { for (const t of document.querySelectorAll('#toasts > *')) t.remove(); });
-    await ph.screenshot({ path: path.join(OUT, '14-mobile-app.png') }); SHOTS.push('14-mobile-app.png'); console.log('shot 14-mobile-app.png');
+    await ph.screenshot({ path: path.join(OUT, '14-mobile-touch-cockpit.png') }); SHOTS.push('14-mobile-touch-cockpit.png'); console.log('shot 14-mobile-touch-cockpit.png');
     await m.close();
   } finally { await b.close(); }
   console.log(SHOTS.length + ' screenshots → docs/screenshots'); process.exit(SHOTS.length === 14 ? 0 : 1);

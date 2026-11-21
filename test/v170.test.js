@@ -209,14 +209,14 @@ let pass = 0, fail = 0; const ok = (n, c, i) => { if (c) { pass++; console.log('
   ok('P5 sizing keypad: digits, decimal guard, % of max, clear', X.sizeKeys('1', '2') === '12' && X.sizeKeys('1.5', '.') === '1.5' && X.sizeKeys('', '50%', 1000) === '500' && X.sizeKeys('99', 'C') === '' && X.sizeKeys('12', '⌫') === '1');
   ok('P5 mobile < 820 px: 5-tab dock, thumb arc, swipe, landscape split, handedness, AMOLED #000000, PiP, share card', X.DOCK.length === 5 && /max-width:819px/.test(fs.readFileSync(path.join(root, 'src', 'style.css'), 'utf8')) && ['x17Arc', 'touchstart', 'orientation:landscape', 'x17-left', 'x17-amoled', 'requestPictureInPicture', 'exterm-setup.png'].every((k) => (mob + fs.readFileSync(path.join(root, 'src', 'style.css'), 'utf8')).includes(k)));
   const reachBlock = app.slice(app.indexOf('const REACH_GO = {'), app.indexOf('const ICON = {'));
-  ok('P5 1-click reach: all 17 surfaces wired on the Reach strip', X.REACH.length === 17 && X.REACH.every((n) => reachBlock.includes("'" + n + "': ()")));
+  ok('P5 1-click reach: all 14 surfaces wired on the Reach strip (v17.1: 3D moved onto the chart, AI Bridge / Quant Lab only in the nav)', X.REACH.length === 14 && !X.REACH.includes('3D') && X.REACH.every((n) => reachBlock.includes("'" + n + "': ()")));
 
   // PHASE 6 · build, CSP, licence, privacy, APK workflow
-  ok('P6 build: v17 Pro files bundled after v170.js and right before boot.js', /V17_PRO = \["v170pro\.js", "v170app\.js", "v170mob\.js"\]/.test(build) && /order\.index\("boot\.js"\)/.test(build));
+  ok('P6 build: v17 Pro files bundled after v170.js and right before boot.js', /V17_PRO = \["v170pro\.js", "v170app\.js", "v170mob\.js", "v171core\.js", "v171\.js"\]/.test(build) && /order\.index\("boot\.js"\)/.test(build));
   ok('P6 CSP: no inline handlers, eval or new Function in v17 Pro sources', !/\son[a-z]+=["']/i.test(app + mob + pro) && !/\beval\(|new Function/.test(app + mob + pro));
   ok('P6 licence: proprietary header on every v17 Pro file; zero MIT/AGPL text in shipped docs', [app, mob, pro].every((s) => s.startsWith('/* Copyright (c) 2026 ExTerm Labs. All Rights Reserved.')) && ['LICENSE', 'README.md', 'BRAND_GUIDELINES.md', 'package.json'].every((f) => !/\b(MIT|AGPL)\b/.test(fs.readFileSync(path.join(root, f), 'utf8'))));
   ok('P6 privacy: no personal paths, emails or usernames in v17 Pro sources', !new RegExp(['[A-Z]:\\\\Users\\\\', '\\/Users\\/', '@gm' + 'ail', 'ro' + 'blo', 'nova' + 'term'].join('|'), 'i').test(app + mob + pro));
-  ok('P6 Android: GitHub workflow builds the APK', fs.existsSync(path.join(root, '.github', 'workflows', 'build-android-apk.yml')) && /ExTerm-v17\.0-android\.apk/.test(fs.readFileSync(path.join(root, '.github', 'workflows', 'build-android-apk.yml'), 'utf8')));
+  ok('P6 Android: GitHub workflow builds the APK', fs.existsSync(path.join(root, '.github', 'workflows', 'build-android-apk.yml')) && /ExTerm-v17\.\d-android\.apk/.test(fs.readFileSync(path.join(root, '.github', 'workflows', 'build-android-apk.yml'), 'utf8')));
   ok('P6 live bot dispatch is localhost-only and HMAC-signed', /\^http:\\\/\\\/\(127\\\.0\\\.0\\\.1\|localhost\)/.test(app) && /name: 'HMAC', hash: 'SHA-256'/.test(app));
 
   console.log(`\n${pass}/${pass + fail} passed`); process.exit(fail ? 1 : 0);

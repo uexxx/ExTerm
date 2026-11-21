@@ -4,7 +4,7 @@
 
 <div align="center">
 
-# ExTerm v17.0
+# ExTerm v17.1
 
 ### The $0, local-first trading workstation for crypto, stocks, on-chain DEX tokens, options and futures, with a Quant Lab that coaches you, a Bot Fleet you arm deliberately, and a native Android app.
 
@@ -13,10 +13,10 @@ and live signals go only to a bot you run yourself on `127.0.0.1`, HMAC-signed a
 
 <img src="docs/screenshots/01-markets-terminal.png" alt="ExTerm Markets terminal at 1440×900 (2× Retina): BTC candles with the plotted morning levels (previous day high, low and close, pivot, R1, S1), the GEX flip, call wall and put wall lines, the one-line Reach strip with the R:R, 2×2 and smart-trail tools under the navigation, the 6-timeframe confluence pill in the header and the Live Tape" width="100%">
 
-**[Launch](#-30-second-local-launch)** · **[What's new](#-whats-new-in-v170)** · **[Screenshots](#-v170-tour)** · **[Android](#-android-app)** · **[Verify](#-how-to-verify-official-builds)** · **[Build & test](#-build--test)** · **[Security](#-security)** · **[License](#-license)**
+**[Launch](#-30-second-local-launch)** · **[What's new](#-whats-new-in-v171)** · **[Screenshots](#-v171-tour)** · **[Android](#-android-app)** · **[Verify](#-how-to-verify-official-builds)** · **[Build & test](#-build--test)** · **[Security](#-security)** · **[License](#-license)**
 
 <p>
-  <a href="https://github.com/uexxx/ExTerm/releases/latest"><img src="https://img.shields.io/badge/download-v17.0-F5C84B?style=for-the-badge" alt="Download v17.0"></a>
+  <a href="https://github.com/uexxx/ExTerm/releases/latest"><img src="https://img.shields.io/badge/download-v17.1-F5C84B?style=for-the-badge" alt="Download v17.1"></a>
   <a href="https://github.com/uexxx/ExTerm/releases/latest"><img src="https://img.shields.io/badge/Android-APK-2fd08a?style=for-the-badge" alt="Android APK"></a>
   <img src="https://img.shields.io/badge/price-%240-2fd08a?style=for-the-badge" alt="$0">
   <img src="https://img.shields.io/badge/indicators-137-F5C84B?style=for-the-badge" alt="137 indicators">
@@ -59,10 +59,43 @@ Useful flags: `python3 serve.py 9000` (other port) · `--no-browser` · `--docto
 
 ---
 
+## 🎯 What's new in v17.1
+
+**Desktop, phone (< 820 px) and the Android APK get the same build.**
+
+- **Two header rows instead of four.** The scrolling ticker repeated the bottom strip and the group captions repeated the tabs, so both are gone. You now get one workspace bar and one Reach / filter bar, 64 px together, which gives 52 px back to the chart.
+  AI Bridge and Quant Lab are now only in the nav, and 3D has moved onto the chart toolbar.
+- **Contrast meets WCAG AAA.** Colours are `#07080B` base → `#0D1117` cards → `#161B22` headers, with `#F8FAFC` / `#F5C84B` primary text (≥ 7:1) and `#94A3B8` secondary labels. Nothing is smaller than 11 px.
+  Sub-penny prices use subscript notation (`$0.0₅2115`), and a token with no logo gets a monogram avatar instead of a blank square.
+- **Live context strip.** Every workspace except the chart shows the active symbol, its price and change, your open positions, their unrealised P&L, and NET BE. **Esc** closes the top modal or drawer.
+- **Global ledger: `window.__EXTERM_LEDGER`.** Positions, resting orders, NET BE, partial take-profits and trailing-stop high-water marks are kept in one ledger, saved to IndexedDB and checked on every tick, whatever tab is open.
+  Logs use fixed-size ring buffers, so memory doesn't grow in a 24/7 session.
+- **Real price impact.** Every paper or bot fill is priced off an AMM `x·y=k` pool model (DEX tokens) or by walking L2 depth (crypto, stocks, futures). The ticket shows **Est. Price Impact %** as you type.
+- **⏻ FLATTEN ALL (`Shift+Esc`).** One button, always visible (it floats on phones), closes every position, cancels every order, stops every bot and empties the co-pilot queue.
+- **Drawings stay put.** They are stored as (epoch ms, price), so they keep their place when you switch timeframe or venue.
+- **Copilot always answers.** Free-form prompts go to local Ollama (`127.0.0.1:11434`, $0) or to your own Grok, Claude, DeepSeek or OpenAI key, with the live context attached: candles, CVD, GEX, order blocks, Rug Shield, ledger and journal.
+  A **Quick-Connect** card can auto-detect Ollama or take a pasted key. If no model is reachable, a deterministic local analyst replies instead of an error.
+  Replies come with 1-click pills: **Plot Levels · Load in R:R Ruler · Run in Quant Lab · Queue Bot Rule Behind Firewall**.
+- **Search inside every tool.** Derivs & Arb, Options, Futures, Quant Lab, Pulse, Bot Fleet, AI Bridge, Copilot, Grok and the Screener all have a **"Search any stock, coin, or paste meme coin CA…"** bar plus **Use Active Chart Symbol**.
+  You switch symbol without leaving the tool.
+- **Flow → Derivs & Arb works for any symbol:**
+  - meme coins: cross-DEX pool arbitrage with $1K / $10K slippage per pool
+  - crypto and perps: cross-exchange quotes, funding, open interest and liquidation clusters
+  - US stocks: lit spread, put/call OI, IV rank, max pain, GEX walls and IV skew
+- **3D on the main chart.** A **3D** pill on the toolbar works for every symbol and contract address on desktop and phone. It shows volume prisms on a calibrated floor grid, Bullion Gold order-block wireframes and L2 particle walls.
+  Top / Side / Isometric camera presets, drag to rotate, double-click to reset. It follows Replay, and the canvas resizes with the chart through `ResizeObserver` at the screen's pixel ratio.
+- **Bot Fleet Neural Core.** A geodesic core listens to `window.__EXTERM_BUS`: six orbiting subsystem nodes, Bezier light trails, gold / emerald / crimson shockwaves, a live telemetry ticker and a Monte Carlo cone.
+  It has an **All Terminal Activity / Bot Fleet Only** filter, **Auto-Cycle Evolution** (on by default) and **Record X Clip**. It runs at the display's refresh rate (120 / 240 Hz) and drops to 0 fps when the tab is hidden.
+- **Bubble Map fills ~85% of the viewport.** Labels show full tickers and live % change, and the map redraws when the window is resized.
+- **Zero-stale-price lock.**
+  - Failover order: DexScreener → Jupiter (Solana pools) → Coinbase / Kraken / Binance.
+  - The rate-limited `solana-rpc.publicnode.com` is tried last, and launcher cooldowns are capped at 60 s.
+  - If every live provider fails for more than 5 s, a crimson **STALE FEED · Xs** pill and a **DELAYED DATA** stamp appear, and Bot Fleet and live execution are locked until fresh ticks resume.
+
 ## 🎯 What's new in v17.0
 
 Every workspace is **one click away** on the new one-line **Reach strip** under the navigation:
-`Stocks · Crypto · On-Chain · Options · Futures · Screener · Pulse · 3D · Bot Fleet · Quant Lab · AI Bridge · Academy · Live Tape · Whales $25K+ · Tracker · Positions · Briefing`.
+`Stocks · Crypto · On-Chain · Options · Futures · Screener · Pulse · Bot Fleet · Academy · Live Tape · Whales $25K+ · Tracker · Positions · Briefing` (v17.1: 3D is on the chart toolbar; Quant Lab and AI Bridge are in the nav).
 Nothing new is painted over the 240 Hz / 120 Hz chart canvas: chart additions are thin lines drawn from a cached offscreen layer.
 
 **ƒ Quant Lab Edge-Coach** (top of the Lab tab)
@@ -96,7 +129,7 @@ Nothing new is painted over the 240 Hz / 120 Hz chart canvas: chart additions ar
   left / right-handed layout, sizing keypad, clipboard CA snipe, 1-tap **Phantom / Solflare / Jupiter / Uniswap** deep links
   (**ExTerm adds a $0 fee**; network and DEX fees still apply), QR pairing of your layout, AMOLED `#000000`, PIN or biometric lock,
   Share Setup Card and Picture-in-Picture.
-- **Native Android app**: [`ExTerm-v17.0-android.apk`](https://github.com/uexxx/ExTerm/releases/latest).
+- **Native Android app**: [`ExTerm-v17.1-android.apk`](https://github.com/uexxx/ExTerm/releases/latest).
 
 **🛡 Launcher (Phases 0–1)**: a 429 storm shield (single-flight requests, per-host cool-down that honours `Retry-After`, stale
 fallback), a cross-venue crypto tape (Coinbase · Kraken · Binance · Bybit · OKX) with basis, funding, spread and CVD, instant
@@ -106,7 +139,7 @@ Full notes: [`CHANGELOG.md`](CHANGELOG.md).
 
 ---
 
-## 🖼 v17.0 tour
+## 🖼 v17.1 tour
 
 All screenshots: 1440 × 900 at 2× (Retina), offline launcher, captured with `node tools/capture-screens.js`.
 
@@ -118,9 +151,9 @@ All screenshots: 1440 × 900 at 2× (Retina), offline launcher, captured with `n
 
 **R:R heatmap, prop-firm simulator, Kelly and slippage.** Click a heatmap cell to put its SL / TP on the chart.
 
-<img src="docs/screenshots/04-bot-fleet-torus.png" alt="Bot Fleet tab: the three mode cards (Paper Sandbox, Attended Co-Pilot, Live Unattended 24/7), the co-pilot approval queue, the fleet table, the self-improving loop result and the gold neural strategy torus" width="100%">
+<img src="docs/screenshots/04-pulse-event-backtester.png" alt="Pulse tab: market breadth, the last-12 FOMC reaction table with 1-hour, 4-hour and 1-day moves, the portfolio beta shock slider and the bull, bear and risk debate" width="100%">
 
-**Bot Fleet.** Three modes, a co-pilot approval queue, the self-improving loop and the Neural Strategy Torus.
+**Pulse.** Event reaction backtests, beta shock and the Bull / Bear / Risk debate, from data already on screen.
 
 <img src="docs/screenshots/05-arming-wizard.png" alt="The mandatory five-step arming wizard on step 2: settled cash and the zero-overdraft bot cash cap" width="100%">
 
@@ -138,13 +171,13 @@ All screenshots: 1440 × 900 at 2× (Retina), offline launcher, captured with `n
 
 **Futures.** RTH / ETH volume profile, tick risk and liquidation clusters.
 
-<img src="docs/screenshots/09-pulse-event-backtester.png" alt="Pulse tab: market breadth, the last-12 FOMC reaction table with 1-hour, 4-hour and 1-day moves, the portfolio beta shock slider and the bull, bear and risk debate" width="100%">
+<img src="docs/screenshots/09-3d-volumetric-order-blocks.png" alt="Main chart with the 3D pill on: BTC candles as emerald and crimson volume prisms on a calibrated floor grid, Bullion Gold order-block wireframes, L2 particle walls and the Top / Side / Isometric camera pills" width="100%">
 
-**Pulse.** Event reaction backtests, beta shock and the Bull / Bear / Risk debate, from data already on screen.
+**3D on the main chart (v17.1).** One toolbar pill for every symbol and CA: volume prisms, order-block wireframes, L2 walls, camera presets, double-click to reset.
 
-<img src="docs/screenshots/10-3d-order-blocks.png" alt="3D tab: isometric candles with volumetric bullish and bearish order blocks, order-book walls and the replay scrubber" width="100%">
+<img src="docs/screenshots/10-bot-fleet-neural-torus.png" alt="Bot Fleet with the in-tool search bar, the three mode cards, the co-pilot approval queue and the Terminal and Bot Neural Core: a gold geodesic sphere with six orbiting subsystem nodes, the activity filter, Auto-Cycle Evolution, Record X Clip and a Monte Carlo cone" width="100%">
 
-**3D order blocks.** Volumetric blocks, L2 walls and a replay scrubber.
+**Bot Fleet Neural Core (v17.1).** Modes, co-pilot approvals and a live geodesic core wired to every subsystem on `window.__EXTERM_BUS`.
 
 <img src="docs/screenshots/11-academy.png" alt="Academy tab: progress bar, five module cards with mission checklists and the custom drill generator" width="100%">
 
@@ -158,7 +191,7 @@ All screenshots: 1440 × 900 at 2× (Retina), offline launcher, captured with `n
 
 **On-Chain Lab.** Rug / honeypot simulation, sniper bundles and smart-money ranking.
 
-<p align="center"><img src="docs/screenshots/14-mobile-app.png" alt="ExTerm on a phone (390 by 844 at 2×): the chart with plotted levels, the open thumb-arc quick-action menu (Buy, Sell, Snipe CA, Swap) and the five-tab bottom dock" width="360"></p>
+<p align="center"><img src="docs/screenshots/14-mobile-touch-cockpit.png" alt="ExTerm on a phone (390 by 844 at 2×): the chart with plotted levels, the open thumb-arc quick-action menu (Buy, Sell, Snipe CA, Swap) and the five-tab bottom dock" width="360"></p>
 
 **Mobile app.** Bottom dock, thumb-arc quick actions and the full chart, below 820 px and in the Android app.
 
@@ -166,7 +199,7 @@ All screenshots: 1440 × 900 at 2× (Retina), offline launcher, captured with `n
 
 ## 📱 Android app
 
-Download **`ExTerm-v17.0-android.apk`** from the [latest release](https://github.com/uexxx/ExTerm/releases/latest)
+Download **`ExTerm-v17.1-android.apk`** from the [latest release](https://github.com/uexxx/ExTerm/releases/latest)
 (Android 7.0+, about 1 MB). It runs the same single-file app from the APK's assets on a secure origin, so storage and WebCrypto
 work offline. Wallet and DEX links open in your installed apps, and leaving the app keeps the chart in Picture-in-Picture.
 The APK's SHA-256 is listed in the release `SHA256SUMS.txt`.
@@ -175,7 +208,7 @@ Build it yourself (JDK 17 + Android SDK `platforms;android-34` and `build-tools;
 
 ```bash
 python3 build.py --harden
-python3 tools/build_apk.py          # → dist/ExTerm-v17.0-android.apk
+python3 tools/build_apk.py          # → dist/ExTerm-v17.1-android.apk
 ```
 
 CI builds the same APK on every tag: [`.github/workflows/build-android-apk.yml`](.github/workflows/build-android-apk.yml).
@@ -222,6 +255,8 @@ Get-Content SHA256SUMS.txt | ForEach-Object {
 python3 build.py             # dist/exterm.html (readable) + exterm.html
 python3 build.py --harden    # dist/exterm.min.html (minified with esbuild)
 node test/v170.test.js       # v17.0 unit suite
+node test/v171.test.js       # v17.1 unit suite (ledger, AMM/L2 impact, stale guard, Copilot routing)
+node test/v17pro_e2e.js      # v17.0 + v17.1 browser end-to-end (desktop 1440/1280 + phone 390)
 ```
 
 `build.py` inlines `src/*.js` and `src/style.css` into one file and stamps the CSP with the bundle's SHA-256 hash.

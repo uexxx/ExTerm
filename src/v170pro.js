@@ -168,7 +168,7 @@ const V17P = (() => {
 <h1>${esc(m.title || 'Strategy Tear Sheet')}</h1><div class="sub">${esc(m.sym || '')} · ${esc(m.tf || '')} · ${esc(m.strategy || '')} · generated ${esc(new Date(m.at || 0).toISOString().slice(0, 10))}</div>
 <div class="g">${kv('Net return', pct(s.ret))}${kv('Max drawdown', pct(s.dd != null ? -Math.abs(s.dd) : NaN))}${kv('Sharpe', num(s.sharpe))}${kv('Trades', String((rts || []).length))}${kv('Win rate', pct((rts || []).length ? W.length / rts.length : NaN))}${kv('Overfitting score', x.overfit != null ? x.overfit + ' / 100' : '–')}${kv('Half-Kelly', pct(x.halfKelly))}${kv('Prop pass (100K)', pct(x.propPass))}</div>
 <table><thead><tr><th>Entry (UTC)</th><th>Dir</th><th>Entry</th><th>Exit</th><th>P&amp;L</th><th>Return</th></tr></thead><tbody>${rows || '<tr><td colspan="6">No closed trades</td></tr>'}</tbody></table>
-<footer>ExTerm v17.0 · Copyright (c) 2026 ExTerm Labs. All Rights Reserved. Simulated results are not a guarantee of future performance.</footer></main></body></html>`;
+<footer>ExTerm v17.1 · Copyright (c) 2026 ExTerm Labs. All Rights Reserved. Simulated results are not a guarantee of future performance.</footer></main></body></html>`;
   };
 
   /* backtest leaks: the specific habits costing money, ranked */
@@ -458,7 +458,7 @@ const V17P = (() => {
   P.HAND = ['right', 'left'];
   P.DOCK = [['markets', 'Chart'], ['watch', 'Watch'], ['trade', 'Trade'], ['fleet', 'Fleet'], ['more', 'More']];
   /* the 17 surfaces that must stay reachable in one click */
-  P.REACH = ['Stocks', 'Crypto', 'On-Chain', 'Options', 'Futures', 'Screener', 'Pulse', '3D', 'Bot Fleet', 'Quant Lab', 'AI Bridge', 'Academy', 'Live Tape', 'Whales $25K+', 'Tracker', 'Positions', 'Briefing'];
+  P.REACH = ['Stocks', 'Crypto', 'On-Chain', 'Options', 'Futures', 'Screener', 'Pulse', 'Bot Fleet', 'Academy', 'Live Tape', 'Whales $25K+', 'Tracker', 'Positions', 'Briefing'];
   P.sizeKeys = (cur, key, max) => { let s = String(cur || ''); if (key === 'C') return ''; if (key === '⌫') return s.slice(0, -1); if (/^(25|50|75|100)%$/.test(key)) { const v = (max || 0) * parseInt(key, 10) / 100; return v > 0 ? String(Math.floor(v * 100) / 100) : s; } if (key === '.' && s.includes('.')) return s; if (s.length >= 12) return s; return s === '0' && key !== '.' ? key : s + key; };
 
   /* QR code (byte mode, ECC M, versions 1–10, all 8 masks scored) → boolean matrix */

@@ -38,9 +38,8 @@ const V17App = (() => {
     'Stocks': () => { if (typeof setMode === 'function') setMode('stocks'); showTab('markets'); },
     'Crypto': () => { if (typeof setMode === 'function') setMode('crypto'); showTab('markets'); },
     'On-Chain': () => { if (typeof setMode === 'function') setMode('onchain'); showTab('markets'); },
-    'Options': () => showTab('opts'), 'Futures': () => showTab('futs'), 'Screener': () => showTab('heat'), 'Pulse': () => showTab('pulse'), '3D': () => showTab('d3'),
-    'Bot Fleet': () => showTab('fleet'), 'Quant Lab': () => { showTab('lab'); setTimeout(() => { const c = $1('#x17Coach'); if (c && c.scrollIntoView) c.scrollIntoView({ block: 'start' }); }, 30); },
-    'AI Bridge': () => showTab('bridge'), 'Academy': () => showTab('academy'),
+    'Options': () => showTab('opts'), 'Futures': () => showTab('futs'), 'Screener': () => showTab('heat'), 'Pulse': () => showTab('pulse'),
+    'Bot Fleet': () => showTab('fleet'), 'Academy': () => showTab('academy'),
     'Live Tape': () => { showTab('markets'); if (typeof V166UI !== 'undefined') V166UI.toggle(true); },
     'Whales $25K+': () => { showTab('markets'); if (typeof V166UI !== 'undefined') { V166UI.toggle(true); V166UI.minUsd = 25000; V166UI.dirty = true; const m = $1('#v166Min'); if (m) m.value = '25000'; try { V166UI.refilter(true); } catch (e) { /* tape not ready */ } } },
     'Tracker': () => showTab('whales'), 'Positions': () => showTab('port'), 'Briefing': () => Brief.open(true),
@@ -53,18 +52,18 @@ const V17App = (() => {
     nav.after(r);
     r.addEventListener('click', (e) => { const b = e.target.closest('[data-x17r]'); if (b) { const f = REACH_GO[b.dataset.x17r]; if (f) f(); paintReach(); return; } if (e.target.closest('#x17Mic')) Voice.listen(); });
   };
-  const ACT = { markets: null, opts: 'Options', futs: 'Futures', heat: 'Screener', pulse: 'Pulse', d3: '3D', fleet: 'Bot Fleet', lab: 'Quant Lab', bridge: 'AI Bridge', academy: 'Academy', whales: 'Tracker', port: 'Positions' };
+  const ACT = { markets: null, opts: 'Options', futs: 'Futures', heat: 'Screener', pulse: 'Pulse', fleet: 'Bot Fleet', academy: 'Academy', whales: 'Tracker', port: 'Positions' };
   const paintReach = () => {
     const tab = typeof curTab !== 'undefined' ? curTab : 'markets', mode = typeof ST !== 'undefined' ? ST.mode : 'crypto', on = tab === 'markets' ? (mode === 'stocks' ? 'Stocks' : mode === 'onchain' ? 'On-Chain' : 'Crypto') : ACT[tab];
     for (const b of $$1('#x17Reach [data-x17r]')) { const a = b.dataset.x17r === on; if (b.classList.contains('on') !== a) { b.classList.toggle('on', a); b.setAttribute('aria-pressed', String(a)); } }
   };
 
   /* ══ 2. tab scaffolding ══ */
-  const TABDEF = [['fleet', 'Bot Fleet'], ['pulse', 'Pulse'], ['opts', 'Options'], ['futs', 'Futures'], ['d3', '3D']];
+  const TABDEF = [['fleet', 'Bot Fleet'], ['pulse', 'Pulse'], ['opts', 'Options'], ['futs', 'Futures']]; // v17.1: 3D lives on the main chart toolbar (v171.js)
   const mountTabs = () => {
     const main = $1('main'); if (!main || $1('#tab-fleet')) return;
     for (const [id, name] of TABDEF) { const s = document.createElement('section'); s.id = 'tab-' + id; s.className = 'tab x17-tab'; s.setAttribute('aria-label', name); main.appendChild(s); }
-    TABS.fleet = { show: () => Fleet.show(), render: () => {} }; TABS.pulse = { show: () => Pulse.show(), render: () => {} }; TABS.opts = { show: () => Opts.show(), render: () => {} }; TABS.futs = { show: () => Futs.show(), render: () => {} }; TABS.d3 = { show: () => D3.show(), render: () => {} };
+    TABS.fleet = { show: () => Fleet.show(), render: () => {} }; TABS.pulse = { show: () => Pulse.show(), render: () => {} }; TABS.opts = { show: () => Opts.show(), render: () => {} }; TABS.futs = { show: () => Futs.show(), render: () => {} };
     // the torus and 3D scene stop (0 fps) the moment their tab is hidden
     if (typeof showTab === 'function' && !showTab._x17) { const o = showTab; showTab = function (n) { const r = o.apply(this, arguments); try { if (n !== 'fleet') Fleet.stop(); if (n !== 'd3') D3.stop(); const bo = $1('#x17Brief'); if (bo && bo.dataset.auto === '1' && n !== 'markets') bo.remove(); paintReach(); } catch (e) { /* never block navigation */ } return r; }; showTab._x17 = true; } // eslint-disable-line no-func-assign
   };
