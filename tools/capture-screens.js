@@ -53,9 +53,11 @@ const SHOTS = [];
     // 09 universal main-chart 3D (toolbar pill, any symbol): volume prisms, Bullion Gold order-block wireframes, L2 particles
     await ev(() => { showTab('markets'); V171UI.chart3d.toggle(true); });
     await shot('09-3d-volumetric-order-blocks.png', 1200); await ev(() => V171UI.chart3d.toggle(false));
-    // 10 Bot Fleet: Terminal & Bot Neural Core wired to window.__EXTERM_BUS
-    await ev(() => { showTab('fleet'); V17App.cfg.mode = 'copilot'; V17App.Fleet.demo(); V17App.Fleet.propose(); V17App.Fleet.paint(); V17App.Fleet.evolve(); document.querySelector('#tab-fleet').scrollTop = 0; for (let i = 0; i < 8; i++) setTimeout(() => window.__EXTERM_BUS.emit(['fill', 'win', 'bot', 'ai', 'loss', 'trail', 'fill', 'bot'][i], { node: V171UI.core.NODES[i % 6], side: i % 2 ? 'sell' : 'buy', text: ['demo BUY filled', 'TP hit +', 'evolution gen 20', 'copilot answered', 'SL hit -', 'trail raised', 'paper fill', 'co-pilot queued'][i], src: 'fleet' }), 150 * i); });
-    await shot('10-bot-fleet-neural-torus.png', 1300); await ev(() => { V17App.cfg.mode = 'paper'; V17App.save(); });
+    // 10 Bot Fleet → v17.2 THE SYNAPSE: Sensory Input Layer · 6 neural nodes → ExTerm core · Cortex weights · Signal Rotation · The Trace · The Pricer
+    await ev(() => { showTab('fleet'); V17App.cfg.mode = 'copilot'; V17App.Fleet.demo(); V17App.Fleet.propose(); V17App.Fleet.paint(); V17App.Fleet.evolve(); const s = document.querySelector('#x172Syn'); if (s) s.scrollIntoView({ block: 'start' }); });
+    await sleep(6000); // let the 1 Hz sensors build sparkline history from the real background processes
+    await ev(() => { const s = document.querySelector('#x172Syn'); if (s) s.scrollIntoView({ block: 'start' }); const ev8 = [['fill', 'Bots', 'demo BUY filled'], ['win', 'Ledger', 'TP hit +'], ['bot', 'Bots', 'evolution gen 20'], ['ai', 'Copilot', 'copilot answered'], ['block', 'Firewall', 'firewall gate · size over risk budget'], ['whale', 'Screener', 'whale print $250K'], ['trail', 'Ledger', 'trail raised'], ['fill', 'Bots', 'paper fill']]; ev8.forEach(([t, n, x], i) => setTimeout(() => window.__EXTERM_BUS.emit(t, { node: n, side: 'buy', text: x, src: 'fleet' }), 140 * i)); });
+    await shot('10-bot-fleet-neural-torus.png', 1100); await ev(() => { V17App.cfg.mode = 'paper'; V17App.save(); });
     // 11 academy (with a drill)
     await ev(() => { V17Mob.drillGen(); showTab('academy'); });
     await shot('11-academy.png');

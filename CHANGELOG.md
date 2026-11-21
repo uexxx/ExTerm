@@ -2,6 +2,22 @@
 
 ExTerm holds no funds and no keys in every version. Up to v15.7 it was paper only; from v16.0 it can send HMAC-signed signals to a bot you run on your own machine, only after four explicit gates, and it starts in PAPER. v16.1 adds eight fail-safe engines on that path; v16.3 closes the loop with ACK + fill sync and a live cockpit; v16.4 adds DEX discovery, a local Copilot and a realistic backtester; v16.5 lets any AI or bot advise through one deterministic firewall; v16.6 adds a live transactions tape for every market.
 
+## v17.2 — Obsidian & Bullion Gold Everywhere, THE SYNAPSE Neural Cockpit — 21 Nov 2026
+
+- Theme: strict Obsidian `#07080B` / `#0D1117` panels / `#161B22` headers, Bullion Gold `#F5C84B`, Emerald `#22C55E`, Crimson `#EF4444`, on every workspace and on mobile.
+  Obsidian & Gold is now the default theme, with a one-time migration for existing installs. 106 off-palette violet, rose and mint literals in 22 source files now use the palette, chart overlays use platinum `#CBD5E1`, and the near-liquidation colour is Crimson.
+- Bot Fleet → THE SYNAPSE (`src/v172core.js`, `src/v172.js`): a 3-column stage (Sensory Input Layer · The Synapse · Cortex & Synaptic Weights) plus a bottom row (Signal Rotation · The Trace · The Pricer), stacked under 820 px.
+  It takes over `V171UI.core` with the same API, so the bus wiring, fleet filter and 0-fps-when-hidden behaviour carry over.
+- Sensors are real counters:
+  - `Feed.tickL` ticks/s
+  - Resource Timing cache hits, plus the new `Server-Timing: swr;desc=LIVE|STALE|MISS` header on `serve.py` proxy responses
+  - `Worker.postMessage` jobs/s
+  - `V170UI.merger` cross-exchange CVD, with a bar-volume fallback when the tape is thin
+  - GEX regime and realized volatility
+- Impulses: Gold for tick / cache / mutation, Emerald for signal / whale / fill, Crimson for a firewall block. A blocked `Fleet.exec` now emits a `block` bus event.
+- The Pricer: 48 seeded GBM paths with p5 / p25 / p50 / p75 / p95 bands. The Trace: ms-stamped and incremental, keeping 40 rows from a 120-entry ring. Record X Clip hides dollar balances automatically and masks $ amounts on the canvas and in the Trace.
+- Tests: new `test/v172.test.js` (35); `test/v17pro_e2e.js` 59/59; all 32 unit files pass. Builds: standard and `--harden`, with script and style SHA-256 CSP hashes checked against the inline bundles.
+
 ## v17.1 — Two-Row Header, Global Ledger, Real Slippage, Copilot Everywhere, Chart 3D, Neural Core, Stale-Feed Lock — 21 Nov 2026
 
 - UI: the header bars go from four to two rows (64 px total). The ticker and group captions are gone, and 3D, AI Bridge and Quant Lab no longer have duplicate Reach chips.

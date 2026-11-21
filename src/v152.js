@@ -93,7 +93,7 @@ const V152UI = (() => {
   ov.sess = (g, L) => {
     const s = cfg().sess; if (!s.asia && !s.london && !s.ny) return; const D = L.D.slice(L.start, L.end), key = 'sp|' + ST.sel + '|' + L.start + '|' + L.end + '|' + (D[D.length - 1] || {}).c;
     if (U.cache.spKey !== key) { U.cache.spKey = key; U.cache.sp = V152.sessionProfiles(D, 32); }
-    const cols = { asia: '#a78bfa', london: '#38bdf8', ny: '#f59e0b' }, right = L.W - L.Rm - 4; let off = 0;
+    const cols = { asia: '#F5C84B', london: '#38bdf8', ny: '#f59e0b' }, right = L.W - L.Rm - 4; let off = 0;
     g.save();
     for (const k of ['asia', 'london', 'ny']) {
       const P = U.cache.sp[k]; if (!s[k] || !P) continue; const vmax = Math.max(...P.bins.map((b) => b.v)) || 1;
@@ -106,7 +106,7 @@ const V152UI = (() => {
     if (!cfg().gamma || typeof P5UI === 'undefined') return; const ch = P5UI.chain; if (!ch || ch.sym !== ST.sel) return;
     if (U.cache.gKey !== ch) { const T = Math.max(1 / 365, (ch.exp - Date.now() / 1000) / 31557600), gx = P5.gex(ch, ch.spot, T); U.cache.gKey = ch; U.cache.g = { flip: gx.flip, call: gx.callWall, put: gx.putWall, zero: V152.zeroGamma(ch, ch.spot, T, P5.gex) }; }
     const G = U.cache.g; g.save(); g.font = '700 9px Inter, system-ui, sans-serif'; g.textAlign = 'right';
-    for (const [k, p, c] of [['Zero γ', G.zero, '#e879f9'], ['γ flip', G.flip, '#c084fc'], ['Call wall', G.call, L.col.up], ['Put wall', G.put, L.col.dn]]) { if (!(p > 0)) continue; const y = L.py(p); if (!(y > L.y0 && y < L.y0 + L.mainH)) continue; g.strokeStyle = c; g.fillStyle = c; g.globalAlpha = 0.7; g.setLineDash([8, 4]); g.beginPath(); g.moveTo(L.Lm, y); g.lineTo(L.W - L.Rm, y); g.stroke(); g.setLineDash([]); g.fillText(k + ' ' + fp(p), L.W - L.Rm - 4, y - 3); }
+    for (const [k, p, c] of [['Zero γ', G.zero, '#CBD5E1'], ['γ flip', G.flip, '#CBD5E1'], ['Call wall', G.call, L.col.up], ['Put wall', G.put, L.col.dn]]) { if (!(p > 0)) continue; const y = L.py(p); if (!(y > L.y0 && y < L.y0 + L.mainH)) continue; g.strokeStyle = c; g.fillStyle = c; g.globalAlpha = 0.7; g.setLineDash([8, 4]); g.beginPath(); g.moveTo(L.Lm, y); g.lineTo(L.W - L.Rm, y); g.stroke(); g.setLineDash([]); g.fillText(k + ' ' + fp(p), L.W - L.Rm - 4, y - 3); }
     g.restore();
   };
   ov.cvd = (g, L) => {
@@ -170,7 +170,7 @@ const V152UI = (() => {
     const st = getStore(ST.sel, cfg().pipTf); if (!st.loaded) { if (!st.loading) st.load(200); return; }
     const D = st.candles.slice(-60), cv = el.querySelector('canvas'), g = cv.getContext('2d'); if (!D.length) return;
     const lo = Math.min(...D.map((c) => c.l)), hi = Math.max(...D.map((c) => c.h)), y = (p) => 104 - ((p - lo) / (hi - lo || 1)) * 98, w = 220 / D.length;
-    g.clearRect(0, 0, 220, 110); D.forEach((c, i) => { const col = c.c >= c.o ? cssv('--up', '#2fd08a') : cssv('--dn', '#ff5470'); g.strokeStyle = col; g.fillStyle = col; const x = i * w + w / 2; g.beginPath(); g.moveTo(x, y(c.h)); g.lineTo(x, y(c.l)); g.stroke(); g.fillRect(x - w * 0.3, Math.min(y(c.o), y(c.c)), Math.max(1, w * 0.6), Math.max(1, Math.abs(y(c.o) - y(c.c)))); });
+    g.clearRect(0, 0, 220, 110); D.forEach((c, i) => { const col = c.c >= c.o ? cssv('--up', '#22C55E') : cssv('--dn', '#ff5470'); g.strokeStyle = col; g.fillStyle = col; const x = i * w + w / 2; g.beginPath(); g.moveTo(x, y(c.h)); g.lineTo(x, y(c.l)); g.stroke(); g.fillRect(x - w * 0.3, Math.min(y(c.o), y(c.c)), Math.max(1, w * 0.6), Math.max(1, Math.abs(y(c.o) - y(c.c)))); });
   };
   const syncBadge = () => {
     const host = $('#chartHost'); if (!host) return; let b = $('#v152Sync'); const g = cfg().group;

@@ -1,16 +1,16 @@
 #!/usr/bin/env python3
 # Copyright (c) 2026 ExTerm Labs. All Rights Reserved. Free for personal, non-commercial use. Copying, modifying, reverse-engineering, cloning, or redistributing source or derivative works without express written permission from ExTerm Labs is strictly prohibited.
 """Package the minified, release-only ExTerm build:
-  <out>/ExTerm-v17.1/          exterm.html (hardened build) + launchers + daemon + Docker + docs + SHA256SUMS.txt
-  <out>/ExTerm-v17.1.zip
-  <out>/ExTerm-v17.1-android.apk
+  <out>/ExTerm-v17.2/          exterm.html (hardened build) + launchers + daemon + Docker + docs + SHA256SUMS.txt
+  <out>/ExTerm-v17.2.zip
+  <out>/ExTerm-v17.2-android.apk
   <out>/SHA256SUMS.txt         zip, apk and the app file
 Run python build.py --harden and tools/build_apk.py first. Usage: python tools/package_release.py [--out DIR]
 """
 import argparse, hashlib, os, pathlib, shutil, zipfile
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
-V = "17.1"
+V = "17.2"
 NAME = "ExTerm-v" + V
 TEXT_LF = ("serve.py", "serve.ps1", "exterm_ops.py", "start-exterm.sh", "start-exterm.command", "Dockerfile", "docker-compose.yml")
 FILES = ("serve.py", "serve.ps1", "exterm_ops.py", "start-exterm.bat", "start-exterm.sh", "start-exterm.command", "Dockerfile", "docker-compose.yml",

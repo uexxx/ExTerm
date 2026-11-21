@@ -4,7 +4,7 @@
 
 <div align="center">
 
-# ExTerm v17.1
+# ExTerm v17.2
 
 ### The $0, local-first trading workstation for crypto, stocks, on-chain DEX tokens, options and futures, with a Quant Lab that coaches you, a Bot Fleet you arm deliberately, and a native Android app.
 
@@ -13,10 +13,10 @@ and live signals go only to a bot you run yourself on `127.0.0.1`, HMAC-signed a
 
 <img src="docs/screenshots/01-markets-terminal.png" alt="ExTerm Markets terminal at 1440×900 (2× Retina): BTC candles with the plotted morning levels (previous day high, low and close, pivot, R1, S1), the GEX flip, call wall and put wall lines, the one-line Reach strip with the R:R, 2×2 and smart-trail tools under the navigation, the 6-timeframe confluence pill in the header and the Live Tape" width="100%">
 
-**[Launch](#-30-second-local-launch)** · **[What's new](#-whats-new-in-v171)** · **[Screenshots](#-v171-tour)** · **[Android](#-android-app)** · **[Verify](#-how-to-verify-official-builds)** · **[Build & test](#-build--test)** · **[Security](#-security)** · **[License](#-license)**
+**[Launch](#-30-second-local-launch)** · **[What's new](#-whats-new-in-v172)** · **[Screenshots](#-v172-tour)** · **[Android](#-android-app)** · **[Verify](#-how-to-verify-official-builds)** · **[Build & test](#-build--test)** · **[Security](#-security)** · **[License](#-license)**
 
 <p>
-  <a href="https://github.com/uexxx/ExTerm/releases/latest"><img src="https://img.shields.io/badge/download-v17.1-F5C84B?style=for-the-badge" alt="Download v17.1"></a>
+  <a href="https://github.com/uexxx/ExTerm/releases/latest"><img src="https://img.shields.io/badge/download-v17.2-F5C84B?style=for-the-badge" alt="Download v17.2"></a>
   <a href="https://github.com/uexxx/ExTerm/releases/latest"><img src="https://img.shields.io/badge/Android-APK-2fd08a?style=for-the-badge" alt="Android APK"></a>
   <img src="https://img.shields.io/badge/price-%240-2fd08a?style=for-the-badge" alt="$0">
   <img src="https://img.shields.io/badge/indicators-137-F5C84B?style=for-the-badge" alt="137 indicators">
@@ -58,6 +58,27 @@ Useful flags: `python3 serve.py 9000` (other port) · `--no-browser` · `--docto
 > proxies only an allow-list of public market-data hosts, on `localhost`, behind a fresh per-launch token.
 
 ---
+
+## 🎯 What's new in v17.2
+
+**Obsidian & Bullion Gold everywhere, and the Bot Fleet becomes THE SYNAPSE: a live neural cockpit of every background process in the terminal.**
+
+- **Strict Obsidian & Bullion Gold theme.** Obsidian `#07080B` background, `#0D1117` panels, `#161B22` card headers, Bullion Gold `#F5C84B` accents, Emerald `#22C55E` gains and Crimson `#EF4444` alerts, on every workspace and every phone screen.
+  Obsidian & Gold is now the default theme, and existing installs move to it once (the theme picker still works). 106 off-palette violet, rose and mint literals across 22 source files now use the palette, and chart overlays such as EMA50 use platinum `#CBD5E1` so they stay distinct from gold.
+- **THE SYNAPSE (Bot Fleet).** A full-width cockpit: a 3-column stage plus a 3-card bottom row on desktop, stacked cards under 820 px.
+  - **Sensory Input Layer:** live sparklines and meters fed by real processes:
+    - WS ticks/s (`Feed.tickL`)
+    - L1/L2 SWR cache hit rate (Resource Timing plus a new `Server-Timing: swr` header from `serve.py`)
+    - Worker Math jobs/s (`Worker.postMessage`)
+    - Cross-Exchange CVD (`V170UI.merger`)
+    - GEX regime and volatility
+  - **The Synapse:** six glowing node cards (TAPE/CVD · GEX/DOM · 3D OB · SCREENER · AI BRIDGE · FIREWALL) around a rotating geodesic ExTerm core. Dendrite curves fire impulses for every background event: Gold for tick, cache or mutation, Emerald for signal, whale or fill, Crimson for a firewall block.
+  - **Cortex & Synaptic Weights:** active symbol price, mini curve, and animated CVD · GEX · 3D OB · Momentum · Risk Budget weight bars.
+  - **Signal Rotation:** a phase-space momentum attractor redrawn at display rate.
+  - **The Trace:** a millisecond-stamped stream of WS bursts, cache hits, GEX recalcs, screener scans and firewall gates.
+  - **The Pricer:** a Monte Carlo fan of 48 GBM paths (σ from live closes), coloured Gold, Emerald or Crimson, with p5–p95 bands.
+  - **Controls:** an All Terminal Activity / Bot Fleet Only filter and **Record X Clip**, which hides dollar balances automatically during the recording. The Synapse runs at 0 fps when hidden.
+- **Tests.** New `test/v172.test.js` (35 checks). `test/v17pro_e2e.js` now runs 59 checks, including theme tokens, Synapse pixel variance, background pulse firing, a Crimson firewall impulse, and the mobile stacked layout.
 
 ## 🎯 What's new in v17.1
 
@@ -129,7 +150,7 @@ Nothing new is painted over the 240 Hz / 120 Hz chart canvas: chart additions ar
   left / right-handed layout, sizing keypad, clipboard CA snipe, 1-tap **Phantom / Solflare / Jupiter / Uniswap** deep links
   (**ExTerm adds a $0 fee**; network and DEX fees still apply), QR pairing of your layout, AMOLED `#000000`, PIN or biometric lock,
   Share Setup Card and Picture-in-Picture.
-- **Native Android app**: [`ExTerm-v17.1-android.apk`](https://github.com/uexxx/ExTerm/releases/latest).
+- **Native Android app**: [`ExTerm-v17.2-android.apk`](https://github.com/uexxx/ExTerm/releases/latest).
 
 **🛡 Launcher (Phases 0–1)**: a 429 storm shield (single-flight requests, per-host cool-down that honours `Retry-After`, stale
 fallback), a cross-venue crypto tape (Coinbase · Kraken · Binance · Bybit · OKX) with basis, funding, spread and CVD, instant
@@ -139,7 +160,7 @@ Full notes: [`CHANGELOG.md`](CHANGELOG.md).
 
 ---
 
-## 🖼 v17.1 tour
+## 🖼 v17.2 tour
 
 All screenshots: 1440 × 900 at 2× (Retina), offline launcher, captured with `node tools/capture-screens.js`.
 
@@ -175,9 +196,9 @@ All screenshots: 1440 × 900 at 2× (Retina), offline launcher, captured with `n
 
 **3D on the main chart (v17.1).** One toolbar pill for every symbol and CA: volume prisms, order-block wireframes, L2 walls, camera presets, double-click to reset.
 
-<img src="docs/screenshots/10-bot-fleet-neural-torus.png" alt="Bot Fleet with the in-tool search bar, the three mode cards, the co-pilot approval queue and the Terminal and Bot Neural Core: a gold geodesic sphere with six orbiting subsystem nodes, the activity filter, Auto-Cycle Evolution, Record X Clip and a Monte Carlo cone" width="100%">
+<img src="docs/screenshots/10-bot-fleet-neural-torus.png" alt="THE SYNAPSE in Bot Fleet at 1440×900 (2× Retina): the Sensory Input Layer with live sparklines (WS ticks/s, L1/L2 SWR cache, Worker Math, cross-exchange CVD, GEX/volatility), six Bullion Gold node cards firing impulses along dendrite curves into a rotating geodesic ExTerm core, the Cortex weight bars, and the Signal Rotation attractor, The Trace stream and The Pricer Monte Carlo fan along the bottom" width="100%">
 
-**Bot Fleet Neural Core (v17.1).** Modes, co-pilot approvals and a live geodesic core wired to every subsystem on `window.__EXTERM_BUS`.
+**THE SYNAPSE (v17.2).** The Bot Fleet cockpit: real background-process sensors, six neural nodes firing Gold, Emerald and Crimson impulses into the ExTerm core, Cortex weights, a phase-space attractor, a millisecond Trace and a Monte Carlo fan of futures.
 
 <img src="docs/screenshots/11-academy.png" alt="Academy tab: progress bar, five module cards with mission checklists and the custom drill generator" width="100%">
 
@@ -199,7 +220,7 @@ All screenshots: 1440 × 900 at 2× (Retina), offline launcher, captured with `n
 
 ## 📱 Android app
 
-Download **`ExTerm-v17.1-android.apk`** from the [latest release](https://github.com/uexxx/ExTerm/releases/latest)
+Download **`ExTerm-v17.2-android.apk`** from the [latest release](https://github.com/uexxx/ExTerm/releases/latest)
 (Android 7.0+, about 1 MB). It runs the same single-file app from the APK's assets on a secure origin, so storage and WebCrypto
 work offline. Wallet and DEX links open in your installed apps, and leaving the app keeps the chart in Picture-in-Picture.
 The APK's SHA-256 is listed in the release `SHA256SUMS.txt`.
@@ -208,7 +229,7 @@ Build it yourself (JDK 17 + Android SDK `platforms;android-34` and `build-tools;
 
 ```bash
 python3 build.py --harden
-python3 tools/build_apk.py          # → dist/ExTerm-v17.1-android.apk
+python3 tools/build_apk.py          # → dist/ExTerm-v17.2-android.apk
 ```
 
 CI builds the same APK on every tag: [`.github/workflows/build-android-apk.yml`](.github/workflows/build-android-apk.yml).
@@ -256,7 +277,8 @@ python3 build.py             # dist/exterm.html (readable) + exterm.html
 python3 build.py --harden    # dist/exterm.min.html (minified with esbuild)
 node test/v170.test.js       # v17.0 unit suite
 node test/v171.test.js       # v17.1 unit suite (ledger, AMM/L2 impact, stale guard, Copilot routing)
-node test/v17pro_e2e.js      # v17.0 + v17.1 browser end-to-end (desktop 1440/1280 + phone 390)
+node test/v172.test.js       # v17.2 unit suite (theme tokens, Monte Carlo fan, phase space, weights, Synapse wiring)
+node test/v17pro_e2e.js      # v17.0–v17.2 browser end-to-end (desktop 1440/1280 + phone 390)
 ```
 
 `build.py` inlines `src/*.js` and `src/style.css` into one file and stamps the CSP with the bundle's SHA-256 hash.

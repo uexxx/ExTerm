@@ -206,9 +206,9 @@ class CandleChart {
       const br = NT.bodyRect(py(k.o), py(k.c), x, bw);
       g.fillRect(br.x, br.y, br.w, br.h);
     }
-    if (o.ema) { line(ind.ema20, col.amb, 1.3); line(ind.ema50, '#c678dd', 1.3); }
+    if (o.ema) { line(ind.ema20, col.amb, 1.3); line(ind.ema50, '#CBD5E1', 1.3); }
     // library overlays
-    const PAL = ['#38bdf8', '#f472b6', '#f59e0b', '#a78bfa', '#22c55e', '#fb7185', '#14b8a6', '#eab308', '#60a5fa', '#c084fc', '#f97316', '#4ade80'];
+    const PAL = ['#38bdf8', '#f472b6', '#f59e0b', '#F5C84B', '#22c55e', '#fb7185', '#14b8a6', '#eab308', '#60a5fa', '#CBD5E1', '#f97316', '#4ade80'];
     if (ind.extra && ind.extra.length) { g.save(); g.beginPath(); g.rect(Lm, y0, plotW, mainH - volH); g.clip(); let ci = 0;
       for (const x of ind.extra) { if (x.def.pane !== 'over') continue; for (const ln of x.out) { const cc = PAL[ci++ % PAL.length]; if (ln.dots) { g.fillStyle = cc; for (let i = start; i < end; i++) { const v = ln.v[i]; if (Number.isFinite(v)) { g.beginPath(); g.arc(kx(i), py(v), Math.max(1.5, Math.min(3, bw * 0.2)), 0, 7); g.fill(); } } } else line(ln.v, cc, 1.25); } }
       g.restore(); }
@@ -263,7 +263,7 @@ class CandleChart {
           g.fillStyle = col.up + '26'; g.fillRect(xa, Math.min(ye, yt), xb - xa, Math.abs(yt - ye)); g.fillStyle = col.dn + '26'; g.fillRect(xa, Math.min(ye, ys), xb - xa, Math.abs(ys - ye)); g.strokeStyle = col.fg; g.beginPath(); g.moveTo(xa, ye); g.lineTo(xb, ye); g.stroke();
           g.font = '600 10px Inter, system-ui, sans-serif'; g.textAlign = 'left'; g.textBaseline = 'middle'; g.fillStyle = col.up; g.fillText(`Target ${NT.fmtPrice(tgt)} (${NT.fmtPct((tgt / d.p1 - 1) * 100, 2)}) · ${d.rr || 2}R`, xa + 4, (ye + yt) / 2); g.fillStyle = col.dn; g.fillText(`Stop ${NT.fmtPrice(d.p2)} (${NT.fmtPct((d.p2 / d.p1 - 1) * 100, 2)})`, xa + 4, (ye + ys) / 2); g.fillStyle = col.txt; g.fillText(`${L0 ? 'Long' : 'Short'} @ ${NT.fmtPrice(d.p1)}`, xa + 4, ye - 8); }
         if (d.type === 't') { g.strokeStyle = col.acc; g.beginPath(); g.moveTo(x1, y1); g.lineTo(x2, y2); g.stroke(); for (const [x, y] of [[x1, y1], [x2, y2]]) { g.fillStyle = col.acc; g.beginPath(); g.arc(x, y, 3, 0, 7); g.fill(); } }
-        if (d.type === 'fib') { const lv = [0, 0.236, 0.382, 0.5, 0.618, 0.786, 1], cs = ['#94a3b8', '#f472b6', '#f59e0b', '#22c55e', '#38bdf8', '#a78bfa', '#94a3b8']; const xa = Math.min(x1, x2), xb = Math.max(W - Rm, Math.max(x1, x2));
+        if (d.type === 'fib') { const lv = [0, 0.236, 0.382, 0.5, 0.618, 0.786, 1], cs = ['#94a3b8', '#f472b6', '#f59e0b', '#22c55e', '#38bdf8', '#F5C84B', '#94a3b8']; const xa = Math.min(x1, x2), xb = Math.max(W - Rm, Math.max(x1, x2));
           lv.forEach((k, j) => { const p = d.p2 + (d.p1 - d.p2) * k, y = py(p); g.strokeStyle = cs[j]; g.globalAlpha = d.ghost ? 0.5 : 0.9; g.beginPath(); g.moveTo(xa, y); g.lineTo(xb, y); g.stroke(); g.fillStyle = cs[j]; g.textAlign = 'left'; g.textBaseline = 'bottom'; g.fillText(`${k} · ${NT.fmtPrice(p)}`, xa + 4, y - 2); if (j < lv.length - 1) { const yn = py(d.p2 + (d.p1 - d.p2) * lv[j + 1]); g.globalAlpha = 0.06; g.fillRect(xa, Math.min(y, yn), xb - xa, Math.abs(yn - y)); } }); }
       }
       g.globalAlpha = 1; g.restore();
@@ -279,9 +279,9 @@ class CandleChart {
     if (o.rsi) pane('RSI 14', (s0, h) => {
       const yy = (v) => s0 + (100 - v) / 100 * h;
       for (const l of [30, 70]) { g.strokeStyle = col.txt + '55'; g.setLineDash([3, 3]); g.beginPath(); g.moveTo(Lm, yy(l)); g.lineTo(W - Rm, yy(l)); g.stroke(); g.setLineDash([]); g.fillStyle = col.txt; g.textAlign = 'left'; g.textBaseline = 'middle'; g.fillText(l, W - Rm + 6, yy(l)); }
-      g.strokeStyle = '#c678dd'; g.lineWidth = 1.3; g.beginPath(); let on = false;
+      g.strokeStyle = '#CBD5E1'; g.lineWidth = 1.3; g.beginPath(); let on = false;
       for (let i = start; i < end; i++) { const v = ind.rsi[i]; if (!isFinite(v)) { on = false; continue; } const x = kx(i); if (!on) { g.moveTo(x, yy(v)); on = true; } else g.lineTo(x, yy(v)); } g.stroke();
-      const lv = ind.rsi[end - 1]; if (isFinite(lv)) { g.fillStyle = '#c678dd'; g.textAlign = 'right'; g.textBaseline = 'top'; g.fillText(lv.toFixed(1), W - Rm - 6, s0 + 4); }
+      const lv = ind.rsi[end - 1]; if (isFinite(lv)) { g.fillStyle = '#CBD5E1'; g.textAlign = 'right'; g.textBaseline = 'top'; g.fillText(lv.toFixed(1), W - Rm - 6, s0 + 4); }
     });
     if (o.macd) pane('MACD 12·26·9', (s0, h) => {
       const m = ind.macd; let mx = 1e-12; for (let i = start; i < end; i++) { for (const a of [m.macd[i], m.signal[i], m.hist[i]]) if (isFinite(a)) mx = Math.max(mx, Math.abs(a)); }
@@ -301,7 +301,7 @@ class CandleChart {
     if (o.stochrsi && ind.srsi) pane('Stoch RSI 14·3·3', (s0, h) => { const yy = lnP(s0, h, [ind.srsi.k, ind.srsi.d], [col.acc, col.amb], [0, 100]); for (const l of [20, 80]) { g.strokeStyle = col.txt + '44'; g.setLineDash([3, 3]); g.beginPath(); g.moveTo(Lm, yy(l)); g.lineTo(W - Rm, yy(l)); g.stroke(); g.setLineDash([]); } });
     if (o.adx && ind.adx) pane('ADX 14 · +DI · −DI', (s0, h) => { lnP(s0, h, [ind.adx.adx, ind.adx.pdi, ind.adx.mdi], [col.fg, col.up, col.dn], [0, 60]); });
     if (o.atr && ind.atr) pane('ATR 14', (s0, h) => { lnP(s0, h, [ind.atr], ['#38bdf8']); });
-    if (o.obv && ind.obv) pane('On-Balance Volume', (s0, h) => { lnP(s0, h, [ind.obv], ['#a78bfa']); });
+    if (o.obv && ind.obv) pane('On-Balance Volume', (s0, h) => { lnP(s0, h, [ind.obv], ['#F5C84B']); });
     // library sub-panes
     if (ind.extra) { let ci = 0; for (const x of ind.extra) { if (x.def.pane !== 'sub') continue; const d0 = x.def, pr = Object.assign({}, d0.p, x.e.p || {}), ttl = d0.name + (Object.keys(pr).length ? ' (' + Object.values(pr).join(', ') + ')' : '');
       pane(ttl, (s0, h) => { const lines = x.out.filter((l) => !l.hist && !l.dots), hs = x.out.filter((l) => l.hist), ds = x.out.filter((l) => l.dots); let mn = Infinity, mx = -Infinity;
@@ -349,7 +349,7 @@ class CandleChart {
     const seg = (t, c) => { g.fillStyle = c; g.fillText(t, lx, ty); lx += g.measureText(t).width + 4; };
     seg('O', col.txt); seg(NT.fmtPrice(k.o), cc); seg('H', col.txt); seg(NT.fmtPrice(k.h), cc); seg('L', col.txt); seg(NT.fmtPrice(k.l), cc); seg('C', col.txt); seg(NT.fmtPrice(k.c), cc); seg(NT.fmtPct(chg), cc);
     seg('  Vol', col.txt); seg(NT.fmtCompact(k.v), col.fg);
-    if (o.ema) { seg('  EMA20', col.amb); if (isFinite(ind.ema20[hi_i])) seg(NT.fmtPrice(ind.ema20[hi_i]), col.amb); seg('EMA50', '#c678dd'); if (isFinite(ind.ema50[hi_i])) seg(NT.fmtPrice(ind.ema50[hi_i]), '#c678dd'); }
+    if (o.ema) { seg('  EMA20', col.amb); if (isFinite(ind.ema20[hi_i])) seg(NT.fmtPrice(ind.ema20[hi_i]), col.amb); seg('EMA50', '#CBD5E1'); if (isFinite(ind.ema50[hi_i])) seg(NT.fmtPrice(ind.ema50[hi_i]), '#CBD5E1'); }
   }
 }
 function findIdx(D, t) { // index of candle with bucket time t (binary search); -1 if before

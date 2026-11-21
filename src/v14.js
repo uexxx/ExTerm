@@ -82,9 +82,9 @@ const V14UI = (() => {
     g.save(); g.font = '600 11px Inter, system-ui, sans-serif'; g.textAlign = 'center';
     for (const e of list) {
       const x = ch.tToX(e.ts / 1000), y = L.py(e.price); if (!Number.isFinite(x) || !Number.isFinite(y) || x < L.Lm || x > L.W - L.Rm) continue;
-      const buy = e.side === 'buy', c = buy ? '#22c55e' : '#f43f5e', d = buy ? 1 : -1, yy = y + d * 9;
+      const buy = e.side === 'buy', c = buy ? '#22c55e' : '#EF4444', d = buy ? 1 : -1, yy = y + d * 9;
       g.fillStyle = c; g.strokeStyle = '#0b0d1a'; g.lineWidth = 1.5; g.beginPath(); g.moveTo(x, y + d * 2); g.lineTo(x - 6, yy + d * 6); g.lineTo(x + 6, yy + d * 6); g.closePath(); g.fill(); g.stroke();
-      if (!buy && e.pnl != null) { const s = (e.pnl >= 0 ? '+' : '') + NT.fmtUSD(e.pnl); g.fillStyle = e.pnl >= 0 ? '#22c55e' : '#f43f5e'; g.fillText(s, x, yy - d * 2 + 14 * (d < 0 ? -1 : 1) + (d < 0 ? 0 : 6)); }
+      if (!buy && e.pnl != null) { const s = (e.pnl >= 0 ? '+' : '') + NT.fmtUSD(e.pnl); g.fillStyle = e.pnl >= 0 ? '#22c55e' : '#EF4444'; g.fillText(s, x, yy - d * 2 + 14 * (d < 0 ? -1 : 1) + (d < 0 ? 0 : 6)); }
     }
     g.restore();
   };
@@ -134,7 +134,7 @@ const V14UI = (() => {
     try { for (const id of ids) { const r = await BTW.run({ type: 'bt', strat: id, params: NT.defaultParams(id), candles: lastBt.candles, o }); rows.push({ id, name: NT.strategies[id].name, res: r.res }); } }
     catch (e) { out.innerHTML = `<div class="note dn">Compare failed: ${esc(e.message)}</div>`; return; }
     U.lastCompare = rows;
-    const COL = ['#a78bfa', '#f59e0b', '#22d3ee'], f = (v, d = 1) => (v == null || !Number.isFinite(v) ? '–' : v.toFixed(d));
+    const COL = ['#F5C84B', '#f59e0b', '#FFE08A'], f = (v, d = 1) => (v == null || !Number.isFinite(v) ? '–' : v.toFixed(d));
     out.innerHTML = `<canvas id="v14CmpCv" width="560" height="170" style="width:100%;height:170px;margin-top:8px" role="img" aria-label="Equity curves of the compared strategies"></canvas>
       <div class="v14-tw"><table class="tbl v14-ct"><thead><tr><th>Strategy</th><th>Return</th><th>Max DD</th><th>Sharpe</th><th>Trades</th><th>Win %</th></tr></thead><tbody>${rows.map((r, i) => { const s = r.res.stats; return `<tr><td><span class="dot" style="background:${COL[i]}"></span>${esc(r.name)}</td><td class="${cls(s.ret)}">${f(s.ret)}%</td><td>${f(s.maxDD)}%</td><td>${f(s.sharpe, 2)}</td><td>${s.closed}</td><td>${f(s.winRate, 0)}</td></tr>`; }).join('')}</tbody></table></div>`;
     const cv = $('#v14CmpCv'), dpr = window.devicePixelRatio || 1; cv.width = Math.max(300, Math.round(cv.clientWidth * dpr)); cv.height = Math.round(170 * dpr);

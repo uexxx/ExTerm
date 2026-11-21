@@ -4,8 +4,8 @@
 const Themes = (() => {
   const T = {};
   T.LIST = [
-    { id: 'obsidian', name: 'Obsidian & Gold', desc: 'The @exterm.labs look: obsidian black, brushed gold and silver.', sw: ['#070707', '#D4AF37', '#CBD5E1', '#2fd08a'] },
-    { id: 'nova', name: 'Nova', desc: 'Deep space with violet-to-pink neon. The new default.', sw: ['#05060e', '#8b5cf6', '#ec4899', '#19e3a1'] },
+    { id: 'obsidian', name: 'Obsidian & Gold', desc: 'The default ExTerm look: obsidian #07080B, Bullion Gold #F5C84B, Emerald gains, Crimson alerts.', sw: ['#07080B', '#F5C84B', '#0D1117', '#22C55E'] },
+    { id: 'nova', name: 'Nova', desc: 'Deep space with violet-to-pink neon.', sw: ['#05060e', '#8b5cf6', '#ec4899', '#19e3a1'] },
     { id: 'cyber', name: 'Cyber Lime', desc: 'Terminal black with acid lime and cyan.', sw: ['#050705', '#b8ff3c', '#22d3ee', '#3dffa0'] },
     { id: 'gold', name: 'Gold Rush', desc: 'Obsidian with molten gold, exchange-style.', sw: ['#0a0805', '#f7b928', '#ff7a1a', '#21d07a'] },
     { id: 'arctic', name: 'Arctic', desc: 'Calm slate and ice blue for long sessions.', sw: ['#061019', '#38bdf8', '#2dd4bf', '#34d399'] },
@@ -15,7 +15,7 @@ const Themes = (() => {
   ];
   const IDS = new Set(T.LIST.map((t) => t.id));
   const LEGACY = { midnight: 'nova', aurora: 'synth', ocean: 'arctic' }; // older theme names map onto the new set
-  T.cur = () => { const t = (typeof ST !== 'undefined' && ST && ST.theme) || 'nova'; return IDS.has(t) ? t : LEGACY[t] || 'nova'; };
+  T.cur = () => { const t = (typeof ST !== 'undefined' && ST && ST.theme) || 'obsidian'; return IDS.has(t) ? t : LEGACY[t] || 'obsidian'; };
   T.apply = (id) => {
     const t = IDS.has(id) ? id : T.cur();
     if (typeof ST !== 'undefined' && ST) { ST.theme = t; }

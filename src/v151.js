@@ -234,7 +234,7 @@ const V151UI = (() => {
     g.strokeStyle = 'rgba(212,175,55,.35)'; g.lineWidth = 3; g.strokeRect(30, 30, 1020, 1020);
     V151.drawMark(g, 80, 80, 120); V151.drawWordmark(g, 220, 160, 66);
     g.fillStyle = '#e2e8f0'; g.font = '600 44px Inter, system-ui, sans-serif'; g.fillText('Daily Recap · ' + S.date, 80, 290);
-    g.fillStyle = S.pnl >= 0 ? '#22c55e' : '#f43f5e'; g.font = '900 150px Inter, system-ui, sans-serif'; g.fillText((S.pnl >= 0 ? '+' : '−') + NT.fmtUSD(Math.abs(S.pnl), 0), 80, 470);
+    g.fillStyle = S.pnl >= 0 ? '#22c55e' : '#EF4444'; g.font = '900 150px Inter, system-ui, sans-serif'; g.fillText((S.pnl >= 0 ? '+' : '−') + NT.fmtUSD(Math.abs(S.pnl), 0), 80, 470);
     const box = (x, y, l, v, c) => { g.fillStyle = 'rgba(255,255,255,.05)'; g.fillRect(x, y, 440, 150); g.fillStyle = '#94a3b8'; g.font = '600 30px Inter, system-ui'; g.fillText(l, x + 26, y + 50); g.fillStyle = c || '#f8fafc'; g.font = '800 58px Inter, system-ui'; g.fillText(v, x + 26, y + 120); };
     box(80, 540, 'Trades closed', String(S.n)); box(560, 540, 'Win rate', S.wr == null ? '–' : Math.round(S.wr) + '%');
     box(80, 720, 'Best', S.best ? String(baseOf(S.best.sym)).slice(0, 8) + ' ' + NT.fmtUSD(S.best.pnl, 0) : '–', '#22c55e'); box(560, 720, 'Equity', NT.fmtUSD(S.eq, 0), '#F3D06B');

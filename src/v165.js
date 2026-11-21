@@ -94,7 +94,7 @@ const V165UI = (() => {
   };
   const overlay = (g, L, ch) => {
     if (typeof chart === 'undefined' || ch !== chart || !L || !L.py) return; const G = U.ghosts[ST.sel]; if (!G) { U.drawn = null; return; }
-    const top = L.y0 + 4, bot = L.y0 + L.mainH - (L.volH || 0) - 6, x0 = L.Lm, xr = L.W - L.Rm, col = { entry: '#D4AF37', sl: '#f43f5e', tp: '#2fd08a' }, badges = [];
+    const top = L.y0 + 4, bot = L.y0 + L.mainH - (L.volH || 0) - 6, x0 = L.Lm, xr = L.W - L.Rm, col = { entry: '#D4AF37', sl: '#EF4444', tp: '#22C55E' }, badges = [];
     g.save(); g.lineWidth = 1.4;
     for (const l of G.lines) {
       const y0 = L.py(l.p); if (!Number.isFinite(y0)) continue; const off = y0 < top ? 'up' : y0 > bot ? 'dn' : '', y = Math.max(top, Math.min(bot, y0));
@@ -270,7 +270,7 @@ const V165UI = (() => {
     const x0 = 56, x1 = W - 300, y0 = 170, y1 = H - 90, all = bars.map((b) => b.c).concat(lv), lo = all.length ? Math.min(...all) : 0, hi = all.length ? Math.max(...all) : 1, py = (p) => y1 - ((p - lo) / ((hi - lo) || 1)) * (y1 - y0);
     if (bars.length > 1) { g.strokeStyle = '#e8e2cc'; g.lineWidth = 2; g.beginPath(); bars.forEach((b, i) => { const x = x0 + (i / (bars.length - 1)) * (x1 - x0); if (i) g.lineTo(x, py(b.c)); else g.moveTo(x, py(b.c)); }); g.stroke(); }
     const line = (p, c, l) => { if (!(p > 0)) return; g.setLineDash([10, 7]); g.strokeStyle = c; g.lineWidth = 2; g.beginPath(); g.moveTo(x0, py(p)); g.lineTo(x1, py(p)); g.stroke(); g.setLineDash([]); T(`${l} ${p}`, x1 + 16, py(p) + 7, '700 20px ui-monospace, Menlo, Consolas, monospace', c); };
-    line(m.entry, '#D4AF37', 'Entry'); line(m.sl, '#f43f5e', 'Stop'); m.tp.forEach((t, i) => line(t, '#2fd08a', 'TP' + (i + 1)));
+    line(m.entry, '#D4AF37', 'Entry'); line(m.sl, '#EF4444', 'Stop'); m.tp.forEach((t, i) => line(t, '#22C55E', 'TP' + (i + 1)));
     T(m.masked, 56, H - 44, '500 16px Inter, system-ui, sans-serif', '#8f8a78'); T('Paper-first · zero custody · ExTerm', W - 56, H - 44, '500 16px Inter, system-ui, sans-serif', '#8f8a78', 'right');
     const url = cv.toDataURL('image/png'); U.card = { url, model: m }; U.cardTexts = texts;
     if (!noDownload) { try { const a = document.createElement('a'); a.href = url; a.download = `exterm-setup-${m.sym.replace(/[^\w-]/g, '')}-${m.tf}.png`; document.body.appendChild(a); a.click(); a.remove(); toast('⬇ Share Setup Card saved (balances and personal data masked)', 'acc'); } catch (e) { toast('Downloads are blocked here', 'amb'); } }

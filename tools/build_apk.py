@@ -1,17 +1,17 @@
 #!/usr/bin/env python3
 # Copyright (c) 2026 ExTerm Labs. All Rights Reserved. Free for personal, non-commercial use. Copying, modifying, reverse-engineering, cloning, or redistributing source or derivative works without express written permission from ExTerm Labs is strictly prohibited.
-"""Build ExTerm-v17.1-android.apk without Gradle: aapt2 → javac → d8 → zipalign → apksigner.
+"""Build ExTerm-v17.2-android.apk without Gradle: aapt2 → javac → d8 → zipalign → apksigner.
 
 Needs JDK 17 (JAVA_HOME or on PATH) and an Android SDK (ANDROID_HOME / ANDROID_SDK_ROOT, or %LOCALAPPDATA%\\Android\\Sdk)
 with platforms;android-34 and build-tools;34.0.0. The release key lives OUTSIDE the repo (EXTERM_KEYSTORE, default
 %LOCALAPPDATA%\\ExTerm\\exterm-release.jks or ~/.exterm/exterm-release.jks) and is created on first use.
 
-Usage: python tools/build_apk.py [--html dist/exterm.min.html] [--out dist/ExTerm-v17.1-android.apk]
+Usage: python tools/build_apk.py [--html dist/exterm.min.html] [--out dist/ExTerm-v17.2-android.apk]
 """
 import argparse, os, pathlib, secrets, shutil, subprocess, sys, tempfile, zipfile
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
-VERSION_NAME, VERSION_CODE, MIN_SDK, TARGET_SDK = "17.1", "1710", "24", "34"
+VERSION_NAME, VERSION_CODE, MIN_SDK, TARGET_SDK = "17.2", "1720", "24", "34"
 EXE = ".exe" if os.name == "nt" else ""
 BAT = ".bat" if os.name == "nt" else ""
 

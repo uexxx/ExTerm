@@ -314,7 +314,7 @@ class NoRedirect(urllib.request.HTTPRedirectHandler):
 NOTIFY_OPENER = urllib.request.build_opener(NoRedirect(), urllib.request.HTTPSHandler(context=CTX))
 LOCAL_OPENER = urllib.request.build_opener(NoRedirect(), urllib.request.HTTPHandler())
 
-VERSION = "17.1"
+VERSION = "17.2"
 STARTED = time.time()
 CACHE_STATS = {"hits": 0, "total": 0}  # /api/feed symbols answered from RAM vs asked for (Grok telemetry strip)
 OLD_DATA_DIR = pathlib.Path.home() / (".nova" + "term")  # pre-v15 data folder, moved to ~/.exterm on first start
@@ -2100,16 +2100,16 @@ class H(http.server.BaseHTTPRequestHandler):
             if status == 200 and (self.headers.get("X-ExTerm-Pack") or "").lower() == "ohlcv":  # v17.0 compact candles (~65% smaller)
                 packed = pack_ohlcv(host, body)
                 if packed is not None:
-                    return self._send(200, packed, "application/json", {"X-ExTerm-Cache": "LIVE", "X-ExTerm-Packed": "ohlcv"})
-            self._send(status, body, ctype, {"X-ExTerm-Cache": "LIVE"})
+                    return self._send(200, packed, "application/json", {"X-ExTerm-Cache": "LIVE", "X-ExTerm-Packed": "ohlcv", "Server-Timing": "swr;desc=LIVE"})
+            self._send(status, body, ctype, {"X-ExTerm-Cache": "LIVE", "Server-Timing": "swr;desc=LIVE"})  # Server-Timing: the v17.2 Synapse reads L2 cache state from Resource Timing
         except UpstreamBlocked as e:
             ra = str(max(1, int(e.retry_after + 0.999)))
             stale = shield_stale(url) if method == "GET" else None  # never replay a stale answer to a POST
             if stale and e.status in (429, 502, 504):
                 age = max(0, int(time.time() - stale[0]))
-                return self._send(200, stale[1], stale[2], {"X-ExTerm-Cache": "STALE", "X-ExTerm-Stale-Age": str(age), "Retry-After": ra})
+                return self._send(200, stale[1], stale[2], {"X-ExTerm-Cache": "STALE", "X-ExTerm-Stale-Age": str(age), "Retry-After": ra, "Server-Timing": "swr;desc=STALE"})
             self._send(e.status, json.dumps({"error": e.reason, "rateLimited": e.status == 429, "retryAfter": int(ra), "host": host}).encode(),
-                       "application/json", {"Retry-After": ra, "X-ExTerm-Cache": "MISS"})
+                       "application/json", {"Retry-After": ra, "X-ExTerm-Cache": "MISS", "Server-Timing": "swr;desc=MISS"})
         except urllib.error.HTTPError as e:
             self._send(e.code, getattr(e, "exterm_body", b"") or json.dumps({"error": str(e.reason)}).encode())
         except Exception as e:
