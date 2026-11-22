@@ -168,7 +168,7 @@ const V17P = (() => {
 <h1>${esc(m.title || 'Strategy Tear Sheet')}</h1><div class="sub">${esc(m.sym || '')} · ${esc(m.tf || '')} · ${esc(m.strategy || '')} · generated ${esc(new Date(m.at || 0).toISOString().slice(0, 10))}</div>
 <div class="g">${kv('Net return', pct(s.ret))}${kv('Max drawdown', pct(s.dd != null ? -Math.abs(s.dd) : NaN))}${kv('Sharpe', num(s.sharpe))}${kv('Trades', String((rts || []).length))}${kv('Win rate', pct((rts || []).length ? W.length / rts.length : NaN))}${kv('Overfitting score', x.overfit != null ? x.overfit + ' / 100' : '–')}${kv('Half-Kelly', pct(x.halfKelly))}${kv('Prop pass (100K)', pct(x.propPass))}</div>
 <table><thead><tr><th>Entry (UTC)</th><th>Dir</th><th>Entry</th><th>Exit</th><th>P&amp;L</th><th>Return</th></tr></thead><tbody>${rows || '<tr><td colspan="6">No closed trades</td></tr>'}</tbody></table>
-<footer>ExTerm v17.3 · Copyright (c) 2026 ExTerm Labs. All Rights Reserved. Simulated results are not a guarantee of future performance.</footer></main></body></html>`;
+<footer>ExTerm v17.5 · Copyright (c) 2026 ExTerm Labs. All Rights Reserved. Simulated results are not a guarantee of future performance.</footer></main></body></html>`;
   };
 
   /* backtest leaks: the specific habits costing money, ranked */

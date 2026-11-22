@@ -2,6 +2,34 @@
 
 ExTerm holds no funds and no keys in every version. Up to v15.7 it was paper only; from v16.0 it can send HMAC-signed signals to a bot you run on your own machine, only after four explicit gates, and it starts in PAPER. v16.1 adds eight fail-safe engines on that path; v16.3 closes the loop with ACK + fill sync and a live cockpit; v16.4 adds DEX discovery, a local Copilot and a realistic backtester; v16.5 lets any AI or bot advise through one deterministic firewall; v16.6 adds a live transactions tape for every market.
 
+## v17.5 — Multi-Worker Sovereign 3D & Quant Frontier — 22 Nov 2026
+
+- Worker mesh: 8 dedicated Web Workers from one blob (`WORKER175_SRC` = `src/v175core.js` + `src/v175work.js`), one per lane.
+  - Each lane runs only its allow-listed ops. `Float64Array` series are transferred zero-copy, and typed-array results are transferred back.
+  - There is an inline fallback, a 20 s timeout, and per-lane BUSY / IDLE / HIBERNATE state with jobs, queue and avg / p99 ms.
+- Off-thread rendering: the six Working Bots canvases are handed to the 3D Spatial worker with `transferControlToOffscreen` and drawn by the pure `V175.R` renderers.
+  - Each frame the main thread posts one state snapshot; large payloads (attractor xyz, Monte Carlo paths) travel once.
+  - One rAF driver (`V175UI.loop`) uses IntersectionObserver / ResizeObserver, so no layout reads happen inside the frame. It enforces a 0.6 ms per-frame budget and stops off-screen canvases.
+  - Measured main-thread v17.5 frame work: p95 ≈ 0.2 ms; the e2e gate is ≤ 1.2 ms.
+- `serve.py`: 4 execution lanes (ingest · forensics · quant · exec). Each is a lazily started single-worker `ProcessPoolExecutor`.
+  - Jobs: OHLC aggregation, wash entropy, Bellman–Ford, Merton percentiles, book shock and Kelly sizing.
+  - Allow-list, numeric and size caps (`lane_args_ok`) apply; `GET /api/lanes` and `POST /api/lanes/run` are token-gated.
+  - Thread fallback (`EXTERM_LANES=thread`, or automatic if a process pool can't start); `--no-lanes`.
+- Search: "Search any stock, coin, or paste meme coin CA…" + "Use Active Chart Symbol" now also covers the chart, Tracker, Portfolio, Journal, Workspace, Social, Bots, Challenges and Academy tabs, plus the Morning Briefing, which gets a MutationObserver. On the chart it shares one compact row with a single-line EDGE ticker you can click to expand.
+- Working Bots squad (`V175.Squad`): 6 members mapped from real bus events.
+  - It shows STANDBY, or IDLE / ARMED / ACTIVE once real events arrive.
+  - The demo is opt-in and labelled. It feeds the squad only, is dropped while real bots run, and stops itself.
+  - 4D core plus 8 quant panels: Lorenz–Rössler · Merton cone · eigen-risk sonar · firing matrix · events/s + p99 · KPIs · worker mesh · edge engines.
+  - The Merton Kelly readout is gated on the drift t-statistic (|t| ≥ 2), and λ is marked when capped.
+- Main-chart 3D: 3 default layers (OB Prisms, VPVR / POC, Whale Beacons) and a 12-layer drawer with IndexedDB presets and a 4D replay scrub. v17.1's renderer now gates OB / L2 on the layer state and exposes its projection (`chart3d.geo`) for the overlays.
+- 2D | 3D pills on 10 tools; every scene says whether it shows live or model data.
+- Shock Lab (Quant Lab): 156 scenarios, 4 sliders, a book-walk shock on the live L2 book or a model book, and a stress test of open positions and running bots' positions.
+- 30+ edge engines (`V175.E`, catalogue `V175.ENGINES`) computed in the lanes for the active symbol, with honest "model" / "collecting" / "needs X" labels.
+- WebAudio Sonar, Voice HUD (Shift+V; the chart keeps v17.0's Shift+V voice commands), 60 s Flight Recorder (Shift+R → JSON).
+- Palette: every colour literal in the v17.5 JS and CSS is one of the pre-v17.0 tokens (`#07080B`, `#0D1117`, `#F5C84B`, `#2fd08a`, `#ff5a5f`, `#9a917a`, `#d8cfb6`); the tests enforce this, and the pre-v17.0 rules are untouched.
+- Screenshots: new `17-working-bots-squad.png`, `18-shock-lab-flight-simulator.png`, `19-3d-layers-drawer.png` and `20-options-3d-iv-surface.png` (20 × 2×).
+- Tests: new `test/v175.test.js` (118) and `test/v175_lanes_test.py` (20); `v17pro_e2e` 80/80; all 36 unit suites pass. `run-all.ps1` / `.sh` now include v17.1–v17.5. The v17.3 build-order assertion was relaxed to allow modules after `v173.js`.
+
 ## v17.3 — Exact Pre-v17.0 Gold Restored, Live Bubble Physics, Dual-Engine Synapse, Telemetry Matrix — 22 Nov 2026
 
 - Theme: the v16.6 (`961e97d`) palette was measured from that build's computed styles and restored exactly; a probe of v17.3 shows zero token differences from it.

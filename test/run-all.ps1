@@ -25,13 +25,13 @@ function Run([string]$name, [string]$exe, [string[]]$argv) {
 try {
   if (-not $Only -or $Only -eq 'unit') {
     Write-Output '-- unit'
-    foreach ($t in 'core', 'strategies', 'validate', 'robust', 'bigdata', 'solana', 'v12', 'v13', 'v14', 'v15', 'v15p2', 'v15p3', 'v15p4', 'v15p5', 'world', 'v151', 'v152', 'v153', 'v154', 'v155', 'v156', 'v157', 'v160', 'v161', 'v162', 'v163', 'v164', 'v165', 'v166', 'v170') { if (Test-Path "test/$t.test.js") { Run "$t.test.js" node @("test/$t.test.js") } }
+    foreach ($t in 'core', 'strategies', 'validate', 'robust', 'bigdata', 'solana', 'v12', 'v13', 'v14', 'v15', 'v15p2', 'v15p3', 'v15p4', 'v15p5', 'world', 'v151', 'v152', 'v153', 'v154', 'v155', 'v156', 'v157', 'v160', 'v161', 'v162', 'v163', 'v164', 'v165', 'v166', 'v170', 'v171', 'v172', 'v173', 'v175') { if (Test-Path "test/$t.test.js") { Run "$t.test.js" node @("test/$t.test.js") } }
     Run 'community strategies' node @('tools/validate-strategies.js')
     Run 'launcher/page strategy parity' node @('test/v13_parity.js')
   }
   if (-not $Only -or $Only -eq 'launcher') {
     Write-Output '-- launcher'
-    foreach ($t in 'redirect_e2e', 'v12_server_test', 'v13_server_test', 'v131_server_test', 'v14_server_test', 'v15_server_test', 'v15p2_server_test', 'v15p3_server_test', 'v15p4_server_test', 'v15p5_server_test', 'v152_server_test', 'v154_server_test', 'v161_server_test', 'v17_shield_test', 'v17_ops_test', 'v17_daemon_e2e') { if (Test-Path "test/$t.py") { Run "$t.py" python @("test/$t.py") } }
+    foreach ($t in 'redirect_e2e', 'v12_server_test', 'v13_server_test', 'v131_server_test', 'v14_server_test', 'v15_server_test', 'v15p2_server_test', 'v15p3_server_test', 'v15p4_server_test', 'v15p5_server_test', 'v152_server_test', 'v154_server_test', 'v161_server_test', 'v17_shield_test', 'v17_ops_test', 'v17_daemon_e2e', 'v175_lanes_test') { if (Test-Path "test/$t.py") { Run "$t.py" python @("test/$t.py") } }
   }
   if (-not $Only -or $Only -eq 'e2e') {
     Write-Output '-- browser end-to-end'

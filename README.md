@@ -4,7 +4,7 @@
 
 <div align="center">
 
-# ExTerm v17.3
+# ExTerm v17.5
 
 ### The $0, local-first trading workstation for crypto, stocks, on-chain DEX tokens, options and futures, with a Quant Lab that coaches you, a Bot Fleet you arm deliberately, and a native Android app.
 
@@ -13,10 +13,10 @@ and live signals go only to a bot you run yourself on `127.0.0.1`, HMAC-signed a
 
 <img src="docs/screenshots/01-hero-chart-gex-dom.png" alt="ExTerm Markets terminal at 1440×900 (2× Retina): BTC candles with the plotted morning levels (previous day high, low and close, pivot, R1, S1), the GEX flip, call wall and put wall lines, the one-line Reach strip with the R:R, 2×2 and smart-trail tools under the navigation, the 6-timeframe confluence pill in the header and the Live Tape" width="100%">
 
-**[Launch](#-30-second-local-launch)** · **[What's new](#-whats-new-in-v173)** · **[Screenshots](#-v173-tour)** · **[Android](#-android-app)** · **[Verify](#-how-to-verify-official-builds)** · **[Build & test](#-build--test)** · **[Security](#-security)** · **[License](#-license)**
+**[Launch](#-30-second-local-launch)** · **[What's new](#-whats-new-in-v175)** · **[Screenshots](#-v175-tour)** · **[Android](#-android-app)** · **[Verify](#-how-to-verify-official-builds)** · **[Build & test](#-build--test)** · **[Security](#-security)** · **[License](#-license)**
 
 <p>
-  <a href="https://github.com/uexxx/ExTerm/releases/latest"><img src="https://img.shields.io/badge/download-v17.3-D4AF37?style=for-the-badge" alt="Download v17.3"></a>
+  <a href="https://github.com/uexxx/ExTerm/releases/latest"><img src="https://img.shields.io/badge/download-v17.5-F5C84B?style=for-the-badge" alt="Download v17.5"></a>
   <a href="https://github.com/uexxx/ExTerm/releases/latest"><img src="https://img.shields.io/badge/Android-APK-2fd08a?style=for-the-badge" alt="Android APK"></a>
   <img src="https://img.shields.io/badge/price-%240-2fd08a?style=for-the-badge" alt="$0">
   <img src="https://img.shields.io/badge/indicators-137-F5C84B?style=for-the-badge" alt="137 indicators">
@@ -58,6 +58,60 @@ Useful flags: `python3 serve.py 9000` (other port) · `--no-browser` · `--docto
 > proxies only an allow-list of public market-data hosts, on `localhost`, behind a fresh per-launch token.
 
 ---
+
+## 🎯 What's new in v17.5
+
+**Multi-Worker Sovereign 3D & Quant Frontier: 8 browser worker lanes plus 4 Python process lanes, search inside every tool, a truthful Working Bots squad, a 3-layer default 3D chart and 30+ quant engines. The pre-v17.0 Obsidian `#07080B` / `#0D1117` and Bullion Gold `#F5C84B` palette is locked by tests.**
+
+- **8 dedicated Web Workers** (`src/v175work.js`, one blob, allow-listed ops per lane, `Float64Array` arguments transferred zero-copy):
+  Feed / L2 · 3D Spatial / Shock Physics · On-Chain / Bellman-Ford · Options GEX / IV · Screener / Causality · Quant Lab / CPCV · Bot Squad / Ledger · Copilot RAG / Flight Recorder.
+  - Per-lane state (BUSY / IDLE / HIBERNATE), jobs, queue depth and avg / p99 ms appear in THE SYNAPSE.
+  - The Working Bots canvases render in the 3D Spatial worker through `OffscreenCanvas`. The main thread only posts a small state snapshot per frame.
+  - **Measured:** with the full Synapse visible, v17.5's main-thread frame work is p95 ≈ 0.2 ms (headless Chrome, 1440 × 900). The e2e gate is ≤ 1.2 ms. Hidden or off-screen canvases drop to 0 fps.
+- **4 isolated Python lanes in `serve.py`:** Market / WS Ingest · On-Chain DEX / DAG Forensics · Heavy Quant / GEX / Shock Math · Copilot / Bot Execution.
+  - Each lane is its own lazily started `ProcessPoolExecutor`, exposed at `GET /api/lanes` and `POST /api/lanes/run`. Both are token-gated; jobs are allow-listed and work-capped.
+  - **Measured:** the ingest lane answers in < 250 ms while the quant lane runs an 800k-step Monte Carlo.
+  - `EXTERM_LANES=thread` runs the same lanes as dedicated threads; `--no-lanes` turns the endpoints off.
+- **"Search any stock, coin, or paste meme coin CA…" in every tool**, with **Use Active Chart Symbol**: all 19 tool tabs (the chart has a compact one-line row) and the Morning Briefing.
+- **Working Bots squad.** HUNTER-α · SNIPER-EXEC · SCALPER-EXIT · RISK-GUARD · MUTATOR-EVO · HEDGER-ARB, bound 1:1 to real bus events.
+  - The squad shows **STANDBY** until a bot runs. **Explore Live Demo** shows clearly labelled DEMO events, which feed only the squad, never the global bus.
+  - The demo stops itself the moment a real bot starts. Zero demo signals are shown while real bots run, and the tests check this.
+  - On top sits a 4D core: Clifford torus rotating in 4D, Hopf fibration, Kerr ring with frame-dragging spirals, and L-system lightning on every fire.
+  - 8 panels below it:
+    - 3D Lorenz–Rössler attractor with Hurst H, Lorenz λ₁ and permutation entropy.
+    - 100-path Merton jump-diffusion cone: P10–P90, hover crosshair, ±EV, t-gated Kelly f*, 95 % VaR / CVaR.
+    - Sweeping eigen-risk sonar with a −3σ gauge.
+    - Sub-ms firing matrix.
+    - Events/s + p99 latency histogram.
+    - Squad KPIs.
+    - Worker mesh (8 + 4 lanes).
+    - 30 edge engines.
+- **Main-chart 3D: at most 3 layers by default** (OB Prisms + VPVR / POC + Whale Beacons). A **3D Layers** drawer holds 9 more: L2 Terrain, CVD Pillars, GEX Towers, Liq Pools, FVG Tunnels, AVWAP Canyon, 3D R:R Hologram, 6-TF Strata and 4D Replay Scrub. Presets live in IndexedDB.
+- **Optional 2D | 3D pills** (fast 2D stays the default) on 10 tools:
+  - On-Chain cabal DAG + CLMM volcano
+  - Options IV & GEX surface + spot-shift
+  - Futures DOM waterfall
+  - Screener alpha cube
+  - Pulse whale globe
+  - Derivs arb hyper-graph
+  - Quant Lab Sharpe surface + DNA helix
+  - Copilot Bull / Bear / Risk tetrahedron
+  - Portfolio equity / drawdown canyon
+  - Ctrl+K carousel
+- **3D Order-Book Shock & Scenario Flight Simulator (Quant Lab):** 156 deterministic scenarios (6 categories × 26).
+  - Sliders for Order Size $, Book Depth %, Vol Multiplier and Spoof Pull %.
+  - Runs on the live L2 book when it matches the price, otherwise on a model book.
+  - **Stress-Test My Open Positions & Active Bots** for any searched ticker or CA.
+- **30+ engines computed in the lanes for the active symbol:**
+  - Easley–O'Hara PIN (grid MLE), Almgren–Chriss, FFT cycle + Haar wavelet, adaptive Kalman, spoof half-life, order-type selector, IOC shadow bracket, draw-to-bot compiler.
+  - Sybil wash entropy, MEV sandwich, smart-money board, Breeden–Litzenberger RND, gamma–vanna–charm, max-pain pin risk, Hawkes DOM, latency impulse.
+  - Marchenko–Pastur RMT, transfer entropy, Clayton / Gumbel copulas, BOCPD, vol cone, Bellman–Ford arb, genetic alpha with deflated Sharpe + CPCV, inverse stress, Thompson bandit, shadow twin, IF-THEN automator, Bayesian 3-agent co-pilot + journal RAG, MFE / MAE.
+  - Where an input isn't available (e.g. no live option chain), the readout says so, for example "model chain".
+- **WebAudio Sonar · Voice HUD (Shift+V) · 60 s Flight Recorder (Shift+R, JSON download).** On the chart tab, Shift+V keeps the v17.0 voice commands.
+- **Tests.**
+  - New `test/v175.test.js` (118 checks). It covers closed-form accuracy: Black–Scholes 10.4506, Breeden–Litzenberger mass 1 / forward mean, Lorenz λ₁ ≈ 0.906, Merton median, C(6,2) CPCV, and more.
+  - New `test/v175_lanes_test.py` (20).
+  - `v17pro_e2e` now runs 80 checks (+15 for v17.5, desktop + phone).
 
 ## 🎯 What's new in v17.3
 
@@ -173,7 +227,7 @@ Nothing new is painted over the 240 Hz / 120 Hz chart canvas: chart additions ar
   left / right-handed layout, sizing keypad, clipboard CA snipe, 1-tap **Phantom / Solflare / Jupiter / Uniswap** deep links
   (**ExTerm adds a $0 fee**; network and DEX fees still apply), QR pairing of your layout, AMOLED `#000000`, PIN or biometric lock,
   Share Setup Card and Picture-in-Picture.
-- **Native Android app**: [`ExTerm-v17.3-android.apk`](https://github.com/uexxx/ExTerm/releases/latest).
+- **Native Android app**: [`ExTerm-v17.5-android.apk`](https://github.com/uexxx/ExTerm/releases/latest).
 
 **🛡 Launcher (Phases 0–1)**: a 429 storm shield (single-flight requests, per-host cool-down that honours `Retry-After`, stale
 fallback), a cross-venue crypto tape (Coinbase · Kraken · Binance · Bybit · OKX) with basis, funding, spread and CVD, instant
@@ -183,7 +237,7 @@ Full notes: [`CHANGELOG.md`](CHANGELOG.md).
 
 ---
 
-## 🖼 v17.3 tour
+## 🖼 v17.5 tour
 
 All screenshots: 1440 × 900 at 2× (Retina), offline launcher, captured with `node tools/capture-screens.js`.
 
@@ -217,7 +271,23 @@ All screenshots: 1440 × 900 at 2× (Retina), offline launcher, captured with `n
 
 <img src="docs/screenshots/09-3d-volumetric-order-blocks.png" alt="Main chart with the 3D pill on: BTC candles as emerald and crimson volume prisms on a calibrated floor grid, Bullion Gold order-block wireframes, L2 particle walls and the Top / Side / Isometric camera pills" width="100%">
 
-**3D on the main chart (v17.1).** One toolbar pill for every symbol and CA: volume prisms, order-block wireframes, L2 walls, camera presets, double-click to reset.
+**3D on the main chart.** One toolbar pill for every symbol and CA. Since v17.5 it shows at most 3 layers by default: OB Prisms, VPVR / POC and Whale Beacons.
+
+<img src="docs/screenshots/19-3d-layers-drawer.png" alt="The v17.5 3D Layers drawer over the 3D chart: OB Prisms, VPVR / POC and Whale Beacons ticked as core layers; L2 Terrain, CVD Pillars, GEX Towers, Liq Pools, FVG Tunnels, AVWAP Canyon, R:R Hologram, 6-TF Strata and 4D Replay Scrub as optional extras" width="100%">
+
+**3D Layers drawer (v17.5).** Nine extra layers, a 4D replay scrub and IndexedDB presets.
+
+<img src="docs/screenshots/17-working-bots-squad.png" alt="The v17.5 Working Bots squad in THE SYNAPSE: the 4D core (Clifford torus, Hopf fibres, Kerr ring, L-system lightning), the six squad members HUNTER-alpha to HEDGER-ARB with labelled DEMO events, and the Lorenz–Rössler attractor, Merton cone, eigen-risk sonar and firing matrix panels" width="100%">
+
+**Working Bots squad (v17.5).** STANDBY until a bot runs. This capture uses the labelled **Explore Live Demo**, and the panels render off the main thread.
+
+<img src="docs/screenshots/18-shock-lab-flight-simulator.png" alt="The v17.5 Shock Lab in Quant Lab: category and scenario pickers (156 scenarios), Order Size, Book Depth, Vol Multiplier and Spoof Pull sliders, the 3D order book before and after the shock, and the fill, slippage and impact readout" width="100%">
+
+**3D Order-Book Shock Lab (v17.5).** 156 scenarios, four sliders, and a stress test of your open positions and running bots.
+
+<img src="docs/screenshots/20-options-3d-iv-surface.png" alt="The Options tab with the v17.5 2D | 3D pill set to 3D: an IV smile surface with GEX towers and a spot-shift marker" width="100%">
+
+**Optional 2D | 3D (v17.5).** Every tool stays fast 2D until you flip its pill.
 
 <img src="docs/screenshots/10-bot-fleet-neural-torus.png" alt="THE SYNAPSE in Bot Fleet at 1440×900 (2× Retina): the Sensory Input Layer with live sparklines (WS ticks/s, L1/L2 SWR cache, Worker Math, cross-exchange CVD, GEX/volatility), six Bullion Gold node cards firing impulses along dendrite curves into a rotating geodesic ExTerm core, the Cortex weight bars, and the Signal Rotation attractor, The Trace stream and The Pricer Monte Carlo fan along the bottom" width="100%">
 
@@ -251,7 +321,7 @@ All screenshots: 1440 × 900 at 2× (Retina), offline launcher, captured with `n
 
 ## 📱 Android app
 
-Download **`ExTerm-v17.3-android.apk`** from the [latest release](https://github.com/uexxx/ExTerm/releases/latest)
+Download **`ExTerm-v17.5-android.apk`** from the [latest release](https://github.com/uexxx/ExTerm/releases/latest)
 (Android 7.0+, about 1 MB). It runs the same single-file app from the APK's assets on a secure origin, so storage and WebCrypto
 work offline. Wallet and DEX links open in your installed apps, and leaving the app keeps the chart in Picture-in-Picture.
 The APK's SHA-256 is listed in the release `SHA256SUMS.txt`.
@@ -260,7 +330,7 @@ Build it yourself (JDK 17 + Android SDK `platforms;android-34` and `build-tools;
 
 ```bash
 python3 build.py --harden
-python3 tools/build_apk.py          # → dist/ExTerm-v17.3-android.apk
+python3 tools/build_apk.py          # → dist/ExTerm-v17.5-android.apk
 ```
 
 CI builds the same APK on every tag: [`.github/workflows/build-android-apk.yml`](.github/workflows/build-android-apk.yml).
@@ -310,7 +380,9 @@ node test/v170.test.js       # v17.0 unit suite
 node test/v171.test.js       # v17.1 unit suite (ledger, AMM/L2 impact, stale guard, Copilot routing)
 node test/v172.test.js       # v17.2 unit suite (Synapse maths, Monte Carlo fan, phase space, weights, wiring)
 node test/v173.test.js       # v17.3 unit suite (bubble physics, fractal dendrites, particles, matrix, v16.6 palette restore)
-node test/v17pro_e2e.js      # v17.0–v17.3 browser end-to-end (desktop 1440/1280 + phone 390)
+node test/v175.test.js       # v17.5 unit suite (worker kernel, squad truthfulness, 3D layers, 156 scenarios, 30+ engines vs closed forms, palette lock)
+python3 test/v175_lanes_test.py  # v17.5 serve.py lanes (process isolation, allow-list, caps, HTTP)
+node test/v17pro_e2e.js      # v17.0–v17.5 browser end-to-end (desktop 1440/1280 + phone 390)
 ```
 
 `build.py` inlines `src/*.js` and `src/style.css` into one file and stamps the CSP with the bundle's SHA-256 hash.

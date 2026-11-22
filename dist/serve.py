@@ -314,7 +314,7 @@ class NoRedirect(urllib.request.HTTPRedirectHandler):
 NOTIFY_OPENER = urllib.request.build_opener(NoRedirect(), urllib.request.HTTPSHandler(context=CTX))
 LOCAL_OPENER = urllib.request.build_opener(NoRedirect(), urllib.request.HTTPHandler())
 
-VERSION = "17.3"
+VERSION = "17.5"
 STARTED = time.time()
 CACHE_STATS = {"hits": 0, "total": 0}  # /api/feed symbols answered from RAM vs asked for (Grok telemetry strip)
 OLD_DATA_DIR = pathlib.Path.home() / (".nova" + "term")  # pre-v15 data folder, moved to ~/.exterm on first start
@@ -1866,6 +1866,160 @@ class LlmBridge:
 LLM = None
 
 
+# ── v17.5: 4 dedicated execution lanes ──────────────────────────────────────────────────────────────────────────────────
+# Market / WS Ingest · On-Chain DEX / DAG Forensics · Heavy Quant / GEX / Shock Math · Copilot / Bot Execution. Each lane is its
+# own single-worker ProcessPoolExecutor (lazy: the process starts on the lane's first job), so a 2 000-path Monte Carlo on the
+# quant lane never delays a tick on the ingest lane or a request on this server's threads. Jobs are allow-listed, pure, top-level
+# functions (picklable); arguments are numeric and size-capped. EXTERM_LANES=thread (or a platform without process pools) runs
+# the same lanes as dedicated threads. --no-lanes turns the endpoint off.
+import random as _lrand, math as _lm
+def _lane_ping(x=0):
+    return {"pong": x, "pid": os.getpid()}
+def _lane_ohlc(ticks, bucket_ms):
+    """ingest: [[t_ms, price, size], ...] -> OHLCV bars"""
+    out = []; cur = None
+    for t, p, s in ticks:
+        k = int(t // bucket_ms * bucket_ms)
+        if cur is None or cur[0] != k:
+            cur = [k, p, p, p, p, 0.0]; out.append(cur)
+        cur[2] = max(cur[2], p); cur[3] = min(cur[3], p); cur[4] = p; cur[5] += s
+    return {"bars": out, "pid": os.getpid()}
+def _lane_entropy(trades):
+    """forensics: Sybil / wash-trading score 0-100 from [[from, to], ...] (counterparty entropy + round trips)"""
+    if not trades: return {"score": 0, "entropy": 0.0, "pid": os.getpid()}
+    cnt = {}; seen = set(); rt = 0
+    for a, b in trades:
+        k = (a, b) if a < b else (b, a); cnt[k] = cnt.get(k, 0) + 1
+        if (b, a) in seen: rt += 1
+        seen.add((a, b))
+    n = len(trades); h = -sum((c / n) * _lm.log2(c / n) for c in cnt.values()); he = min(1.0, h / _lm.log2(max(2, n)))
+    return {"score": round(max(0, min(100, (1 - he) * 60 + (rt / n) * 40))), "entropy": h, "roundTrip": rt / n, "pid": os.getpid()}
+def _lane_bellman(nodes, edges):
+    """forensics: Bellman-Ford multi-hop arbitrage on -log(rate) edges"""
+    idx = {x: i for i, x in enumerate(nodes)}; n = len(nodes); dist = [0.0] * n; pred = [-1] * n
+    es = [(idx[a], idx[b], -_lm.log(r), r) for a, b, r in edges if a in idx and b in idx and r > 0]; x = -1
+    for _ in range(n):
+        x = -1
+        for u, v, w, _r in es:
+            if dist[u] + w < dist[v] - 1e-12: dist[v] = dist[u] + w; pred[v] = u; x = v
+    if x < 0: return {"arb": False, "cycle": [], "profit": 0.0, "pid": os.getpid()}
+    for _ in range(n): x = pred[x]
+    cyc = [x]; v = pred[x]
+    while v != x and len(cyc) <= n: cyc.append(v); v = pred[v]
+    cyc.append(x); cyc.reverse(); prod = 1.0
+    for i in range(len(cyc) - 1):
+        prod *= next((r for u, v2, _w, r in es if u == cyc[i] and v2 == cyc[i + 1]), 1.0)
+    return {"arb": prod > 1, "cycle": [nodes[i] for i in cyc], "profit": prod - 1, "pid": os.getpid()}
+def _lane_merton(s0, mu, sigma, lam, muj, sigj, T, steps, paths, seed):
+    """quant: Merton jump-diffusion terminal distribution -> P10/P50/P90, EV, 95 % VaR / CVaR (seeded, deterministic)"""
+    rnd = _lrand.Random(seed); dt = T / steps; k = _lm.exp(muj + sigj * sigj / 2) - 1; term = []
+    for _ in range(paths):
+        s = s0
+        for _ in range(steps):
+            nj = 0; L = _lm.exp(-lam * dt); p = rnd.random()
+            while p > L and nj < 50: nj += 1; p *= rnd.random()
+            J = sum(rnd.gauss(muj, sigj) for _ in range(nj))
+            s *= _lm.exp((mu - lam * k - sigma * sigma / 2) * dt + sigma * _lm.sqrt(dt) * rnd.gauss(0, 1) + J)
+        term.append(s / s0 - 1)
+    term.sort(); q = lambda f: term[min(len(term) - 1, max(0, int(round(f * (len(term) - 1)))))]
+    tail = [x for x in term if x <= q(0.05)] or [q(0.05)]
+    return {"p10": s0 * (1 + q(0.1)), "p50": s0 * (1 + q(0.5)), "p90": s0 * (1 + q(0.9)), "ev": sum(term) / len(term), "var95": -q(0.05), "cvar95": -sum(tail) / len(tail), "paths": paths, "pid": os.getpid()}
+def _lane_shock(mid, levels, spread_bps, depth_usd, order_usd, depth_pct, spoof_pct, vol_mult, side):
+    """quant: model book walk under a shock (same model as the browser's V175.shock)"""
+    hs = spread_bps / 2e4; tick = 0.0005; book = []
+    for kk in range(levels):
+        dec = _lm.exp(-kk / (levels * 0.45)) * 0.6 + 0.4; usd = depth_usd / levels * dec * 4
+        px = mid * (1 - hs - kk * tick) if side == "sell" else mid * (1 + hs + kk * tick); book.append([px, usd / px])
+    near = max(1, round(levels * 0.25)); left = order_usd; qty = cost = 0.0; used = 0; last = mid
+    for kk, (px, q) in enumerate(book):
+        if left <= 1e-9: break
+        px = mid + (px - mid) * max(1.0, vol_mult); q = q * min(1.0, max(0.01, depth_pct)) * ((1 - spoof_pct) if kk < near else 1)
+        take = min(q, left / px); qty += take; cost += take * px; left -= take * px; used += 1; last = px
+    avg = cost / qty if qty else mid
+    return {"slipBps": abs(avg / mid - 1) * 1e4 if qty else 0.0, "impactBps": abs(last / mid - 1) * 1e4, "levels": used, "unfilledUsd": left, "pid": os.getpid()}
+def _lane_kelly(p, b, equity, risk_cap):
+    """exec: Kelly fraction, capped position size for the bot squad"""
+    f = max(-1.0, min(1.0, p - (1 - p) / max(1e-9, b))); size = max(0.0, min(f, risk_cap)) * equity
+    return {"kelly": f, "size": size, "pid": os.getpid()}
+LANE_JOBS = {
+    "ingest": {"ping": (_lane_ping, 1), "ohlc": (_lane_ohlc, 2)},
+    "forensics": {"ping": (_lane_ping, 1), "entropy": (_lane_entropy, 1), "bellman": (_lane_bellman, 2)},
+    "quant": {"ping": (_lane_ping, 1), "merton": (_lane_merton, 10), "shock": (_lane_shock, 9)},
+    "exec": {"ping": (_lane_ping, 1), "kelly": (_lane_kelly, 4)},
+}
+def lane_args_ok(lane, job, args):
+    """numeric sanity + work caps so a request can't pin a core for minutes"""
+    if lane not in LANE_JOBS or job not in LANE_JOBS[lane] or not isinstance(args, list) or len(args) != LANE_JOBS[lane][job][1]: return False
+    num = lambda x: isinstance(x, (int, float)) and not isinstance(x, bool) and _lm.isfinite(x)
+    if job == "ping": return num(args[0])
+    if job == "ohlc": return isinstance(args[0], list) and len(args[0]) <= 200000 and all(isinstance(t, list) and len(t) == 3 and all(num(v) for v in t) for t in args[0]) and num(args[1]) and args[1] >= 1
+    if job == "entropy": return isinstance(args[0], list) and len(args[0]) <= 100000 and all(isinstance(t, list) and len(t) == 2 and all(isinstance(v, str) and len(v) <= 64 for v in t) for t in args[0])
+    if job == "bellman": return isinstance(args[0], list) and 1 < len(args[0]) <= 200 and all(isinstance(v, str) and len(v) <= 32 for v in args[0]) and isinstance(args[1], list) and len(args[1]) <= 5000 and all(isinstance(e, list) and len(e) == 3 and isinstance(e[0], str) and isinstance(e[1], str) and num(e[2]) for e in args[1])
+    if job == "merton": return all(num(v) for v in args) and args[0] > 0 and args[3] >= 0 and args[6] > 0 and 1 <= args[7] <= 2000 and 1 <= args[8] <= 5000 and args[7] * args[8] <= 2000000
+    if job == "shock": return all(num(v) for v in args[:8]) and args[8] in ("buy", "sell") and args[0] > 0 and 1 <= args[1] <= 2000
+    if job == "kelly": return all(num(v) for v in args) and 0 <= args[0] <= 1 and args[1] > 0
+    return False
+
+class Lanes:
+    NAMES = (("ingest", "Market / WS Ingest"), ("forensics", "On-Chain DEX / DAG Forensics"), ("quant", "Heavy Quant / GEX / Shock Math"), ("exec", "Copilot / Bot Execution"))
+    def __init__(self, mode=None):
+        self.mode = mode or os.environ.get("EXTERM_LANES", "process")
+        self.pools = {}; self.lock = threading.Lock()
+        self.st = {k: {"jobs": 0, "err": 0, "q": 0, "peak": 0, "ms": deque(maxlen=256), "kind": None, "pid": None, "at": 0} for k, _ in self.NAMES}
+    def _pool(self, lane, force_thread=False):
+        with self.lock:
+            p = self.pools.get(lane)
+            if p is not None and not force_thread: return p
+            if p is not None:
+                try: p.shutdown(wait=False, cancel_futures=True)
+                except Exception: pass
+            p = None
+            if self.mode == "process" and not force_thread:
+                try:
+                    from concurrent.futures import ProcessPoolExecutor
+                    p = ProcessPoolExecutor(max_workers=1); self.st[lane]["kind"] = "process"
+                except Exception:
+                    p = None
+            if p is None:
+                p = ThreadPoolExecutor(max_workers=1, thread_name_prefix="lane-" + lane); self.st[lane]["kind"] = "thread"
+            self.pools[lane] = p
+            return p
+    def run(self, lane, job, args, timeout=30):
+        fn = LANE_JOBS[lane][job][0]; st = self.st[lane]; t0 = time.perf_counter()
+        with self.lock:
+            st["q"] += 1; st["peak"] = max(st["peak"], st["q"])
+        try:
+            try:
+                out = self._pool(lane).submit(fn, *args).result(timeout=timeout)
+            except Exception as e:  # a process pool that can't start (frozen app, sandbox) falls back to a dedicated thread once
+                if type(e).__name__ not in ("BrokenProcessPool", "PicklingError", "OSError", "PermissionError") or st["kind"] != "process": raise
+                out = self._pool(lane, force_thread=True).submit(fn, *args).result(timeout=timeout)
+            with self.lock:
+                st["jobs"] += 1; st["pid"] = out.get("pid") if isinstance(out, dict) else None; st["at"] = time.time()
+            return out
+        except Exception:
+            with self.lock: st["err"] += 1
+            raise
+        finally:
+            with self.lock:
+                st["q"] -= 1; st["ms"].append((time.perf_counter() - t0) * 1000)
+    def public(self):
+        rows = []
+        with self.lock:
+            for k, name in self.NAMES:
+                s = self.st[k]; ms = sorted(s["ms"])
+                rows.append({"lane": k, "name": name, "kind": s["kind"] or "cold", "jobs": s["jobs"], "err": s["err"], "q": s["q"], "peak": s["peak"],
+                             "avg": (sum(ms) / len(ms)) if ms else 0, "p99": ms[min(len(ms) - 1, int(0.99 * (len(ms) - 1) + 0.5))] if ms else 0,
+                             "isolated": s["kind"] == "process" and s["pid"] not in (None, os.getpid()), "state": "busy" if s["q"] else ("cold" if not s["kind"] else "idle")})
+        return {"mode": self.mode, "lanes": rows, "server_pid": os.getpid()}
+    def shutdown(self):
+        for p in list(self.pools.values()):
+            try: p.shutdown(wait=False, cancel_futures=True)
+            except Exception: pass
+
+LANES = None
+
+
 class H(http.server.BaseHTTPRequestHandler):
     def log_message(self, fmt, *a):
         pass
@@ -1930,6 +2084,14 @@ class H(http.server.BaseHTTPRequestHandler):
                 bots = BOTS.public()["bots"] if BOTS is not None else []
                 return self._send(200, json.dumps({"version": VERSION, "uptime": int(time.time() - STARTED), "cache": dict(CACHE_STATS), "polls": FEED.polls if FEED is not None else 0,
                                                    "bots": {"total": len(bots), "active": sum(1 for b in bots if b.get("active")), "lastBar": max([b.get("lastBar") or 0 for b in bots] or [0])}}).encode())
+            if p.startswith("/api/lanes"):  # v17.5: 4 dedicated execution lanes (telemetry + allow-listed jobs)
+                if LANES is None: return self._send(503, b'{"error":"execution lanes are off (--no-lanes)"}')
+                if p == "/api/lanes" and method == "GET": return self._send(200, json.dumps(LANES.public()).encode())
+                if p == "/api/lanes/run" and method == "POST":
+                    j = self._json_body(512 * 1024); lane, job, args = j.get("lane"), j.get("job"), j.get("args")
+                    if not lane_args_ok(lane, job, args): return self._send(400, b'{"error":"unknown lane / job or bad arguments"}')
+                    t0 = time.perf_counter(); out = LANES.run(lane, job, args)
+                    return self._send(200, json.dumps({"ok": True, "lane": lane, "job": job, "ms": (time.perf_counter() - t0) * 1000, "out": out}).encode())
             if p.startswith("/api/daemon"):  # v17.0: 24/7 daemon status + Wake-Up digest; arming only from this computer
                 if not DAEMON or OPS is None: return self._send(503, b'{"error":"start the launcher with --bot-daemon"}')
                 if p == "/api/daemon" and method == "GET":
@@ -2429,6 +2591,8 @@ if __name__ == "__main__":
         HL = HLCache(offline="--offline" in sys.argv)
     if "--no-llm-signal" not in sys.argv:
         LLM = LlmBridge()
+    if "--no-lanes" not in sys.argv:
+        LANES = Lanes()
     if FEED is not None:
         if ALERTS:
             _slow = ALERTS.fetch

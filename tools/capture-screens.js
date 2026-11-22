@@ -52,7 +52,21 @@ const SHOTS = [];
     await shot('08-futures-volume-profile.png');
     // 09 universal main-chart 3D (toolbar pill, any symbol): volume prisms, Bullion Gold order-block wireframes, L2 particles
     await ev(() => { showTab('markets'); V171UI.chart3d.toggle(true); });
-    await shot('09-3d-volumetric-order-blocks.png', 1200); await ev(() => V171UI.chart3d.toggle(false));
+    await shot('09-3d-volumetric-order-blocks.png', 1200);
+    // v17.5 · 19 3D Layers drawer (≤ 3 default layers: OB Prisms + VPVR / POC + Whale Beacons, 12-layer drawer, IndexedDB presets)
+    await ev(() => { const b = document.querySelector('#x175LayB'); if (b) b.click(); });
+    await shot('19-3d-layers-drawer.png', 900); await ev(() => { const b = document.querySelector('#x175LayB'); if (b) b.click(); V171UI.chart3d.toggle(false); });
+    // v17.5 · 17 Working Bots squad: taken BEFORE shot 10 injects its scripted events, using the labelled Explore Live Demo (STANDBY otherwise)
+    await ev(() => { showTab('fleet'); }); await sleep(2500);
+    await ev(() => { document.querySelector('#x175Demo').click(); }); await sleep(9000);
+    await ev(() => { const s = document.querySelector('#x175Sq'); if (s) s.scrollIntoView({ block: 'start' }); window.scrollBy(0, -8); }); await sleep(1500);
+    await shot('17-working-bots-squad.png', 600); await ev(() => { if (V175UI.squad.demoOn) document.querySelector('#x175Demo').click(); showTab('markets'); });
+    // v17.5 · 18 Shock Lab (Quant Lab): flash-crash scenario on the live book
+    await ev(async () => { showTab('lab'); await new Promise((r) => setTimeout(r, 900)); const c = document.querySelector('#x175sCat'); c.value = 'crash'; c.dispatchEvent(new Event('change')); const l = document.querySelector('#x175sList'); l.value = l.options[2].value; l.dispatchEvent(new Event('change')); await V175UI.shock.run(); document.querySelector('#x175Shock').scrollIntoView({ block: 'start' }); });
+    await shot('18-shock-lab-flight-simulator.png', 1500);
+    // v17.5 · 20 Options 3D IV & GEX surface (optional 2D | 3D pill)
+    await ev(async () => { showTab('opts'); await new Promise((r) => setTimeout(r, 700)); document.querySelector('#tab-opts .x175-pill [data-x175v="3D"]').click(); });
+    await shot('20-options-3d-iv-surface.png', 2500); await ev(() => { document.querySelector('#tab-opts .x175-pill [data-x175v="2D"]').click(); showTab('markets'); });
     // 10 Bot Fleet → v17.3 THE SYNAPSE, Synapse Cortex engine (fractal dendrites, comets, spores) · 15 Singularity Burst · 16 live bubble map
     await ev(() => { try { localStorage.setItem('x173.eng', 'cortex'); } catch (e) { /* storage */ } V173UI.syn.eng = 'cortex'; showTab('fleet'); const b = document.querySelector('[data-x173eng="cortex"]'); if (b) b.click(); V17App.cfg.mode = 'copilot'; V17App.Fleet.demo(); V17App.Fleet.propose(); V17App.Fleet.paint(); V17App.Fleet.evolve(); const s = document.querySelector('#x172Syn'); if (s) s.scrollIntoView({ block: 'start' }); });
     await sleep(6000); // let the 1 Hz sensors build sparkline history from the real background processes
@@ -84,5 +98,5 @@ const SHOTS = [];
     await ph.screenshot({ path: path.join(OUT, '14-mobile-touch-cockpit.png') }); SHOTS.push('14-mobile-touch-cockpit.png'); console.log('shot 14-mobile-touch-cockpit.png');
     await m.close();
   } finally { await b.close(); }
-  console.log(SHOTS.length + ' screenshots → docs/screenshots'); process.exit(SHOTS.length === 16 ? 0 : 1);
+  console.log(SHOTS.length + ' screenshots → docs/screenshots'); process.exit(SHOTS.length === 20 ? 0 : 1);
 })().catch((e) => { console.error('CRASH', e.message); process.exit(1); });
