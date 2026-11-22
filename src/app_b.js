@@ -9,7 +9,7 @@ async function loadOcHeat(force) {
   const H = ST.heat, key = (H.ocKind || 'trending') + ':' + (H.ocChain || 'solana');
   if (ocHeat.loading || (!force && ocHeat.key === key && Date.now() - ocHeat.ts < 90000)) return;
   ocHeat.loading = true; $('#heatNote').textContent = 'Loading on-chain pools…';
-  try { ocHeat.syms = await OC.discover(H.ocKind || 'trending', H.ocChain || 'solana', force); ocHeat.err = ''; ocHeat.key = key; ocHeat.ts = Date.now(); }
+  try { ocHeat.syms = await OC.universe(H.ocChain || 'solana', H.ocKind || 'trending', force); /* v17.6: 28–40 merged pools */ ocHeat.err = ''; ocHeat.key = key; ocHeat.ts = Date.now(); }
   catch (e) { ocHeat.err = e.message; }
   ocHeat.loading = false; renderHeat(true);
 }

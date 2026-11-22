@@ -1,5 +1,5 @@
 // Copyright (c) 2026 ExTerm Labs. All Rights Reserved.
-// Captures the 14 README screenshots (01–14) at 2× device pixel ratio from the offline launcher, in ONE headless browser that
+// Captures the 27 README screenshots (01–27) at 2× device pixel ratio from the offline launcher, in ONE headless browser that
 // is closed at the end. Old docs/screenshots/*.png are deleted first. Usage: node tools/capture-screens.js
 const { chromium } = require(process.platform === 'win32' ? 'C:/opt/npm-tools/node_modules/playwright' : '/opt/npm-tools/node_modules/playwright');
 const { spawn } = require('child_process');
@@ -88,6 +88,20 @@ const SHOTS = [];
     await ev(() => { showTab('heat'); const d = document.querySelector('#x17Chain'); if (d) { d.open = true; d.dispatchEvent(new Event('toggle')); V17Mob.chain.rug(); V17Mob.chain.bubbles(); V17Mob.chain.smart(); d.scrollIntoView({ block: 'start' }); } });
     await sleep(1500); await ev(() => { const d = document.querySelector('#x17Chain'); if (d) d.scrollIntoView({ block: 'start' }); }); // Discovery tiles render late and push the card down
     await shot('13-onchain-lab.png', 600);
+    // v17.6 · 21 Alpha Radar quantum dome + graded dossiers (wait for ≥ 15 picks and some live history)
+    await ev(async () => { showTab('radar'); for (let i = 0; i < 60 && !(V176UI.res && V176UI.res.picks.length >= 15); i++) await new Promise((r) => setTimeout(r, 500)); document.querySelector('#tab-radar').scrollTop = 0; const p = V176UI.view()[0]; if (p) { V176UI.sel = p.sym; } });
+    await shot('21-alpha-radar-quantum-dome.png', 4000);
+    // v17.6 · 22 / 23 DEX bubble map (28–40 merged pools) on the 1h and 24h windows
+    await ev(async () => { setMode('onchain'); await new Promise((r) => setTimeout(r, 2500)); showTab('heat'); await new Promise((r) => setTimeout(r, 800)); const bt = document.querySelector('[data-v164v="bubbles"]'); if (bt) bt.click(); for (let i = 0; i < 60; i++) { const c = document.querySelector('canvas.v164-bub'); if (c && c._x173 && c._x173.nodes.length >= 25) break; await new Promise((r) => setTimeout(r, 400)); } document.querySelector('[data-v164tf="1h"]').click(); const d = document.querySelector('#v164Dex'); if (d) d.scrollIntoView({ block: 'start' }); });
+    await shot('22-dex-bubble-map-1h.png', 3500);
+    await ev(() => { document.querySelector('[data-v164tf="24h"]').click(); const d = document.querySelector('#v164Dex'); if (d) d.scrollIntoView({ block: 'start' }); });
+    await shot('23-dex-bubble-map-24h.png', 3500);
+    // v17.6 · 25 On-Chain Token Desk (chain pills, CA resolver, Rug Shield v2, MEV + TWAP, handoffs)
+    await ev(async () => { showTab('whales'); for (let i = 0; i < 30 && !V176UI.desk.rug; i++) await new Promise((r) => setTimeout(r, 400)); const d = document.querySelector('#x176Desk'); if (d) d.scrollIntoView({ block: 'start' }); });
+    await shot('25-onchain-token-desk.png', 1500);
+    // v17.6 · 24 Main chart: unclipped EDGE quant strip + toolbar that wraps clear of the order ticket
+    await ev(async () => { setMode('crypto', 'BTC-USD'); showTab('markets'); await new Promise((r) => setTimeout(r, 2500)); V175UI.runEdge('markets'); });
+    await shot('24-main-chart-quant-strip.png', 3500);
     await ctx.close();
     // 14 mobile app (390 × 844 @2×)
     const m = await b.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true }); await block(m);
@@ -96,7 +110,13 @@ const SHOTS = [];
     await ph.evaluate(() => { for (const x of document.querySelectorAll('#langGate, #walkCard, #p2Brief, #v162Brief, #x17Brief, #v170Clip')) x.remove(); for (const t of document.querySelectorAll('#toasts > *')) t.remove(); V17App.Brief.plot(); const a = document.querySelector('.x17-arcm'); a.click(); });
     await sleep(1500); await ph.evaluate(() => { for (const t of document.querySelectorAll('#toasts > *')) t.remove(); });
     await ph.screenshot({ path: path.join(OUT, '14-mobile-touch-cockpit.png') }); SHOTS.push('14-mobile-touch-cockpit.png'); console.log('shot 14-mobile-touch-cockpit.png');
+    // v17.6 · 26 phone Alpha Radar · 27 phone DEX bubble map
+    const phShot = async (name) => { await ph.evaluate(() => { for (const t of document.querySelectorAll('#toasts > *')) t.remove(); }); await ph.screenshot({ path: path.join(OUT, name) }); SHOTS.push(name); console.log('shot ' + name); };
+    await ph.evaluate(async () => { const a = document.querySelector('.x17-arcm'); if (a) a.click(); /* close the thumb arc that shot 14 opened */ showTab('radar'); for (let i = 0; i < 60 && !(V176UI.res && V176UI.res.picks.length >= 15); i++) await new Promise((r) => setTimeout(r, 500)); window.scrollTo(0, 0); });
+    await sleep(3500); await phShot('26-mobile-alpha-radar.png');
+    await ph.evaluate(async () => { setMode('onchain'); await new Promise((r) => setTimeout(r, 2500)); showTab('heat'); await new Promise((r) => setTimeout(r, 800)); const bt = document.querySelector('[data-v164v="bubbles"]'); if (bt) bt.click(); for (let i = 0; i < 60; i++) { const c = document.querySelector('canvas.v164-bub'); if (c && c._x173 && c._x173.nodes.length >= 25) break; await new Promise((r) => setTimeout(r, 400)); } const d = document.querySelector('.v164-tf'); if (d) d.scrollIntoView({ block: 'start' }); });
+    await sleep(3500); await phShot('27-mobile-dex-bubble-map.png');
     await m.close();
   } finally { await b.close(); }
-  console.log(SHOTS.length + ' screenshots → docs/screenshots'); process.exit(SHOTS.length === 20 ? 0 : 1);
+  console.log(SHOTS.length + ' screenshots → docs/screenshots'); process.exit(SHOTS.length === 27 ? 0 : 1);
 })().catch((e) => { console.error('CRASH', e.message); process.exit(1); });

@@ -4,7 +4,7 @@
 
 <div align="center">
 
-# ExTerm v17.5
+# ExTerm v17.6
 
 ### The $0, local-first trading workstation for crypto, stocks, on-chain DEX tokens, options and futures, with a Quant Lab that coaches you, a Bot Fleet you arm deliberately, and a native Android app.
 
@@ -13,10 +13,10 @@ and live signals go only to a bot you run yourself on `127.0.0.1`, HMAC-signed a
 
 <img src="docs/screenshots/01-hero-chart-gex-dom.png" alt="ExTerm Markets terminal at 1440×900 (2× Retina): BTC candles with the plotted morning levels (previous day high, low and close, pivot, R1, S1), the GEX flip, call wall and put wall lines, the one-line Reach strip with the R:R, 2×2 and smart-trail tools under the navigation, the 6-timeframe confluence pill in the header and the Live Tape" width="100%">
 
-**[Launch](#-30-second-local-launch)** · **[What's new](#-whats-new-in-v175)** · **[Screenshots](#-v175-tour)** · **[Android](#-android-app)** · **[Verify](#-how-to-verify-official-builds)** · **[Build & test](#-build--test)** · **[Security](#-security)** · **[License](#-license)**
+**[Launch](#-30-second-local-launch)** · **[What's new](#-whats-new-in-v176)** · **[Screenshots](#-v176-tour)** · **[Android](#-android-app)** · **[Verify](#-how-to-verify-official-builds)** · **[Build & test](#-build--test)** · **[Security](#-security)** · **[License](#-license)**
 
 <p>
-  <a href="https://github.com/uexxx/ExTerm/releases/latest"><img src="https://img.shields.io/badge/download-v17.5-F5C84B?style=for-the-badge" alt="Download v17.5"></a>
+  <a href="https://github.com/uexxx/ExTerm/releases/latest"><img src="https://img.shields.io/badge/download-v17.6-F5C84B?style=for-the-badge" alt="Download v17.6"></a>
   <a href="https://github.com/uexxx/ExTerm/releases/latest"><img src="https://img.shields.io/badge/Android-APK-2fd08a?style=for-the-badge" alt="Android APK"></a>
   <img src="https://img.shields.io/badge/price-%240-2fd08a?style=for-the-badge" alt="$0">
   <img src="https://img.shields.io/badge/indicators-137-F5C84B?style=for-the-badge" alt="137 indicators">
@@ -58,6 +58,40 @@ Useful flags: `python3 serve.py 9000` (other port) · `--no-browser` · `--docto
 > proxies only an allow-list of public market-data hosts, on `localhost`, behind a fresh per-launch token.
 
 ---
+
+## 🎯 What's new in v17.6
+
+- **THE SYNAPSE → 4D singularity.** The Working Bots wireframe core is replaced by one off-thread canvas that layers:
+  - a tesseract rotating in the XW / YW / ZW planes, with a counter-rotating inner tesseract;
+  - four (p, q) torus knots on nested Clifford tori in S³ (Hopf fibration S³ → S²), stereographically projected;
+  - a Keplerian Bullion Gold / amber accretion vortex around a photon-ringed event horizon;
+  - L-system dendrites and plasma bolts reaching out to the **6 orbiting holographic squad nodes** (HUNTER-α … HEDGER-ARB), each showing its live status and fire count.
+  - You can drag to orbit and use the wheel to zoom. It draws at up to the display refresh rate in the 3D Spatial worker, and drops to 0 fps when hidden.
+- **3 wide panels instead of 8 small ones:**
+  1. Strange attractor + Merton probability cone (P10–P90, Hurst H, Lyapunov λ₁, +EV, Kelly f*).
+  2. Eigen-risk sonar + worker mesh (W1–W8 avg / p99 ms bars and the lane table).
+  3. Squad execution stream + KPIs. Win rate, profit factor, per-trade Sharpe and the equity sparkline come **only from bots that are actually running**. DEMO events are labelled and never counted.
+- **New top-level Alpha Radar tab.** It has its own 3D quantum-constellation dome: a wave-interference torus, 4 market quadrants, a sweeping volumetric beam, grade-elevated orbs, transfer-entropy arcs and a targeting reticle.
+  - Every live stock, coin, perp and on-chain pool is graded by the applicable ExTerm engines plus a **6-bot consensus debate**.
+  - Each card is a 6-box dossier (Trigger · Safe Max $ at ≤ 2 % impact · GEX / Funding / Rug-Shield · Regime Edge · Entry / Stop · TP1 / TP2 & R:R) with a plain-English summary.
+  - One-click handoffs: Chart + 3D · 3D Shock Test · Load R:R Ruler · Deploy Bot Rule (queued behind the Co-Pilot firewall).
+  - Sub-tabs with counters, S / A+ / A / B+ grade pills, Pause / Resume, and Pin / Lookup for any ticker or CA.
+  - Grades are deliberately pulled toward neutral until a symbol has 60 live samples, so a new symbol never looks better than its data.
+- **DEX Bubble Map fixed.**
+  - It now shows **28–40 pools per chain**, merged from GeckoTerminal trending (2 pages), DexScreener boosted pairs and new pairs, never mixing real pools with simulated ones.
+  - The **5m · 1h · 6h · 24h** pills and a **Refresh** button sit on the map. Each window re-labels every %, recolours and resizes each bubble from that pool's own price change, and gives the springs a kick.
+  - Bubbles are no longer cut off by the 470 px Discovery scroller.
+- **On-Chain Token Desk** (On-Chain tab):
+  - chain pills (All Chains · Solana · Base · Ethereum · Arbitrum);
+  - a CA resolver with DexScreener + GeckoTerminal hydration;
+  - **Rug Shield v2**: Sybil entropy, slot-0 bundle share, LP lock, smart-money retention half-life. Each check says *n/a* when it can't be measured instead of guessing;
+  - an **MEV priority-fee sandwich predictor + TWAP slicer**;
+  - handoffs: Load on Main Chart · 3D Shock Lab · Copy CA.
+- **Clipping fixes:**
+  - the EDGE quant strip no longer clips glyph tops;
+  - the chart toolbar wraps instead of sliding under the order ticket;
+  - on phones the Trade sheet was anchored to `main` (whose `perspective` made it the containing block), which pushed the ticket's Buy / Sell row and symbol above the screen. It now sits above the dock.
+- **Tests:** new `test/v176.test.js` (26). `v17pro_e2e` now runs 96 checks (+16 for v17.6: singularity pixels, drag / zoom, Alpha Radar, dome RGBA variance + frame budget, handoffs, quant strip / toolbar / ticket clipping, ≥ 25 bubbles inside the canvas, timeframe switching, bubble click → chart, On-Chain desk, every tab error-free on desktop 1440 × 900 and phone 390 × 844).
 
 ## 🎯 What's new in v17.5
 
@@ -227,7 +261,7 @@ Nothing new is painted over the 240 Hz / 120 Hz chart canvas: chart additions ar
   left / right-handed layout, sizing keypad, clipboard CA snipe, 1-tap **Phantom / Solflare / Jupiter / Uniswap** deep links
   (**ExTerm adds a $0 fee**; network and DEX fees still apply), QR pairing of your layout, AMOLED `#000000`, PIN or biometric lock,
   Share Setup Card and Picture-in-Picture.
-- **Native Android app**: [`ExTerm-v17.5-android.apk`](https://github.com/uexxx/ExTerm/releases/latest).
+- **Native Android app**: [`ExTerm-v17.6-android.apk`](https://github.com/uexxx/ExTerm/releases/latest).
 
 **🛡 Launcher (Phases 0–1)**: a 429 storm shield (single-flight requests, per-host cool-down that honours `Retry-After`, stale
 fallback), a cross-venue crypto tape (Coinbase · Kraken · Binance · Bybit · OKX) with basis, funding, spread and CVD, instant
@@ -237,7 +271,26 @@ Full notes: [`CHANGELOG.md`](CHANGELOG.md).
 
 ---
 
-## 🖼 v17.5 tour
+## 🖼 v17.6 tour
+
+<img src="docs/screenshots/21-alpha-radar-quantum-dome.png" alt="The v17.6 Alpha Radar tab: market sub-tabs with counters, grade pills, Pause and the Pin / Lookup bar above a 3D quantum-constellation dome with four market quadrants, a sweeping gold beam and graded opportunity orbs, next to 6-box dossier cards with six bot votes and one-click handoffs" width="100%">
+
+**Alpha Radar (v17.6).** Every live market graded by the engines plus a 6-bot consensus, on its own 3D dome.
+
+<img src="docs/screenshots/22-dex-bubble-map-1h.png" alt="The v17.6 DEX bubble map on the 1h window: 28 to 40 on-chain pools as glossy emerald and crimson bubbles, every one fully inside the canvas, with 5m, 1h, 6h and 24h pills and a Refresh button" width="100%">
+
+<img src="docs/screenshots/23-dex-bubble-map-24h.png" alt="The same DEX bubble map switched to the 24h window: every percentage label, colour and radius has changed" width="100%">
+
+**DEX Bubble Map (v17.6).** 28–40 merged pools; each timeframe re-labels, recolours and resizes every bubble.
+
+<img src="docs/screenshots/25-onchain-token-desk.png" alt="The v17.6 On-Chain Token Desk: chain pills, a search or paste-CA resolver, the pool list, pool stats, Rug Shield v2 checks, the MEV sandwich predictor and TWAP slicer, and Load on Main Chart, 3D Shock Lab and Copy CA buttons" width="100%">
+
+**On-Chain Token Desk (v17.6).** Rug Shield v2, MEV + TWAP and one-click handoffs for any pool or CA.
+
+<img src="docs/screenshots/24-main-chart-quant-strip.png" alt="The main chart after the v17.6 clipping fixes: the EDGE quant strip with unclipped text, and the chart toolbar wrapping clear of the order ticket" width="100%">
+
+<p align="center"><img src="docs/screenshots/26-mobile-alpha-radar.png" alt="Alpha Radar on a 390 px phone" width="32%"> <img src="docs/screenshots/27-mobile-dex-bubble-map.png" alt="DEX bubble map on a 390 px phone" width="32%"></p>
+
 
 All screenshots: 1440 × 900 at 2× (Retina), offline launcher, captured with `node tools/capture-screens.js`.
 
@@ -277,9 +330,9 @@ All screenshots: 1440 × 900 at 2× (Retina), offline launcher, captured with `n
 
 **3D Layers drawer (v17.5).** Nine extra layers, a 4D replay scrub and IndexedDB presets.
 
-<img src="docs/screenshots/17-working-bots-squad.png" alt="The v17.5 Working Bots squad in THE SYNAPSE: the 4D core (Clifford torus, Hopf fibres, Kerr ring, L-system lightning), the six squad members HUNTER-alpha to HEDGER-ARB with labelled DEMO events, and the Lorenz–Rössler attractor, Merton cone, eigen-risk sonar and firing matrix panels" width="100%">
+<img src="docs/screenshots/17-working-bots-squad.png" alt="The v17.6 Working Bots squad in THE SYNAPSE: the 4D singularity (tesseract, Hopf torus knots, accretion vortex, L-system dendrites, plasma arcs) with the six squad bots HUNTER-alpha to HEDGER-ARB as orbiting holographic nodes, labelled DEMO events, and the three wide panels: attractor + Merton cone, eigen-risk sonar + worker mesh, execution stream + KPIs" width="100%">
 
-**Working Bots squad (v17.5).** STANDBY until a bot runs. This capture uses the labelled **Explore Live Demo**, and the panels render off the main thread.
+**Working Bots squad (v17.6 4D singularity).** STANDBY until a bot runs. This capture uses the labelled **Explore Live Demo**, and the panels render off the main thread.
 
 <img src="docs/screenshots/18-shock-lab-flight-simulator.png" alt="The v17.5 Shock Lab in Quant Lab: category and scenario pickers (156 scenarios), Order Size, Book Depth, Vol Multiplier and Spoof Pull sliders, the 3D order book before and after the shock, and the fill, slippage and impact readout" width="100%">
 
@@ -321,7 +374,7 @@ All screenshots: 1440 × 900 at 2× (Retina), offline launcher, captured with `n
 
 ## 📱 Android app
 
-Download **`ExTerm-v17.5-android.apk`** from the [latest release](https://github.com/uexxx/ExTerm/releases/latest)
+Download **`ExTerm-v17.6-android.apk`** from the [latest release](https://github.com/uexxx/ExTerm/releases/latest)
 (Android 7.0+, about 1 MB). It runs the same single-file app from the APK's assets on a secure origin, so storage and WebCrypto
 work offline. Wallet and DEX links open in your installed apps, and leaving the app keeps the chart in Picture-in-Picture.
 The APK's SHA-256 is listed in the release `SHA256SUMS.txt`.
@@ -330,7 +383,7 @@ Build it yourself (JDK 17 + Android SDK `platforms;android-34` and `build-tools;
 
 ```bash
 python3 build.py --harden
-python3 tools/build_apk.py          # → dist/ExTerm-v17.5-android.apk
+python3 tools/build_apk.py          # → dist/ExTerm-v17.6-android.apk
 ```
 
 CI builds the same APK on every tag: [`.github/workflows/build-android-apk.yml`](.github/workflows/build-android-apk.yml).
@@ -380,9 +433,10 @@ node test/v170.test.js       # v17.0 unit suite
 node test/v171.test.js       # v17.1 unit suite (ledger, AMM/L2 impact, stale guard, Copilot routing)
 node test/v172.test.js       # v17.2 unit suite (Synapse maths, Monte Carlo fan, phase space, weights, wiring)
 node test/v173.test.js       # v17.3 unit suite (bubble physics, fractal dendrites, particles, matrix, v16.6 palette restore)
+node test/v176.test.js       # v17.6 unit suite (4D maths, 5 off-thread renderers, Alpha Radar grading, Rug Shield v2, TWAP, palette lock)
 node test/v175.test.js       # v17.5 unit suite (worker kernel, squad truthfulness, 3D layers, 156 scenarios, 30+ engines vs closed forms, palette lock)
 python3 test/v175_lanes_test.py  # v17.5 serve.py lanes (process isolation, allow-list, caps, HTTP)
-node test/v17pro_e2e.js      # v17.0–v17.5 browser end-to-end (desktop 1440/1280 + phone 390)
+node test/v17pro_e2e.js      # v17.0–v17.6 browser end-to-end (desktop 1440/1280 + phone 390)
 ```
 
 `build.py` inlines `src/*.js` and `src/style.css` into one file and stamps the CSP with the bundle's SHA-256 hash.

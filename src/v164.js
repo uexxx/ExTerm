@@ -154,7 +154,7 @@ const V164UI = (() => {
     if (m === 'onchain' && typeof OC !== 'undefined') for (const s of Object.keys(OC.stats || {})) {
       if (!/^oc:/.test(s)) continue; const st = OC.stats[s] || {}, me = OC.meta[s] || {}, p0 = OC.parse(s); if (!p0 || (p0.chain === 'sim') !== !!OC.sim) continue; const L = Feed.live[s] || {};
       const chn = CHAIN_OF(p0.chain), b24 = st.buys24, s24 = st.sells24;
-      out.push({ id: s, mode: 'onchain', sym: me.s || OC.label(s), name: me.n, chain: chn, dex: V164.dexKey(me.dex), group: V164.CHAIN_LABEL[chn] || chn, price: L.price || st.price, ch: st.ch24, ch5m: st.ch5m, ch1h: st.ch1h, liq: st.liq, mcap: st.mcap || st.fdv, v5: st.vol5m, v1h: st.vol1h, v24: st.vol24, rvol: V164.rvol(st.vol1h, st.vol24), range: Number.isFinite(st.ch1h) ? Math.abs(st.ch1h) : null, created: st.created, holders: st.holders != null ? +st.holders : null, bsPct: b24 + s24 > 0 ? (b24 / (b24 + s24)) * 100 : null, b5: st.buys5m, s5: st.sells5m, b15: st.buys15m, s15: st.sells15m, b1h: st.buys1h, s1h: st.sells1h, b24, s24, mintOff: me.mintOff, lpLocked: me.lpLocked, top10: me.top10, smartIn: me.smartIn, spark: spark(s) });
+      out.push({ id: s, mode: 'onchain', sym: me.s || OC.label(s), name: me.n, chain: chn, dex: V164.dexKey(me.dex), group: V164.CHAIN_LABEL[chn] || chn, price: L.price || st.price, ch: st.ch24, ch5m: st.ch5m, ch1h: st.ch1h, ch6h: st.ch6h, liq: st.liq, mcap: st.mcap || st.fdv, v5: st.vol5m, v1h: st.vol1h, v24: st.vol24, rvol: V164.rvol(st.vol1h, st.vol24), range: Number.isFinite(st.ch1h) ? Math.abs(st.ch1h) : null, created: st.created, holders: st.holders != null ? +st.holders : null, bsPct: b24 + s24 > 0 ? (b24 / (b24 + s24)) * 100 : null, b5: st.buys5m, s5: st.sells5m, b15: st.buys15m, s15: st.sells15m, b1h: st.buys1h, s1h: st.sells1h, b24, s24, mintOff: me.mintOff, lpLocked: me.lpLocked, top10: me.top10, smartIn: me.smartIn, spark: spark(s) });
     }
     return V164.isolate(out, m);
   };
@@ -197,6 +197,8 @@ const V164UI = (() => {
   const pin = (id) => { if (!ST.watch.includes(id)) { ST.watch.push(id); try { renderWatch(); saveState(); Feed.subscribe([id]); } catch (e) { /* watchlist */ } toast('Pinned ' + esc(baseOf(id)) + ' to the watchlist', 'acc'); } else toast(esc(baseOf(id)) + ' is already on the watchlist'); };
   const onDexClick = (e) => {
     const v = e.target.closest('[data-v164v]'); if (v) { U.cfg.view = v.dataset.v164v; save(); paintDex(true); return; }
+    const tf = e.target.closest('[data-v164tf]'); if (tf) { ST.heat.ocPer = tf.dataset.v164tf; try { saveState(); if (typeof buildHeatControls === 'function' && ST.heat.asset === 'onchain') buildHeatControls(); renderHeat(true); } catch (er) { /* legacy heat not built */ } paintDex(true); return; } // v17.6: one timeframe for the bubble map + the legacy pool heat map
+    const rf = e.target.closest('[data-v164ref]'); if (rf) { rf.disabled = true; rf.textContent = 'Refreshing…'; Promise.resolve(typeof loadOcHeat === 'function' ? loadOcHeat(true) : null).catch(() => null).then(() => { rf.disabled = false; rf.textContent = 'Refresh'; paintDex(true); }); return; }
     const p = e.target.closest('[data-v164p]'); if (p) { U.cfg.pill = p.dataset.v164p; save(); paintDex(true); return; }
     const s = e.target.closest('[data-v164s]'); if (s) { const k = s.dataset.v164s; U.sort = { k, d: U.sort.k === k ? -U.sort.d : -1 }; paintDex(true); return; }
     const pn = e.target.closest('[data-v164pin]'); if (pn) { e.stopPropagation(); pin(pn.dataset.v164pin); return; }
@@ -259,6 +261,15 @@ const V164UI = (() => {
     }
   };
   let bubCv = null, bubPts = [];
+  const TF_OF = () => { const t = typeof ST !== 'undefined' && ST.heat && ST.heat.ocPer; return ['5m', '1h', '6h', '24h'].includes(t) ? t : '24h'; };
+  const TF_SCALE = { '5m': 4, '1h': 10, '6h': 20, '24h': 40 }; // ±% = full colour, same as the legacy pool heat map
+  /* timeframe pills + Refresh above the on-chain bubble map (kept across live re-renders; the on-state follows ST.heat.ocPer) */
+  const paintTf = (host, tf) => {
+    let bar = host.querySelector(':scope > .v164-tf');
+    if (!bar) { bar = document.createElement('div'); bar.className = 'v164-fp v164-tf'; bar.setAttribute('role', 'group'); bar.setAttribute('aria-label', 'Price-change window'); for (const t of ['5m', '1h', '6h', '24h']) { const b = document.createElement('button'); b.type = 'button'; b.dataset.v164tf = t; b.textContent = t; bar.appendChild(b); } const r = document.createElement('button'); r.type = 'button'; r.className = 'btn xs'; r.dataset.v164ref = '1'; r.textContent = 'Refresh'; r.title = 'Re-pull the pools and their 5m / 1h / 6h / 24h price changes now'; bar.appendChild(r); const n = document.createElement('span'); n.className = 'note v164-tfn'; bar.appendChild(n); const f = host.querySelector(':scope > .v164-fp'); if (f) f.after(bar); else host.prepend(bar); }
+    for (const b of bar.querySelectorAll('[data-v164tf]')) { const on = b.dataset.v164tf === tf; b.classList.toggle('on', on); b.setAttribute('aria-pressed', String(on)); }
+    const n = bar.querySelector('.v164-tfn'); if (n) n.textContent = Math.min(40, (host._x171R || []).length) + ' pools · ' + tf + ' change · ±' + TF_SCALE[tf] + '% = full colour';
+  };
   const renderBubbles = (host, R) => {
     // v17.1: fill ~85% of the viewport (DPR-aware), redraw when the host is resized
     host._x171R = R; const top = Math.max(0, host.getBoundingClientRect().top), W = host.clientWidth || 900, H = Math.max(420, Math.round(Math.min(innerHeight * 0.85, innerHeight - top - 12))), k = U.cfg.bub, ks = Math.sqrt((W * H) / (900 * 440));
@@ -269,11 +280,15 @@ const V164UI = (() => {
     host.innerHTML = `<div class="v164-fp" role="group" aria-label="Bubble size">${V164.BUB.map((x) => `<button type="button" data-v164bub="${x}" class="${x === k ? 'on' : ''}" aria-pressed="${x === k}">${esc(V164.BUB_LABEL[x])}</button>`).join('')}</div>`;
     bubCv = document.createElement('canvas'); bubCv.className = 'v164-bub'; bubCv.width = W * (devicePixelRatio || 1); bubCv.height = H * (devicePixelRatio || 1); bubCv.style.width = W + 'px'; bubCv.style.height = H + 'px'; bubCv.setAttribute('role', 'img'); bubCv.setAttribute('aria-label', `${R.length} ${mode()} markets sized by ${V164.BUB_LABEL[k]}`); host.appendChild(bubCv);
     }
-    const L = R.slice(0, 90), mx = Math.max(1e-9, ...L.map((r) => V164.bubbleMetric(r, k))), C = V164.clusters(L, W, H);
-    bubPts = L.map((r, i) => { const c = C.get(r.group) || { x: W / 2, y: H / 2 }, a = i * 2.39996; return { r, x: c.x + Math.cos(a) * (8 + i), y: c.y + Math.sin(a) * (8 + i), rad: (8 + 34 * Math.sqrt(V164.bubbleMetric(r, k) / mx)) * ks, cx: c.x, cy: c.y }; });
+    /* v17.6 on-chain: ≤ 40 pools, every label / colour / radius follows the 5m | 1h | 6h | 24h pill (the pool's own priceChange for that window) */
+    const oc = mode() === 'onchain', tf = oc ? TF_OF() : null, fld = { '5m': 'ch5m', '1h': 'ch1h', '6h': 'ch6h', '24h': 'ch' }[tf], tsc = oc ? TF_SCALE[tf] : 10;
+    if (oc) paintTf(host, tf);
+    const L = R.slice(0, oc ? 40 : 90).map((r) => (oc ? Object.assign({}, r, { ch: Number.isFinite(r[fld]) ? r[fld] : null, chTf: r[fld] }) : r)), mx = Math.max(1e-9, ...L.map((r) => V164.bubbleMetric(r, k))), C = V164.clusters(L, W, H);
+    bubPts = L.map((r, i) => { const c = C.get(r.group) || { x: W / 2, y: H / 2 }, a = i * 2.39996, mom = oc ? 0.7 + 0.6 * Math.min(1, Math.abs(r.ch || 0) / tsc) : 1; return { r, x: c.x + Math.cos(a) * (8 + i), y: c.y + Math.sin(a) * (8 + i), rad: (8 + 34 * Math.sqrt(V164.bubbleMetric(r, k) / mx)) * ks * mom, cx: c.x, cy: c.y }; });
     for (let it = 0; it < 90; it++) { for (const p of bubPts) { p.x += (p.cx - p.x) * 0.02; p.y += (p.cy - p.y) * 0.02; } for (let i = 0; i < bubPts.length; i++) for (let j = i + 1; j < bubPts.length; j++) { const a = bubPts[i], b = bubPts[j], dx = b.x - a.x, dy = b.y - a.y, d = Math.hypot(dx, dy) || 0.01, mn = a.rad + b.rad + 2; if (d < mn) { const s = (mn - d) / 2 / d; a.x -= dx * s; a.y -= dy * s; b.x += dx * s; b.y += dy * s; } } for (const p of bubPts) { p.x = Math.max(p.rad, Math.min(W - p.rad, p.x)); p.y = Math.max(p.rad, Math.min(H - p.rad, p.y)); } }
     // v17.3: live physics (V173UI) animates these same bubPts in place, so hitBub / tooltips / clicks track the moving bubbles
-    const live = typeof V173UI !== 'undefined' && V173UI.marketBubbles(bubCv, bubPts, { W, H, host, color: (p) => V164.bubbleColor(p.r, k), clusters: C }); if (live) bubCv._x173k = k;
+    const live = typeof V173UI !== 'undefined' && V173UI.marketBubbles(bubCv, bubPts, { W, H, host, color: (p) => (oc ? Math.max(-1, Math.min(1, (p.r.ch || 0) / tsc)) : V164.bubbleColor(p.r, k)), clusters: C }); if (live) bubCv._x173k = k;
+    if (live && oc && bubCv._tf !== tf) { const E = bubCv._x173; if (bubCv._tf && E) for (const n of E.nodes) { n.vx += (Math.random() - 0.5) * W * 0.9; n.vy += (Math.random() - 0.5) * H * 0.9; n.flash = 1; } bubCv._tf = tf; if (E && E.wake) E.wake(); } // spring impulse on a timeframe switch
     if (live && reuse) return; // click listener is already bound to this canvas
     if (!live) { const g = bubCv.getContext('2d'); g.scale(devicePixelRatio || 1, devicePixelRatio || 1);
     g.font = '600 10px ui-sans-serif, system-ui, sans-serif'; g.textAlign = 'center'; g.fillStyle = 'rgba(212,175,55,.6)'; for (const [name, c] of C) g.fillText(name, c.x, Math.max(12, c.y - 70));

@@ -2,6 +2,41 @@
 
 ExTerm holds no funds and no keys in every version. Up to v15.7 it was paper only; from v16.0 it can send HMAC-signed signals to a bot you run on your own machine, only after four explicit gates, and it starts in PAPER. v16.1 adds eight fail-safe engines on that path; v16.3 closes the loop with ACK + fill sync and a live cockpit; v16.4 adds DEX discovery, a local Copilot and a realistic backtester; v16.5 lets any AI or bot advise through one deterministic firewall; v16.6 adds a live transactions tape for every market.
 
+## v17.6 — Psychedelic 4D Singularity, Alpha Radar, DEX Bubble Map & On-Chain Desk — 22 Nov 2026
+
+- THE SYNAPSE: the Working Bots wireframe core is now the `sing` renderer (`src/v176core.js`).
+  - Layers: a tesseract rotated in XW / YW / ZW, an inner counter-rotating tesseract, and 4 torus knots on nested Clifford tori in S³ stereographically projected (the pen lifts near the pole so no chords cross the canvas).
+  - Also: a Keplerian accretion vortex, a photon ring + horizon, L-system dendrites and seeded midpoint-displacement plasma bolts to 6 orbiting squad nodes.
+  - Drag-orbit / wheel-zoom. It renders off-thread in the 3D Spatial worker (≈ 0.8 ms/frame there; main thread p95 ≈ 0.2 ms).
+  - The roster list stays in the DOM, visually hidden, for screen readers.
+- 3 wide panels replace the 8: `ac` (attractor + Merton cone with P10 / P50 / P90 labels), `sonar2` (eigen-risk sonar + W1–W8 avg / p99 bars, with the lane table and frame budget below), and execution stream + KPIs.
+  - KPIs are computed only from closed trades of `ST.bots` with `run = true`; the equity sparkline samples those bots' equity.
+- Alpha Radar (`src/v176.js`, nav tab `radar`, a ◎ chip in the phone More sheet).
+  - The universe is every live quote the terminal streams + on-chain pools + pins, with 2 s price rings.
+  - `V176.scan` runs as the allow-listed `alphaScan` op in the Screener worker lane every 4 s while the tab is open.
+  - Grading = the applicable engines (Hurst, Kalman, permutation entropy, shadow bracket, Kelly, ≤ 2 % impact size, order type, rug shield, MEV) + a 6-bot vote. There is a RISK-GUARD veto (≤ 69), on-chain is long-only, and a confidence shrink applies until 60 samples.
+  - Output: a 6-box dossier, a summary and 4 handoffs. The dome renderer `radar` runs off-thread, and tap-to-select uses the renderer's own projection.
+- DEX Bubble Map:
+  - `OC.universe(chain, kind)` merges GeckoTerminal trending p1 + p2, DexScreener `token-boosts/top` pairs and new pairs into 28–40 pools (never mixed with simulated ones); `loadOcHeat` uses it.
+  - 5m / 1h / 6h / 24h pills + Refresh on the map drive the label, colour scale (±4 / 10 / 20 / 40 %), momentum-weighted radius and a spring impulse.
+  - `#v164Main` no longer clips the canvas.
+  - The simulated fallback grew to 32 pools, and simulated swaps carry wallet tags so Rug Shield v2 runs offline.
+- On-Chain Token Desk (On-Chain tab):
+  - Chain pills; the CA resolver (`OC.search` → `OC.refreshPool`).
+  - `V176.rug2`: Sybil entropy, slot-0 bundle share, LP lock and retention half-life, each `n/a` when it can't be measured.
+  - `V176.twap`: constant-product TWAP + sandwich odds at a priority fee.
+  - Load on Main Chart / 3D Shock Lab / Copy CA (with a clipboard fallback); the 2D ↔ 3D scene pill is verified.
+  - "All Chains" loads one chain at a time, to respect GeckoTerminal's ~30 calls / min.
+- Fixes:
+  - EDGE strip glyph tops;
+  - the chart toolbar wraps (it overflowed 1063 px into an 834 px row, under the ticket);
+  - the phone Trade sheet was anchored to `main` because of `perspective`, so the ticket header sat at −100 px;
+  - the grade-pill class collided with the global `.gB`;
+  - the Alpha Radar nav sits after Lab.
+- Palette: every v17.6 colour literal is a pre-v17.0 token (tests enforce it).
+- Screenshots: 27 × 2× (new 21–27: Alpha Radar, DEX bubbles 1h / 24h, main chart, On-Chain desk, phone radar + bubbles; 17 now shows the singularity).
+- Tests: new `test/v176.test.js` (26); `v17pro_e2e` 96/96; the v17.5 assertions for the build list, the replaced panel names and the version now accept v17.6.
+
 ## v17.5 — Multi-Worker Sovereign 3D & Quant Frontier — 22 Nov 2026
 
 - Worker mesh: 8 dedicated Web Workers from one blob (`WORKER175_SRC` = `src/v175core.js` + `src/v175work.js`), one per lane.

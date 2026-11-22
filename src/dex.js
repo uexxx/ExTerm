@@ -155,9 +155,32 @@ const OC = (() => {
     const prof = await J.get(`${DS}/token-profiles/latest/v1`, { timeout: 10000 });
     const addrs = [...new Set((Array.isArray(prof) ? prof : []).filter((x) => x && x.chainId === dsc && /^[A-Za-z0-9]{20,90}$/.test(x.tokenAddress || '')).map((x) => x.tokenAddress))].slice(0, 30);
     if (!addrs.length) return [];
+    const syms = await dsPairs(dsc, addrs); O.dsNewTs = Date.now(); return syms;
+  };
+  // token addresses → their most liquid DexScreener pair each (one batched call, ≤ 30 addresses)
+  const dsPairs = async (dsc, addrs) => {
     const r = await J.get(`${DS}/tokens/v1/${dsc}/${addrs.join(',')}`, { timeout: 12000 });
     const best = new Map(); for (const p of Array.isArray(r) ? r : []) { const a = p && p.baseToken && p.baseToken.address; if (a && (!best.has(a) || ((p.liquidity || {}).usd || 0) > ((best.get(a).liquidity || {}).usd || 0))) best.set(a, p); }
-    const syms = fromDsPairs([...best.values()]); O.dsNewTs = Date.now(); return syms;
+    return fromDsPairs([...best.values()]);
+  };
+  // DexScreener boosted tokens (top boosts) on one chain → their pairs
+  O.boosted = async (chain) => {
+    const dsc = (CHAINS[chain] || [])[1]; if (!dsc) return [];
+    const b = await J.get(`${DS}/token-boosts/top/v1`, { timeout: 10000 });
+    const addrs = [...new Set((Array.isArray(b) ? b : []).filter((x) => x && x.chainId === dsc && /^[A-Za-z0-9]{20,90}$/.test(x.tokenAddress || '')).map((x) => x.tokenAddress))].slice(0, 30);
+    return addrs.length ? dsPairs(dsc, addrs) : [];
+  };
+  /* v17.6 bubble universe: 28–40 pools for one chain, merging the primary list (trending or new) with trending page 2, DexScreener
+     boosted pairs and the other list; each source is optional (rate limits / outages just shrink the merge), simulated only if all fail */
+  O.UNI_MIN = 28; O.UNI_MAX = 40;
+  O.universe = async (chain, kind, force) => {
+    if (!CHAINS[chain]) chain = 'solana'; kind = kind === 'new' ? 'new' : 'trending';
+    const k = 'uni:' + kind + ':' + chain, c = O.lists[k]; if (!force && c && Date.now() - c.ts < 90000) return c.syms;
+    const out = [], add = (l) => { for (const s of l || []) if (out.length < O.UNI_MAX && !out.includes(s)) out.push(s); };
+    const tries = [() => O.discover(kind, chain, force), () => O.discoverPage(kind, chain, 2), () => O.boosted(chain), () => O.discover(kind === 'new' ? 'trending' : 'new', chain, force)];
+    for (let i = 0; i < tries.length && out.length < O.UNI_MAX; i++) { if (i === 3 && out.length >= O.UNI_MIN) break; try { add(await tries[i]()); } catch (e) { /* optional source */ } }
+    if (out.some((s) => /^oc:sim:/.test(s)) && out.some((s) => !/^oc:sim:/.test(s))) { const real = out.filter((s) => !/^oc:sim:/.test(s)); out.length = 0; add(real); } // never mix simulated with real pools
+    O.lists[k] = { syms: out.slice(), ts: Date.now() }; return out;
   };
   /* ---------- token socials / websites (from DexScreener pair info + GeckoTerminal token info) ---------- */
   O.social = {};
@@ -172,13 +195,17 @@ const OC = (() => {
   };
 
   /* ---------- simulated fallback (no network / opened without the launcher) ---------- */
-  const SIM = [['ZAPCAT', 'Zap Cat', 0.0123], ['MOONBEAN', 'Moon Bean', 0.00042], ['GIGAFROG', 'Giga Frog', 0.0000271], ['LUMA', 'Luma', 0.94], ['QUBIT', 'Qubit', 0.071], ['HODLR', 'Hodlr', 0.0038], ['NEBULA', 'Nebula', 2.31], ['WAGMI', 'Wagmi Dog', 0.000913]];
+  const SIM = [['ZAPCAT', 'Zap Cat', 0.0123], ['MOONBEAN', 'Moon Bean', 0.00042], ['GIGAFROG', 'Giga Frog', 0.0000271], ['LUMA', 'Luma', 0.94], ['QUBIT', 'Qubit', 0.071], ['HODLR', 'Hodlr', 0.0038], ['NEBULA', 'Nebula', 2.31], ['WAGMI', 'Wagmi Dog', 0.000913],
+    // v17.6: 32 simulated pools so the offline bubble map still shows a full 28–40 universe (clearly labelled simulated)
+    ['PIXL', 'Pixel Pup', 0.0061], ['ORBIT', 'Orbit', 0.38], ['FROTH', 'Froth', 0.00077], ['KOALA', 'Koala Kid', 0.0129], ['RUNE8', 'Rune Eight', 1.42], ['SPARK', 'Spark', 0.054], ['DUNE', 'Dune Cat', 0.0093], ['MOCHI', 'Mochi', 0.00051],
+    ['VOLT', 'Volt', 0.21], ['YETI', 'Yeti', 0.0034], ['NOVA', 'Nova Dog', 0.0187], ['GLOW', 'Glow', 0.77], ['TIDE', 'Tide', 0.0412], ['FUZZ', 'Fuzz', 0.00021], ['ZEN', 'Zen Frog', 0.0068], ['BLIP', 'Blip', 0.113],
+    ['ECHO', 'Echo', 0.0025], ['RIFT', 'Rift', 0.58], ['PUFF', 'Puff', 0.00094], ['JOLT', 'Jolt', 0.0311], ['MINT', 'Mint Owl', 0.0047], ['HALO', 'Halo', 1.08], ['SNEK', 'Snek', 0.00063], ['BOLT', 'Bolt', 0.0852]];
   O.simPx = {};
   function simList() {
     return SIM.map(([s, n, p], i) => {
       const sym = 'oc:sim:' + s + 'SIM' + i; O.simPx[sym] = O.simPx[sym] || p;
       const r = prng(hash(s) ^ Math.floor(Date.now() / 3.6e6));
-      O.register(sym, { s, n: n + ' (simulated)', q: 'USDC', dex: 'simulated' }, { price: O.simPx[sym], ch24: (r() - 0.45) * 60, ch1h: (r() - 0.5) * 12, ch5m: (r() - 0.5) * 3, liq: 40000 + r() * 900000, mcap: 2e5 + r() * 4e7, vol24: 5e4 + r() * 3e6, buys24: 200 + Math.round(r() * 4000), sells24: 150 + Math.round(r() * 3500), created: Date.now() - r() * 30 * 864e5 });
+      O.register(sym, { s, n: n + ' (simulated)', q: 'USDC', dex: 'simulated' }, { price: O.simPx[sym], ch24: (r() - 0.45) * 60, ch1h: (r() - 0.5) * 12, ch5m: (r() - 0.5) * 3, ch6h: (r() - 0.48) * 28, liq: 40000 + r() * 900000, mcap: 2e5 + r() * 4e7, vol24: 5e4 + r() * 3e6, buys24: 200 + Math.round(r() * 4000), sells24: 150 + Math.round(r() * 3500), created: Date.now() - r() * 30 * 864e5 });
       return sym;
     });
   }
@@ -298,7 +325,7 @@ const OC = (() => {
     const p = O.parse(sym); if (!p) return [];
     if (p.chain === 'sim') {
       const px0 = O.simPx[sym] || 1, now = Date.now() / 1000;
-      return Array.from({ length: 6 }, (_, i) => ({ side: Math.random() > 0.47 ? 'buy' : 'sell', p: px0 * (1 + (Math.random() - 0.5) * 0.004), q: Math.round(1e3 + Math.random() * 9e5) / (px0 > 1 ? 1000 : 1), usd: 20 + Math.random() * 4000, ts: now - i * 3, tx: 'sim' + Math.random().toString(36).slice(2), who: '' }));
+      return Array.from({ length: 24 }, (_, i) => ({ side: Math.random() > 0.47 ? 'buy' : 'sell', p: px0 * (1 + (Math.random() - 0.5) * 0.004), q: Math.round(1e3 + Math.random() * 9e5) / (px0 > 1 ? 1000 : 1), usd: 20 + Math.random() * 4000, ts: now - i * 3, tx: 'sim' + Math.random().toString(36).slice(2), who: 'SimWallet' + Math.floor(Math.random() * 14) })).sort((a, b) => a.ts - b.ts); // simulated wallets so Rug Shield v2 runs offline (pool is labelled simulated)
     }
     const r = await gt(`/networks/${p.chain}/pools/${p.pool}/trades`, 0, { noWait: !!(opt && opt.noWait) });
     return ((r && r.data) || []).map((d) => {
