@@ -407,7 +407,7 @@ const V163C = (() => {
     const cv = $1('#v163Spark'); if (!cv) return; const g = cv.getContext('2d'); if (!g) return; const w = cv.width, h = cv.height; g.clearRect(0, 0, w, h);
     const s = V163.spark(C.eq.map((x) => x.e), w, h); if (!s) { g.fillStyle = 'rgba(255,255,255,.35)'; g.font = '10px ui-monospace, Menlo, Consolas, monospace'; g.fillText('collecting equity…', 6, h / 2 + 3); return; }
     g.beginPath(); s.peakPts.forEach(([x, y], i) => (i ? g.lineTo(x, y) : g.moveTo(x, y))); for (let i = s.pts.length - 1; i >= 0; i--) g.lineTo(s.pts[i][0], s.pts[i][1]); g.closePath(); g.fillStyle = 'rgba(244,63,94,.22)'; g.fill();
-    g.beginPath(); s.pts.forEach(([x, y], i) => (i ? g.lineTo(x, y) : g.moveTo(x, y))); g.strokeStyle = s.up ? '#22C55E' : '#EF4444'; g.lineWidth = 1.5; g.stroke();
+    g.beginPath(); s.pts.forEach(([x, y], i) => (i ? g.lineTo(x, y) : g.moveTo(x, y))); g.strokeStyle = s.up ? '#2fd08a' : '#f43f5e'; g.lineWidth = 1.5; g.stroke();
     const dd = $1('#v163HudDD'), t = `DD ${s.ddPct.toFixed(2)}% · ${V163.money(s.last - s.first)}`; if (dd && dd.textContent !== t) dd.textContent = t;
   };
   const paintHud = (force) => {
@@ -616,7 +616,7 @@ const V163C = (() => {
     const gr = g.createLinearGradient(0, H * 0.55, 0, H); gr.addColorStop(0, 'rgba(11,11,13,0)'); gr.addColorStop(0.3, 'rgba(11,11,13,.92)'); gr.addColorStop(1, '#0b0b0d'); g.fillStyle = gr; g.fillRect(0, H * 0.55, W, H * 0.45);
     const c = L.card; g.textBaseline = 'alphabetic'; g.fillStyle = '#D4AF37'; g.font = '700 22px ui-sans-serif, system-ui, sans-serif'; g.fillText('ExTerm · Trade Card', 40, H - 150);
     g.fillStyle = '#e8e8ea'; g.font = '700 40px ui-sans-serif, system-ui, sans-serif'; g.fillText(c.title, 40, H - 100);
-    g.fillStyle = c.win ? '#22C55E' : '#EF4444'; g.font = '800 64px ui-monospace, Menlo, Consolas, monospace'; g.fillText(c.result + (c.r ? '  ' + c.r : ''), 40, H - 34);
+    g.fillStyle = c.win ? '#2fd08a' : '#f43f5e'; g.font = '800 64px ui-monospace, Menlo, Consolas, monospace'; g.fillText(c.result + (c.r ? '  ' + c.r : ''), 40, H - 34);
     g.fillStyle = 'rgba(232,232,234,.7)'; g.font = '500 18px ui-monospace, Menlo, Consolas, monospace'; g.textAlign = 'right'; g.fillText(`held ${c.held}${c.reason ? ' · ' + c.reason : ''}`, W - 40, H - 100); g.fillText('privacy-masked: no size, no quantity, no account value', W - 40, H - 40); g.textAlign = 'left';
     return cv;
   };
@@ -807,7 +807,7 @@ const V163C = (() => {
     const cv = $1('#v163HbCv'); if (cv) {
       const g = cv.getContext('2d'), w = cv.width, h = cv.height; g.clearRect(0, 0, w, h); const all = Object.entries(C.hb).flatMap(([id, a]) => a.map((x) => Object.assign({ id: +id }, x))).sort((a, b) => a.t - b.t).slice(-60);
       const mx = Math.max(10, ...all.filter((x) => x.ok).map((x) => x.ms)), bw = w / 60;
-      all.forEach((x, i) => { const bh = x.ok ? Math.max(3, (x.ms / mx) * (h - 14)) : h - 14; g.fillStyle = x.ok ? (x.ms > 1000 ? '#D4AF37' : '#22C55E') : '#EF4444'; g.fillRect(i * bw + 1, h - bh, Math.max(1, bw - 2), bh); });
+      all.forEach((x, i) => { const bh = x.ok ? Math.max(3, (x.ms / mx) * (h - 14)) : h - 14; g.fillStyle = x.ok ? (x.ms > 1000 ? '#D4AF37' : '#2fd08a') : '#f43f5e'; g.fillRect(i * bw + 1, h - bh, Math.max(1, bw - 2), bh); });
       g.fillStyle = 'rgba(232,232,234,.55)'; g.font = '10px ui-monospace, Menlo, Consolas, monospace'; g.fillText(all.length ? `max ${Math.round(mx)} ms` : 'waiting for heartbeats…', 4, 10);
     }
     const st = $1('#v163HbSt'); if (st) { const t = Object.entries(C.hb).map(([id, a]) => { const s = V163.hbStats(a); return `Slot ${id}: ${s.okPct == null ? '–' : s.okPct.toFixed(0)}% ok · avg ${s.avgMs == null ? '–' : Math.round(s.avgMs)} ms · ${s.n} pkts`; }).join('  |  ') || 'No heartbeats yet: enable a slot and wait 15 s or run the self-check.'; if (st.textContent !== t) st.textContent = t; }

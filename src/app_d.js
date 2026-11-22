@@ -167,7 +167,7 @@ function filteredTrades() {
 }
 /* ───────────── tracker revamp: smart-money radar ───────────── */
 const KOL_META = new Map((typeof DEFAULT_WALLETS !== 'undefined' ? DEFAULT_WALLETS : []).map((o) => [o.trackedWalletAddress, o]));
-const TIERS = { consistent: ['🎯', 'Consistent', '#22c55e'], whale: ['🐋', 'Whale', '#38bdf8'], grinder: ['⚡', 'Grinder', '#f5a524'], sniper: ['🎲', 'Sniper', '#f472b6'], rising: ['🌱', 'Rising', '#F5C84B'] };
+const TIERS = { consistent: ['🎯', 'Consistent', '#22c55e'], whale: ['🐋', 'Whale', '#38bdf8'], grinder: ['⚡', 'Grinder', '#f5a524'], sniper: ['🎲', 'Sniper', '#f472b6'], rising: ['🌱', 'Rising', '#a78bfa'] };
 function wMeta(w) {
   const k = KOL_META.get(w.addr) || {}, e = w.ext || {};
   const wr = e.winRate != null ? e.winRate : k.w + k.l ? (k.w / (k.w + k.l)) * 100 : null;

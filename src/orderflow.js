@@ -71,11 +71,11 @@ const OF = (() => {
     for (let j = 0; j < Q.longs.length; j++) {
       const y1 = L.py(Q.lo + (j + 1) * Q.step), y2 = L.py(Q.lo + j * Q.step); if (y2 < L.y0 || y1 > L.y0 + L.mainH) continue;
       const lv = Q.longs[j], sv = Q.shorts[j], v = Math.max(lv, sv); if (v < 0.42) continue;
-      g.fillStyle = (sv >= lv ? '#f59e0b' : '#CBD5E1') + Math.round(10 + Math.pow((v - 0.42) / 0.58, 1.6) * 80).toString(16).padStart(2, '0');
+      g.fillStyle = (sv >= lv ? '#f59e0b' : '#a855f7') + Math.round(10 + Math.pow((v - 0.42) / 0.58, 1.6) * 80).toString(16).padStart(2, '0');
       g.fillRect(left, y1, right - left, Math.max(1, y2 - y1));
     }
     g.font = '10px ui-monospace, Menlo, monospace'; g.textAlign = 'right'; g.textBaseline = 'top';
-    g.fillStyle = '#f59e0b'; g.fillText('■ short liquidations (est.)', right - 6, L.y0 + 4); g.fillStyle = '#CBD5E1'; g.fillText('■ long liquidations (est.)', right - 6, L.y0 + 16);
+    g.fillStyle = '#f59e0b'; g.fillText('■ short liquidations (est.)', right - 6, L.y0 + 4); g.fillStyle = '#a855f7'; g.fillText('■ long liquidations (est.)', right - 6, L.y0 + 16);
   };
   O.attach = (ch) => { if (!ch || ch._of) return; ch._of = true; ch.overlays.unshift(drawLiq); ch.overlays.push(drawProfile, drawDelta); };
   return O;

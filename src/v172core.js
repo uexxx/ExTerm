@@ -12,11 +12,12 @@
    · stamp        HH:MM:SS.mmm millisecond timestamp for The Trace */
 const V172 = (() => {
   const V = {};
-  V.THEME = Object.freeze({ bg: '#07080B', panel: '#0D1117', head: '#161B22', gold: '#F5C84B', up: '#22C55E', dn: '#EF4444', text: '#F8FAFC', mut: '#9AA4B2' });
+  /* v17.3: the exact pre-v17.0 (v16.6) Obsidian & Gold palette, measured from the 961e97d build's computed styles */
+  V.THEME = Object.freeze({ bg: '#0B0E14', panel: '#0F131B', head: '#141924', gold: '#D4AF37', gold2: '#F5B841', amber: '#E5C158', silver: '#CBD5E1', up: '#2fd08a', dn: '#ff5a5f', text: '#f6f3ea', mut: '#a59d8a' });
   V.NODES = Object.freeze(['TAPE/CVD', 'GEX/DOM', '3D OB', 'SCREENER', 'AI BRIDGE', 'FIREWALL']);
   V.SENSORS = Object.freeze(['WS Ticks/s', 'L1/L2 SWR Cache', 'Worker Math', 'Cross-Exchange CVD', 'GEX/Volatility']);
   V.WEIGHTS = Object.freeze(['CVD', 'GEX', '3D OB', 'Momentum', 'Risk Budget']);
-  V.RGB = Object.freeze({ gold: '245,200,75', up: '34,197,94', dn: '239,68,68' });
+  V.RGB = Object.freeze({ gold: '245,184,65', gold2: '212,175,55', up: '47,208,138', dn: '255,90,95' });
 
   /* per-second meter: count(), then roll(now) once a second pushes the rate into a fixed history */
   V.Rate = class {

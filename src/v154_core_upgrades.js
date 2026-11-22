@@ -31,13 +31,13 @@ const V154UpUI = (() => {
   ov.sess = (g, L, ch) => {
     const c = cfg(); if (!c.sess) return; const D = L.D, stock = typeof isStock === 'function' && isStock(ST.sel), key = ST.sel + '|' + D.length + '|' + c.orMin;
     if (U.cache.sKey !== key) { U.cache.sKey = key; U.cache.or = V154.openingRange(D, stock ? 13 * 60 + 30 : 0, [c.orMin]); U.cache.kz = V154.killZones(D); }
-    const top = L.y0, bot = L.y0 + L.mainH - (L.volH || 0) - 4, cols = { asia: '#F5C84B', london: '#38bdf8', ny: '#f59e0b' }; g.font = '700 9px Inter, system-ui, sans-serif';
+    const top = L.y0, bot = L.y0 + L.mainH - (L.volH || 0) - 4, cols = { asia: '#a78bfa', london: '#38bdf8', ny: '#f59e0b' }; g.font = '700 9px Inter, system-ui, sans-serif';
     for (const [k, b] of Object.entries(U.cache.kz || {})) { const x1 = Math.max(L.Lm, ch.tToX(b.t0)), x2 = Math.min(L.W - L.Rm, ch.tToX(b.t1)); if (x2 <= x1) continue; const y1 = Math.max(top, L.py(b.hi)), y2 = Math.min(bot, L.py(b.lo)); g.globalAlpha = 0.07; g.fillStyle = cols[k]; g.fillRect(x1, y1, x2 - x1, y2 - y1); g.globalAlpha = 0.6; g.strokeStyle = cols[k]; g.strokeRect(x1, y1, x2 - x1, y2 - y1); g.fillText(k.toUpperCase(), x1 + 3, y1 + 10); }
     const o = (U.cache.or || {})[c.orMin]; if (o) for (const [p, lab] of [[o.hi, 'ORH ' + c.orMin + 'm'], [o.lo, 'ORL ' + c.orMin + 'm']]) { const y = L.py(p); if (!(y > top && y < bot)) continue; g.globalAlpha = 0.8; g.strokeStyle = L.col.acc; g.fillStyle = L.col.acc; g.setLineDash([5, 3]); g.beginPath(); g.moveTo(Math.max(L.Lm, ch.tToX(o.t0)), y); g.lineTo(L.W - L.Rm, y); g.stroke(); g.setLineDash([]); g.textAlign = 'right'; g.fillText(lab, L.W - L.Rm - 4, y - 3); }
   };
   ov.absorb = (g, L) => {
     if (!cfg().absorb) return; const D = L.D, key = ST.sel + '|' + D.length + '|' + (D[D.length - 1] || {}).c; if (U.cache.abKey !== key) { U.cache.abKey = key; const off = Math.max(0, D.length - 600); U.cache.ab = V154.absorption(D.slice(off)).map((x) => Object.assign(x, { i: x.i + off })); }
-    for (const a of U.cache.ab) { if (a.i < L.start || a.i >= L.end) continue; const c = D[a.i], x = L.kx(a.i); g.globalAlpha = 0.25 + 0.6 * a.absorb; g.fillStyle = a.side === 'bid' ? '#FFE08A' : '#f472b6'; g.fillRect(x - L.bw * 0.4, L.py(Math.max(c.o, c.c)), L.bw * 0.8, Math.max(2, Math.abs(L.py(c.o) - L.py(c.c)))); }
+    for (const a of U.cache.ab) { if (a.i < L.start || a.i >= L.end) continue; const c = D[a.i], x = L.kx(a.i); g.globalAlpha = 0.25 + 0.6 * a.absorb; g.fillStyle = a.side === 'bid' ? '#22d3ee' : '#f472b6'; g.fillRect(x - L.bw * 0.4, L.py(Math.max(c.o, c.c)), L.bw * 0.8, Math.max(2, Math.abs(L.py(c.o) - L.py(c.c)))); }
   };
   ov.charm = (g, L) => {
     if (!cfg().charm || typeof P5UI === 'undefined') return; const ch = P5UI.chain; if (!ch || ch.sym !== ST.sel) return; if (U.cache.chKey !== ch) { U.cache.chKey = ch; U.cache.ch = V154.charmCurve(ch, ch.spot); } const C = U.cache.ch; if (!C) return;

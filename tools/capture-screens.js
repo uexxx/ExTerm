@@ -25,9 +25,9 @@ const SHOTS = [];
     await p.waitForFunction(() => typeof V17App !== 'undefined' && V17App.mounted && typeof chart !== 'undefined' && chart && chart.data.length > 200, null, { timeout: 90000 });
     await clean(); await sleep(2500);
 
-    // 01 markets: morning levels + GEX walls + NET BE + confluence + Reach strip + Live Tape
-    await ev(async () => { showTab('markets'); if (typeof V166UI !== 'undefined') V166UI.toggle(true); V17App.Brief.plot(); await V17App.Opts.gex(); V17App.Layer.dirty(); chart.invalidate(); });
-    await shot('01-markets-terminal.png', 1500);
+    // 01 hero: chart with morning levels + GEX flip / call wall / put wall, DOM Spoof Ladder open in the side column, Live Tape
+    await ev(async () => { showTab('markets'); if (typeof V166UI !== 'undefined') V166UI.toggle(true); V17App.Brief.plot(); await V17App.Opts.gex(); V17App.Layer.dirty(); chart.invalidate(); const d = document.querySelector('#x17Dom'); if (d) { d.open = true; d.dispatchEvent(new Event('toggle')); const side = d.closest('.side-col'); if (side) side.scrollTop = Math.max(0, d.offsetTop - 160); } });
+    await shot('01-hero-chart-gex-dom.png', 1800);
     // 02 + 03 Quant Lab Edge-Coach
     await ev(() => { showTab('lab'); V17App.Coach.run(); const c = document.querySelector('#x17Coach'); if (c) c.scrollIntoView({ block: 'start' }); });
     await shot('02-quant-lab-edge-coach.png');
@@ -53,11 +53,16 @@ const SHOTS = [];
     // 09 universal main-chart 3D (toolbar pill, any symbol): volume prisms, Bullion Gold order-block wireframes, L2 particles
     await ev(() => { showTab('markets'); V171UI.chart3d.toggle(true); });
     await shot('09-3d-volumetric-order-blocks.png', 1200); await ev(() => V171UI.chart3d.toggle(false));
-    // 10 Bot Fleet → v17.2 THE SYNAPSE: Sensory Input Layer · 6 neural nodes → ExTerm core · Cortex weights · Signal Rotation · The Trace · The Pricer
-    await ev(() => { showTab('fleet'); V17App.cfg.mode = 'copilot'; V17App.Fleet.demo(); V17App.Fleet.propose(); V17App.Fleet.paint(); V17App.Fleet.evolve(); const s = document.querySelector('#x172Syn'); if (s) s.scrollIntoView({ block: 'start' }); });
+    // 10 Bot Fleet → v17.3 THE SYNAPSE, Synapse Cortex engine (fractal dendrites, comets, spores) · 15 Singularity Burst · 16 live bubble map
+    await ev(() => { try { localStorage.setItem('x173.eng', 'cortex'); } catch (e) { /* storage */ } V173UI.syn.eng = 'cortex'; showTab('fleet'); const b = document.querySelector('[data-x173eng="cortex"]'); if (b) b.click(); V17App.cfg.mode = 'copilot'; V17App.Fleet.demo(); V17App.Fleet.propose(); V17App.Fleet.paint(); V17App.Fleet.evolve(); const s = document.querySelector('#x172Syn'); if (s) s.scrollIntoView({ block: 'start' }); });
     await sleep(6000); // let the 1 Hz sensors build sparkline history from the real background processes
     await ev(() => { const s = document.querySelector('#x172Syn'); if (s) s.scrollIntoView({ block: 'start' }); const ev8 = [['fill', 'Bots', 'demo BUY filled'], ['win', 'Ledger', 'TP hit +'], ['bot', 'Bots', 'evolution gen 20'], ['ai', 'Copilot', 'copilot answered'], ['block', 'Firewall', 'firewall gate · size over risk budget'], ['whale', 'Screener', 'whale print $250K'], ['trail', 'Ledger', 'trail raised'], ['fill', 'Bots', 'paper fill']]; ev8.forEach(([t, n, x], i) => setTimeout(() => window.__EXTERM_BUS.emit(t, { node: n, side: 'buy', text: x, src: 'fleet' }), 140 * i)); });
-    await shot('10-bot-fleet-neural-torus.png', 1100); await ev(() => { V17App.cfg.mode = 'paper'; V17App.save(); });
+    await shot('10-bot-fleet-neural-torus.png', 1100);
+    await ev(() => { document.querySelector('[data-x173eng="singularity"]').click(); const ev6 = [['tick', 'Data', 'tick batch'], ['whale', 'Screener', 'whale sweep $410K'], ['ui', 'Ledger', 'GEX recalc · flip shift'], ['draw', 'Chart', '3D order-block wall'], ['gate', 'Firewall', 'firewall pass · size ok'], ['fill', 'Bots', 'paper fill']]; ev6.forEach(([t, n, x], i) => setTimeout(() => window.__EXTERM_BUS.emit(t, { node: n, side: 'buy', text: x, src: 'fleet' }), 180 * i)); });
+    await shot('15-synapse-singularity-burst.png', 1500);
+    await ev(() => { document.querySelector('[data-x173eng="cortex"]').click(); V17App.cfg.mode = 'paper'; V17App.save(); });
+    await ev(async () => { showTab('heat'); for (let i = 0; i < 60; i++) { const bt = document.querySelector('[data-v164v="bubbles"]'); if (bt && !bt.classList.contains('on')) bt.click(); const cv = document.querySelector('canvas.v164-bub'); if (cv && cv._x173 && cv._x173.nodes.length) break; await new Promise((r) => setTimeout(r, 250)); } const t = document.querySelector('#tab-heat'); if (t) t.scrollTop = 0; });
+    await shot('16-live-bubble-map.png', 2500);
     // 11 academy (with a drill)
     await ev(() => { V17Mob.drillGen(); showTab('academy'); });
     await shot('11-academy.png');
@@ -79,5 +84,5 @@ const SHOTS = [];
     await ph.screenshot({ path: path.join(OUT, '14-mobile-touch-cockpit.png') }); SHOTS.push('14-mobile-touch-cockpit.png'); console.log('shot 14-mobile-touch-cockpit.png');
     await m.close();
   } finally { await b.close(); }
-  console.log(SHOTS.length + ' screenshots → docs/screenshots'); process.exit(SHOTS.length === 14 ? 0 : 1);
+  console.log(SHOTS.length + ' screenshots → docs/screenshots'); process.exit(SHOTS.length === 16 ? 0 : 1);
 })().catch((e) => { console.error('CRASH', e.message); process.exit(1); });

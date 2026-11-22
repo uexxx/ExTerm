@@ -33,7 +33,7 @@ const FX3 = (() => {
 const Space3D = (() => {
   const S = { cv: null, g: null, raf: 0, last: 0, t: 0, px: 0, py: 0, tx: 0, ty: 0, parts: [], sky: [], level: 'full' };
   const reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const accent = () => (getComputedStyle(document.body).getPropertyValue('--acc').trim() || '#F5C84B');
+  const accent = () => (getComputedStyle(document.body).getPropertyValue('--acc').trim() || '#7c5cff');
   function hexA(h, a) { const m = /^#?([0-9a-f]{6})$/i.exec(h); if (!m) return `rgba(124,92,255,${a})`; const n = parseInt(m[1], 16); return `rgba(${n >> 16},${(n >> 8) & 255},${n & 255},${a})`; }
   function seed() {
     S.parts = Array.from({ length: 70 }, () => ({ x: (Math.random() - 0.5) * 2, y: Math.random() * -0.9 - 0.05, z: Math.random() }));

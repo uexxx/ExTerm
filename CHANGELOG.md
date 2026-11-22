@@ -2,6 +2,25 @@
 
 ExTerm holds no funds and no keys in every version. Up to v15.7 it was paper only; from v16.0 it can send HMAC-signed signals to a bot you run on your own machine, only after four explicit gates, and it starts in PAPER. v16.1 adds eight fail-safe engines on that path; v16.3 closes the loop with ACK + fill sync and a live cockpit; v16.4 adds DEX discovery, a local Copilot and a realistic backtester; v16.5 lets any AI or bot advise through one deterministic firewall; v16.6 adds a live transactions tape for every market.
 
+## v17.3 — Exact Pre-v17.0 Gold Restored, Live Bubble Physics, Dual-Engine Synapse, Telemetry Matrix — 22 Nov 2026
+
+- Theme: the v16.6 (`961e97d`) palette was measured from that build's computed styles and restored exactly; a probe of v17.3 shows zero token differences from it.
+  - The v17.1 slate overrides (`#0D1117` / `#161B22` / `#F8FAFC` / `#94A3B8`) and the v17.2 strict token block are removed.
+  - The 18 pre-v17 modules are back to their v16.6 colour literals, and the theme swatches match v16.6.
+  - v17-era chrome uses the warm v16.6 tones. Obsidian & Gold stays the default.
+- Bubble maps: a shared live engine (`src/v173core.js` physics, `src/v173.js` rendering) drives all three.
+  - `Radar.bubbles` (On-Chain Age × Buy Pressure).
+  - `P4UI.Bubbles` (heat bubbles).
+  - The v16.4 Market / Discovery map: `v164.js` now hands its `bubPts` to the engine and reuses the canvas across its 500 ms price-driven re-renders, which previously rebuilt it every tick.
+  - Engine features: ~85 % fill, spring attractors with orbiting targets, currents, buoyancy, elastic collisions, wall containment, hover repel, drag-fling, additive halos, specular highlights, update shockwaves, and 0 fps when hidden. Missing buy/sell counts fall back to a 1h-change estimate, so the map never collapses to a flat line.
+- THE SYNAPSE: Visual Engine Switcher (Synapse Cortex · Singularity Burst · Auto-Morph), additive `lighter` compositing, fed by the bus and the sensors.
+  - Cortex: fractal dendrites, comet relays, spore cascades.
+  - Singularity: event horizon, ~3,000 radial filaments, coronal tendrils, shockwaves, callout badges.
+  - The scope filter is now labelled "Working Bots".
+- Telemetry matrix: RUN LOG (the ms trace) · ACCESS LEDGER · BLAST RADIUS · ACTION HEAT (6 × 30 flashing grid) · THROUGHPUT (stacked histogram) · BOT STATUS, plus Signal Rotation and The Pricer.
+- Screenshots: `01-hero-chart-gex-dom.png`, `10-bot-fleet-neural-torus.png` and `14-mobile-touch-cockpit.png` recaptured, plus new `15-synapse-singularity-burst.png` and `16-live-bubble-map.png` (16 × 2×).
+- Tests: new `test/v173.test.js` (34); `v17pro_e2e` 65/65; all 33 unit files pass. The v17.2 assertions were updated for the restored palette, and the v15.7 test is back to its original v16.6 expectation.
+
 ## v17.2 — Obsidian & Bullion Gold Everywhere, THE SYNAPSE Neural Cockpit — 21 Nov 2026
 
 - Theme: strict Obsidian `#07080B` / `#0D1117` panels / `#161B22` headers, Bullion Gold `#F5C84B`, Emerald `#22C55E`, Crimson `#EF4444`, on every workspace and on mobile.

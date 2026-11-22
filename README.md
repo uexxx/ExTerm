@@ -4,19 +4,19 @@
 
 <div align="center">
 
-# ExTerm v17.2
+# ExTerm v17.3
 
 ### The $0, local-first trading workstation for crypto, stocks, on-chain DEX tokens, options and futures, with a Quant Lab that coaches you, a Bot Fleet you arm deliberately, and a native Android app.
 
 **Your money never leaves your broker, exchange or wallet.** ExTerm holds no funds and no keys: it paper-trades by default,
 and live signals go only to a bot you run yourself on `127.0.0.1`, HMAC-signed and locked behind a 5-step arming wizard.
 
-<img src="docs/screenshots/01-markets-terminal.png" alt="ExTerm Markets terminal at 1440×900 (2× Retina): BTC candles with the plotted morning levels (previous day high, low and close, pivot, R1, S1), the GEX flip, call wall and put wall lines, the one-line Reach strip with the R:R, 2×2 and smart-trail tools under the navigation, the 6-timeframe confluence pill in the header and the Live Tape" width="100%">
+<img src="docs/screenshots/01-hero-chart-gex-dom.png" alt="ExTerm Markets terminal at 1440×900 (2× Retina): BTC candles with the plotted morning levels (previous day high, low and close, pivot, R1, S1), the GEX flip, call wall and put wall lines, the one-line Reach strip with the R:R, 2×2 and smart-trail tools under the navigation, the 6-timeframe confluence pill in the header and the Live Tape" width="100%">
 
-**[Launch](#-30-second-local-launch)** · **[What's new](#-whats-new-in-v172)** · **[Screenshots](#-v172-tour)** · **[Android](#-android-app)** · **[Verify](#-how-to-verify-official-builds)** · **[Build & test](#-build--test)** · **[Security](#-security)** · **[License](#-license)**
+**[Launch](#-30-second-local-launch)** · **[What's new](#-whats-new-in-v173)** · **[Screenshots](#-v173-tour)** · **[Android](#-android-app)** · **[Verify](#-how-to-verify-official-builds)** · **[Build & test](#-build--test)** · **[Security](#-security)** · **[License](#-license)**
 
 <p>
-  <a href="https://github.com/uexxx/ExTerm/releases/latest"><img src="https://img.shields.io/badge/download-v17.2-F5C84B?style=for-the-badge" alt="Download v17.2"></a>
+  <a href="https://github.com/uexxx/ExTerm/releases/latest"><img src="https://img.shields.io/badge/download-v17.3-D4AF37?style=for-the-badge" alt="Download v17.3"></a>
   <a href="https://github.com/uexxx/ExTerm/releases/latest"><img src="https://img.shields.io/badge/Android-APK-2fd08a?style=for-the-badge" alt="Android APK"></a>
   <img src="https://img.shields.io/badge/price-%240-2fd08a?style=for-the-badge" alt="$0">
   <img src="https://img.shields.io/badge/indicators-137-F5C84B?style=for-the-badge" alt="137 indicators">
@@ -58,6 +58,29 @@ Useful flags: `python3 serve.py 9000` (other port) · `--no-browser` · `--docto
 > proxies only an allow-list of public market-data hosts, on `localhost`, behind a fresh per-launch token.
 
 ---
+
+## 🎯 What's new in v17.3
+
+**The pre-v17.0 gold is back exactly, the bubble maps never freeze, and THE SYNAPSE gets two high-velocity, additive-light engines.**
+
+- **Exact pre-v17.0 Obsidian & Gold.** I measured the v16.6 build (`961e97d`) in a browser and restored its palette value for value:
+  - obsidian `#0B0E14` body, `#0F131B` / `#141924` panels
+  - brushed gold `#D4AF37` with `#F5B841` / `#E5C158` highlights and the gold → silver `#CBD5E1` active pill
+  - warm ivory text `#f6f3ea` / `#a59d8a`
+  - `#2fd08a` / `#ff5a5f` gains and losses
+
+  The v17.1 slate overrides and the v17.2 strict token block are gone, the 18 pre-v17 modules carry their v16.6 colours again, and v17-era chrome uses the same warm tones.
+- **Live bubble maps (Desktop + Mobile).** The On-Chain map (Age × Buy Pressure), the Market / Discovery map and the heat bubbles share one physics engine:
+  - **Layout:** 25–40+ tokens (up to 86 on the Market map) filling ~85 % of a ResizeObserver-sized canvas. Market bubbles keep their momentum through every price refresh instead of being rebuilt.
+  - **Motion:** (Age, Buy-Pressure) spring attractors with orbital and buoyancy currents, elastic collisions, wall containment, hover repel and drag-fling.
+  - **Lighting:** glossy emerald / crimson spheres with ticker + live %, additive `lighter` halos, specular highlights and gold / emerald / crimson shockwave rings on every update.
+  - **Flat-line fix:** when the feed has no buy/sell counts, buy pressure is estimated from the 1h change (flagged as an estimate).
+  - **Hidden:** 0 fps whenever the map is not visible.
+- **THE SYNAPSE: Visual Engine Switcher.** Choose **Synapse Cortex** | **Singularity Burst** | **Auto-Morph** (cross-fades every 12 s), wired to `window.__EXTERM_BUS` for All Terminal Activity and Working Bots.
+  - **Synapse Cortex:** a fast-pulsing gold core, ~970 procedural fractal dendrite segments lit by travelling waves, comet packets relaying across all six nodes, and spore cascades.
+  - **Singularity Burst:** a pitch-black event horizon with thousands of radial filaments, coronal plasma tendrils, shockwave flashes and callouts (TICK BATCH · WHALE SWEEP · GEX SHIFT · 3D OB WALL · FIREWALL PASS / BLOCK).
+- **Telemetry matrix.** `// RUN LOG · // ACCESS LEDGER · // BLAST RADIUS · // ACTION HEAT · // THROUGHPUT · // BOT STATUS`, plus Signal Rotation and The Pricer. Record X Clip still hides dollar balances.
+- **Tests.** New `test/v173.test.js` (34 checks). `v17pro_e2e` now runs 65 checks, adding multi-frame bubble velocity and brightness, and Cortex / Singularity RGBA brightness and variance.
 
 ## 🎯 What's new in v17.2
 
@@ -150,7 +173,7 @@ Nothing new is painted over the 240 Hz / 120 Hz chart canvas: chart additions ar
   left / right-handed layout, sizing keypad, clipboard CA snipe, 1-tap **Phantom / Solflare / Jupiter / Uniswap** deep links
   (**ExTerm adds a $0 fee**; network and DEX fees still apply), QR pairing of your layout, AMOLED `#000000`, PIN or biometric lock,
   Share Setup Card and Picture-in-Picture.
-- **Native Android app**: [`ExTerm-v17.2-android.apk`](https://github.com/uexxx/ExTerm/releases/latest).
+- **Native Android app**: [`ExTerm-v17.3-android.apk`](https://github.com/uexxx/ExTerm/releases/latest).
 
 **🛡 Launcher (Phases 0–1)**: a 429 storm shield (single-flight requests, per-host cool-down that honours `Retry-After`, stale
 fallback), a cross-venue crypto tape (Coinbase · Kraken · Binance · Bybit · OKX) with basis, funding, spread and CVD, instant
@@ -160,7 +183,7 @@ Full notes: [`CHANGELOG.md`](CHANGELOG.md).
 
 ---
 
-## 🖼 v17.2 tour
+## 🖼 v17.3 tour
 
 All screenshots: 1440 × 900 at 2× (Retina), offline launcher, captured with `node tools/capture-screens.js`.
 
@@ -198,7 +221,15 @@ All screenshots: 1440 × 900 at 2× (Retina), offline launcher, captured with `n
 
 <img src="docs/screenshots/10-bot-fleet-neural-torus.png" alt="THE SYNAPSE in Bot Fleet at 1440×900 (2× Retina): the Sensory Input Layer with live sparklines (WS ticks/s, L1/L2 SWR cache, Worker Math, cross-exchange CVD, GEX/volatility), six Bullion Gold node cards firing impulses along dendrite curves into a rotating geodesic ExTerm core, the Cortex weight bars, and the Signal Rotation attractor, The Trace stream and The Pricer Monte Carlo fan along the bottom" width="100%">
 
-**THE SYNAPSE (v17.2).** The Bot Fleet cockpit: real background-process sensors, six neural nodes firing Gold, Emerald and Crimson impulses into the ExTerm core, Cortex weights, a phase-space attractor, a millisecond Trace and a Monte Carlo fan of futures.
+**THE SYNAPSE (v17.3, Synapse Cortex engine).** Fractal dendrites lit by travelling waves, comet packets across the six subsystem nodes, spore cascades from a fast-pulsing gold core, and the 6-panel telemetry matrix below.
+
+<img src="docs/screenshots/15-synapse-singularity-burst.png" alt="THE SYNAPSE in Singularity Burst mode: a pitch-black event horizon with a gold photon ring, thousands of radial gold filaments, coronal plasma tendrils, shockwave rings and callout badges such as WHALE SWEEP, GEX SHIFT, 3D OB WALL and FIREWALL PASS around the six subsystem chips" width="100%">
+
+**Singularity Burst (v17.3).** Every terminal and bot event erupts as filaments, shockwaves and callouts from the event horizon.
+
+<img src="docs/screenshots/16-live-bubble-map.png" alt="The live Market bubble map: dozens of glossy emerald and crimson spheres with ticker and live percentage change, additive glow halos and shockwave rings, filling about 85 percent of the canvas" width="100%">
+
+**Live bubble maps (v17.3).** Lively physics, glossy spheres and a shockwave on every update. They never freeze into a line.
 
 <img src="docs/screenshots/11-academy.png" alt="Academy tab: progress bar, five module cards with mission checklists and the custom drill generator" width="100%">
 
@@ -220,7 +251,7 @@ All screenshots: 1440 × 900 at 2× (Retina), offline launcher, captured with `n
 
 ## 📱 Android app
 
-Download **`ExTerm-v17.2-android.apk`** from the [latest release](https://github.com/uexxx/ExTerm/releases/latest)
+Download **`ExTerm-v17.3-android.apk`** from the [latest release](https://github.com/uexxx/ExTerm/releases/latest)
 (Android 7.0+, about 1 MB). It runs the same single-file app from the APK's assets on a secure origin, so storage and WebCrypto
 work offline. Wallet and DEX links open in your installed apps, and leaving the app keeps the chart in Picture-in-Picture.
 The APK's SHA-256 is listed in the release `SHA256SUMS.txt`.
@@ -229,7 +260,7 @@ Build it yourself (JDK 17 + Android SDK `platforms;android-34` and `build-tools;
 
 ```bash
 python3 build.py --harden
-python3 tools/build_apk.py          # → dist/ExTerm-v17.2-android.apk
+python3 tools/build_apk.py          # → dist/ExTerm-v17.3-android.apk
 ```
 
 CI builds the same APK on every tag: [`.github/workflows/build-android-apk.yml`](.github/workflows/build-android-apk.yml).
@@ -277,8 +308,9 @@ python3 build.py             # dist/exterm.html (readable) + exterm.html
 python3 build.py --harden    # dist/exterm.min.html (minified with esbuild)
 node test/v170.test.js       # v17.0 unit suite
 node test/v171.test.js       # v17.1 unit suite (ledger, AMM/L2 impact, stale guard, Copilot routing)
-node test/v172.test.js       # v17.2 unit suite (theme tokens, Monte Carlo fan, phase space, weights, Synapse wiring)
-node test/v17pro_e2e.js      # v17.0–v17.2 browser end-to-end (desktop 1440/1280 + phone 390)
+node test/v172.test.js       # v17.2 unit suite (Synapse maths, Monte Carlo fan, phase space, weights, wiring)
+node test/v173.test.js       # v17.3 unit suite (bubble physics, fractal dendrites, particles, matrix, v16.6 palette restore)
+node test/v17pro_e2e.js      # v17.0–v17.3 browser end-to-end (desktop 1440/1280 + phone 390)
 ```
 
 `build.py` inlines `src/*.js` and `src/style.css` into one file and stamps the CSP with the bundle's SHA-256 hash.

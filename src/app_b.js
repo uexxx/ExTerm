@@ -474,7 +474,7 @@ function renderBtResult(res, S, sym, candles, opt) {
     <div class="sec">Trades (${NT.fmtQty(res.trades.length)}${res.trades.length > 300 && typeof V156UI === 'undefined' ? ', newest 300 shown' : ''})</div>
     <div class="scroll" id="btTradesBox" style="max-height:260px"><table><thead><tr><th>Time</th><th>Side</th><th class="r">Price</th><th class="r">Qty</th><th class="r">P&amp;L</th><th>Why</th></tr></thead><tbody>${res.trades.slice(-300).reverse().map(btTradeRow).join('') || '<tr><td colspan="6" class="empty">No trades — strategy never triggered on this data</td></tr>'}</tbody></table></div></div>`;
   if (res.trades.length > 120 && typeof V156UI !== 'undefined') V156UI.virt($('#btTradesBox'), res.trades.slice().reverse(), btTradeRow); // v15.6: every trade scrollable, only the visible rows in the DOM
-  drawLines($('#btChart'), [{ name: 'Strategy', color: cssv('--acc', '#F5C84B'), values: res.eq, w: 2, fill: true }, { name: 'Buy & hold', color: '#8b94a9', values: res.bh, w: 1.4 }], { fmt: (v) => (Math.abs(v) >= 1e6 ? '$' + NT.fmtCompact(v) : NT.fmtUSD(v, 0)), xs: res.t, xsSpan: NT.TF[S.tf] / 86400, base: S.capital });
+  drawLines($('#btChart'), [{ name: 'Strategy', color: cssv('--acc', '#7c5cff'), values: res.eq, w: 2, fill: true }, { name: 'Buy & hold', color: '#8b94a9', values: res.bh, w: 1.4 }], { fmt: (v) => (Math.abs(v) >= 1e6 ? '$' + NT.fmtCompact(v) : NT.fmtUSD(v, 0)), xs: res.t, xsSpan: NT.TF[S.tf] / 86400, base: S.capital });
   const pc = new CandleChart($('#btPrice')); pc.o = { ema: true, sma: false, bb: false, vol: true, rsi: false, macd: false, trades: true, fc: false }; pc.view.bars = Math.min(candles.length, 400);
   pc.set(candles, NT.TF[S.tf], res.trades.map((t) => ({ t: t.ts, side: t.side, price: t.price })), null, '');
   if (typeof BTArrows !== 'undefined') BTArrows.attach(pc, res.trades); // v15: win/loss round-trip arrows + hover tooltips
@@ -568,8 +568,8 @@ function renderValidation(v, ctx) {
     </div>
     <div class="stats mstats" style="margin-top:12px">${[['CAGR', NT.fmtPct(M.cagr, 1)], ['Sortino', f(M.sortino)], ['Calmar', f(M.calmar)], ['Expectancy', NT.fmtPct(M.expectancy)], ['Payoff', f(M.payoff)], ['SQN', f(M.sqn)], ['Kelly', M.kelly == null ? '–' : f(M.kelly, 1) + '%'], ['Exposure', f(M.exposure, 0) + '%'], ['Avg hold', f(M.avgHold, 1) + ' bars'], ['OOS Sharpe', f(v.oos.oosSh)], ['Stress return', NT.fmtPct(v.stress, 1)], ['+1 bar latency', NT.fmtPct(v.late, 1)]].map(([k, val]) => `<div class="stat"><span class="k">${k}</span><span class="v" style="font-size:15px">${val}</span></div>`).join('')}</div>
     <div class="note" style="margin-top:8px">The checklist is intentionally harsh: most strategies fail it, which is the point. A good grade is not a guarantee. Forward-test with a paper bot before trusting any edge.</div></div>`;
-  const acc = cssv('--acc', '#F5C84B');
-  drawLines($('#vFan'), [{ name: '95th', color: '#22c55e', values: v.fan.map((x) => x.p95), w: 1 }, { name: '75th', color: acc, values: v.fan.map((x) => x.p75), w: 1 }, { name: 'Median', color: '#e6eaf3', values: v.fan.map((x) => x.p50), w: 2 }, { name: '25th', color: acc, values: v.fan.map((x) => x.p25), w: 1 }, { name: '5th', color: '#EF4444', values: v.fan.map((x) => x.p5), w: 1 }], { fmt: (x) => x.toFixed(2) + '×', base: 1 });
+  const acc = cssv('--acc', '#7c5cff');
+  drawLines($('#vFan'), [{ name: '95th', color: '#22c55e', values: v.fan.map((x) => x.p95), w: 1 }, { name: '75th', color: acc, values: v.fan.map((x) => x.p75), w: 1 }, { name: 'Median', color: '#e6eaf3', values: v.fan.map((x) => x.p50), w: 2 }, { name: '25th', color: acc, values: v.fan.map((x) => x.p25), w: 1 }, { name: '5th', color: '#f43f5e', values: v.fan.map((x) => x.p5), w: 1 }], { fmt: (x) => x.toFixed(2) + '×', base: 1 });
   drawHist($('#vPerm'), v.perm.dist, v.stats.ret);
   drawBars($('#vSeg'), v.segRets);
 }
@@ -579,14 +579,14 @@ function drawHist(cv, vals, mark) {
   for (const v of vals) bins[Math.min(B - 1, Math.floor(((v - lo) / (hi - lo)) * B))]++;
   const mx = Math.max(...bins), bw = (W - 20) / B;
   bins.forEach((b, i) => { const h = (b / mx) * (H - 30); g.fillStyle = 'rgba(139,148,169,.45)'; g.fillRect(10 + i * bw + 1, H - 18 - h, bw - 2, h); });
-  const x = 10 + ((mark - lo) / (hi - lo)) * (W - 20); g.strokeStyle = cssv('--acc', '#F5C84B'); g.lineWidth = 3; g.beginPath(); g.moveTo(x, 6); g.lineTo(x, H - 18); g.stroke();
+  const x = 10 + ((mark - lo) / (hi - lo)) * (W - 20); g.strokeStyle = cssv('--acc', '#7c5cff'); g.lineWidth = 3; g.beginPath(); g.moveTo(x, 6); g.lineTo(x, H - 18); g.stroke();
   g.fillStyle = '#8b94a9'; g.font = '11px ui-monospace, monospace'; g.textAlign = 'left'; g.fillText(NT.fmtPct(lo, 0), 10, H - 4); g.textAlign = 'right'; g.fillText(NT.fmtPct(hi, 0), W - 10, H - 4);
 }
 function drawBars(cv, vals) {
   const dpr = window.devicePixelRatio || 1, W = cv.clientWidth, H = cv.clientHeight; if (!W) return; cv.width = W * dpr; cv.height = H * dpr; const g = cv.getContext('2d'); g.setTransform(dpr, 0, 0, dpr, 0, 0);
   const mx = Math.max(1e-9, ...vals.map(Math.abs)), bw = W / vals.length, z = H / 2;
   g.strokeStyle = 'rgba(148,163,200,.25)'; g.beginPath(); g.moveTo(0, z); g.lineTo(W, z); g.stroke();
-  vals.forEach((v, i) => { const h = (Math.abs(v) / mx) * (H / 2 - 12); g.fillStyle = v >= 0 ? '#22c55e' : '#EF4444'; g.fillRect(i * bw + 4, v >= 0 ? z - h : z, bw - 8, h); g.fillStyle = '#8b94a9'; g.font = '10px ui-monospace, monospace'; g.textAlign = 'center'; g.fillText(NT.fmtPct(v, 0), i * bw + bw / 2, v >= 0 ? z - h - 3 : z + h + 11); });
+  vals.forEach((v, i) => { const h = (Math.abs(v) / mx) * (H / 2 - 12); g.fillStyle = v >= 0 ? '#22c55e' : '#f43f5e'; g.fillRect(i * bw + 4, v >= 0 ? z - h : z, bw - 8, h); g.fillStyle = '#8b94a9'; g.font = '10px ui-monospace, monospace'; g.textAlign = 'center'; g.fillText(NT.fmtPct(v, 0), i * bw + bw / 2, v >= 0 ? z - h - 3 : z + h + 11); });
 }
 function initBots() { renderSetup(); renderBots(true); $('#botList').onclick = botAction; $('#botCtl').onclick = botCtlAction; renderBotCtl(); }
 TABS.bots = { show() { renderBots(true); renderBotCtl(); }, render() { if (Date.now() - lastBotRender > 3000) { renderBots(); const c = $('#botCtl'); if (c && !c.contains(document.activeElement)) renderBotCtl(); } } };
@@ -637,12 +637,12 @@ function pfBars(cv, items, horiz) {
   const mx = Math.max(1e-9, ...items.map((x) => Math.abs(x.v)));
   if (horiz) {
     const rh = Math.min(24, H / items.length), lw = 78, z = lw + (W - lw - 70) * (items.some((x) => x.v < 0) ? 0.45 : 0), span = W - lw - 70 - (z - lw);
-    items.forEach((x, i) => { const y = i * rh + rh / 2, w = (Math.abs(x.v) / mx) * (x.v >= 0 ? W - 70 - z : z - lw); g.fillStyle = '#c3c9d6'; g.textAlign = 'left'; g.fillText(String(x.l).slice(0, 10), 2, y); g.fillStyle = x.v >= 0 ? '#22c55e' : '#EF4444'; const bx = x.v >= 0 ? z : z - w; g.beginPath(); g.roundRect ? g.roundRect(bx, y - rh * 0.32, Math.max(2, w), rh * 0.64, 4) : g.rect(bx, y - rh * 0.32, Math.max(2, w), rh * 0.64); g.fill(); g.fillStyle = x.v >= 0 ? '#86efac' : '#fda4af'; g.textAlign = x.v >= 0 ? 'left' : 'right'; g.fillText(NT.fmtUSD(x.v, 0), x.v >= 0 ? bx + w + 5 : bx - 5, y); });
+    items.forEach((x, i) => { const y = i * rh + rh / 2, w = (Math.abs(x.v) / mx) * (x.v >= 0 ? W - 70 - z : z - lw); g.fillStyle = '#c3c9d6'; g.textAlign = 'left'; g.fillText(String(x.l).slice(0, 10), 2, y); g.fillStyle = x.v >= 0 ? '#22c55e' : '#f43f5e'; const bx = x.v >= 0 ? z : z - w; g.beginPath(); g.roundRect ? g.roundRect(bx, y - rh * 0.32, Math.max(2, w), rh * 0.64, 4) : g.rect(bx, y - rh * 0.32, Math.max(2, w), rh * 0.64); g.fill(); g.fillStyle = x.v >= 0 ? '#86efac' : '#fda4af'; g.textAlign = x.v >= 0 ? 'left' : 'right'; g.fillText(NT.fmtUSD(x.v, 0), x.v >= 0 ? bx + w + 5 : bx - 5, y); });
     void span;
   } else {
     const bw = W / items.length, z = H / 2 - 6;
     g.strokeStyle = 'rgba(148,163,200,.25)'; g.beginPath(); g.moveTo(0, z); g.lineTo(W, z); g.stroke();
-    items.forEach((x, i) => { const h = (Math.abs(x.v) / mx) * (z - 14); g.fillStyle = x.v > 0 ? '#22c55e' : x.v < 0 ? '#EF4444' : 'rgba(148,163,200,.3)'; g.fillRect(i * bw + bw * 0.18, x.v >= 0 ? z - h : z, bw * 0.64, Math.max(1, h)); g.fillStyle = '#8b94a9'; g.textAlign = 'center'; g.fillText(x.l, i * bw + bw / 2, H - 7); });
+    items.forEach((x, i) => { const h = (Math.abs(x.v) / mx) * (z - 14); g.fillStyle = x.v > 0 ? '#22c55e' : x.v < 0 ? '#f43f5e' : 'rgba(148,163,200,.3)'; g.fillRect(i * bw + bw * 0.18, x.v >= 0 ? z - h : z, bw * 0.64, Math.max(1, h)); g.fillStyle = '#8b94a9'; g.textAlign = 'center'; g.fillText(x.l, i * bw + bw / 2, H - 7); });
   }
 }
 function pfBadge() {
@@ -666,7 +666,7 @@ function renderPortfolio(force) {
   // equity chart
   segBtns($('#pfEqRange'), [{ v: '1h', l: '1H' }, { v: '24h', l: '24H' }, { v: '7d', l: '7D' }, { v: 'all', l: 'All' }], pf.eqRange, (v) => { pf.eqRange = v; renderPortfolio(true); });
   const cut = { '1h': Date.now() - 36e5, '24h': Date.now() - 864e5, '7d': Date.now() - 7 * 864e5, all: 0 }[pf.eqRange], E = ST.totalEq.filter((x) => x.t >= cut && x.p != null).concat([{ p: pnl, pm: ACC.equity(priceMap()) - ACC.cash0, pb: ST.bots.reduce((s, b) => s + botStats(b).pnl, 0), pc: COPY ? copyEquity() - COPY.cash0 : 0 }]);
-  const ser = [{ name: 'Total P&L', color: '#F5C84B', values: E.map((x) => x.p), fill: true }];
+  const ser = [{ name: 'Total P&L', color: '#a78bfa', values: E.map((x) => x.p), fill: true }];
   ser.push({ name: 'Paper account', color: '#5b8cff', values: E.map((x) => x.pm), w: 1.2 }); if (ST.bots.length) ser.push({ name: 'Bots', color: '#f5a524', values: E.map((x) => x.pb), w: 1.2 }); if (COPY && COPY.trades.length) ser.push({ name: 'Copy-bot', color: '#14b8a6', values: E.map((x) => x.pc), w: 1.2 });
   drawLines($('#pfChart'), E.length > 1 ? ser : [], { fmt: (v) => NT.fmtUSD(v, 0), base: 0, empty: 'The P&L curve builds as the app runs (sampled every 15 s)' });
   // open positions

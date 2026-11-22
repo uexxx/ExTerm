@@ -209,14 +209,14 @@ const Challenge = (() => {
     try {
       const M = MODES[m.mode] || MODES.random, c = document.createElement('canvas'); c.width = 1080; c.height = 1080; const g = c.getContext('2d');
       const bg = g.createLinearGradient(0, 0, 1080, 1080); bg.addColorStop(0, '#0b0f1e'); bg.addColorStop(1, '#1a1033'); g.fillStyle = bg; g.fillRect(0, 0, 1080, 1080);
-      g.textAlign = 'center'; g.fillStyle = '#F5C84B'; g.font = '700 40px Inter, system-ui, sans-serif'; g.fillText('EXTERM CHALLENGE FLEX CARD', 540, 110);
+      g.textAlign = 'center'; g.fillStyle = '#a78bfa'; g.font = '700 40px Inter, system-ui, sans-serif'; g.fillText('EXTERM CHALLENGE FLEX CARD', 540, 110);
       g.fillStyle = '#e6eaf3'; g.font = '600 36px Inter, system-ui, sans-serif'; g.fillText(M.name.slice(0, 44), 540, 165);
-      const gc = { 'A+': '#22c55e', A: '#22c55e', B: '#84cc16', C: '#fbbf24', D: '#fb923c', F: '#EF4444' }[r.grade] || '#e6eaf3';
+      const gc = { 'A+': '#22c55e', A: '#22c55e', B: '#84cc16', C: '#fbbf24', D: '#fb923c', F: '#f43f5e' }[r.grade] || '#e6eaf3';
       g.fillStyle = gc; g.font = '900 200px Inter, system-ui, sans-serif'; g.fillText(r.grade || '–', 540, 380);
       g.fillStyle = '#ffffff'; g.font = '800 64px Inter, system-ui, sans-serif'; g.fillText(r.passed ? 'Evaluation passed' : r.fail ? 'Rule broken' : r.beat ? (m.mode === 'swan' || m.mode === 'trench' ? 'Survived' : 'Beat the market') : 'Market won', 540, 480);
       const box = (x, y, label, val, col) => { g.fillStyle = 'rgba(255,255,255,0.06)'; g.fillRect(x - 230, y, 460, 170); g.fillStyle = '#9aa3b8'; g.font = '600 32px Inter, system-ui'; g.fillText(label, x, y + 52); g.fillStyle = col; g.font = '800 72px Inter, system-ui'; g.fillText(val, x, y + 135); };
-      box(300, 540, 'Me', NT.fmtPct(r.mine, 1), r.mine >= 0 ? '#22c55e' : '#EF4444'); box(780, 540, 'Buy & hold', NT.fmtPct(r.bh, 1), r.bh >= 0 ? '#22c55e' : '#EF4444');
-      box(300, 730, 'Max drawdown', '−' + (+r.maxDD || 0).toFixed(1) + '%', '#EF4444'); box(780, 730, 'Win rate', r.winRate == null ? '–' : Math.round(r.winRate) + '%', '#e6eaf3');
+      box(300, 540, 'Me', NT.fmtPct(r.mine, 1), r.mine >= 0 ? '#22c55e' : '#f43f5e'); box(780, 540, 'Buy & hold', NT.fmtPct(r.bh, 1), r.bh >= 0 ? '#22c55e' : '#f43f5e');
+      box(300, 730, 'Max drawdown', '−' + (+r.maxDD || 0).toFixed(1) + '%', '#f43f5e'); box(780, 730, 'Win rate', r.winRate == null ? '–' : Math.round(r.winRate) + '%', '#e6eaf3');
       g.fillStyle = '#9aa3b8'; g.font = '500 32px Inter, system-ui'; g.fillText(`Score ${r.score}  ·  Streak ${s.streak}  ·  ` + (m.daily ? 'Daily ' + m.daily : m.blind ? 'Blind' : String(baseOf(m.sym) + ' ' + m.tf).slice(0, 24)) + '  ·  paper', 540, 960);
       g.fillStyle = '#D4AF37'; g.font = '700 38px Inter, system-ui'; g.fillText('@exterm.labs', 540, 1030); if (typeof V151 !== 'undefined') V151.drawMark(g, 40, 40, 90);
       return c.toDataURL('image/png');

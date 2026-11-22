@@ -7,7 +7,7 @@ const V = require('../src/v172core.js');
 const root = path.join(__dirname, '..'), src = (f) => fs.readFileSync(path.join(root, f), 'utf8');
 let pass = 0, fail = 0; const ok = (n, c, i) => { if (c) { pass++; console.log('PASS ' + n); } else { fail++; console.log('FAIL ' + n + (i !== undefined ? ' - ' + JSON.stringify(i) : '')); } };
 
-ok('theme: strict Obsidian #07080B / #0D1117 / #161B22 + Bullion Gold #F5C84B, Emerald #22C55E, Crimson #EF4444', V.THEME.bg === '#07080B' && V.THEME.panel === '#0D1117' && V.THEME.head === '#161B22' && V.THEME.gold === '#F5C84B' && V.THEME.up === '#22C55E' && V.THEME.dn === '#EF4444' && Object.isFrozen(V.THEME));
+ok('theme (v17.3): the exact pre-v17.0 (v16.6) Obsidian & Gold: #0B0E14 / #0F131B / #141924, gold #D4AF37 · #F5B841, #2fd08a / #ff5a5f', V.THEME.bg === '#0B0E14' && V.THEME.panel === '#0F131B' && V.THEME.head === '#141924' && V.THEME.gold === '#D4AF37' && V.THEME.gold2 === '#F5B841' && V.THEME.up === '#2fd08a' && V.THEME.dn === '#ff5a5f' && V.THEME.text === '#f6f3ea' && Object.isFrozen(V.THEME));
 ok('synapse: 6 nodes, 5 sensors, 5 weights', V.NODES.join('|') === 'TAPE/CVD|GEX/DOM|3D OB|SCREENER|AI BRIDGE|FIREWALL' && V.SENSORS.length === 5 && V.WEIGHTS.join('|') === 'CVD|GEX|3D OB|Momentum|Risk Budget');
 
 const r = new V.Rate(3); r.roll(1000); for (let i = 0; i < 10; i++) r.count(); r.roll(2000); r.count(4); r.roll(3000); r.roll(4000); r.roll(5000);
@@ -46,15 +46,15 @@ ok('maskMoney: hides every dollar amount', V.maskMoney('fleet buy BTC $1,250.50 
 
 // static
 const b = src('build.py'), ui = src('src/v172.js'), core = src('src/v172core.js'), css = src('src/style.css'), th = src('src/themes.js');
-ok('build: v172core + v172 load after v171 and before boot', /V172 = \["v172core\.js", "v172\.js"\]/.test(b) && b.indexOf('V172 =') > b.indexOf('V17_PRO =') && /\+ V172 \+ order\[order\.index\("boot\.js"\):\]/.test(b));
-ok('ui: takes over V171UI.core (same API), 3-tier Synapse, all named panels', /Object\.assign\(Core, \{ NODES: V172\.NODES/.test(ui) && ['SENSORY INPUT LAYER', 'THE SYNAPSE', 'CORTEX &amp; SYNAPTIC WEIGHTS', 'SIGNAL ROTATION', 'THE TRACE', 'THE PRICER', 'All Terminal Activity', 'Bot Fleet Only', 'Record X Clip', 'id="x171Core"', 'id="x171Tele"'].every((s) => ui.includes(s)));
+ok('build: v172core + v172 load after v171 and before boot', /V172 = \["v172core\.js", "v172\.js"/.test(b) && b.indexOf('V172 =') > b.indexOf('V17_PRO =') && /\+ V172 \+ order\[order\.index\("boot\.js"\):\]/.test(b));
+ok('ui: takes over V171UI.core (same API), 3-tier Synapse, all named panels', /Object\.assign\(Core, \{ NODES: V172\.NODES/.test(ui) && ['SENSORY INPUT LAYER', 'THE SYNAPSE', 'CORTEX &amp; SYNAPTIC WEIGHTS', 'SIGNAL ROTATION', 'THE TRACE', 'THE PRICER', 'All Terminal Activity', 'Bot Fleet Only' /* relabelled Working Bots by v17.3 */, 'Record X Clip', 'id="x171Core"', 'id="x171Tele"'].every((s) => ui.includes(s)));
 ok('ui: real sensors (Feed.tickL, Resource Timing + Server-Timing, Worker.postMessage, V170UI.merger CVD, GEX)', ['Feed.tickL.push', 'PerformanceObserver', 'serverTiming', 'Worker.prototype.postMessage', 'V170UI.merger', 'Opts.gex'].every((s) => ui.includes(s)) && /"Server-Timing": "swr;desc=LIVE"/.test(src('serve.py')));
 ok('ui: Record X Clip auto-hides dollar balances and restores them', /hideBalances\(true\)/.test(ui) && /hideBalances\(false\)/.test(ui) && /maskMoney/.test(ui));
 ok('ui: 0 fps when hidden (tab / visibility) and pauses via Core.stop', /tab\(\) !== 'fleet' \|\| document\.hidden\) \{ Core\.stop\(\)/.test(ui));
 ok('ui: strict CSP (no eval / inline handlers / innerHTML from data)', !/\beval\(|new Function|onclick=/.test(ui + core) && !/innerHTML\s*=\s*[^;]*\b(text|r\.text|e\.text)\b/.test(ui));
-ok('css: v17.2 strict token block + Synapse layout + mobile stack < 820 px', /html body\.x172\[data-theme="obsidian"\][^{]*\{[^}]*--bg:#07080B[^}]*--panel:#0D1117[^}]*--panel2:#161B22[^}]*--acc:#F5C84B[^}]*--up:#22C55E;--dn:#EF4444/.test(css) && /\.x172-stage\{display:grid;grid-template-columns:minmax\(220px,1fr\) minmax\(0,2\.4fr\) minmax\(220px,1fr\)/.test(css) && /@media \(max-width:819px\)\{[^@]*\.x172-stage,\.x172-row\{grid-template-columns:minmax\(0,1fr\)\}/.test(css));
-ok('themes: Obsidian & Gold is the default', /ST\.theme\) \|\| 'obsidian'/.test(th) && /'#07080B', '#F5C84B'/.test(th));
-ok('no washed-out violet / rose literals left in feature modules', !/#(7c5cff|a78bfa|f43f5e|FF5C6C|5EF0B0)(?![0-9a-f])/i.test(fs.readdirSync(path.join(root, 'src')).filter((f) => /^v1[67]\d*.*\.js$/.test(f)).map((f) => src('src/' + f)).join('\n')));
+ok('css: Synapse layout + mobile stack < 820 px; v17.3 dropped the v17.1 / v17.2 slate token overrides', !/body\.x171\[data-theme="obsidian"\][^{]*\{[^}]*--panel:#0D1117/.test(css) && !/html body\.x172\[data-theme="obsidian"\]/.test(css) && /\.x172-stage\{display:grid;grid-template-columns:minmax\(220px,1fr\) minmax\(0,2\.4fr\) minmax\(220px,1fr\)/.test(css) && /@media \(max-width:819px\)\{[^@]*\.x172-stage,\.x172-row\{grid-template-columns:minmax\(0,1fr\)\}/.test(css));
+ok('themes: Obsidian & Gold is the default, with its v16.6 swatches', /ST\.theme\) \|\| 'obsidian'/.test(th) && /sw: \['#070707', '#D4AF37', '#CBD5E1', '#2fd08a'\]/.test(th));
+ok('no v17.1 / v17.2 slate literals left in the v17 modules (#F8FAFC / #94A3B8 / #0D1117 / #161B22 / #EF4444)', !/#(f8fafc|94a3b8|0d1117|161b22|ef4444|22c55e)(?![0-9a-f])/i.test(['v170app.js', 'v170mob.js', 'v170pro.js', 'v171.js', 'v172core.js'].map((f) => src('src/' + f)).join('\n')));
 ok('privacy: no personal paths, emails or usernames in v17.2 sources', !new RegExp(['[A-Z]:\\\\Users\\\\', '\\/Users\\/', '@gm' + 'ail', 'ro' + 'blo', 'nova' + 'term'].join('|'), 'i').test(ui + core));
 ok('license header on new files', [ui, core].every((s) => s.startsWith('/* Copyright (c) 2026 ExTerm Labs. All Rights Reserved.')));
 

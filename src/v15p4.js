@@ -233,7 +233,7 @@ const P4UI = (() => {
     const dpr = Math.min(2, window.devicePixelRatio || 1), W = cv.clientWidth || 84, H = cv.clientHeight || 24; if (cv.width !== W * dpr) { cv.width = W * dpr; cv.height = H * dpr; }
     const g = cv.getContext('2d'); g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, W, H);
     const pts = P4.sparkPath(P4.sparkPoints(ticksOf(sym), nowS(), 60, 120), W, H); if (pts.length < 2) return;
-    const up = pts[pts.length - 1][1] <= pts[0][1]; g.strokeStyle = up ? '#22c55e' : '#EF4444'; g.lineWidth = 1.4; g.beginPath(); pts.forEach(([x, y], i) => (i ? g.lineTo(x, y) : g.moveTo(x, y))); g.stroke();
+    const up = pts[pts.length - 1][1] <= pts[0][1]; g.strokeStyle = up ? '#22c55e' : '#f43f5e'; g.lineWidth = 1.4; g.beginPath(); pts.forEach(([x, y], i) => (i ? g.lineTo(x, y) : g.moveTo(x, y))); g.stroke();
   };
   U.renderSide = (force) => {
     const a = side(); if (!a || a.hidden) return; const o = opt(), body = a.querySelector('#p4SideBody');

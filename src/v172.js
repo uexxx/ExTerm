@@ -141,13 +141,13 @@ const V172UI = (() => {
       if (!this.P2 || this.P2.length !== nV * 2) { this.P2 = new Float32Array(nV * 2); this.Z = new Float32Array(nV); } const P2 = this.P2, Z = this.Z;
       g.setTransform(1, 0, 0, 1, 0, 0); g.fillStyle = TH.bg; g.fillRect(0, 0, W, H);
       const act = Math.min(1, this.heat.reduce((s, v) => s + v, 0) / 3), breath = 0.5 + 0.5 * Math.sin(now / 900);
-      const rg = g.createRadialGradient(cx, cy, R * 0.1, cx, cy, R * 2.2); rg.addColorStop(0, `rgba(245,200,75,${(0.14 + act * 0.2 + this.coreFlash * 0.3).toFixed(3)})`); rg.addColorStop(1, 'rgba(7,8,11,0)'); g.fillStyle = rg; g.fillRect(0, 0, W, H);
+      const rg = g.createRadialGradient(cx, cy, R * 0.1, cx, cy, R * 2.2); rg.addColorStop(0, `rgba(245,184,65,${(0.14 + act * 0.2 + this.coreFlash * 0.3).toFixed(3)})`); rg.addColorStop(1, 'rgba(11,14,20,0)'); g.fillStyle = rg; g.fillRect(0, 0, W, H);
       const nodes = this.layout(W, H);
-      for (let i = 0; i < 6; i++) { const n = nodes[i], h = this.heat[i]; for (const br of [0, 1, -1]) { g.strokeStyle = `rgba(245,200,75,${((br ? 0.06 : 0.16) + h * (br ? 0.2 : 0.45)).toFixed(3)})`; g.lineWidth = (br ? 0.8 : 1.4) * d; g.beginPath(); for (let s = 0; s <= 24; s++) { const p = this.bez(n, s / 24, br); if (s) g.lineTo(p[0], p[1]); else g.moveTo(p[0], p[1]); } g.stroke(); } this.heat[i] *= 0.965; }
+      for (let i = 0; i < 6; i++) { const n = nodes[i], h = this.heat[i]; for (const br of [0, 1, -1]) { g.strokeStyle = `rgba(245,184,65,${((br ? 0.06 : 0.16) + h * (br ? 0.2 : 0.45)).toFixed(3)})`; g.lineWidth = (br ? 0.8 : 1.4) * d; g.beginPath(); for (let s = 0; s <= 24; s++) { const p = this.bez(n, s / 24, br); if (s) g.lineTo(p[0], p[1]); else g.moveTo(p[0], p[1]); } g.stroke(); } this.heat[i] *= 0.965; }
       const a = now / 2600, b = now / 4100, ca = Math.cos(a), sa = Math.sin(a), cb = Math.cos(b), sb = Math.sin(b), Rk = R * (0.96 + breath * 0.04 + this.coreFlash * 0.08);
       for (let i = 0, j = 0; i < M.v.length; i += 3, j++) { const x = M.v[i], y = M.v[i + 1], z = M.v[i + 2], x1 = x * ca + z * sa, z1 = -x * sa + z * ca, y1 = y * cb - z1 * sb, z2 = y * sb + z1 * cb, k = 3 / (3 + z2); P2[j * 2] = cx + x1 * Rk * k; P2[j * 2 + 1] = cy + y1 * Rk * k; Z[j] = z2; }
-      g.lineWidth = d * 0.75; for (let i = 0; i < M.e.length; i += 2) { const p = M.e[i], q = M.e[i + 1], z = (Z[p] + Z[q]) / 2; g.strokeStyle = `rgba(245,200,75,${(0.08 + (1 - (z + 1) / 2) * (0.5 + act * 0.3)).toFixed(3)})`; g.beginPath(); g.moveTo(P2[p * 2], P2[p * 2 + 1]); g.lineTo(P2[q * 2], P2[q * 2 + 1]); g.stroke(); }
-      g.fillStyle = `rgba(255,240,168,${(0.35 + act * 0.5).toFixed(2)})`; for (let j = 0; j < nV; j += 3) if (Z[j] < -0.4) g.fillRect(P2[j * 2] - d, P2[j * 2 + 1] - d, 2 * d, 2 * d);
+      g.lineWidth = d * 0.75; for (let i = 0; i < M.e.length; i += 2) { const p = M.e[i], q = M.e[i + 1], z = (Z[p] + Z[q]) / 2; g.strokeStyle = `rgba(245,184,65,${(0.08 + (1 - (z + 1) / 2) * (0.5 + act * 0.3)).toFixed(3)})`; g.beginPath(); g.moveTo(P2[p * 2], P2[p * 2 + 1]); g.lineTo(P2[q * 2], P2[q * 2 + 1]); g.stroke(); }
+      g.fillStyle = `rgba(255,232,170,${(0.35 + act * 0.5).toFixed(2)})`; for (let j = 0; j < nV; j += 3) if (Z[j] < -0.4) g.fillRect(P2[j * 2] - d, P2[j * 2 + 1] - d, 2 * d, 2 * d);
       g.font = `800 ${11 * d}px Inter, system-ui, sans-serif`; g.textAlign = 'center'; g.fillStyle = TH.gold; g.fillText('EXTERM CORE', cx, cy + Rk + 18 * d);
       g.font = `600 ${9.5 * d}px ui-monospace, Menlo, monospace`; g.fillStyle = TH.mut; g.fillText(`${Core.events} bus events · ${this.pulses} impulses`, cx, cy + Rk + 32 * d);
       this.imp = this.imp.filter((p) => p.t < 1);
@@ -158,19 +158,19 @@ const V172UI = (() => {
       this.coreFlash *= 0.93;
       this.waves = this.waves.filter((w) => w.r < 1); for (const w of this.waves) { w.r += 0.016; g.strokeStyle = `rgba(${RGB[w.col] || RGB.gold},${(1 - w.r).toFixed(2)})`; g.lineWidth = 2 * d; g.beginPath(); g.arc(cx, cy, Rk * (1 + w.r * 1.3), 0, 6.2832); g.stroke(); }
       for (let i = 0; i < 6; i++) { const n = nodes[i], h = Math.min(1, this.heat[i] * 1.6), r = 7 * d;
-        g.shadowColor = 'rgba(245,200,75,.9)'; g.shadowBlur = (4 + h * 18) * d; g.fillStyle = TH.panel; rr(g, n.x, n.y, n.w, n.h, r); g.fill(); g.shadowBlur = 0;
-        g.strokeStyle = `rgba(245,200,75,${(0.45 + h * 0.55).toFixed(2)})`; g.lineWidth = (1 + h) * d; rr(g, n.x, n.y, n.w, n.h, r); g.stroke();
-        g.fillStyle = `rgba(245,200,75,${(0.5 + h * 0.5).toFixed(2)})`; g.fillRect(n.x + 3 * d, n.y + 6 * d, 3 * d, n.h - 12 * d);
+        g.shadowColor = 'rgba(245,184,65,.9)'; g.shadowBlur = (4 + h * 18) * d; g.fillStyle = TH.panel; rr(g, n.x, n.y, n.w, n.h, r); g.fill(); g.shadowBlur = 0;
+        g.strokeStyle = `rgba(245,184,65,${(0.45 + h * 0.55).toFixed(2)})`; g.lineWidth = (1 + h) * d; rr(g, n.x, n.y, n.w, n.h, r); g.stroke();
+        g.fillStyle = `rgba(245,184,65,${(0.5 + h * 0.5).toFixed(2)})`; g.fillRect(n.x + 3 * d, n.y + 6 * d, 3 * d, n.h - 12 * d);
         g.textAlign = 'left'; g.font = `800 ${10.5 * d}px Inter, system-ui, sans-serif`; g.fillStyle = TH.gold; g.fillText(n.nm, n.x + 12 * d, n.y + 14 * d);
         g.font = `600 ${9 * d}px ui-monospace, Menlo, monospace`; g.fillStyle = TH.mut; g.fillText(`${Math.round(this.counts[i])} impulses`, n.x + 12 * d, n.y + 27 * d);
-        g.fillStyle = h > 0.15 ? TH.up : '#3A4250'; g.beginPath(); g.arc(n.x + n.w - 10 * d, n.y + n.h / 2, 3.2 * d, 0, 6.2832); g.fill(); }
-      g.textAlign = 'left'; g.font = `700 ${10 * d}px Inter, system-ui, sans-serif`; g.fillStyle = 'rgba(245,200,75,.75)'; g.fillText(`EXTERM · THE SYNAPSE · ${sym() || ''}`, 10 * d, H - 10 * d);
+        g.fillStyle = h > 0.15 ? TH.up : '#3a3426'; g.beginPath(); g.arc(n.x + n.w - 10 * d, n.y + n.h / 2, 3.2 * d, 0, 6.2832); g.fill(); }
+      g.textAlign = 'left'; g.font = `700 ${10 * d}px Inter, system-ui, sans-serif`; g.fillStyle = 'rgba(245,184,65,.75)'; g.fillText(`EXTERM · THE SYNAPSE · ${sym() || ''}`, 10 * d, H - 10 * d);
       if (this.rec) { g.fillStyle = TH.dn; g.beginPath(); g.arc(W - 16 * d, 16 * d, 5 * d, 0, 6.2832); g.fill(); g.textAlign = 'right'; g.fillText('REC · balances hidden', W - 26 * d, 20 * d); }
     },
     spark(c, h, col, now) {
       if (!c) return; const g = c.getContext('2d'), W = c.width, H = c.height, d = DPR(); g.setTransform(1, 0, 0, 1, 0, 0); g.clearRect(0, 0, W, H);
-      g.strokeStyle = 'rgba(245,200,75,.10)'; g.lineWidth = 1; g.beginPath(); g.moveTo(0, H - 0.5); g.lineTo(W, H - 0.5); g.stroke();
-      if (!h.length) { const y = H / 2 + Math.sin(now / 300) * H * 0.12; g.strokeStyle = 'rgba(245,200,75,.4)'; g.beginPath(); g.moveTo(0, y); g.lineTo(W, y); g.stroke(); return; }
+      g.strokeStyle = 'rgba(245,184,65,.10)'; g.lineWidth = 1; g.beginPath(); g.moveTo(0, H - 0.5); g.lineTo(W, H - 0.5); g.stroke();
+      if (!h.length) { const y = H / 2 + Math.sin(now / 300) * H * 0.12; g.strokeStyle = 'rgba(245,184,65,.4)'; g.beginPath(); g.moveTo(0, y); g.lineTo(W, y); g.stroke(); return; }
       const lo = Math.min(0, ...h), hi = Math.max(...h, lo + 1e-9), n = h.length, X = (i) => (W * i) / Math.max(19, n - 1), Y = (v) => H - 2 * d - ((v - lo) / (hi - lo)) * (H - 4 * d), off = W - X(n - 1);
       g.beginPath(); h.forEach((v, i) => (i ? g.lineTo(X(i) + off, Y(v)) : g.moveTo(X(i) + off, Y(v)))); g.lineTo(W, H); g.lineTo(off, H); g.closePath(); g.fillStyle = `rgba(${col},.14)`; g.fill();
       g.beginPath(); h.forEach((v, i) => (i ? g.lineTo(X(i) + off, Y(v)) : g.moveTo(X(i) + off, Y(v)))); g.strokeStyle = `rgba(${col},.95)`; g.lineWidth = 1.4 * d; g.stroke();
@@ -199,19 +199,19 @@ const V172UI = (() => {
     drawMini() {
       const c = this.cvs.x172Mini; if (!c || this.frames % 6) return; const g = c.getContext('2d'), W = c.width, H = c.height, d = DPR(), C = candles().slice(-120); g.setTransform(1, 0, 0, 1, 0, 0); g.clearRect(0, 0, W, H); if (C.length < 3) return;
       const lo = Math.min(...C.map((k) => k.l)), hi = Math.max(...C.map((k) => k.h)), X = (i) => (W * i) / (C.length - 1), Y = (v) => H - 3 * d - ((v - lo) / (hi - lo || 1)) * (H - 6 * d), col = C[C.length - 1].c >= C[0].c ? RGB.up : RGB.dn;
-      g.beginPath(); C.forEach((k, i) => (i ? g.lineTo(X(i), Y(k.c)) : g.moveTo(X(i), Y(k.c)))); g.lineTo(W, H); g.lineTo(0, H); g.closePath(); const lg = g.createLinearGradient(0, 0, 0, H); lg.addColorStop(0, `rgba(${col},.28)`); lg.addColorStop(1, 'rgba(7,8,11,0)'); g.fillStyle = lg; g.fill();
+      g.beginPath(); C.forEach((k, i) => (i ? g.lineTo(X(i), Y(k.c)) : g.moveTo(X(i), Y(k.c)))); g.lineTo(W, H); g.lineTo(0, H); g.closePath(); const lg = g.createLinearGradient(0, 0, 0, H); lg.addColorStop(0, `rgba(${col},.28)`); lg.addColorStop(1, 'rgba(11,14,20,0)'); g.fillStyle = lg; g.fill();
       g.beginPath(); C.forEach((k, i) => (i ? g.lineTo(X(i), Y(k.c)) : g.moveTo(X(i), Y(k.c)))); g.strokeStyle = TH.gold; g.lineWidth = 1.5 * d; g.stroke();
     },
     drawRot(now) {
       const c = this.cvs.x172Rot; if (!c) return; const g = c.getContext('2d'), W = c.width, H = c.height, d = DPR(), cx = W / 2, cy = H / 2, R = Math.min(W, H) * 0.42;
       if (!this.ph || this.frames % 60 === 0) { let e = 0; this.ph = V172.phase(candles().slice(-230).map((k, i) => (e = i ? e + 0.35 * (k.c - e) : k.c)), 6, 180); } // EMA-smoothed closes: the momentum loop, not tick noise
-      g.setTransform(1, 0, 0, 1, 0, 0); g.fillStyle = 'rgba(7,8,11,.30)'; g.fillRect(0, 0, W, H); // phosphor persistence
-      g.strokeStyle = 'rgba(245,200,75,.10)'; g.lineWidth = 1; g.beginPath(); g.moveTo(cx - R, cy); g.lineTo(cx + R, cy); g.moveTo(cx, cy - R); g.lineTo(cx, cy + R); g.stroke();
-      const P = this.ph; if (!P || P.length < 4) { g.strokeStyle = 'rgba(245,200,75,.5)'; g.beginPath(); g.arc(cx, cy, R * 0.6, now / 400, now / 400 + 4); g.stroke(); return; }
+      g.setTransform(1, 0, 0, 1, 0, 0); g.fillStyle = 'rgba(11,14,20,.30)'; g.fillRect(0, 0, W, H); // phosphor persistence
+      g.strokeStyle = 'rgba(245,184,65,.10)'; g.lineWidth = 1; g.beginPath(); g.moveTo(cx - R, cy); g.lineTo(cx + R, cy); g.moveTo(cx, cy - R); g.lineTo(cx, cy + R); g.stroke();
+      const P = this.ph; if (!P || P.length < 4) { g.strokeStyle = 'rgba(245,184,65,.5)'; g.beginPath(); g.arc(cx, cy, R * 0.6, now / 400, now / 400 + 4); g.stroke(); return; }
       const rot = now / 7000, cr = Math.cos(rot), sr = Math.sin(rot), pt = (p) => [cx + (p[0] * cr - p[1] * sr) * R, cy + (p[0] * sr + p[1] * cr) * R];
-      g.lineWidth = 1.2 * d; for (let i = 1; i < P.length; i++) { const a = pt(P[i - 1]), b = pt(P[i]); g.strokeStyle = `rgba(245,200,75,${(0.08 + (i / P.length) * 0.6).toFixed(3)})`; g.beginPath(); g.moveTo(a[0], a[1]); g.lineTo(b[0], b[1]); g.stroke(); }
+      g.lineWidth = 1.2 * d; for (let i = 1; i < P.length; i++) { const a = pt(P[i - 1]), b = pt(P[i]); g.strokeStyle = `rgba(245,184,65,${(0.08 + (i / P.length) * 0.6).toFixed(3)})`; g.beginPath(); g.moveTo(a[0], a[1]); g.lineTo(b[0], b[1]); g.stroke(); }
       const k = (now / 16) % P.length, i0 = Math.floor(k), fr = k - i0, p0 = P[i0], p1 = P[(i0 + 1) % P.length], hd = pt([p0[0] + (p1[0] - p0[0]) * fr, p0[1] + (p1[1] - p0[1]) * fr]);
-      g.shadowColor = 'rgba(34,197,94,1)'; g.shadowBlur = 14 * d; g.fillStyle = TH.up; g.beginPath(); g.arc(hd[0], hd[1], 3.6 * d, 0, 6.2832); g.fill(); g.shadowBlur = 0;
+      g.shadowColor = 'rgba(47,208,138,1)'; g.shadowBlur = 14 * d; g.fillStyle = TH.up; g.beginPath(); g.arc(hd[0], hd[1], 3.6 * d, 0, 6.2832); g.fill(); g.shadowBlur = 0;
       const e = pt(P[P.length - 1]); g.strokeStyle = TH.up; g.lineWidth = 1.5 * d; g.beginPath(); g.arc(e[0], e[1], 5 * d, 0, 6.2832); g.stroke();
       g.fillStyle = TH.mut; g.font = `600 ${9 * d}px ui-monospace, Menlo, monospace`; g.textAlign = 'left'; g.fillText(`z(p) vs z(p−6) · ${Core.fps || 0} Hz`, 6 * d, H - 6 * d);
     },
@@ -223,11 +223,11 @@ const V172UI = (() => {
       const F = this.fan, g = c.getContext('2d'), W = c.width, H = c.height, d = DPR(), N = F.steps; this.fanDrawn = Math.min(N, (this.fanDrawn || 0) + 1.2); const upto = Math.max(2, Math.floor(this.fanDrawn));
       const lo = Math.min(F.lo, F.s0), hi = Math.max(F.hi, F.s0), X = (i) => 6 * d + ((W - 12 * d) * i) / (N - 1), Y = (v) => 14 * d + (1 - (v - lo) / (hi - lo || 1)) * (H - 30 * d);
       g.setTransform(1, 0, 0, 1, 0, 0); g.fillStyle = TH.bg; g.fillRect(0, 0, W, H);
-      const band = (a, b, al) => { g.beginPath(); for (let i = 0; i < upto; i++) (i ? g.lineTo(X(i), Y(a[i])) : g.moveTo(X(i), Y(a[i]))); for (let i = upto - 1; i >= 0; i--) g.lineTo(X(i), Y(b[i])); g.closePath(); g.fillStyle = `rgba(245,200,75,${al})`; g.fill(); };
+      const band = (a, b, al) => { g.beginPath(); for (let i = 0; i < upto; i++) (i ? g.lineTo(X(i), Y(a[i])) : g.moveTo(X(i), Y(a[i]))); for (let i = upto - 1; i >= 0; i--) g.lineTo(X(i), Y(b[i])); g.closePath(); g.fillStyle = `rgba(245,184,65,${al})`; g.fill(); };
       band(F.p95, F.p5, 0.07); band(F.p75, F.p25, 0.12);
       g.lineWidth = 0.9 * d; F.paths.forEach((r, p) => { g.strokeStyle = `rgba(${RGB[F.tag[p]]},.45)`; g.beginPath(); for (let i = 0; i < upto; i++) (i ? g.lineTo(X(i), Y(r[i])) : g.moveTo(X(i), Y(r[i]))); g.stroke(); });
       g.strokeStyle = TH.gold; g.lineWidth = 2 * d; g.beginPath(); for (let i = 0; i < upto; i++) (i ? g.lineTo(X(i), Y(F.p50[i])) : g.moveTo(X(i), Y(F.p50[i]))); g.stroke();
-      g.setLineDash([3 * d, 3 * d]); g.strokeStyle = 'rgba(248,250,252,.35)'; g.lineWidth = d; g.beginPath(); g.moveTo(X(0), Y(F.s0)); g.lineTo(W, Y(F.s0)); g.stroke(); g.setLineDash([]);
+      g.setLineDash([3 * d, 3 * d]); g.strokeStyle = 'rgba(246,243,234,.35)'; g.lineWidth = d; g.beginPath(); g.moveTo(X(0), Y(F.s0)); g.lineTo(W, Y(F.s0)); g.stroke(); g.setLineDash([]);
       const lab = (v) => (this.rec ? '$•••' : fmtP(v)); g.font = `700 ${9.5 * d}px ui-monospace, Menlo, monospace`; g.textAlign = 'right';
       g.fillStyle = TH.up; g.fillText('p95 ' + lab(F.p95[N - 1]), W - 6 * d, 11 * d); g.fillStyle = TH.dn; g.fillText('p5 ' + lab(F.p5[N - 1]), W - 6 * d, H - 4 * d);
       g.textAlign = 'left'; g.fillStyle = TH.gold; g.fillText('now ' + lab(F.s0), 6 * d, 11 * d); g.fillStyle = TH.mut; g.fillText('p5 · p25 · p50 · p75 · p95', 6 * d, H - 4 * d);

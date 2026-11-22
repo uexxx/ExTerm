@@ -48,7 +48,7 @@ ok('geometry: visible bar count fits the plot at 6px per bar (1,000px plot → 1
 { const a = Array.from({ length: 80 }, (_, i) => 100 * Math.exp(Math.sin(i) * 0.01 + i * 0.001)), b = a.map((x) => x * 2), c = a.map((x, i) => 10000 / x);
   const k = V.corr([a, b, c]); ok('correlation: identical moves → +1, inverse → −1, momentum in %', Math.abs(k.M[0][1] - 1) < 1e-9 && Math.abs(k.M[0][2] + 1) < 1e-9 && Number.isFinite(k.mom[0])); }
 { const p = V.whalePts([{ coin: 'BTC', side: 'Long', ntl: 1e6, mark: 100, liq: 98 }, { coin: 'ETH', side: 'Short', ntl: 1e5, mark: 100, liq: 130 }]);
-  ok('whale orbit: near-liquidation positions sit on the inner ring, shorts below the floor', Math.hypot(p[0].x, p[0].y) < Math.hypot(p[1].x, p[1].y) && p[1].z < 0 && V.liqColor(p[0].dist) === '#EF4444'); }
+  ok('whale orbit: near-liquidation positions sit on the inner ring, shorts below the floor', Math.hypot(p[0].x, p[0].y) < Math.hypot(p[1].x, p[1].y) && p[1].z < 0 && V.liqColor(p[0].dist) === '#e879f9'); }
 
 // ── build + static checks
 const B = fs.readFileSync(path.join(__dirname, '..', 'build.py'), 'utf8'), CORE = fs.readFileSync(path.join(__dirname, '..', 'src', 'core.js'), 'utf8'), APP = fs.readFileSync(path.join(__dirname, '..', 'src', 'app_a.js'), 'utf8');

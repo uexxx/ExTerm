@@ -4,7 +4,7 @@
 const Themes = (() => {
   const T = {};
   T.LIST = [
-    { id: 'obsidian', name: 'Obsidian & Gold', desc: 'The default ExTerm look: obsidian #07080B, Bullion Gold #F5C84B, Emerald gains, Crimson alerts.', sw: ['#07080B', '#F5C84B', '#0D1117', '#22C55E'] },
+    { id: 'obsidian', name: 'Obsidian & Gold', desc: 'The @exterm.labs look: obsidian black, brushed gold and silver.', sw: ['#070707', '#D4AF37', '#CBD5E1', '#2fd08a'] },
     { id: 'nova', name: 'Nova', desc: 'Deep space with violet-to-pink neon.', sw: ['#05060e', '#8b5cf6', '#ec4899', '#19e3a1'] },
     { id: 'cyber', name: 'Cyber Lime', desc: 'Terminal black with acid lime and cyan.', sw: ['#050705', '#b8ff3c', '#22d3ee', '#3dffa0'] },
     { id: 'gold', name: 'Gold Rush', desc: 'Obsidian with molten gold, exchange-style.', sw: ['#0a0805', '#f7b928', '#ff7a1a', '#21d07a'] },

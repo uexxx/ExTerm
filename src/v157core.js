@@ -122,7 +122,7 @@ const V157 = (() => {
       return { x: Math.cos(a) * r, y: Math.sin(a) * r, z: (p.side === 'Short' ? -1 : 1) * (0.15 + 0.45 * Math.sqrt((p.ntl || 0) / mx)), size: 3 + 9 * Math.sqrt((p.ntl || 0) / mx), dist, p };
     });
   };
-  V.liqColor = (dist) => (dist <= 2.5 ? '#EF4444' : dist <= 10 ? '#F5C84B' : '#22C55E'); // v17.2: Crimson alert · Bullion Gold · Emerald
+  V.liqColor = (dist) => (dist <= 2.5 ? '#e879f9' : dist <= 10 ? '#f5a524' : '#26c281');
   return V;
 })();
 if (typeof module === 'object' && module.exports) module.exports = V157;
