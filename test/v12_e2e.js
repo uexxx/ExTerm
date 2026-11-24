@@ -67,7 +67,7 @@ const ollama = http.createServer((q, r) => {
   ok('default theme is Nova', await ev(() => document.body.dataset.theme === 'nova'));
 
   /* ───────── 2. token safety scanner ───────── */
-  await page.click('#nav button[data-tab="lab"]'); await page.click('#labNav button[data-v="safety"]'); await sleep(300);
+  await page.$eval('#nav button[data-tab="lab"]', (e) => e.click()); await page.click('#labNav button[data-v="safety"]'); await sleep(300);
   ok('Lab has a Token safety tool', await ev(() => !!document.querySelector('#safeForm')));
   await page.fill('#safeAddr', 'not-an-address'); await page.click('#safeGo'); await sleep(400);
   ok('invalid address is refused with a message', await ev(() => /valid Solana token address/.test($('#safeOut').textContent)));
@@ -84,7 +84,7 @@ const ollama = http.createServer((q, r) => {
   ok('Copilot answers "is <token> safe?"', /grade F/.test(cp) && /Mint authority/.test(cp), cp.slice(0, 120));
 
   /* ───────── 3. strategy builder + community library ───────── */
-  await page.click('#nav button[data-tab="bots"]'); await sleep(600);
+  await page.$eval('#nav button[data-tab="bots"]', (e) => e.click()); await sleep(600);
   ok('builder renders with a valid starter template', await ev(() => !!document.querySelector('#bdForm') && !$('#bdPrev').classList.contains('bad')));
   await page.selectOption('#bdTpl', '1'); await sleep(200);
   ok('template switch loads EMA cross rules', await ev(() => $('#bdName').value === 'EMA cross with volume' && document.querySelectorAll('.bd-cond').length === 3));
@@ -135,7 +135,7 @@ const ollama = http.createServer((q, r) => {
   const of2 = await ev(async () => (await aiHandle('show volume profile')).txt); ok('Copilot turns on order-flow layers', /Volume profile/.test(of2));
 
   /* ───────── 5. workspaces ───────── */
-  await page.click('#nav button[data-tab="workspace"]'); await sleep(2500);
+  await page.$eval('#nav button[data-tab="workspace"]', (e) => e.click()); await sleep(2500);
   ok('4 synced charts load', await ev(() => document.querySelectorAll('.ws-chart canvas').length === 4 && WS.charts.every((c) => c.data.length > 50)));
   await ev(() => { const c = WS.charts[0], r = c.cv.getBoundingClientRect(); c.cv.dispatchEvent(new PointerEvent('pointermove', { clientX: r.left + r.width / 2, clientY: r.top + r.height / 2, bubbles: true })); });
   ok('crosshair syncs across charts', await ev(() => WS.charts.slice(1).every((c) => c.ext && c.ext.t)));
@@ -155,7 +155,7 @@ const ollama = http.createServer((q, r) => {
   await ev(() => showTab('markets')); await sleep(800);
   await page.fill('#tkUsd', '750').catch(() => {}); await page.click('#tkGo'); await sleep(800);
   await ev(() => { const s = ST.sel; ACC.sell(s, px(s) * 0.97, null, Date.now(), { reason: 'manual close', src: 'manual' }); });
-  await sleep(500); await page.click('#nav button[data-tab="journal"]'); await sleep(1200);
+  await sleep(500); await page.$eval('#nav button[data-tab="journal"]', (e) => e.click()); await sleep(1200);
   ok('manual trades are journaled automatically', await ev(() => Journal.entries.length >= 2 && document.querySelectorAll('.jn-card').length >= 2));
   ok('entry has a chart snapshot', await ev(() => !!document.querySelector('.jn-card img.jn-snap') && /^data:image\/jpeg;base64,/.test(document.querySelector('.jn-card img.jn-snap').src)));
   await page.fill('.jn-card .jn-notes', 'Chased the breakout <script>window.__pwn=7</script>'); await page.dispatchEvent('.jn-card .jn-notes', 'change');
@@ -177,7 +177,7 @@ const ollama = http.createServer((q, r) => {
   ok('delete-all wipes the journal (IndexedDB too)', await ev(async () => { await Journal.init(); return Journal.entries.length === 0; }));
 
   /* ───────── 7. replay challenges ───────── */
-  await page.click('#nav button[data-tab="challenge"]'); await sleep(300);
+  await page.$eval('#nav button[data-tab="challenge"]', (e) => e.click()); await sleep(300);
   await page.click('#chNew'); await page.waitForFunction(() => Challenge.g && document.querySelector('#chChart canvas'), null, { timeout: 20000 }).catch(() => {});
   const w1 = await ev(() => Challenge.g.c.map((k) => k.c.toFixed(4)).join(','));
   ok('daily challenge starts in blind mode', await ev(() => Challenge.g.meta.daily && Challenge.g.meta.blind && Math.abs(Challenge.g.c[0].c - 100) < 1e-6));
@@ -210,7 +210,7 @@ const ollama = http.createServer((q, r) => {
   } else ok('port 11434 busy: local-AI e2e skipped', true);
 
   /* ───────── 9. background alerts settings ───────── */
-  await page.click('#nav button[data-tab="set"]'); await sleep(600);
+  await page.$eval('#nav button[data-tab="set"]', (e) => e.click()); await sleep(600);
   ok('background alerts panel (launcher detected)', await ev(() => !!document.querySelector('#bgPanel')));
   await page.fill('#bgTg', 'not-a-token'); await page.click('#bgForm button[type="submit"]'); await sleep(500);
   ok('bad bot token rejected with a message', await ev(() => /doesn't look right/.test($('#bgMsg').textContent)));

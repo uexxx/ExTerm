@@ -98,7 +98,7 @@ const ollama = http.createServer((q, r) => {
   await page.waitForFunction(() => Launcher.caps, null, { timeout: 8000 }).catch(() => {});
 
   /* ───────── 1. storage safety + backups ───────── */
-  await page.click('#nav button[data-tab="set"]'); await sleep(500);
+  await page.$eval('#nav button[data-tab="set"]', (e) => e.click()); await sleep(500);
   ok('Settings shows Data status, Backups, API keys and Time zone panels', await ev(() => ['#v13Data', '#v13Store', '#v13Keys', '#v13Tz'].every((s) => document.querySelector(s))));
   await page.evaluate((s) => typeof V155S === 'undefined' || V155S.reveal(s), '#v13Snap'); // v15.5: Settings tabs
   await page.click('#v13Snap'); await page.waitForFunction(() => SafeStore.snaps.length >= 1, null, { timeout: 5000 }).catch(() => {});
@@ -136,7 +136,7 @@ const ollama = http.createServer((q, r) => {
   await ev(() => Tour.start()); await sleep(500);
   let steps = 0; for (let i = 0; i < 10 && (await ev(() => !!document.querySelector('#tourOv'))); i++) { steps++; await page.click('#tourNext'); await sleep(250); }
   ok('the tour walks through all 7 steps and remembers it was done', steps === 7 && (await ev(() => ST.settings.tourDone === true)), steps);
-  await page.click('#nav button[data-tab="set"]'); await sleep(400);
+  await page.$eval('#nav button[data-tab="set"]', (e) => e.click()); await sleep(400);
   ok('keys hub shows a status for every key', await ev(() => document.querySelectorAll('#v13Keys tr').length === 7 && /set/.test($('#v13Keys').textContent)));
   await page.click('#v13Keys [data-key-go="1"]'); await sleep(700);
   ok('"Set up" jumps to and focuses the matching field', await ev(() => document.activeElement && document.activeElement.id === 'seStKey'));
@@ -148,7 +148,7 @@ const ollama = http.createServer((q, r) => {
   await ev(() => { ST.settings.tz = 'local'; TZ.set(null); saveState(); });
 
   /* ───────── 3. perps data + paper futures ───────── */
-  await page.click('#nav button[data-tab="markets"]'); await ev(() => { if (ST.mode !== 'crypto') setMode('crypto'); selectSym('BTC-USD'); }); await sleep(800);
+  await page.$eval('#nav button[data-tab="markets"]', (e) => e.click()); await ev(() => { if (ST.mode !== 'crypto') setMode('crypto'); selectSym('BTC-USD'); }); await sleep(800);
   await page.waitForFunction(() => /Funding/.test(($('#derivPanel') || {}).textContent || ''), null, { timeout: 15000 }).catch(() => {});
   ok('Perps panel shows funding, open interest, long/short and liquidations', await ev(() => { const t = $('#derivPanel').textContent; return /0\.0100%/.test(t) && /\$2\.45B/.test(t) && /2\.40/.test(t) && /Hyperliquid/.test(t) && /OKX/.test(t); }), await ev(() => $('#derivPanel').textContent.slice(0, 400)));
   ok('recent liquidations are listed', await ev(() => document.querySelectorAll('.pv-liqs > div').length === 2));
@@ -168,7 +168,7 @@ const ollama = http.createServer((q, r) => {
   ok('perps trades land in the journal', await ev(() => Journal.entries.some((e) => /paper perps/.test(e.reason || ''))));
 
   /* ───────── 4. Launch Radar ───────── */
-  await ev(() => setMode('onchain')); await page.click('#nav button[data-tab="heat"]'); await sleep(1200);
+  await ev(() => setMode('onchain')); await page.$eval('#nav button[data-tab="heat"]', (e) => e.click()); await sleep(1200);
   ok('on-chain heat map has Tiles / Radar / Bubbles views', await ev(() => ['tiles', 'list', 'bubbles'].every((v) => document.querySelector(`#rdView button[data-v="${v}"]`)))); // v15.5 added a 4th ☰ Table view
   await page.click('#rdView button[data-v="list"]'); await page.waitForFunction(() => document.querySelectorAll('.rd-row').length > 5, null, { timeout: 15000 }).catch(() => {});
   ok('Radar lists new pairs from 2 pages (min $5K liquidity filters the tiny one)', await ev(() => document.querySelectorAll('.rd-row').length === 13), await ev(() => document.querySelectorAll('.rd-row').length));
@@ -219,7 +219,7 @@ const ollama = http.createServer((q, r) => {
   ok('"Track earliest buyers" adds them to the wallet tracker', await ev((n) => Sol.wallets.length === n + 5 && Sol.wallets.some((w) => /early #1/.test(w.name)), nw));
 
   /* ───────── 7. backtests: recent windows, new strategies, regimes, basket ───────── */
-  await ev(() => setMode('crypto')); await page.click('#nav button[data-tab="bots"]'); await sleep(900);
+  await ev(() => setMode('crypto')); await page.$eval('#nav button[data-tab="bots"]', (e) => e.click()); await sleep(900);
   ok('15 new strategies are registered (crypto, meme coins, short selling, stocks)', await ev(() => NT.PACK3.length === 15 && ['Crypto', 'Meme coins', 'Short selling', 'Stocks'].every((c) => NT.STRAT_CATS.includes(c))));
   ok('strategy menu shows the new categories', await ev(() => ['Meme coins', 'Short selling'].every((c) => [...document.querySelectorAll('#suStrat optgroup')].some((g) => g.label.includes(c)))));
   ok('date-range menu has last hour / 24 hours / 2 days', await ev(() => ['r:0.0417', 'r:1', 'r:2'].every((v) => !!document.querySelector(`#btBars option[value="${v}"]`))));
@@ -251,7 +251,7 @@ const ollama = http.createServer((q, r) => {
   ok('bad higher timeframe is rejected with a clear message', await ev(() => { const v = NT.Spec.validate({ v: 1, name: 'x tf', entry: { all: [{ a: { k: 'rsi', tf: 5 }, op: '>', b: { k: 'const', v: 1 } }] }, risk: { sl: 2 } }); return !v.ok && /higher timeframe/.test(v.errors.join(' ')); }));
 
   /* ───────── 9. background bots (launcher) ───────── */
-  await page.click('#nav button[data-tab="bots"]'); await sleep(1200);
+  await page.$eval('#nav button[data-tab="bots"]', (e) => e.click()); await sleep(1200);
   ok('Background bots panel is live when the launcher runs', await ev(() => BgBotsUI.on() && !!$('#bgForm2')), await ev(() => JSON.stringify(Launcher.caps)));
   ok('only no-code strategies are offered (plus templates)', await ev(() => [...$('#bgStrat').options].length >= NT.Spec.TEMPLATES.length && [...$('#bgStrat').options].every((o) => o.value.startsWith('tpl:') || !!(NT.strategies[o.value] && NT.strategies[o.value].spec)))); // v15p3 pack-4 specs are no-code too
   await page.fill('#bgSym', 'ETH'); await page.selectOption('#bgTf', '15m'); await page.fill('#bgCap', '2500');
@@ -290,7 +290,7 @@ const ollama = http.createServer((q, r) => {
   ok('copy-backtest math: 10s delay costs ~1.5% each way, plus fees', CB.n === 2 && Math.abs(CB.rows[0].ret - ((2 * (1 - 0.015)) / (1 * 1.015) * 0.99 * 0.99 - 1) * 100) < 1e-6 && CB.rows[0].estimated === true && CB.own === 50, JSON.stringify(CB.rows[0]));
   const CB2 = await ev(() => { const cs = Array.from({ length: 100 }, (_, i) => ({ t: 1e9 + i * 60, o: 1 + i * 0.01, h: 1, l: 1, c: 1 + (i + 1) * 0.01 })); return WalletPro.copySim([{ mint: 'm', sym: 'C', buyTs: (1e9 + 600) * 1000, buyPx: 1.1, sellTs: (1e9 + 3000) * 1000, sellPx: 1.5, cs }], { delay: 30, size: 100, fee: 0, delayCost: 0.0015 }); });
   ok('copy-backtest uses real 1-minute candles when they cover the trade', CB2.rows[0].estimated === false && Math.abs(CB2.rows[0].inPx - 1.105) < 1e-9, JSON.stringify(CB2.rows[0]));
-  await page.click('#nav button[data-tab="whales"]'); await sleep(600);
+  await page.$eval('#nav button[data-tab="whales"]', (e) => e.click()); await sleep(600);
   await ev((a) => { openWallet(a); }, TRADERS[0]); await sleep(500);
   ok('wallet drawer shows Score v2 and the copy-backtest form', await ev(() => /Score v2/.test($('#dBody').textContent) && !!$('#cbRun')));
   await page.click('#cbRun'); await page.waitForFunction(() => /You \(copying\)|No complete trades|no buys/.test(($('#cbOut') || {}).textContent || ''), null, { timeout: 30000 }).catch(() => {});
@@ -315,7 +315,7 @@ const ollama = http.createServer((q, r) => {
   });
   ok('spam filter flags copy-paste shill posts with reasons', SP.spam === 4 && SP.why.some((w) => /same text posted by 4 accounts/.test(w)) && SP.why.includes('shill words'), JSON.stringify(SP));
   ok('spike detection: a ticker jumping from ~0 to 12 posts is a spike; steady chatter is not', SP.spikes[0].startsWith('ZAP:') && parseFloat(SP.spikes[0].split(':')[1]) >= 3 && !SP.spikes.some((s) => s.startsWith('WIF') && parseFloat(s.split(':')[1]) >= 3), SP.spikes.join(' '));
-  await page.click('#nav button[data-tab="social"]'); await sleep(900);
+  await page.$eval('#nav button[data-tab="social"]', (e) => e.click()); await sleep(900);
   ok('Social side panel shows spikes and filters', await ev(() => /Spikes/.test($('#spPanel').textContent) && !!$('#spHide') && !!document.querySelector('#spPanel .sp-row')));
   ok('spam is hidden from the feed by default', await ev(() => soFiltered().every((p) => !p.spam) && soFiltered().length === Social.posts.filter((p) => !p.spam && p.market === soMarket()).length));
   ok('spam doesn\'t count toward trending', await ev(() => { const t = Social.trends('crypto').find((e) => e.k === 'ZAP'); return t && t.all === 12; }));
@@ -330,7 +330,7 @@ const ollama = http.createServer((q, r) => {
   ok('social volume can be drawn under the price chart', await ev(() => chart.overlays.includes(SocialPro.overlay)));
 
   /* ───────── 12. drawing tools + undo/redo ───────── */
-  await page.click('#nav button[data-tab="markets"]'); await sleep(900);
+  await page.$eval('#nav button[data-tab="markets"]', (e) => e.click()); await sleep(900);
   ok('drawing toolbar has Channel, Zone, Long, Short, Ruler, Text and Undo', await ev(() => ['ch', 'rect', 'long', 'short', 'ruler', 'txt', 'undo'].every((v) => document.querySelector(`#drawBtns button[data-v="${v}"]`))));
   const box = await ev(() => { const r = chart.cv.getBoundingClientRect(); return { x: r.left + r.width * 0.45, y: r.top + r.height * 0.3, w: r.width, h: r.height }; });
   await ev(() => { chart.drawings = []; ST.draw[ST.sel] = chart.drawings; });

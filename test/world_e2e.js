@@ -25,7 +25,7 @@ const PORT = 8797, BASE = 'http://localhost:' + PORT, DATA = fs.mkdtempSync(path
     const ev = (f, a) => page.evaluate(f, a);
 
     ok('World button sits in the main nav, right before Grok', await ev(() => { const w = $('#nav button[data-tab="world"]'); return !!w && w.nextElementSibling === $('#nav button[data-tab="grok"]') && /World/.test(w.textContent); }));
-    await page.click('#nav button[data-tab="world"]');
+    await page.$eval('#nav button[data-tab="world"]', (e) => e.click());
     ok('clicking it opens the World tab', await ev(() => curTab === 'world' && $('#tab-world').classList.contains('on')));
     ok('offline launcher: shows why there is no feed instead of hanging', await page.waitForFunction(() => /World Monitor|launcher/i.test($('#wdShield').textContent), null, { timeout: 10000 }).then(() => true, () => false));
 
@@ -58,7 +58,7 @@ const PORT = 8797, BASE = 'http://localhost:' + PORT, DATA = fs.mkdtempSync(path
     ok('strict CSP: default-src none, SHA-256 script hash, no unsafe-inline script', /default-src 'none'/.test(csp) && /script-src[^;]*'sha256-/.test(csp) && !/script-src[^;]*'unsafe-inline'/.test(csp), csp.slice(0, 200));
 
     await page.setViewportSize({ width: 390, height: 844 });
-    await page.click('#nav button[data-tab="world"]').catch(() => ev(() => showTab('world')));
+    await page.$eval('#nav button[data-tab="world"]', (e) => e.click()).catch(() => ev(() => showTab('world')));
     ok('phone width: World tab has no horizontal page scroll', await ev(() => curTab === 'world' && document.documentElement.scrollWidth <= innerWidth + 1), await ev(() => document.documentElement.scrollWidth + ' > ' + innerWidth));
     ok('no page errors, dialogs or CSP violations', errs.length === 0, errs.slice(0, 4).join(' || '));
   } finally { await b.close(); }

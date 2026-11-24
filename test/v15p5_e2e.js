@@ -31,7 +31,7 @@ const PORT = 8785, BASE = 'http://localhost:' + PORT, DATA = fs.mkdtempSync(path
 
   ok('phase 5 boots: P5 core, Pro Desk tab and section nav', await ev(() => typeof P5 === 'object' && !!$('#nav button[data-tab="desk"]') && !!$('#tab-desk')));
   await ev(() => { showTab('markets'); selectSym('BTC-USD'); }); await sleep(300);
-  await page.click('#nav button[data-tab="desk"]');
+  await page.$eval('#nav button[data-tab="desk"]', (e) => e.click());
   ok('Pro Desk shows nine sections', await ev(() => curTab === 'desk' && $$('#p5Nav button').length === 9));
 
   /* ── DOM ladder ── */

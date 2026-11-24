@@ -1,5 +1,5 @@
 // Copyright (c) 2026 ExTerm Labs. All Rights Reserved.
-// Captures the 27 README screenshots (01–27) at 2× device pixel ratio from the offline launcher, in ONE headless browser that
+// Captures the 30 README screenshots (01–30) at 2× device pixel ratio from the offline launcher, in ONE headless browser that
 // is closed at the end. Old docs/screenshots/*.png are deleted first. Usage: node tools/capture-screens.js
 const { chromium } = require(process.platform === 'win32' ? 'C:/opt/npm-tools/node_modules/playwright' : '/opt/npm-tools/node_modules/playwright');
 const { spawn } = require('child_process');
@@ -20,7 +20,7 @@ const SHOTS = [];
     const p = await ctx.newPage(); p.setDefaultTimeout(15000);
     const ev = (f, a) => p.evaluate(f, a);
     const clean = () => ev(() => { for (const x of document.querySelectorAll('#langGate, #walkCard, #p2Brief, #v162Brief, #v163CardPill, #v164AvMenu, #x17Brief, #x17Wiz, #v170Clip')) x.remove(); for (const t of document.querySelectorAll('#toasts > *')) t.remove(); });
-    const shot = async (name, settle) => { await clean().catch(() => {}); await sleep(settle || 700); await ev(() => { for (const t of document.querySelectorAll('#toasts > *')) t.remove(); }); const f = path.join(OUT, name); await p.screenshot({ path: f }); SHOTS.push(name); console.log('shot ' + name); };
+    const shot = async (name, settle) => { await clean().catch(() => {}); await sleep(settle || 700); await ev(() => { for (const t of document.querySelectorAll('#toasts > *')) t.remove(); if (typeof V177UI !== 'undefined') V177UI.rail.wake(); }); const f = path.join(OUT, name); await p.screenshot({ path: f }); SHOTS.push(name); console.log('shot ' + name); };
     await p.goto(BASE + '/');
     await p.waitForFunction(() => typeof V17App !== 'undefined' && V17App.mounted && typeof chart !== 'undefined' && chart && chart.data.length > 200, null, { timeout: 90000 });
     await clean(); await sleep(2500);
@@ -50,31 +50,27 @@ const SHOTS = [];
     // 08 futures
     await ev(() => { showTab('futs'); });
     await shot('08-futures-volume-profile.png');
-    // 09 universal main-chart 3D (toolbar pill, any symbol): volume prisms, Bullion Gold order-block wireframes, L2 particles
-    await ev(() => { showTab('markets'); V171UI.chart3d.toggle(true); });
-    await shot('09-3d-volumetric-order-blocks.png', 1200);
-    // v17.5 · 19 3D Layers drawer (≤ 3 default layers: OB Prisms + VPVR / POC + Whale Beacons, 12-layer drawer, IndexedDB presets)
-    await ev(() => { const b = document.querySelector('#x175LayB'); if (b) b.click(); });
-    await shot('19-3d-layers-drawer.png', 900); await ev(() => { const b = document.querySelector('#x175LayB'); if (b) b.click(); V171UI.chart3d.toggle(false); });
-    // v17.5 · 17 Working Bots squad: taken BEFORE shot 10 injects its scripted events, using the labelled Explore Live Demo (STANDBY otherwise)
-    await ev(() => { showTab('fleet'); }); await sleep(2500);
-    await ev(() => { document.querySelector('#x175Demo').click(); }); await sleep(9000);
-    await ev(() => { const s = document.querySelector('#x175Sq'); if (s) s.scrollIntoView({ block: 'start' }); window.scrollBy(0, -8); }); await sleep(1500);
-    await shot('17-working-bots-squad.png', 600); await ev(() => { if (V175UI.squad.demoOn) document.querySelector('#x175Demo').click(); showTab('markets'); });
+    // v17.7 · 09 tactile 2D depth layers on the live 1s chart (the detached 3D chart mode is gone) · 19 the 13-pass depth drawer
+    await ev(async () => { V177UI.go('copilot'); const b1 = [...document.querySelectorAll('#tfBtns button')].find((x) => x.textContent.trim() === '1s'); if (b1) b1.click(); for (let i = 0; i < 80 && !(chart.tfSec === 1 && chart.data.length > 40); i++) await new Promise((r) => setTimeout(r, 250)); for (const k of ['cvd', 'liq', 'avwap']) V177UI.depth.set(k, true); });
+    await shot('09-tactile-2d-depth-1s-chart.png', 2500);
+    await ev(() => { document.querySelector('#x177DepthB').click(); });
+    await shot('19-depth-layers-drawer.png', 900); await ev(() => { document.querySelector('#x177DepthB').click(); for (const k of ['cvd', 'liq', 'avwap']) V177UI.depth.set(k, false); const b = [...document.querySelectorAll('#tfBtns button')].find((x) => x.textContent.trim() === '1m'); if (b) b.click(); });
+    // v17.7 · 17 the 24/7 Optional Live Bot clean execution view (Co-Pilot switch + Arm wizard, approval queue, fleet)
+    await ev(() => { V177UI.go('livebot'); V17App.cfg.mode = 'copilot'; V17App.Fleet.demo(); V17App.Fleet.propose(); V17App.Fleet.paint(); V177UI.live.paint(); });
+    await shot('17-live-bot-clean-view.png', 1500); await ev(() => { V17App.cfg.mode = 'paper'; V17App.save(); V177UI.live.paint(); });
     // v17.5 · 18 Shock Lab (Quant Lab): flash-crash scenario on the live book
     await ev(async () => { showTab('lab'); await new Promise((r) => setTimeout(r, 900)); const c = document.querySelector('#x175sCat'); c.value = 'crash'; c.dispatchEvent(new Event('change')); const l = document.querySelector('#x175sList'); l.value = l.options[2].value; l.dispatchEvent(new Event('change')); await V175UI.shock.run(); document.querySelector('#x175Shock').scrollIntoView({ block: 'start' }); });
     await shot('18-shock-lab-flight-simulator.png', 1500);
     // v17.5 · 20 Options 3D IV & GEX surface (optional 2D | 3D pill)
     await ev(async () => { showTab('opts'); await new Promise((r) => setTimeout(r, 700)); document.querySelector('#tab-opts .x175-pill [data-x175v="3D"]').click(); });
     await shot('20-options-3d-iv-surface.png', 2500); await ev(() => { document.querySelector('#tab-opts .x175-pill [data-x175v="2D"]').click(); showTab('markets'); });
-    // 10 Bot Fleet → v17.3 THE SYNAPSE, Synapse Cortex engine (fractal dendrites, comets, spores) · 15 Singularity Burst · 16 live bubble map
-    await ev(() => { try { localStorage.setItem('x173.eng', 'cortex'); } catch (e) { /* storage */ } V173UI.syn.eng = 'cortex'; showTab('fleet'); const b = document.querySelector('[data-x173eng="cortex"]'); if (b) b.click(); V17App.cfg.mode = 'copilot'; V17App.Fleet.demo(); V17App.Fleet.propose(); V17App.Fleet.paint(); V17App.Fleet.evolve(); const s = document.querySelector('#x172Syn'); if (s) s.scrollIntoView({ block: 'start' }); });
-    await sleep(6000); // let the 1 Hz sensors build sparkline history from the real background processes
-    await ev(() => { const s = document.querySelector('#x172Syn'); if (s) s.scrollIntoView({ block: 'start' }); const ev8 = [['fill', 'Bots', 'demo BUY filled'], ['win', 'Ledger', 'TP hit +'], ['bot', 'Bots', 'evolution gen 20'], ['ai', 'Copilot', 'copilot answered'], ['block', 'Firewall', 'firewall gate · size over risk budget'], ['whale', 'Screener', 'whale print $250K'], ['trail', 'Ledger', 'trail raised'], ['fill', 'Bots', 'paper fill']]; ev8.forEach(([t, n, x], i) => setTimeout(() => window.__EXTERM_BUS.emit(t, { node: n, side: 'buy', text: x, src: 'fleet' }), 140 * i)); });
-    await shot('10-bot-fleet-neural-torus.png', 1100);
-    await ev(() => { document.querySelector('[data-x173eng="singularity"]').click(); const ev6 = [['tick', 'Data', 'tick batch'], ['whale', 'Screener', 'whale sweep $410K'], ['ui', 'Ledger', 'GEX recalc · flip shift'], ['draw', 'Chart', '3D order-block wall'], ['gate', 'Firewall', 'firewall pass · size ok'], ['fill', 'Bots', 'paper fill']]; ev6.forEach(([t, n, x], i) => setTimeout(() => window.__EXTERM_BUS.emit(t, { node: n, side: 'buy', text: x, src: 'fleet' }), 180 * i)); });
-    await shot('15-synapse-singularity-burst.png', 1500);
-    await ev(() => { document.querySelector('[data-x173eng="cortex"]').click(); V17App.cfg.mode = 'paper'; V17App.save(); });
+    // v17.7 · 10 full-bleed Terminal Brain (every worker lane, feed, process and squad bot as a live node) · 15 full-bleed 24/7 Bot Radar with a target lock · 28 MEV/Whales filter
+    await ev(() => { V177UI.go('brain'); const B = window.__EXTERM_BUS; let i = 0; const ev8 = [['fill', 'Bots', 'demo BUY filled'], ['win', 'Ledger', 'TP hit'], ['block', 'Firewall', 'firewall block'], ['bot', 'Bots', 'evolution gen 20']]; const t = setInterval(() => { const e = ev8[i++ % ev8.length]; B.emit(e[0], { node: e[1], text: e[2], src: 'fleet' }); if (i > 14) clearInterval(t); }, 350); });
+    await sleep(3000); await shot('10-terminal-brain-full-bleed.png', 400);
+    await ev(async () => { V177UI.go('botradar'); for (let i = 0; i < 80; i++) { const r = [0, 0, 0]; for (const b of V177UI.radar.pop.m.values()) r[b.ring]++; if (r.every((x) => x > 2)) break; await new Promise((x) => setTimeout(x, 250)); } await new Promise((x) => setTimeout(x, 4000)); const R = V177UI.radar, w = [...R.pop.m.values()].filter((b) => b.ring === 0).sort((a, b) => b.usd - a.usd)[0]; if (w) R.lock = w.id; });
+    await shot('15-bot-radar-full-bleed.png', 600);
+    await ev(() => { V177UI.radar.lock = null; document.querySelector('[data-x177f="mev"]').click(); });
+    await shot('28-bot-radar-mev-whales-filter.png', 1200); await ev(() => { document.querySelector('[data-x177f="all"]').click(); V177UI.go('copilot'); });
     await ev(async () => { showTab('heat'); for (let i = 0; i < 60; i++) { const bt = document.querySelector('[data-v164v="bubbles"]'); if (bt && !bt.classList.contains('on')) bt.click(); const cv = document.querySelector('canvas.v164-bub'); if (cv && cv._x173 && cv._x173.nodes.length) break; await new Promise((r) => setTimeout(r, 250)); } const t = document.querySelector('#tab-heat'); if (t) t.scrollTop = 0; });
     await shot('16-live-bubble-map.png', 2500);
     // 11 academy (with a drill)
@@ -111,12 +107,16 @@ const SHOTS = [];
     await sleep(1500); await ph.evaluate(() => { for (const t of document.querySelectorAll('#toasts > *')) t.remove(); });
     await ph.screenshot({ path: path.join(OUT, '14-mobile-touch-cockpit.png') }); SHOTS.push('14-mobile-touch-cockpit.png'); console.log('shot 14-mobile-touch-cockpit.png');
     // v17.6 · 26 phone Alpha Radar · 27 phone DEX bubble map
-    const phShot = async (name) => { await ph.evaluate(() => { for (const t of document.querySelectorAll('#toasts > *')) t.remove(); }); await ph.screenshot({ path: path.join(OUT, name) }); SHOTS.push(name); console.log('shot ' + name); };
+    const phShot = async (name) => { await ph.evaluate(() => { for (const t of document.querySelectorAll('#toasts > *')) t.remove(); if (typeof V177UI !== 'undefined') V177UI.rail.wake(); }); await ph.screenshot({ path: path.join(OUT, name) }); SHOTS.push(name); console.log('shot ' + name); };
     await ph.evaluate(async () => { const a = document.querySelector('.x17-arcm'); if (a) a.click(); /* close the thumb arc that shot 14 opened */ showTab('radar'); for (let i = 0; i < 60 && !(V176UI.res && V176UI.res.picks.length >= 15); i++) await new Promise((r) => setTimeout(r, 500)); window.scrollTo(0, 0); });
     await sleep(3500); await phShot('26-mobile-alpha-radar.png');
     await ph.evaluate(async () => { setMode('onchain'); await new Promise((r) => setTimeout(r, 2500)); showTab('heat'); await new Promise((r) => setTimeout(r, 800)); const bt = document.querySelector('[data-v164v="bubbles"]'); if (bt) bt.click(); for (let i = 0; i < 60; i++) { const c = document.querySelector('canvas.v164-bub'); if (c && c._x173 && c._x173.nodes.length >= 25) break; await new Promise((r) => setTimeout(r, 400)); } const d = document.querySelector('.v164-tf'); if (d) d.scrollIntoView({ block: 'start' }); });
     await sleep(3500); await phShot('27-mobile-dex-bubble-map.png');
+    // v17.7 · 29 phone 24/7 Bot Radar · 30 phone Terminal Brain (full-bleed 390 × 844, same 4-tab rail)
+    await ph.evaluate(async () => { setMode('crypto', 'BTC-USD'); V177UI.go('botradar'); for (let i = 0; i < 80; i++) { const r = [0, 0, 0]; for (const b of V177UI.radar.pop.m.values()) r[b.ring]++; if (r.every((x) => x > 2)) break; await new Promise((x) => setTimeout(x, 250)); } });
+    await sleep(3500); await phShot('29-mobile-bot-radar.png');
+    await ph.evaluate(() => V177UI.go('brain')); await sleep(2500); await phShot('30-mobile-terminal-brain.png');
     await m.close();
   } finally { await b.close(); }
-  console.log(SHOTS.length + ' screenshots → docs/screenshots'); process.exit(SHOTS.length === 27 ? 0 : 1);
+  console.log(SHOTS.length + ' screenshots → docs/screenshots'); process.exit(SHOTS.length === 30 ? 0 : 1);
 })().catch((e) => { console.error('CRASH', e.message); process.exit(1); });

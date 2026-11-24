@@ -17,8 +17,12 @@ const res = [], errs = []; const ok = (n, c, i = '') => res.push((c ? 'PASS ' : 
   ok('CSP is pinned to a script hash with default-src none', await page.evaluate(() => { const m = document.querySelector('meta[http-equiv="Content-Security-Policy"]').content; return /default-src 'none'/.test(m) && /script-src 'sha256-/.test(m) && !/unsafe-inline'[^;]*script|script-src[^;]*unsafe-eval/.test(m); }));
   for (const t of ['markets', 'heat', 'bots', 'port', 'ai', 'grok', 'desk', 'lab', 'set']) {
     const has = await page.$(`#nav button[data-tab="${t}"]`); if (!has) { ok(`tab ${t} exists`, false); continue; }
-    await page.click(`#nav button[data-tab="${t}"]`); await page.waitForTimeout(400);
+    await page.evaluate((x) => document.querySelector(`#nav button[data-tab="${x}"]`).click(), t); await page.waitForTimeout(400); // v17.7 hides the legacy nav (the 4-tab rail replaces it); its buttons stay wired
     ok(`tab ${t} opens`, await page.evaluate((x) => document.getElementById('tab-' + x).classList.contains('on'), t));
+  }
+  if (await page.$('#x177Rail')) for (const [k, t] of [['botradar', 'botradar'], ['brain', 'brain'], ['livebot', 'fleet'], ['copilot', 'markets']]) { // v17.7: the 4 rail tabs
+    await page.click(`#x177Rail [data-x177t="${k}"]`); await page.waitForTimeout(500);
+    ok(`rail tab ${k} opens`, await page.evaluate((x) => document.getElementById('tab-' + x).classList.contains('on'), t));
   }
   ok('Pro Desk renders its sections', await page.evaluate(() => document.querySelectorAll('#p5Nav button').length === 9));
   ok('watchlist sidebar toggles', await page.evaluate(() => { document.getElementById('btnSide').click(); return !document.getElementById('p4Side').hidden; }));

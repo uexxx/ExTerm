@@ -81,7 +81,7 @@ const PORT = 8804, BASE = 'http://localhost:' + PORT, DATA = fs.mkdtempSync(path
     await ev(() => { LearnUI.close(); $('#v154Up').classList.remove('on'); });
 
     // ── Social → Perp Leaderboard
-    await page.click('#nav button[data-tab="social"]'); await sleep(200);
+    await page.$eval('#nav button[data-tab="social"]', (e) => e.click()); await sleep(200);
     ok('Social: Feed | Perp Leaderboard switch, feed shown by default', await ev(() => !!$('#lbSeg') && $('#lbFeedBtn').classList.contains('on') && $('#lbPerp').hidden && !$('#tab-social .soterm').hidden));
     await page.click('#lbPerpBtn');
     ok('Perp Leaderboard: ranked on-chain traders (offline sample flagged), Alpha header with "?"', await waitFor(() => $$('#lbPerp .lb-row').length >= 20 && /SAMPLE/.test($('#lbPerp').textContent) && !!$('#lbPerp .lb-alpha-h'), null, 20000));
@@ -97,7 +97,7 @@ const PORT = 8804, BASE = 'http://localhost:' + PORT, DATA = fs.mkdtempSync(path
     ok('+ Track Wallet: saved for the Smart-Money Leaderboard', await ev(() => ST.v154.tracked.length === 1));
     await page.click('#lbPerp [data-lb="setup"]');
     ok('Chart Setup: opens that market on the chart with entry + liquidation levels', await waitFor(() => $('#tab-markets').classList.contains('on') && LeaderUI.setup && LeaderUI.setup.entry > 0 && ST.sel === LeaderUI.setup.sym, null, 8000));
-    await page.click('#nav button[data-tab="social"]'); await sleep(200);
+    await page.$eval('#nav button[data-tab="social"]', (e) => e.click()); await sleep(200);
     const nOn = await ev(() => LeaderUI.top().length); await page.click('#lbPerp input[data-lbc="antiRug"]'); await sleep(300);
     ok('Anti-Rug filter: on by default; turning it off reveals the screened copy-trap wallets', await ev((n) => !ST.v154.antiRug && LeaderUI.top().length > n && LeaderUI.top().some((r) => LeaderUI.rug(r).flag), nOn), nOn);
     await page.click('#lbPerp input[data-lbc="antiRug"]'); await sleep(200);

@@ -2,6 +2,45 @@
 
 ExTerm holds no funds and no keys in every version. Up to v15.7 it was paper only; from v16.0 it can send HMAC-signed signals to a bot you run on your own machine, only after four explicit gates, and it starts in PAPER. v16.1 adds eight fail-safe engines on that path; v16.3 closes the loop with ACK + fill sync and a live cockpit; v16.4 adds DEX discovery, a local Copilot and a realistic backtester; v16.5 lets any AI or bot advise through one deterministic firewall; v16.6 adds a live transactions tape for every market.
 
+## v17.7 — Sovereign 4-Tab Declutter, Full-Bleed Dual-Canvas & Tactile 2D Depth Chart — 23 Nov 2026
+
+- **Strictly 4 top-level tabs** on one floating translucent rail (`src/v177.js`): **24/7 Bot Radar**, **Terminal Brain**, **24/7 Optional Live Bot**, **Co-Pilot / Paper**.
+  - The rail uses `backdrop-filter: blur(12px)` and `tabular-nums` monospace, sits at the bottom centre, and fades to 16 % opacity after 2.6 s idle. Any pointer, touch, wheel or key input wakes it. Arrow keys move between tabs.
+  - The legacy nav bar is hidden. Every older workspace still exists and belongs to one rail tab (`V177.railOf`): Bot Fleet → Live Bot, everything else → Co-Pilot / Paper.
+  - On phones (< 820 px) the same rail sits above the bottom dock. The dock only shows on Co-Pilot / Paper, where its Trade / Watch sheets are needed.
+- **24/7 Bot Radar**: a full-bleed `100vw × 100vh` 2D canvas with nothing below it.
+  - Every print the terminal ingests (Live Tape engine: crypto, perps, stocks, on-chain swaps with wallet tags) is fingerprinted. The fingerprint is the wallet, or symbol + side + 2-significant-digit clip size.
+  - Each fingerprint is classified into 6 archetypes on 3 proximity rings: **outer** passive scanners (tiny dim dots, no labels), **middle** staging / limit walls (directional vector tails), **inner** executors, snipers, MEV and whales (high-contrast shapes + sharp pulse rings).
+  - Motion trails fade with age. Busier bots orbit faster and net sellers counter-rotate. Gold = net buying, Crimson = net selling / MEV.
+  - Callout tags appear only on anomalies (MEV sandwich, $100K+ block, 5+ prints / s burst, sniper). Telemetry appears only on hover, and full telemetry on click target lock.
+  - 3 corner micro-HUD numbers (Active Bots, Bot Volume Share %, Net Bot Pressure) and All / Executors / MEV/Whales filter pills.
+  - Without a live trade stream (offline launcher / demo feed) the radar runs a clearly labelled **SIMULATED FLOW**. It clears itself on the first real print.
+- **Terminal Brain**: a full-bleed `100vw × 100vh` 2D canvas with zero HTML panels.
+  - Nodes: the core, the 8 worker lanes, the quote / tape / on-chain feeds, Bot Fleet, firewall, ledger, Co-Pilot queue, Alpha scan, Bot Radar, and the 6 squad bots.
+  - Lane state, event rate, firewall blocks, fills, positions and stale-feed state drive node pulse, particle velocity along each edge, line tension (taut when busy, slack when idle) and colour (Crimson on alerts), plus shockwaves from the core.
+  - Labels sit on a cached offscreen layer.
+- **Both canvases**: one rAF loop each, only while the tab is on screen (0 fps when hidden). No layout reads inside the frame (ResizeObserver). Glow is pre-rendered sprites instead of `shadowBlur`. Measured main-thread p95 ≈ 0.6–0.7 ms per frame at 1440 × 900 and 390 × 844 (budget 1.2 ms).
+- **24/7 Optional Live Bot**: a clean execution view. THE SYNAPSE, the Working Bots panels, the 3-option mode picker, the torus / evolution cards and card titles are stripped.
+  - In their place: one **Co-Pilot approvals** switch and one **Arm 24/7 Live Bot…** button, which runs the unchanged 5-step wizard.
+  - The approval queue, the fleet list and the local-bot URL stay.
+  - The Synapse loop never starts. Its bus events now feed the Terminal Brain.
+- **Co-Pilot / Paper chart**: the **detached 3D chart mode is deleted**. The 3D pill, 3D window and 3D layer drawer are removed, and `chart3d.toggle` refuses.
+  - Its layers are ported into **13 tactile 2D depth passes** drawn as an overlay on the live 1s–1m chart canvas, so they repaint on every tick.
+  - On by default: parallax depth grid, volumetric gradient, extruded bevel candles (volume-ranked), glow halos, OB slabs, VPVR / POC shelf, whale beacons.
+  - Optional: CVD pillars, GEX bands, liquidity pools, FVG tunnels, AVWAP canyon, R:R hologram.
+  - Passes behind the candles use `destination-over`; halos use additive `lighter`.
+  - **◈ Depth** toolbar drawer; the choice is saved per device.
+  - Data ingestion, timeframe switching and the live tick buffer are untouched.
+- Alpha Radar's "Chart + 3D" handoff is now "Load on Chart".
+- **Palette**: v17.7 code uses only Bullion Gold `#F5C84B`, Crimson `#EF4444`, Obsidian `#050608` / `#0A0D12` and neutral greys (tests enforce it).
+- **Screenshots**: 30 × 2× Retina. New or replaced:
+  - 09 tactile 2D depth 1s chart, 10 Terminal Brain, 15 Bot Radar with a target lock, 17 Live Bot, 19 Depth drawer;
+  - 28 MEV/Whales filter, 29 / 30 phone Bot Radar + Terminal Brain.
+- **Tests**:
+  - New `test/v177.test.js` (30): 4-tab map, fingerprints, all 6 archetypes, sweep detection, rings, HUD, filters, capacity / TTL, depth geometry, Brain telemetry mapping, the real renderers against a mocked context (anomaly-only callouts, target lock, depth passes following a new 1s candle, label cache), build order, palette, CSP hygiene, version.
+  - `v17pro_e2e` adds 14 v17.7 checks at 1440 × 900 and 390 × 844. Its Synapse / main-chart-3D assertions now check the v17.7 contract.
+  - The v17.5 / v17.6 build-order, palette-slice, handoff-label and version assertions accept v17.7.
+
 ## v17.6 — Psychedelic 4D Singularity, Alpha Radar, DEX Bubble Map & On-Chain Desk — 22 Nov 2026
 
 - THE SYNAPSE: the Working Bots wireframe core is now the `sing` renderer (`src/v176core.js`).

@@ -4,7 +4,7 @@
 
 <div align="center">
 
-# ExTerm v17.6
+# ExTerm v17.7
 
 ### The $0, local-first trading workstation for crypto, stocks, on-chain DEX tokens, options and futures, with a Quant Lab that coaches you, a Bot Fleet you arm deliberately, and a native Android app.
 
@@ -13,10 +13,10 @@ and live signals go only to a bot you run yourself on `127.0.0.1`, HMAC-signed a
 
 <img src="docs/screenshots/01-hero-chart-gex-dom.png" alt="ExTerm Markets terminal at 1440×900 (2× Retina): BTC candles with the plotted morning levels (previous day high, low and close, pivot, R1, S1), the GEX flip, call wall and put wall lines, the one-line Reach strip with the R:R, 2×2 and smart-trail tools under the navigation, the 6-timeframe confluence pill in the header and the Live Tape" width="100%">
 
-**[Launch](#-30-second-local-launch)** · **[What's new](#-whats-new-in-v176)** · **[Screenshots](#-v176-tour)** · **[Android](#-android-app)** · **[Verify](#-how-to-verify-official-builds)** · **[Build & test](#-build--test)** · **[Security](#-security)** · **[License](#-license)**
+**[Launch](#-30-second-local-launch)** · **[What's new](#-whats-new-in-v177)** · **[Screenshots](#-v177-tour)** · **[Android](#-android-app)** · **[Verify](#-how-to-verify-official-builds)** · **[Build & test](#-build--test)** · **[Security](#-security)** · **[License](#-license)**
 
 <p>
-  <a href="https://github.com/uexxx/ExTerm/releases/latest"><img src="https://img.shields.io/badge/download-v17.6-F5C84B?style=for-the-badge" alt="Download v17.6"></a>
+  <a href="https://github.com/uexxx/ExTerm/releases/latest"><img src="https://img.shields.io/badge/download-v17.7-F5C84B?style=for-the-badge" alt="Download v17.7"></a>
   <a href="https://github.com/uexxx/ExTerm/releases/latest"><img src="https://img.shields.io/badge/Android-APK-2fd08a?style=for-the-badge" alt="Android APK"></a>
   <img src="https://img.shields.io/badge/price-%240-2fd08a?style=for-the-badge" alt="$0">
   <img src="https://img.shields.io/badge/indicators-137-F5C84B?style=for-the-badge" alt="137 indicators">
@@ -58,6 +58,25 @@ Useful flags: `python3 serve.py 9000` (other port) · `--no-browser` · `--docto
 > proxies only an allow-list of public market-data hosts, on `localhost`, behind a fresh per-launch token.
 
 ---
+
+## 🎯 What's new in v17.7
+
+- **Strictly 4 tabs, zero clutter.** One floating translucent rail (blur 12 px, tabular-nums mono) that fades when you stop moving:
+  **24/7 Bot Radar** · **Terminal Brain** · **24/7 Optional Live Bot** · **Co-Pilot / Paper**. Every older workspace still exists
+  inside one of them; the legacy nav bar, stacked cards, mode pickers and title headers are gone.
+- **24/7 Bot Radar: full-bleed 100vw × 100vh.** Every live print is fingerprinted into bot archetypes on 3 proximity rings:
+  passive scanners (outer, tiny dim dots), staging / limit walls (middle, vector tails), executors, MEV, snipers and whales
+  (inner, sharp pulse rings). There are fading motion trails and Gold buy / Crimson sell colours. Callouts appear only on
+  anomalies, and telemetry only on hover or click target lock. Three corner numbers (Active Bots · Bot Volume Share % · Net
+  Bot Pressure) and All / Executors / MEV/Whales pills. With no live trade stream it says **SIMULATED FLOW**.
+- **Terminal Brain: full-bleed 100vw × 100vh.** Every worker lane, feed, process and squad bot is one live node. Their telemetry
+  drives node velocity, pulse intensity, line tension and colour, with zero panels below. Both canvases measure p95 ≈ 0.7 ms
+  per frame (budget 1.2 ms) and drop to 0 fps when hidden.
+- **24/7 Optional Live Bot.** A clean execution view: one Co-Pilot switch, one Arm button (the 5-step wizard), the approval queue.
+- **Tactile 2D depth chart.** The detached 3D chart mode is deleted. Its layers now draw as 13 depth-shaded 2D passes on the live
+  1s–1m chart, repainted on every tick: parallax depth grid, volumetric gradient, extruded bevel candles, glow halos, OB slabs,
+  VPVR / POC shelf and whale beacons by default, plus CVD, GEX, liquidity, FVG, AVWAP and R:R.
+- **Tests:** new `test/v177.test.js` (30) and 14 new v17.7 checks in `v17pro_e2e` (desktop 1440 × 900 + phone 390 × 844).
 
 ## 🎯 What's new in v17.6
 
@@ -261,13 +280,41 @@ Nothing new is painted over the 240 Hz / 120 Hz chart canvas: chart additions ar
   left / right-handed layout, sizing keypad, clipboard CA snipe, 1-tap **Phantom / Solflare / Jupiter / Uniswap** deep links
   (**ExTerm adds a $0 fee**; network and DEX fees still apply), QR pairing of your layout, AMOLED `#000000`, PIN or biometric lock,
   Share Setup Card and Picture-in-Picture.
-- **Native Android app**: [`ExTerm-v17.6-android.apk`](https://github.com/uexxx/ExTerm/releases/latest).
+- **Native Android app**: [`ExTerm-v17.7-android.apk`](https://github.com/uexxx/ExTerm/releases/latest).
 
 **🛡 Launcher (Phases 0–1)**: a 429 storm shield (single-flight requests, per-host cool-down that honours `Retry-After`, stale
 fallback), a cross-venue crypto tape (Coinbase · Kraken · Binance · Bybit · OKX) with basis, funding, spread and CVD, instant
 chart switches from a RAM + IndexedDB candle cache, a Discovery formula scanner, a clipboard sniper and a supervised 24/7 daemon.
 
 Full notes: [`CHANGELOG.md`](CHANGELOG.md).
+
+---
+
+## 🖼 v17.7 tour
+
+<img src="docs/screenshots/15-bot-radar-full-bleed.png" alt="The full-bleed 24/7 Bot Radar at 1440×900 (2× Retina): three proximity rings on an obsidian canvas with dim scanner dots on the outer ring, staging bots with vector tails on the middle ring, gold and crimson executor, MEV and whale shapes with pulse rings on the inner ring, a locked target with its telemetry card, three corner micro-HUD numbers, the All / Executors / MEV/Whales pills and the floating 4-tab rail" width="100%">
+
+**24/7 Bot Radar (v17.7).** Full-bleed. 3 proximity rings, 3 corner numbers, 3 filters; telemetry only when you hover or lock a target.
+
+<img src="docs/screenshots/10-terminal-brain-full-bleed.png" alt="The full-bleed Terminal Brain: the ExTerm core in the centre wired to the 8 worker lanes, the quote, tape and on-chain feeds, Bot Fleet, firewall, ledger, Co-Pilot queue, Alpha scan and Bot Radar, and the 6 squad bots, with gold particles travelling along taut or slack edges, a crimson firewall edge and shockwave rings" width="100%">
+
+**Terminal Brain (v17.7).** Every background process as a live node; telemetry drives velocity, pulse, line tension and colour.
+
+<img src="docs/screenshots/09-tactile-2d-depth-1s-chart.png" alt="The Co-Pilot / Paper chart on 1-second candles with the tactile 2D depth layers: extruded bevel candles with volume-ranked shadows, a volumetric gold gradient under price, a parallax depth grid, order-block slabs, the VPVR / POC shelf, CVD pillars, liquidity pools, an AVWAP canyon and a glow halo on the last price" width="100%">
+
+**Tactile 2D depth on the live 1s chart (v17.7).** The detached 3D mode is gone; its layers draw on the live chart.
+
+<img src="docs/screenshots/19-depth-layers-drawer.png" alt="The Depth drawer on the chart toolbar with 13 depth passes: Parallax Depth Grid, Volumetric Gradient, Extruded Bevel Candles, Glow Halos, OB Slabs, VPVR / POC Shelf, Whale Beacons, CVD Pillars, GEX Bands, Liq Pools, FVG Tunnels, AVWAP Canyon and R:R Hologram" width="100%">
+
+**Depth drawer (v17.7).** 13 passes; 7 on by default; saved per device.
+
+<img src="docs/screenshots/17-live-bot-clean-view.png" alt="The 24/7 Optional Live Bot tab: the Co-Pilot approvals switch, the Arm 24/7 Live Bot button and status, the Co-Pilot approval queue with a pending demo order, the fleet table and the local bot URL, with nothing else stacked" width="100%">
+
+**24/7 Optional Live Bot (v17.7).** One switch, one Arm button, the approval queue.
+
+<img src="docs/screenshots/28-bot-radar-mev-whales-filter.png" alt="The Bot Radar with the MEV/Whales filter on: only inner-ring MEV and whale bots remain, with anomaly callouts" width="100%">
+
+<p align="center"><img src="docs/screenshots/29-mobile-bot-radar.png" alt="The 24/7 Bot Radar full-bleed on a 390 px phone with the 4-tab rail at the bottom" width="32%"> <img src="docs/screenshots/30-mobile-terminal-brain.png" alt="The Terminal Brain full-bleed on a 390 px phone" width="32%"></p>
 
 ---
 
@@ -322,18 +369,6 @@ All screenshots: 1440 × 900 at 2× (Retina), offline launcher, captured with `n
 
 **Futures.** RTH / ETH volume profile, tick risk and liquidation clusters.
 
-<img src="docs/screenshots/09-3d-volumetric-order-blocks.png" alt="Main chart with the 3D pill on: BTC candles as emerald and crimson volume prisms on a calibrated floor grid, Bullion Gold order-block wireframes, L2 particle walls and the Top / Side / Isometric camera pills" width="100%">
-
-**3D on the main chart.** One toolbar pill for every symbol and CA. Since v17.5 it shows at most 3 layers by default: OB Prisms, VPVR / POC and Whale Beacons.
-
-<img src="docs/screenshots/19-3d-layers-drawer.png" alt="The v17.5 3D Layers drawer over the 3D chart: OB Prisms, VPVR / POC and Whale Beacons ticked as core layers; L2 Terrain, CVD Pillars, GEX Towers, Liq Pools, FVG Tunnels, AVWAP Canyon, R:R Hologram, 6-TF Strata and 4D Replay Scrub as optional extras" width="100%">
-
-**3D Layers drawer (v17.5).** Nine extra layers, a 4D replay scrub and IndexedDB presets.
-
-<img src="docs/screenshots/17-working-bots-squad.png" alt="The v17.6 Working Bots squad in THE SYNAPSE: the 4D singularity (tesseract, Hopf torus knots, accretion vortex, L-system dendrites, plasma arcs) with the six squad bots HUNTER-alpha to HEDGER-ARB as orbiting holographic nodes, labelled DEMO events, and the three wide panels: attractor + Merton cone, eigen-risk sonar + worker mesh, execution stream + KPIs" width="100%">
-
-**Working Bots squad (v17.6 4D singularity).** STANDBY until a bot runs. This capture uses the labelled **Explore Live Demo**, and the panels render off the main thread.
-
 <img src="docs/screenshots/18-shock-lab-flight-simulator.png" alt="The v17.5 Shock Lab in Quant Lab: category and scenario pickers (156 scenarios), Order Size, Book Depth, Vol Multiplier and Spoof Pull sliders, the 3D order book before and after the shock, and the fill, slippage and impact readout" width="100%">
 
 **3D Order-Book Shock Lab (v17.5).** 156 scenarios, four sliders, and a stress test of your open positions and running bots.
@@ -341,14 +376,6 @@ All screenshots: 1440 × 900 at 2× (Retina), offline launcher, captured with `n
 <img src="docs/screenshots/20-options-3d-iv-surface.png" alt="The Options tab with the v17.5 2D | 3D pill set to 3D: an IV smile surface with GEX towers and a spot-shift marker" width="100%">
 
 **Optional 2D | 3D (v17.5).** Every tool stays fast 2D until you flip its pill.
-
-<img src="docs/screenshots/10-bot-fleet-neural-torus.png" alt="THE SYNAPSE in Bot Fleet at 1440×900 (2× Retina): the Sensory Input Layer with live sparklines (WS ticks/s, L1/L2 SWR cache, Worker Math, cross-exchange CVD, GEX/volatility), six Bullion Gold node cards firing impulses along dendrite curves into a rotating geodesic ExTerm core, the Cortex weight bars, and the Signal Rotation attractor, The Trace stream and The Pricer Monte Carlo fan along the bottom" width="100%">
-
-**THE SYNAPSE (v17.3, Synapse Cortex engine).** Fractal dendrites lit by travelling waves, comet packets across the six subsystem nodes, spore cascades from a fast-pulsing gold core, and the 6-panel telemetry matrix below.
-
-<img src="docs/screenshots/15-synapse-singularity-burst.png" alt="THE SYNAPSE in Singularity Burst mode: a pitch-black event horizon with a gold photon ring, thousands of radial gold filaments, coronal plasma tendrils, shockwave rings and callout badges such as WHALE SWEEP, GEX SHIFT, 3D OB WALL and FIREWALL PASS around the six subsystem chips" width="100%">
-
-**Singularity Burst (v17.3).** Every terminal and bot event erupts as filaments, shockwaves and callouts from the event horizon.
 
 <img src="docs/screenshots/16-live-bubble-map.png" alt="The live Market bubble map: dozens of glossy emerald and crimson spheres with ticker and live percentage change, additive glow halos and shockwave rings, filling about 85 percent of the canvas" width="100%">
 
@@ -374,7 +401,7 @@ All screenshots: 1440 × 900 at 2× (Retina), offline launcher, captured with `n
 
 ## 📱 Android app
 
-Download **`ExTerm-v17.6-android.apk`** from the [latest release](https://github.com/uexxx/ExTerm/releases/latest)
+Download **`ExTerm-v17.7-android.apk`** from the [latest release](https://github.com/uexxx/ExTerm/releases/latest)
 (Android 7.0+, about 1 MB). It runs the same single-file app from the APK's assets on a secure origin, so storage and WebCrypto
 work offline. Wallet and DEX links open in your installed apps, and leaving the app keeps the chart in Picture-in-Picture.
 The APK's SHA-256 is listed in the release `SHA256SUMS.txt`.
@@ -383,7 +410,7 @@ Build it yourself (JDK 17 + Android SDK `platforms;android-34` and `build-tools;
 
 ```bash
 python3 build.py --harden
-python3 tools/build_apk.py          # → dist/ExTerm-v17.6-android.apk
+python3 tools/build_apk.py          # → dist/ExTerm-v17.7-android.apk
 ```
 
 CI builds the same APK on every tag: [`.github/workflows/build-android-apk.yml`](.github/workflows/build-android-apk.yml).
@@ -433,10 +460,11 @@ node test/v170.test.js       # v17.0 unit suite
 node test/v171.test.js       # v17.1 unit suite (ledger, AMM/L2 impact, stale guard, Copilot routing)
 node test/v172.test.js       # v17.2 unit suite (Synapse maths, Monte Carlo fan, phase space, weights, wiring)
 node test/v173.test.js       # v17.3 unit suite (bubble physics, fractal dendrites, particles, matrix, v16.6 palette restore)
+node test/v177.test.js       # v17.7 unit suite (4-tab map, bot fingerprints + rings + HUD, depth layers, Terminal Brain, real renderers, palette)
 node test/v176.test.js       # v17.6 unit suite (4D maths, 5 off-thread renderers, Alpha Radar grading, Rug Shield v2, TWAP, palette lock)
 node test/v175.test.js       # v17.5 unit suite (worker kernel, squad truthfulness, 3D layers, 156 scenarios, 30+ engines vs closed forms, palette lock)
 python3 test/v175_lanes_test.py  # v17.5 serve.py lanes (process isolation, allow-list, caps, HTTP)
-node test/v17pro_e2e.js      # v17.0–v17.6 browser end-to-end (desktop 1440/1280 + phone 390)
+node test/v17pro_e2e.js      # v17.0–v17.7 browser end-to-end (desktop 1440/1280 + phone 390)
 ```
 
 `build.py` inlines `src/*.js` and `src/style.css` into one file and stamps the CSP with the bundle's SHA-256 hash.

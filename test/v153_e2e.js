@@ -33,7 +33,7 @@ const PORT = 8803, BASE = 'http://localhost:' + PORT, DATA = fs.mkdtempSync(path
     const cash0 = await ev(() => JSON.stringify({ c: ACC.cash, p: Object.keys(ACC.pos || {}).length }));
 
     // ── progressive disclosure
-    await page.click('#nav button[data-tab="lab"]'); await sleep(300);
+    await page.$eval('#nav button[data-tab="lab"]', (e) => e.click()); await sleep(300);
     ok('Lab nav gains exactly one 🧬 Quant Lab Pro pill (translated label)', await ev(() => $$('#labNav button[data-v="q153"]').length === 1 && $('#labNav button[data-v="q153"] [data-i18n="lab.q153"]').textContent === I18N.t('lab.q153')));
     await page.click('#labNav button[data-v="q153"]'); await sleep(300);
     ok('panel: eight collapsed accordions, none rendered until opened', await ev(() => $$('#q153Root details.q153-sec').length === 8 && $$('#q153Root details[open]').length === 0 && $$('#q153Root [data-body]').every((x) => !x.innerHTML)));
@@ -52,7 +52,7 @@ const PORT = 8803, BASE = 'http://localhost:' + PORT, DATA = fs.mkdtempSync(path
     ok('inspector: the drawdown dip / peak markers are keyboard-reachable buttons', await ev(() => !!$('#q153Insp')));
     await ev(() => $('#q153Insp [data-jump]').click());
     ok('inspector: "jump to this candle" opens Markets on that market', await waitFor(() => curTab === 'markets' && ST.sel === V153UI.base.sym, null, 6000));
-    await page.click('#nav button[data-tab="lab"]'); await sleep(300);
+    await page.$eval('#nav button[data-tab="lab"]', (e) => e.click()); await sleep(300);
     ok('Lab remembers the Quant Lab Pro section and the last backtest', await ev(() => !!$('#q153Root') && !!$('#q153Curve') && $('#labNav button[data-v="q153"]').classList.contains('on')));
 
     // ── 1 Auto-Evolve

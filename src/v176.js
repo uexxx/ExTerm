@@ -55,7 +55,7 @@ const V176UI = (() => {
   /* ══ handoffs ══ */
   const select = (s) => { if (typeof modeOf === 'function' && typeof ST !== 'undefined' && modeOf(s) !== ST.mode && typeof setMode === 'function') setMode(modeOf(s), s); else if (typeof selectSym === 'function') selectSym(s); };
   const ACT = {
-    chart(p) { select(p.sym); showTab('markets'); setTimeout(() => { try { V171UI.chart3d.toggle(true); } catch (e) { /* chart not ready */ } }, 350); T('Chart + 3D: ' + p.l, 'acc'); },
+    chart(p) { select(p.sym); showTab('markets'); T('Loaded on the live chart: ' + p.l, 'acc'); }, // v17.7: the detached 3D chart mode is gone (tactile 2D depth layers draw on the live chart)
     shock(p) { select(p.sym); showTab('lab'); setTimeout(() => { try { UI5().shock.run(); } catch (e) { /* lab not mounted */ } }, 700); T('3D Shock Test queued for ' + p.l, 'acc'); },
     rr(p) { select(p.sym); showTab('markets'); setTimeout(() => { const V = typeof V17App !== 'undefined' ? V17App : null; if (!V) return; const C = typeof chart !== 'undefined' && chart ? chart.data : [], lastT = C.length ? C[C.length - 1].t : Date.now() / 1000; V.rulerOn = true; V.ruler = { a: { t: lastT, p: p.entry }, b: { t: lastT, p: p.stop }, done: true }; try { V.Layer.dirty(); } catch (e) { /* layer */ } }, 400); T(`R:R Ruler loaded for ${p.l}: entry ${f2(p.entry, p.entry < 1 ? 6 : 2)} · stop ${f2(p.stop, p.stop < 1 ? 6 : 2)}`, 'acc'); },
     bot(p) { const V = typeof V17App !== 'undefined' ? V17App : null; if (!V || !V.queue) { T('Bot Fleet not ready', 'amb'); return; } V.queue.push({ side: p.side === 'long' ? 'buy' : 'sell', sym: p.sym, usd: Math.max(10, Math.min(1000, p.safe || 1000)), px: p.px, ref: p.px, why: `Alpha Radar ${p.g} ${f2(p.score, 1)} · ${p.pro}/6 bots` }); showTab('fleet'); setTimeout(() => { try { V.Fleet.paintQ(); } catch (e) { /* fleet */ } }, 60); T('Bot rule queued behind the Co-Pilot firewall: approve it in Bot Fleet', 'amb'); },
@@ -102,7 +102,7 @@ const V176UI = (() => {
     const dos = el('div', 'x176-dos'); for (const [k, v] of p.dossier) { const b = el('div', 'x176-box'); b.append(el('span', null, k), el('b', null, v)); dos.appendChild(b); } c.appendChild(dos);
     const vt = el('div', 'x176-votes'); for (const [b, x, why] of p.votes) { const v = el('span', 'x176-vote ' + (x > 0.15 ? 'up' : x < -0.15 ? 'dn' : ''), (x > 0.15 ? '▲ ' : x < -0.15 ? '▼ ' : '• ') + b); v.title = why; vt.appendChild(v); } c.appendChild(vt);
     c.appendChild(el('p', 'x176-sum', p.summary + ' ' + p.applied + ' engines applied · ' + p.n + ' live samples.'));
-    const ac = el('div', 'x176-acts'); for (const [k, l] of [['chart', 'Chart + 3D'], ['shock', '3D Shock Test'], ['rr', 'Load R:R Ruler'], ['bot', 'Deploy Bot Rule']]) { const b = el('button', 'btn xs', l); b.type = 'button'; b.dataset.x176a = k; ac.appendChild(b); } c.appendChild(ac);
+    const ac = el('div', 'x176-acts'); for (const [k, l] of [['chart', 'Load on Chart'], ['shock', '3D Shock Test'], ['rr', 'Load R:R Ruler'], ['bot', 'Deploy Bot Rule']]) { const b = el('button', 'btn xs', l); b.type = 'button'; b.dataset.x176a = k; ac.appendChild(b); } c.appendChild(ac);
     return c;
   };
   const paint = () => {
