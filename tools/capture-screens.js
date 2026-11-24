@@ -98,6 +98,25 @@ const SHOTS = [];
     // v17.6 · 24 Main chart: unclipped EDGE quant strip + toolbar that wraps clear of the order ticket
     await ev(async () => { setMode('crypto', 'BTC-USD'); showTab('markets'); await new Promise((r) => setTimeout(r, 2500)); V175UI.runEdge('markets'); });
     await shot('24-main-chart-quant-strip.png', 3500);
+    // v17.8 · 31 full-range L2 liquidity ladder + Live Transactions tape (Lane 7) · 32 Tracker: On-Chain PnL leaderboard (Lane 5) · 33 Tracker: SEC Form 4 insiders (Lane 6)
+    await ev(async () => { V177UI.go('copilot'); if (!V166UI.open) V166UI.toggle(true); const b1 = [...document.querySelectorAll('#tfBtns button')].find((x) => x.textContent.trim() === '1m'); if (b1) b1.click(); await new Promise((r) => setTimeout(r, 2500)); });
+    await shot('31-l2-ladder-live-tape.png', 3000);
+    await ev(async () => { V178UI.tracker.win = '30d'; V178UI.tracker.toggle(true); await new Promise((r) => setTimeout(r, 2000)); V178UI.tracker.paint(); });
+    await shot('32-tracker-onchain-pnl-leaderboard.png', 900);
+    await ev(async () => { V178UI.tracker.toggle(false); setMode('stocks', 'AAPL'); await new Promise((r) => setTimeout(r, 2500)); V178UI.tracker.toggle(true); await new Promise((r) => setTimeout(r, 2000)); V178UI.tracker.paint(); });
+    await shot('33-tracker-sec-form4-insiders.png', 900); await ev(() => { V178UI.tracker.toggle(false); setMode('crypto', 'BTC-USD'); });
+    // v17.9 · 35 ◆ Picks drawer (Lanes 11–16: tiers, consensus, Monte Carlo, criteria badges) · 36 the 24/7 Optional Live Bot execution strip (Lanes 17–19)
+    await ev(async () => { V179UI.picks.toggle(true); for (let i = 0; i < 40 && !(V179UI.picks.data && V179UI.picks.data.rows && V179UI.picks.data.rows.length); i++) await new Promise((r) => setTimeout(r, 250)); V179UI.picks.paint(); });
+    await shot('35-picks-recommendation-engine.png', 900); await ev(() => V179UI.picks.toggle(false));
+    await ev(async () => { V177UI.go('livebot'); await new Promise((r) => setTimeout(r, 1500)); V179UI.strip.poll(); });
+    await shot('36-live-bot-execution-strip.png', 1200); await ev(() => V177UI.go('copilot'));
+    // v18.0 · 37 the 24/7 Alpha Recs tab (Lanes 11–16 feed, tiers, Why, consensus, Monte Carlo, levels, 1-click actions) · 38 fighter-jet 2D depth chart (plan lines, depth pill, magnifier)
+    await ev(async () => { V177UI.go('alpha'); for (let i = 0; i < 60 && !(V180UI.data && V180UI.data.rows && V180UI.data.rows.length); i++) await new Promise((r) => setTimeout(r, 250)); V180UI.Alpha.paint(); document.querySelector('#tab-alpha').scrollTop = 0; });
+    await shot('37-alpha-recs-feed.png', 1200);
+    await ev(async () => { const r = [...V180UI.rows.values()].find((x) => x.mkt === 'crypto') || [...V180UI.rows.values()][0]; await V180UI.act.chart(r); await new Promise((x) => setTimeout(x, 2500)); const b = document.querySelector('#x180DPB'); if (b && document.querySelector('#x180DPL').hidden) b.click(); chart.invalidate(); });
+    { const g = await ev(() => { const r = chart.cv.getBoundingClientRect(), L = chart.L; return { x: r.left + L.Lm + (L.W - L.Rm - L.Lm) * 0.62, y: r.top + L.y0 + L.mainH * 0.42 }; }); await p.mouse.move(g.x - 20, g.y); await p.mouse.move(g.x, g.y, { steps: 4 }); }
+    await sleep(600); await p.screenshot({ path: path.join(OUT, '38-depth-chart-plan-magnifier.png') }); SHOTS.push('38-depth-chart-plan-magnifier.png'); console.log('shot 38-depth-chart-plan-magnifier.png');
+    await p.mouse.move(2, 2); await ev(() => { const L = document.querySelector('#x180DPL'); if (L && !L.hidden) document.querySelector('#x180DPB').click(); });
     await ctx.close();
     // 14 mobile app (390 × 844 @2×)
     const m = await b.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true }); await block(m);
@@ -116,7 +135,15 @@ const SHOTS = [];
     await ph.evaluate(async () => { setMode('crypto', 'BTC-USD'); V177UI.go('botradar'); for (let i = 0; i < 80; i++) { const r = [0, 0, 0]; for (const b of V177UI.radar.pop.m.values()) r[b.ring]++; if (r.every((x) => x > 2)) break; await new Promise((x) => setTimeout(x, 250)); } });
     await sleep(3500); await phShot('29-mobile-bot-radar.png');
     await ph.evaluate(() => V177UI.go('brain')); await sleep(2500); await phShot('30-mobile-terminal-brain.png');
+    // v17.8 · 34 phone below-chart Live Transactions tape (every control on screen)
+    await ph.evaluate(async () => { V177UI.go('copilot'); if (!V166UI.open) V166UI.toggle(true); await new Promise((r) => setTimeout(r, 3000)); document.querySelector('#v166Tape').scrollIntoView({ block: 'end' }); });
+    await sleep(1200); await phShot('34-mobile-live-tape.png');
+    // v18.0 · 39 phone 24/7 Alpha Recs (5-tab rail) · 40 phone one-thumb action arc on Co-Pilot / Paper
+    await ph.evaluate(async () => { if (V166UI.open) V166UI.toggle(false); V177UI.go('alpha'); for (let i = 0; i < 60 && !(V180UI.data && V180UI.data.rows && V180UI.data.rows.length); i++) await new Promise((r) => setTimeout(r, 250)); V180UI.Alpha.paint(); document.querySelector('#tab-alpha').scrollTop = 0; });
+    await sleep(1500); await phShot('39-mobile-alpha-recs.png');
+    await ph.evaluate(async () => { V177UI.go('copilot'); await new Promise((r) => setTimeout(r, 1500)); const a = document.querySelector('.x17-arcm'); if (a) a.click(); });
+    await sleep(1000); await phShot('40-mobile-thumb-arc.png'); await ph.evaluate(() => { const a = document.querySelector('.x17-arcm'); if (a) a.click(); });
     await m.close();
   } finally { await b.close(); }
-  console.log(SHOTS.length + ' screenshots → docs/screenshots'); process.exit(SHOTS.length === 30 ? 0 : 1);
+  console.log(SHOTS.length + ' screenshots → docs/screenshots'); process.exit(SHOTS.length === 40 ? 0 : 1);
 })().catch((e) => { console.error('CRASH', e.message); process.exit(1); });

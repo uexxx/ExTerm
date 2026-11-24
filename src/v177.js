@@ -101,6 +101,7 @@ const V177UI = (() => {
       s.addEventListener('click', (e) => { const p = e.target.closest('[data-x177f]'); if (p) { this.filter = p.dataset.x177f; this.paintHud(); } });
       this.L = Loop('botradar', (now, dt) => this.draw(cv, now, dt));
     },
+    resort() { this._ls = this.pop.list().sort((a, b) => b.last - a.last); this._lsAt = Date.now(); this._lsPop = this.pop; },
     paintHud() {
       const h = this.hud = V177.hud(this.pop.list(), Date.now(), 60000, this.tapeUsd()), s = $1('#tab-botradar'); if (!s) return;
       const set = (k, v, cls) => { const d = $1(`[data-x177h="${k}"]`, s); if (!d) return; const b = d.firstChild; if (b.textContent !== v) b.textContent = v; d.classList.toggle('up', cls === 'up'); d.classList.toggle('dn', cls === 'dn'); };
@@ -116,32 +117,50 @@ const V177UI = (() => {
       this.sweep = (this.sweep + dt * 0.9) % (Math.PI * 2); g.fillStyle = GA(0.045); g.beginPath(); g.moveTo(cx, cy); g.arc(cx, cy, RR, this.sweep - 0.5, this.sweep); g.closePath(); g.fill();
       g.strokeStyle = GA(0.22); g.beginPath(); g.moveTo(cx, cy); g.lineTo(cx + Math.cos(this.sweep) * RR, cy + Math.sin(this.sweep) * RR); g.stroke();
       /* bots */
-      const pts = [], tags = []; let shown = 0;
-      if (!this._ls || t - this._lsAt > 200 || this._lsPop !== this.pop) { this._ls = this.pop.list().sort((a, b) => b.last - a.last); this._lsAt = t; this._lsPop = this.pop; } // re-sorted 5×/s, not per frame
+      const pts = this._pp || (this._pp = []), tags = [], dots = this._dots || (this._dots = [[], [], []]); dots[0].length = dots[1].length = dots[2].length = 0; let shown = 0, glowN = 0, np = 0;
+      const BK = this._bk || (this._bk = Array.from({ length: 6 }, () => ({ tr: [], tl: [], sh: [] }))), GL = this._gl || (this._gl = []), PU = this._pu || (this._pu = Array.from({ length: 6 }, () => [])); for (const k of BK) k.tr.length = k.tl.length = k.sh.length = 0; GL.length = 0; for (const p of PU) p.length = 0; // v17.8 frame budget: scanner dots batched into 3 fills, one trail stroke per bot, glow sprites for the 48 most recent hot bots
+      if (!this._ls || this._lsPop !== this.pop) this.resort(); // v17.8 frame budget: the 5×/s re-sort runs on a timer, outside the frame
       const list = this._ls;
       for (const b of list) {
-        if (shown >= 260) break; if (!V177.pass(b, this.filter)) continue; shown++;
+        if (shown >= 200) break; /* v17.8 frame budget: the 200 most recent bots are drawn (all still count in the HUD) */ if (!V177.pass(b, this.filter)) continue; shown++;
         const sl = b._sl || (b._sl = V177.slot(b)); if (b._ring !== b.ring) { b._ring = b.ring; b._sl = V177.slot(b); }
         b._ph = (b._ph || 0) + V177.angVel(b) * dt; const a = b._sl.a + b._ph, rr = RR * b._sl.r, x = cx + Math.cos(a) * rr, y = cy + Math.sin(a) * rr;
         const age = (t - b.last) / V177.TTL, fade = Math.max(0.15, 1 - age), col = V177.colorOf(b), C = col === 'dim' ? DIM : col;
-        if (b.ring === 2) { g.fillStyle = DIM; g.globalAlpha = 0.35 * fade; g.fillRect(x - d, y - d, 2 * d, 2 * d); g.globalAlpha = 1; }
+        if (b.ring === 2) dots[fade > 0.66 ? 0 : fade > 0.33 ? 1 : 2].push(x, y);
         else {
-          /* fading motion trail (velocity): two strokes per bot (faint tail half + brighter head half), no per-segment colour strings */
+          /* v17.8 frame budget: everything is bucketed by colour × fade (6 buckets) and drawn after the loop as one path per bucket,
+             so a frame sets each canvas style a handful of times instead of once per bot */
+          const K = BK[(col === R ? 1 : col === 'dim' ? 2 : 0) * 2 + (fade > 0.55 ? 0 : 1)];
           const tr = b._tr || (b._tr = []); if (!tr.length || Math.hypot(tr[tr.length - 1][0] - x, tr[tr.length - 1][1] - y) > 3 * d) { tr.push([x, y]); if (tr.length > 7) tr.shift(); }
-          if (tr.length > 1) { g.strokeStyle = C; g.lineWidth = (b.ring === 1 ? 1.2 : 1.6) * d; const h = tr.length >> 1; g.globalAlpha = 0.14 * fade; g.beginPath(); g.moveTo(tr[0][0], tr[0][1]); for (let i = 1; i <= h; i++) g.lineTo(tr[i][0], tr[i][1]); g.stroke(); g.globalAlpha = 0.4 * fade; g.beginPath(); g.moveTo(tr[h][0], tr[h][1]); for (let i = h + 1; i < tr.length; i++) g.lineTo(tr[i][0], tr[i][1]); g.lineTo(x, y); g.stroke(); g.globalAlpha = 1; }
-          if (b.ring === 1) { const v = V177.angVel(b), ta = a - Math.sign(v) * Math.PI / 2, L = (6 + Math.min(14, Math.abs(v) * 20)) * d; g.strokeStyle = C; g.fillStyle = C; g.globalAlpha = 0.7 * fade; g.lineWidth = 1.4 * d; g.beginPath(); g.moveTo(x, y); g.lineTo(x + Math.cos(ta) * L, y + Math.sin(ta) * L); g.stroke(); g.globalAlpha = 0.85 * fade; g.fillRect(x - 1.5 * d, y - 1.5 * d, 3 * d, 3 * d); g.globalAlpha = 1; }
+          if (tr.length > 1) { K.tr.push(tr.length + 1); for (const q of tr) K.tr.push(q[0], q[1]); K.tr.push(x, y); }
+          if (b.ring === 1) { const v = V177.angVel(b), ta = a - Math.sign(v) * Math.PI / 2, L = (6 + Math.min(14, Math.abs(v) * 20)) * d; K.tl.push(x, y, x + Math.cos(ta) * L, y + Math.sin(ta) * L); }
           else {
-            const sz = (b.kind === 'whale' ? 6 : 4.5) * d, hot = col === R ? S.r : S.g; g.globalCompositeOperation = 'lighter'; g.globalAlpha = 0.55 * fade; g.drawImage(hot, x - sz * 3, y - sz * 3, sz * 6, sz * 6); g.globalAlpha = 1; g.globalCompositeOperation = 'source-over';
-            g.fillStyle = C; g.strokeStyle = C; g.lineWidth = 1.5 * d; g.beginPath();
-            const sh = V177.shape(b.kind); if (sh === 'diamond') { g.moveTo(x, y - sz); g.lineTo(x + sz, y); g.lineTo(x, y + sz); g.lineTo(x - sz, y); g.closePath(); g.fill(); } else if (sh === 'tri') { g.moveTo(x, y - sz); g.lineTo(x + sz, y + sz * 0.8); g.lineTo(x - sz, y + sz * 0.8); g.closePath(); g.fill(); } else if (sh === 'square') { g.rect(x - sz * 0.8, y - sz * 0.8, sz * 1.6, sz * 1.6); g.fill(); } else { g.arc(x, y, sz, 0, Math.PI * 2); g.stroke(); g.beginPath(); g.arc(x, y, sz * 0.45, 0, Math.PI * 2); g.fill(); }
-            const pa = (t - b.pulse) / 900; if (pa >= 0 && pa < 1) { g.strokeStyle = col === R ? R : G; g.globalAlpha = 0.8 * (1 - pa); g.lineWidth = 1.2 * d; g.beginPath(); g.arc(x, y, sz + pa * 18 * d, 0, Math.PI * 2); g.stroke(); g.globalAlpha = 1; }
+            const sz = (b.kind === 'whale' ? 6 : 4.5) * d; if (glowN++ < 48) GL.push(col === R ? 1 : 0, x, y, sz, fade);
+            K.sh.push(V177.shape(b.kind), x, y, sz);
+            const pa = (t - b.pulse) / 900; if (pa >= 0 && pa < 1) PU[(col === R ? 3 : 0) + (pa < 0.33 ? 0 : pa < 0.66 ? 1 : 2)].push(x, y, sz + pa * 18 * d);
           }
         }
-        pts.push({ x: x / d, y: y / d, id: b.id });
-        const an = V177.anomaly(b, t); if (an && tags.length < 6) tags.push([x, y, an, col === R]);
+        let po = pts[np]; if (!po) po = pts[np] = { x: 0, y: 0, id: '' }; po.x = x / d; po.y = y / d; po.id = b.id; np++; // pooled: no per-frame allocation
+        const an = tags.length < 6 && b.ring !== 2 ? V177.anomaly(b, t) : null; if (an) tags.push([x, y, an, col === R]);
         if (b.id === this.lock || b.id === this.hover) this._sel = [b, x, y];
       }
-      this.pts = pts;
+      /* batched render: glows (one composite switch) → per bucket trails, middle-ring tails, inner shapes → pulse rings */
+      if (GL.length) { g.globalCompositeOperation = 'lighter'; for (let i = 0; i < GL.length; i += 5) { const s = GL[i + 3]; g.globalAlpha = 0.55 * GL[i + 4]; g.drawImage(GL[i] ? S.r : S.g, GL[i + 1] - s * 3, GL[i + 2] - s * 3, s * 6, s * 6); } g.globalCompositeOperation = 'source-over'; g.globalAlpha = 1; }
+      for (let bi = 0; bi < 6; bi++) {
+        const K = BK[bi], C = [G, R, DIM][bi >> 1], fa = bi & 1 ? 0.45 : 1; if (!K.tr.length && !K.tl.length && !K.sh.length) continue; g.strokeStyle = C; g.fillStyle = C;
+        if (K.tr.length) { g.globalAlpha = 0.3 * fa; g.lineWidth = 1.4 * d; g.beginPath(); for (let i = 0; i < K.tr.length;) { const n = K.tr[i++]; g.moveTo(K.tr[i], K.tr[i + 1]); for (let j = 1; j < n; j++) g.lineTo(K.tr[i + j * 2], K.tr[i + j * 2 + 1]); i += n * 2; } g.stroke(); }
+        if (K.tl.length) { g.globalAlpha = 0.7 * fa; g.lineWidth = 1.4 * d; g.beginPath(); for (let i = 0; i < K.tl.length; i += 4) { g.moveTo(K.tl[i], K.tl[i + 1]); g.lineTo(K.tl[i + 2], K.tl[i + 3]); } g.stroke(); g.globalAlpha = 0.85 * fa; g.beginPath(); for (let i = 0; i < K.tl.length; i += 4) g.rect(K.tl[i] - 1.5 * d, K.tl[i + 1] - 1.5 * d, 3 * d, 3 * d); g.fill(); }
+        if (K.sh.length) {
+          g.globalAlpha = fa; g.beginPath(); let rings = 0;
+          for (let i = 0; i < K.sh.length; i += 4) { const sh = K.sh[i], x = K.sh[i + 1], y = K.sh[i + 2], sz = K.sh[i + 3]; if (sh === 'diamond') { g.moveTo(x, y - sz); g.lineTo(x + sz, y); g.lineTo(x, y + sz); g.lineTo(x - sz, y); g.closePath(); } else if (sh === 'tri') { g.moveTo(x, y - sz); g.lineTo(x + sz, y + sz * 0.8); g.lineTo(x - sz, y + sz * 0.8); g.closePath(); } else if (sh === 'square') g.rect(x - sz * 0.8, y - sz * 0.8, sz * 1.6, sz * 1.6); else { g.moveTo(x + sz * 0.45, y); g.arc(x, y, sz * 0.45, 0, Math.PI * 2); rings++; } }
+          g.fill();
+          if (rings) { g.lineWidth = 1.5 * d; g.beginPath(); for (let i = 0; i < K.sh.length; i += 4) if (K.sh[i] !== 'diamond' && K.sh[i] !== 'tri' && K.sh[i] !== 'square') { g.moveTo(K.sh[i + 1] + K.sh[i + 3], K.sh[i + 2]); g.arc(K.sh[i + 1], K.sh[i + 2], K.sh[i + 3], 0, Math.PI * 2); } g.stroke(); }
+        }
+      }
+      g.lineWidth = 1.2 * d; for (let pi = 0; pi < 6; pi++) { const P = PU[pi]; if (!P.length) continue; g.strokeStyle = pi < 3 ? G : R; g.globalAlpha = [0.65, 0.4, 0.15][pi % 3]; g.beginPath(); for (let i = 0; i < P.length; i += 3) { g.moveTo(P[i] + P[i + 2], P[i + 1]); g.arc(P[i], P[i + 1], P[i + 2], 0, Math.PI * 2); } g.stroke(); }
+      g.globalAlpha = 1;
+      g.fillStyle = DIM; for (let k = 0; k < 3; k++) { const D2 = dots[k]; if (!D2.length) continue; g.globalAlpha = 0.35 * [0.85, 0.5, 0.2][k]; g.beginPath(); for (let i = 0; i < D2.length; i += 2) g.rect(D2[i] - d, D2[i + 1] - d, 2 * d, 2 * d); g.fill(); } g.globalAlpha = 1;
+      pts.length = np; this.pts = pts;
       g.font = '600 ' + Math.round(10 * d) + 'px ' + MONO; g.textBaseline = 'middle';
       for (const [x, y, s, red] of tags) { const w = g.measureText(s).width + 10 * d, X = Math.min(W - w - 4, x + 9 * d), Y = y - 14 * d; g.fillStyle = 'rgba(5,6,8,0.82)'; g.fillRect(X, Y - 8 * d, w, 16 * d); g.strokeStyle = red ? R : G; g.lineWidth = d; g.strokeRect(X + 0.5, Y - 8 * d + 0.5, w - 1, 16 * d - 1); g.fillStyle = red ? R : G; g.fillText(s, X + 5 * d, Y); }
       /* target lock / hover telemetry */
@@ -337,7 +356,7 @@ const V177UI = (() => {
     try { const B = window.__EXTERM_BUS; if (B && B.on) B.on((e) => Brain.on(e)); } catch (e) { /* bus not ready */ }
     try { if (typeof Feed !== 'undefined' && Feed.tickL && !Feed._x177) { Feed._x177 = true; Feed.tickL.push((s, p) => { try { Sim.onTick(s, p); } catch (e) { /* demo only */ } }); } } catch (e) { /* feed not ready */ }
     document.addEventListener('visibilitychange', () => { if (document.hidden) { if (Radar.L) Radar.L.stop(); if (Brain.L) Brain.L.stop(); } else { if (Radar.L) Radar.L.start(); if (Brain.L) Brain.L.start(); } });
-    setInterval(() => { hookTape(); tick(); }, 1000); setInterval(() => { if (tab() === 'botradar' && !document.hidden) Radar.paintHud(); }, 250);
+    setInterval(() => { hookTape(); tick(); }, 1000); setInterval(() => { if (tab() === 'botradar' && !document.hidden) Radar.paintHud(); }, 250); setInterval(() => { if (tab() === 'botradar' && !document.hidden) Radar.resort(); }, 200);
   };
   U.tick = tick; U.Rail = Rail;
   return U;

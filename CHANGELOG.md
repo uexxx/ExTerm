@@ -2,6 +2,221 @@
 
 ExTerm holds no funds and no keys in every version. Up to v15.7 it was paper only; from v16.0 it can send HMAC-signed signals to a bot you run on your own machine, only after four explicit gates, and it starts in PAPER. v16.1 adds eight fail-safe engines on that path; v16.3 closes the loop with ACK + fill sync and a live cockpit; v16.4 adds DEX discovery, a local Copilot and a realistic backtester; v16.5 lets any AI or bot advise through one deterministic firewall; v16.6 adds a live transactions tape for every market.
 
+## v18.0 — Dedicated 24/7 Alpha Recs Tab, Deep "Why" Intel, 1-Click Copy / Execute & Fighter-Jet 1s–1M 2D Depth Chart — 24 Nov 2026
+
+v18.0 also ships v17.9 and v17.8 below; neither was released on its own.
+
+- **Rail:** 5 tabs on the floating blur(12px) rail. **24/7 Alpha Recs** is new and comes first. The 4 v17.7 workspaces are
+  unchanged; Bot Radar and Terminal Brain still have no HTML panels below their canvases.
+- **24/7 Alpha Recs** (`src/v180.js`, maths in `src/v180core.js`), a border-free feed of the Lane 16 recommendations
+  (< 10 ms warm):
+  - Asset-class filter pills (All · Stocks / 0DTE · Crypto / Perps · On-Chain DEX) and tier counts (S-TIER · A+ · A · B+ ·
+    WATCHLIST). A+ = Lane 16 grade A with score ≥ 86, peer-reviewed by the 6 bots, and no Monte Carlo veto.
+  - Passed / Pending / Failed criteria on every card; partial matches stay in the feed. Malformed rows are dropped.
+  - "Why": GEX / Zero-Gamma flip, walls and 0DTE max pain; Form 4 insider clusters from Lane 6; 30-day top-PnL wallets
+    trading the coin from Lane 5; Stoikov P_micro skew, funding and basis; Rug Shield v2 (impact, top-3 share, entropy, LP lock)
+    and the buyer half-life proxy. Missing data is shown as Pending, never as a pass.
+  - 6-bot votes, Lane 15 Monte Carlo (P(TP), EV, CVaR₅, slippage, verdict) and Lane 16 MTF alignment + journal win rate.
+  - Entry / Stop (1 ATR) / TP1 (1 ATR) / TP2 (2 ATR) / R:R / Safe Size, the same geometry the Lane 15 stress test uses.
+  - Copy Setup (readable text + `exterm-alpha/1` JSON). Open on Chart loads the market and pre-draws the plan; a plan more
+    than 3 risk units from the live price is rescaled onto it. Paper Mirror keeps a local paper ledger with L2
+    queue-position fills, TP1 half-exit and a break-even runner. Send to Live Bot runs the Lane 18 firewall first; blocked or
+    unreachable means nothing is sent. ALLOW goes to the Co-Pilot approval queue, or through the existing fleet path
+    (simulated in PAPER, HMAC-signed to your own bot when armed LIVE). Every allowed handoff is written to the Lane 19 ledger.
+- **Depth pill on the 1s–1M chart:** 7 toggleable passes drawn by a chart overlay on every paint, so they are always locked
+  to the live candles: volume-delta cores (close-location split), L2 shelves (from the order book the terminal already
+  polls, no extra requests), absorption / exhaustion glows, AVWAP ±1σ / ±2σ with a parallax shadow, GEX strike lines, a 1σ
+  expected-move cone from realised volatility, and 5m / 15m ghost candles behind 1s–15s. The overlay records its own cost;
+  the e2e checks p95 ≤ 1.2 ms over 120 redraws.
+- **Cockpit:** rAF crosshair magnifier (price, bid / ask imbalance, absorption rate, P_micro, ms countdown to the candle
+  close); drag-handle Entry / Stop / TP1 / TP2 lines that can never invert the bracket; 3-point pattern alerts (V reversal,
+  lower high, higher low, legs); Ctrl+V outside text boxes loads a Solana / EVM contract (also from a DEX URL); Shift+P smart
+  pyramid (only into a winner, +1 ATR per add, half size each time, stop to the new break-even, max 3 adds); Shift+F atomic
+  flip (spot long → paper-perps short, or a perps position reversed, in one synchronous step); v18 commands at the top of
+  Ctrl+K. The palette is now laid out once and shown with a visibility flip, and it is pre-rendered at idle, so the first
+  open is warm (< 10 ms).
+- **Mobile (< 820 px / APK):** the thumb arc gains Flip · Pyramid · ⌘K · Alpha on a curved column of ≥ 44 px targets; Alpha
+  Recs cards stack with ≥ 40 px buttons.
+- **Build:** `python build.py --harden` scans the hardened bundle, `serve.py`, `exterm_ops.py` and `grok_exterm_bridge.py`
+  for 7 credential patterns (private keys, AWS, GitHub, OpenAI / Anthropic, Slack, Google, Stripe live) and deletes the
+  hardened build on a hit.
+- **Tests:** `test/v180.test.js` (35: core maths, live launcher feed < 10 ms, firewall gate, static palette / CSP / license /
+  version checks) and 20 browser checks in `test/v180_flows.js`, run inside `test/v17pro_e2e.js` at 1440 × 900 and 390 × 844.
+  The v17.5–v17.9 suites now accept version 18.0, and their rail checks still assert the 4 v17.7 workspaces.
+
+## v17.9 — Unified 19-Lane Institutional Mesh: 1s–1M OHLCV Engines, 24/7 Recommendation Engine, Stealth Execution & Fill Accuracy — 23 Nov 2026
+
+v17.9 also ships everything listed under v17.8 below (Lanes 5–8, Social & Trackers, the L2 ladder, the predator Radar, the
+self-healing Brain and the Live Transactions tape repair). v17.8 was never released on its own.
+
+- **The lane framework** (`serve.py`):
+  - Each lane process is now event-driven: it blocks on its queue instead of polling, so a request is answered the moment it
+    arrives. It also gains a request / response path (`FastLane.call`) and snapshot forwarding between lanes.
+  - **15 fast lanes** run as separate OS processes: 5–10 with 16 worker threads each, 11–19 with 32. `GET /api/fast` reports
+    every lane's pid, warm count, snapshot p50 / p99 and call p50 / p99.
+  - Memory: about 15 extra Python processes. `EXTERM_FASTLANES=thread` runs them as threads instead, and `--no-fastlanes`
+    turns them off.
+- **Lanes 9 · 10 — 1s–1M OHLCV engines.**
+  - Lane 9 serves crypto + DEX from Coinbase candles + trades and GeckoTerminal OHLCV + swaps. Lane 10 serves US equities from
+    Yahoo.
+  - Exact OHLCV aggregation to 4h / 1w (Monday 00:00 UTC) / 1M (calendar month), with the forming bar stitched to the last
+    tick. Seconds bars for equities stay with the launcher's tick feed (Lane 10 answers `unsupported`).
+  - Every chart timeframe pill asks the lane first (`TFX.candles` wrapper, 250 ms budget). The lane's bars are used only when
+    they are real, warm and deep enough; otherwise the existing loader answers unchanged, so the offline demo is untouched.
+  - Warm answers take about 1 ms on the server, under 20 ms from the page.
+- **Lanes 11–16 — the 24/7 recommendation engine** (scanners → consensus → stress → confluence, chained by snapshot
+  forwarding). Warm answers take under 10 ms.
+  - **11 · equities & 0DTE gamma:** a fixed 20-ticker liquid universe (a "full universe" scan is not possible from free
+    sources).
+    - Zero-gamma flip, call / put walls and max pain from Black-Scholes gamma × open interest, when Yahoo's options chain answers.
+    - ORB + session-anchored VWAP reclaims and Easley-O'Hara PIN (tick-rule estimate).
+    - RMT alpha residuals: the market eigen-mode is removed by power iteration and checked against the Marchenko-Pastur edge.
+  - **12 · crypto perps squeeze:** from Hyperliquid `metaAndAssetCtxs` + `l2Book` and the Coinbase ticker: 8h funding
+    extremes, spot-perp basis (bps), estimated liquidation-cluster sweeps, Stoikov micro-price skew, and cross-exchange impulses.
+  - **13 · on-chain DEX / Rug Shield v2:** trending pools on Solana / Base / Ethereum / Arbitrum, plus swaps and RugCheck.
+    - Checks: ≤ 2 % AMM impact for a $1K order, top-3 buyer / Slot 0–2 bundle share ≤ 15 %, Sybil entropy, buyer-retention
+      half-life, freeze / mint authority, LP lock, and net buy pressure.
+    - "30-day smart-money inflow" uses net buy pressure as a labelled proxy.
+    - CLMM tick cliffs are not in the free APIs, so they show as Pending.
+  - **14 · consensus:** transfer entropy between the three markets, BOCPD regime state, and a 6-bot peer review (HUNTER-α,
+    MUTATOR-EVO, HEDGER-ARB, RISK-GUARD, SNIPER-EXEC, SCALPER-EXIT). A setup counts as peer-reviewed at ≥ 4/6 with RISK-GUARD
+    positive.
+  - **15 · adversarial Monte Carlo:** 1,000 unit-variance Student-t(3) paths per candidate with Hawkes-clustered jumps and
+    gap-through-stop losses (SL 1 ATR, TP 2 ATR).
+    - A small signal-edge prior sets a drift from the scanner score; it is documented in code.
+    - Liquidity stress: AMM impact or depth slippage.
+    - A candidate is vetoed or downgraded for > 2 % slippage, negative expectancy, or 5 % CVaR below −2.5R.
+  - **16 · confluence:** 1m / 5m / 15m / 1h / 1d trend alignment (forwarded from Lanes 9 / 10) plus a lexical journal
+    correlator (similarity-weighted win rate of your closest past setups).
+    - Six criteria, each with a Passed / Pending / Failed badge; tiers S-TIER (all six passed, 92–100), A, B+ and Watchlist.
+    - The list is never empty: partial matches rank as B+ / Watchlist with their Pending badges.
+  - The **◆ Picks** drawer in Co-Pilot / Paper shows the picks with 1-click Load.
+- **Lanes 17–19 — execution engines.** Requests go through the lane process, measured at well under 5 ms round trip. ExTerm
+  still holds no keys and signs nothing.
+  - **17 · smart order router + shadow-bracket slicer:**
+    - Venues ranked by all-in cost: Coinbase / Kraken, Jupiter / Raydium / Orca, or Alpaca / IBKR.
+    - POV-paced IOC micro-slices and RAM-only shadow brackets (invisible stops / take-profits that fire as IOC exits only when a
+      tick crosses them).
+    - Solana priority fee from live `getRecentPrioritizationFees` percentiles, and an optional sizing split across up to 3 of
+      your own wallets.
+    - It produces plans only; live orders still go solely to your own bot through the existing armed path.
+  - **18 · pre-trade risk firewall:**
+    - Honeypot / freeze-authority veto from Lane 13 forensics, a ≤ 2 % slippage hard cap, ATR + ¼-Kelly sizing, a portfolio VaR
+      heat cap (95 %, ≤ 6 % of equity), a 3-loss cooldown, the > 5.0 s dead-feed lock, and a 30-min pre-FOMC / CPI pause.
+    - FOMC 2026 dates are built in. Add CPI dates in `<data>/macro.json`, because the BLS calendar moves.
+    - **PIN-protected PAPER → LIVE arming:** PBKDF2-SHA256 with 200,000 iterations, salt + hash only, on this computer. The routes
+      are loopback-only, and 5 wrong PINs lock it for 300 s.
+  - **19 · fill accuracy & audit:**
+    - Fill slippage in bps, and a < 500 ms toxic-flow scratch (VPIN > 0.75 against a fresh position).
+    - An emergency IOC exit when > 25 % of pool liquidity drains in one block.
+    - A 3-stage profit-lock ratchet (break-even at +1R → lock +1.5R at +2.5R → 0.6 × ATR trail; stops only tighten).
+    - A **SHA-256 hash-chained audit ledger** (`<data>/audit-ledger.jsonl`, O(1) appends) with verification; editing any line
+      breaks the chain.
+- **Order path:**
+  - **PAPER ticket orders** stay synchronous, as before. Each one then gets a Lane 18 report (failures are shown, not blocked),
+    a ledger entry, a route plan, and a shadow bracket when SL / TP is set.
+  - **LIVE ticket orders** are sent only after Lane 18 answers ALLOW.
+- **24/7 Optional Live Bot strip:**
+  - Seven tabular-nums cells: mode · route · firewall · fill bps · ledger · brackets · feed.
+  - A PIN-gated PAPER | LIVE switch. The 5-step Arm wizard stays locked until LIVE is unlocked with the PIN.
+  - **FLATTEN ALL**, also on Shift+Esc. The Android APK runs the same page.
+- **`grok_exterm_bridge.py`**: a standalone, token-authenticated bridge on 127.0.0.1.
+  - It reads `XAI_API_KEY` from the environment only, never logs it, and uses model `grok-4` (`XAI_MODEL` overrides it).
+  - `POST /signal` asks Grok for one JSON trade proposal, then runs it through Lane 18.
+  - It answers in PAPER mode only, places no orders, refuses browser Origins, and supports `--mock` for offline use.
+- **Brain:** the Terminal Brain shows every running fast lane as a node.
+- **Tests:**
+  - `test/v179.test.js` (40) with `test/v179_lanes.py`, covering the lane maths, a live offline launcher with all latency
+    budgets, PIN gate, ledger tamper detection, and the Grok bridge end to end.
+  - 8 v17.9 checks in `v17pro_e2e` (desktop + phone).
+  - The v17.5–v17.8 suites accept the v17.9 build order and version.
+
+## v17.8 — Dedicated Server Lanes 5–8, Social & Trackers, Full-Range L2 Ladder, Predator Radar, Self-Healing Brain & Live Tape Repair — 23 Nov 2026
+
+- **Lanes 5–8** (`serve.py`, `FastLane`): four new server lanes. Each runs in its own OS process (multiprocessing *spawn*, a
+  top-level entry so it works on Windows too) with a 16-thread fetch pool.
+  - Each lane pre-warms 24/7 and pushes finished snapshots to the server over a queue. Requests read the RAM snapshot through a
+    50 ms LRU of encoded bytes, so they never wait on an upstream.
+  - Measured warm handler time is 0.06–2 ms. From the browser, the budget is < 30 ms for Lanes 5–6 and < 25 ms for Lanes 7–8,
+    asserted by `test/v178.test.js` and `v17pro_e2e`.
+  - `GET /api/fast` reports each lane's process, pid, workers, warm count, p50 / p99 and LRU hits.
+  - `EXTERM_FASTLANES=thread` runs the same loops as threads, and `--no-fastlanes` turns the lanes off.
+  - Upstream HTTP uses the launcher's pooled keep-alive sockets. That is HTTP/1.1: the Python standard library has no HTTP/2 client.
+  - **Lane 5 · Crypto / Perps / On-Chain PnL** (`/api/lane5/board?win=24h|7d|30d`, `/whales`, `/perps`): 60 Hyperliquid wallets
+    from the public leaderboard. Each wallet's fills give the realized PnL and win rate inside the window, its top 3 tokens by
+    notional, and the **Smart Score** (win rate % × ln(closed trades), 0 below 2 trades).
+    - Board PnL is shown until a wallet's fills arrive.
+    - Live polling stays under Hyperliquid's weight limit: 24 wallets on the first pass, then 8 per 15 s.
+    - Opening buys ≥ $50K in the last 24 h become whale-buy notifications.
+  - **Lane 6 · Stocks / SEC Form 4 / 13F** (`/api/lane6/insiders`, `/clusters`, `/f13`, `/alerts`):
+    - Reads EDGAR's current Form 4 feed every 60 s, at 4 requests at a time (SEC fair access). The XML parser refuses DOCTYPE /
+      ENTITY.
+    - Insider clusters are open-market buys in 30 days per ticker, with CEO / CFO / Director flags.
+    - The 13F-HR filer list refreshes every 10 min. Insider buys ≥ $100K become notifications.
+    - Congressional trades have no free, key-less source, so ExTerm states that rather than inventing them.
+  - **Lane 7 · Crypto + DEX transactions tape** (`/api/lane7/tape?sym=`): Coinbase trades (taker side) and GeckoTerminal swaps
+    (wallet = `tx_from_address`, 4 s minimum gap). Rows are tagged WHALE / MEV (one wallet buys and sells within 2 s) and get
+    wallet badges (WHALE ≥ $100K, BOT ≥ 5 prints / min, NEW).
+  - **Lane 8 · US stocks tape** (`/api/lane8/tape?sym=`):
+    - Yahoo 1-minute time-and-sales (tagged `1M AGG`) and block prints (≥ 3× the session average and ≥ $1M).
+    - An options unusual-volume list ("SWEEP?" when volume > open interest and premium ≥ $250K, when Yahoo's options endpoint
+      answers).
+    - A modelled L2 book (`model: true`): there is no free US-equities depth feed.
+  - When an upstream rate-limits or the launcher is offline, Lanes 7–8 serve stand-in rows tagged `synth` / venue **SYNTH**. A
+    table is never empty, and synthetic rows can never pass for real prints. The offline launcher serves seeded samples, flagged
+    `sample`.
+- **Social & Trackers** in Co-Pilot / Paper: the **◎ Tracker** drawer (`src/v178.js`) follows the symbol's market.
+  - **Stocks:** Insider Buys / Sells, Clusters, 13F / Congress and Buy Alerts.
+  - **Crypto / On-Chain:** the On-Chain PnL board with 24h | 7d | 30d pills and full copyable addresses, Perps 30d, and Whale Buys.
+  - Every row has 1-click Load ticker or **Pin to 24/7 Bot Radar** (pinned symbols get a Gold bracket on the radar).
+  - Whale and insider buys are polled every 10 s and raised as escaped toasts.
+  - The board request is hedged: if Lane 5 stalls for 50 ms, the legacy `/api/hl/leaderboard` answers instead.
+- **Full-range L2 liquidity ladder**: a chart overlay that bins the resting book into 64 shelves across the *entire* visible price
+  axis, bids below price and asks above, and re-sizes and bevel-lights them on every tick.
+  - It uses the venue's live L2 when the DOM ladder streams one (`V17App.dom`), extended by a labelled depth model across the rest
+    of the axis ("L2 LIVE + MODEL" / "L2 MODEL").
+  - Spoof detection: a ≥ 3× wall that vanishes with no print near it triggers a Crimson flash on the radar.
+- **Zero-copy tick pipeline** (`src/v178core.js`):
+  - A typed `Float64Array` tick ring (on a `SharedArrayBuffer` when the page is cross-origin isolated) and `DataView` binary frames
+    of 20 bytes per tick.
+  - A 240 Hz / 4.16 ms coalescer, and O(1) EMA / ATR / VWAP.
+  - `desynchronized` 2D contexts for both full-bleed canvases, cached font metrics, and `OffscreenCanvas` glow sprites.
+- **24/7 Bot Radar predator HUD**:
+  - A spring-inertia Gold magnetic crosshair, and a 3-arc orbital lock with **`[` / `]`** cycling across the top 5 Inner Ring
+    executors (by volume). **S** toggles an optional sonar ping.
+  - A volume-clock sweep that follows tick velocity, and a Crimson center halo when VPIN > 0.75. VPIN buckets are 1/20 of the
+    last minute's tape.
+  - 5–30 s velocity cones, 60 s ghost trails (2 Hz, fixed 120-point ring), iceberg reload rings, spoof flashes, Slot 0–2 cabal
+    tethers, MEV sandwich double-rings, and Gold > $250K cross-chain bridge filaments.
+  - A **Mirror Flow / Fade Trap** pill on the locked bot, and a 10-item anomaly history while hovering Net Bot Pressure.
+- **Self-healing Terminal Brain**:
+  - BOCPD (Normal-Gamma, truncated run length) + 2-state HMM drive the harmonic cadence (0.6–2.2×).
+  - Gold shockwave + particle burst on zero-gamma flips, and transfer-entropy lead-lag filaments between the quote and print
+    streams.
+  - Lanes 5–8 appear as live nodes. Clicking a node solos its ring (feed · proc · bot · lane).
+  - **Space + drag** scrubs a 60 s / 10 Hz flight recorder (48 nodes, 1 byte each), and **E** exports it as a < 50 KB binary.
+  - A pre-allocated `Float32Array` particle pool.
+  - **> 5.0 s dead-feed Crimson execution lock:** no tick on any symbol blocks `submitOrder` and shows a banner until ticks resume.
+- **Below-chart Live Transactions tape, repaired**:
+  - **Phones:** the control strip was `nowrap; overflow:hidden`, so Pause / Live, Copy and Hide sat off screen and could not be
+    tapped. The strip and filter chips now wrap, and the drawer grows to fit.
+  - **Stocks:** every 1-minute aggregate used to be flagged as a whale / block. Aggregates no longer get size flags (fixed in
+    `v166core.js`); real blocks are flagged explicitly by Lane 8.
+  - **Feeding:** Lane 8 feeds the stock tape, and Lane 7 backfills crypto / DEX whenever the tape's own stream has starved for 3 s.
+    Rows are de-duplicated against the ring.
+  - **Inspection:** clicking a row's Venue / Maker opens a 1-click inspector (prints, bought, sold, net, Track, Copy, Pin).
+  - Gold buys / Crimson sells, tabular numerals.
+- **Frame budget**: the v17.8 Radar / Brain passes measure ≈ 0.2–0.3 ms p95.
+  - To stay inside the 1.2 ms budget, the v17.7 radar loop now batches scanner dots into 3 fills, draws one trail stroke per bot,
+    limits additive glow to the 48 most recent hot bots, draws the 200 most recent bots (all still count in the HUD) and reuses its
+    hit-test points with no per-frame allocation.
+  - At the full 300+ bot population on a busy machine, the whole radar frame still measures ≈ 1.2–1.5 ms p95 (median ≈ 0.7 ms).
+- **Tests**: `test/v178.test.js` (35). It covers the Python lane maths (leaderboard windows, whale buys, Form 4 parser + XXE refusal,
+  clusters, tape tags, synth tagging), a live offline launcher (4 isolated processes, 16 workers, warm latency budgets, token
+  required), the core maths, the real renderers against a mocked 2D context with the 1.2 ms budget, and static checks. It also adds
+  12 v17.8 checks to `v17pro_e2e` (desktop 1440 × 900 + phone 390 × 844). The v17.5–v17.7 suites accept the v17.8 build order and
+  version.
+
 ## v17.7 — Sovereign 4-Tab Declutter, Full-Bleed Dual-Canvas & Tactile 2D Depth Chart — 23 Nov 2026
 
 - **Strictly 4 top-level tabs** on one floating translucent rail (`src/v177.js`): **24/7 Bot Radar**, **Terminal Brain**, **24/7 Optional Live Bot**, **Co-Pilot / Paper**.

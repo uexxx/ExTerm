@@ -32,7 +32,7 @@ const V166 = (() => {
     if (!(price > 0) || !Number.isFinite(ts)) return -1;
     const u = usd > 0 ? usd : price * (size > 0 ? size : 0), q = size > 0 ? size : u / price, sd = side === 'sell' ? B.SELL : B.BUY;
     let m = sd | (extra | 0);
-    if (u >= V.WHALE) m |= B.WHALE; if (u >= V.BLOCK) m |= B.BLOCK;
+    if (!(m & B.AGG)) { if (u >= V.WHALE) m |= B.WHALE; if (u >= V.BLOCK) m |= B.BLOCK; } // v17.8: a 1-minute aggregate is not one whale print (BLOCK can still be passed explicitly in `extra`)
     const cnt = r.size; if (cnt >= 20 && u > V.UNUSUAL_X * (r.sum / cnt)) m |= B.UNUSUAL;
     // sweep: same aggressive side, ≤ 1 s apart, price walking with the aggressor (buys lift, sells hit) for ≥ 3 prints
     const walk = sd === B.BUY ? price >= r.lastPx : price <= r.lastPx;

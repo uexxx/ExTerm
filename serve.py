@@ -314,7 +314,7 @@ class NoRedirect(urllib.request.HTTPRedirectHandler):
 NOTIFY_OPENER = urllib.request.build_opener(NoRedirect(), urllib.request.HTTPSHandler(context=CTX))
 LOCAL_OPENER = urllib.request.build_opener(NoRedirect(), urllib.request.HTTPHandler())
 
-VERSION = "17.7"
+VERSION = "18.0"
 STARTED = time.time()
 CACHE_STATS = {"hits": 0, "total": 0}  # /api/feed symbols answered from RAM vs asked for (Grok telemetry strip)
 OLD_DATA_DIR = pathlib.Path.home() / (".nova" + "term")  # pre-v15 data folder, moved to ~/.exterm on first start
@@ -2020,6 +2020,1140 @@ class Lanes:
 LANES = None
 
 
+# ── v17.8: 4 dedicated fast server lanes ───────────────────────────────────────────────────────────────────────────────
+# Lane 5 Crypto / Perps / On-Chain PnL · Lane 6 Stocks / SEC Form 4 / 13F · Lane 7 Crypto + DEX live transactions tape ·
+# Lane 8 US stocks tape / block prints / options flow / L2. Each lane is its own OS process (multiprocessing, spawn-safe
+# top-level entry) with a 16-thread fetch pool; it pre-warms 24/7 and pushes finished snapshots to this server over a
+# queue. Requests never wait on upstream: they read the RAM snapshot through a 50 ms LRU of encoded bytes (warm answers
+# are sub-millisecond). Every row says where it came from: real upstream rows, `sample` (offline launcher) or `synth`
+# (a clearly-tagged stand-in while the upstream is rate-limited, so a table is never empty). EXTERM_FASTLANES=thread runs the
+# same loops as threads (frozen apps / tests); --no-fastlanes turns them off. HTTP is stdlib urllib with the launcher's pooled
+# keep-alive sockets (HTTP/1.1; the standard library has no HTTP/2 client).
+import math as _fm, random as _fr
+FAST_WORKERS, FAST_LRU_TTL = 16, 0.05
+LB_WIN = {"24h": 86400, "7d": 7 * 86400, "30d": 30 * 86400}
+LB_BOARD_KEY = {"24h": "day", "7d": "week", "30d": "month"}
+WHALE_BUY_USD, INSIDER_ALERT_USD = 50000.0, 100000.0
+TAPE_SYM = re.compile(r"^(oc:[a-z0-9_-]{2,30}:[A-Za-z0-9_.-]{3,90}|[A-Z0-9]{2,12}-(USD|USDT|USDC|EUR)|[A-Z^][A-Z0-9.^=-]{0,11})$")
+
+def smart_score(wr, n):
+    """Smart Score = win rate (%) × ln(sample size); 0 below 2 closed trades (same formula as V178.smart in the page)"""
+    return round(wr * 100 * _fm.log(n), 2) if wr is not None and n >= 2 else 0.0
+
+def lb_rows(rows, fills, win, now_ms):
+    """24h / 7d / 30d On-Chain PnL leaderboard rows: realized PnL, win rate, Smart Score, top tokens (pure, testable)"""
+    cut = now_ms - LB_WIN[win] * 1000; out = []
+    for r in rows:
+        f = fills.get(r["addr"])
+        if f is not None:
+            win_f = [x for x in f if x.get("time", 0) >= cut]; closes = [x for x in win_f if x.get("closedPnl")]
+            n = len(closes); wins = sum(1 for x in closes if x["closedPnl"] > 0); wr = (wins / n) if n else None
+            realized = sum(x["closedPnl"] for x in closes) if n else r["pnl"][LB_BOARD_KEY[win]]
+            tok = {}
+            for x in win_f: tok[x["coin"]] = tok.get(x["coin"], 0.0) + abs(x.get("px", 0) * x.get("sz", 0))
+            top = [k for k, _ in sorted(tok.items(), key=lambda kv: -kv[1])[:3]]; src = "fills"
+        else:
+            n, wr, realized, top, src = 0, None, r["pnl"][LB_BOARD_KEY[win]], [], "board"
+        out.append({"addr": r["addr"], "name": r.get("name", ""), "acct": r["acct"], "pnl": round(realized, 2), "winRate": None if wr is None else round(wr * 100, 1),
+                    "n": n, "smart": smart_score(wr, n), "tokens": top, "alpha": r.get("alpha", 0), "roi": r["roi"][LB_BOARD_KEY[win]], "src": src})
+    return sorted(out, key=lambda x: -x["pnl"])
+
+def whale_buys(fills, now_ms, min_usd=WHALE_BUY_USD):
+    """opening buys ≥ min_usd in the last 24 h across the tracked wallets → newest-first notifications"""
+    out = []
+    for addr, f in fills.items():
+        for x in f or []:
+            d = str(x.get("dir", "")); usd = abs(x.get("px", 0) * x.get("sz", 0))
+            if (d.startswith("Open Long") or d == "Buy") and usd >= min_usd and now_ms - x.get("time", 0) <= 86400000:
+                out.append({"id": "%s:%d:%s" % (addr, x["time"], x["coin"]), "addr": addr, "coin": x["coin"], "usd": round(usd, 2), "px": x.get("px", 0), "t": x["time"]})
+    return sorted(out, key=lambda a: -a["t"])[:100]
+
+def _sec_hdr():
+    return {"User-Agent": "ExTerm personal research tool " + (os.environ.get("EXTERM_SEC_CONTACT") or "exterm-user@example.com"), "Accept-Encoding": "identity", "Accept": "application/json, text/xml, */*"}
+
+def _xml_safe(b):
+    if len(b) > 4_000_000 or b"<!ENTITY" in b or b"<!DOCTYPE" in b[:2000]: raise ValueError("unsafe or oversized XML")
+    import xml.etree.ElementTree as ET
+    return ET.fromstring(b)
+
+FORM4_CODES = {"P": "Buy", "S": "Sale", "A": "Award", "M": "Option exercise", "X": "Option exercise", "F": "Tax withholding", "G": "Gift"}
+def parse_form4(xml_bytes, meta):
+    """SEC Form 4 XML → transactions (insider, role, code, shares, price, value); P = open-market buy, S = sale"""
+    root = _xml_safe(xml_bytes)
+    g = lambda el, path: ((el.findtext(path) if el is not None else "") or "").strip()
+    tk = g(root, "issuer/issuerTradingSymbol").upper()[:12]; co = g(root, "issuer/issuerName")[:80]
+    ow = root.find("reportingOwner"); rel = ow.find("reportingOwnerRelationship") if ow is not None else None; roles = []
+    yes = lambda k: g(rel, k).lower() in ("1", "true")
+    if yes("isOfficer"): roles.append(g(rel, "officerTitle")[:40] or "Officer")
+    if yes("isDirector"): roles.append("Director")
+    if yes("isTenPercentOwner"): roles.append("10% owner")
+    who = _CTRL_RX.sub("", g(ow, "reportingOwnerId/rptOwnerName"))[:60]; out = []
+    for k, t in enumerate(root.findall("nonDerivativeTable/nonDerivativeTransaction")):
+        code = g(t, "transactionCoding/transactionCode")[:2]
+        sh = _hnum(g(t, "transactionAmounts/transactionShares/value")); px = _hnum(g(t, "transactionAmounts/transactionPricePerShare/value"))
+        out.append({"id": "%s:%d" % (meta.get("acc", ""), k), "ticker": tk, "company": co, "insider": who, "role": ", ".join(roles), "code": code, "type": FORM4_CODES.get(code, code),
+                    "date": g(t, "transactionDate/value")[:10], "filed": meta.get("filed", ""), "shares": sh, "price": px, "value": round(sh * px, 2), "url": meta.get("url", "")})
+    return out
+
+def insider_clusters(rows, now_s, days=30):
+    """tickers with open-market buys (code P) from ≥ 1 insider in the window, ranked by distinct insiders then $; CEO / CFO / Director flags"""
+    from datetime import datetime as _dt
+    cut = now_s - days * 86400; g = {}
+    for r in rows:
+        if r["code"] != "P": continue
+        try: ts = _dt.fromisoformat(r["date"]).timestamp()
+        except ValueError: continue
+        if ts < cut: continue
+        x = g.setdefault(r["ticker"], {"ticker": r["ticker"], "company": r["company"], "insiders": {}, "value": 0.0, "n": 0})
+        x["insiders"][r["insider"]] = r["role"]; x["value"] += r["value"]; x["n"] += 1
+    out = []
+    for x in g.values():
+        roles = " ".join(x["insiders"].values()).upper()
+        out.append({"ticker": x["ticker"], "company": x["company"], "insiders": len(x["insiders"]), "value": round(x["value"], 2), "n": x["n"],
+                    "ceo": "CEO" in roles or "CHIEF EXECUTIVE" in roles, "cfo": "CFO" in roles or "CHIEF FINANCIAL" in roles, "director": "DIRECTOR" in roles})
+    return sorted(out, key=lambda c: (-c["insiders"], -c["value"]))
+
+class MicroLRU:
+    """50 ms micro-cache of encoded response bytes (repeat polls skip JSON encoding entirely)"""
+    def __init__(self, cap=512, ttl=FAST_LRU_TTL):
+        from collections import OrderedDict
+        self.cap, self.ttl, self.d, self.lock, self.hits, self.miss = cap, ttl, OrderedDict(), threading.Lock(), 0, 0
+    def get(self, k):
+        with self.lock:
+            v = self.d.get(k)
+            if v and time.perf_counter() - v[0] < self.ttl: self.d.move_to_end(k); self.hits += 1; return v[1]
+            self.miss += 1; return None
+    def put(self, k, b):
+        with self.lock:
+            self.d[k] = (time.perf_counter(), b); self.d.move_to_end(k)
+            while len(self.d) > self.cap: self.d.popitem(last=False)
+
+# ---- worker-side warmers (run inside the lane process) ----
+def _jget(url, hdr=None, timeout=12):
+    st, body, _ct = shield_fetch(url, "GET", None, hdr or {"User-Agent": "ExTerm/1.0", "Accept": "application/json"}, timeout=timeout)
+    return json.loads(body)
+
+def _sample_whales(rows, now_ms):
+    R = _fr.Random(1780); out = []
+    for i, r in enumerate(rows[:10]):
+        coin = R.choice([c for c, _ in HL_SAMPLE_COINS]); px = dict(HL_SAMPLE_COINS)[coin]; usd = R.uniform(55000, 900000)
+        out.append({"id": "sample:%s:%d" % (r["addr"], i), "addr": r["addr"], "coin": coin, "usd": round(usd, 2), "px": px, "t": now_ms - i * 371000 - R.randint(0, 90000), "sample": True})
+    return out
+
+def _warm5(st, pool, offline, wants):
+    hl = st.get("hl") or HLCache(offline=offline); st["hl"] = hl; now = int(time.time() * 1000)
+    b = hl.board(); rows = [r for r in b["rows"] if r["acct"] >= 1e4][:60]; fills = st.setdefault("fills", {})
+    # offline: score every wallet at once; live: 24 on the first pass, then 8 per 15 s (≈ 640 weight / min, under Hyperliquid's 1 200)
+    due = sorted(rows, key=lambda r: st.setdefault("fat", {}).get(r["addr"], 0))[:len(rows) if offline else 24 if not fills else 8]
+    def one(r):
+        try: return r["addr"], hl.trader(r["addr"], ["userFills"])["userFills"]
+        except Exception: return r["addr"], None
+    for addr, f in pool.map(one, due):
+        st["fat"][addr] = time.time()
+        if f is not None: fills[addr] = f
+    snap = {"board:" + w: {"win": w, "rows": lb_rows(rows, fills, w, now), "sample": bool(b.get("sample")), "wallets": len(rows), "scored": len(fills), "ts": time.time()} for w in LB_WIN}
+    wb = whale_buys(fills, now); snap["whales"] = {"items": wb or (_sample_whales(rows, now) if b.get("sample") else []), "sample": bool(b.get("sample")), "ts": time.time()}
+    snap["perps"] = {"rows": [{"addr": r["addr"], "name": r["name"], "acct": r["acct"], "pnl30": r["pnl"]["month"], "roi30": r["roi"]["month"], "alpha": r["alpha"]} for r in sorted(b["rows"], key=lambda r: -r["pnl"]["month"])[:30]], "sample": bool(b.get("sample")), "ts": time.time()}
+    return snap
+
+def _sample_form4(now_s):
+    R = _fr.Random(1786); out = []
+    tks = [("AAPL", "Apple Inc.", 230), ("NVDA", "NVIDIA Corp", 140), ("MSFT", "Microsoft Corp", 430), ("TSLA", "Tesla Inc", 250), ("AMZN", "Amazon.com Inc", 200), ("META", "Meta Platforms", 580), ("JPM", "JPMorgan Chase", 240), ("PLTR", "Palantir", 70)]
+    names = ["J. Smith", "M. Chen", "A. Patel", "R. Johnson", "L. Garcia", "S. Okafor", "D. Kim", "E. Rossi", "T. Nguyen", "K. Muller"]; roles = ["CEO", "CFO", "Director", "COO", "10% owner", "Director"]
+    for i in range(160):
+        tk, co, px = R.choice(tks); code = "P" if R.random() < 0.38 else "S"; sh = round(500 + R.random() * R.random() * 90000); d = time.strftime("%Y-%m-%d", time.gmtime(now_s - R.random() * 25 * 86400))
+        out.append({"id": "sample:%d" % i, "ticker": tk, "company": co, "insider": R.choice(names), "role": R.choice(roles), "code": code, "type": FORM4_CODES[code], "date": d, "filed": d,
+                    "shares": sh, "price": round(px * R.uniform(0.96, 1.04), 2), "value": 0, "url": "", "sample": True})
+        out[-1]["value"] = round(out[-1]["shares"] * out[-1]["price"], 2)
+    return sorted(out, key=lambda r: r["date"], reverse=True)
+
+def _edgar_atom(form, count=100):
+    import xml.etree.ElementTree as ET
+    st, body, _ = shield_fetch("https://www.sec.gov/cgi-bin/browse-edgar?action=getcurrent&type=%s&company=&dateb=&owner=include&count=%d&output=atom" % (urllib.parse.quote(form), count), "GET", None, _sec_hdr(), timeout=20)
+    root = _xml_safe(body); ns = {"a": "http://www.w3.org/2005/Atom"}; out = []
+    for en in root.findall("a:entry", ns):
+        ln = en.find("a:link", ns); href = ln.get("href") if ln is not None else ""; m = re.search(r"edgar/data/(\d+)/(\d{18})/", href or "")
+        if not m: continue
+        acc = "%s-%s-%s" % (m.group(2)[:10], m.group(2)[10:12], m.group(2)[12:])
+        out.append({"cik": m.group(1), "acc": acc, "title": _CTRL_RX.sub("", en.findtext("a:title", "", ns))[:120], "filed": (en.findtext("a:updated", "", ns) or "")[:10], "url": href})
+    return out
+
+def _warm6(st, pool, offline, wants):
+    now = time.time(); rows = st.setdefault("f4", []); seen = st.setdefault("seen", set())
+    if offline:
+        if not rows: rows.extend(_sample_form4(now))
+        if not st.get("f13"): st["f13"] = [{"filer": n, "cik": str(100000 + i), "filed": time.strftime("%Y-%m-%d", time.gmtime(now - i * 86400 * 0.6)), "url": "", "sample": True} for i, n in enumerate(["Sample Capital LP", "Northwind Advisors", "Bluewater Partners", "Granite Peak Mgmt", "Harbor Lane Investments", "Summit Ridge Capital"])]
+    elif now - st.get("f4at", 0) >= 60:
+        st["f4at"] = now
+        try:
+            jobs = [e for e in _edgar_atom("4") if e["acc"] not in seen][:20]
+            def one(e):
+                try:
+                    time.sleep(0.15 * (hash(e["acc"]) % 4))  # stay well under SEC's 10 requests / s
+                    idx = _jget("https://www.sec.gov/Archives/edgar/data/%d/%s/index.json" % (int(e["cik"]), e["acc"].replace("-", "")), _sec_hdr())
+                    f = next((x["name"] for x in (idx.get("directory") or {}).get("item") or [] if re.search(r"\.xml$", x.get("name", ""), re.I) and not re.match(r"(?i)xsl|FilingSummary", x["name"])), None)
+                    if not f: return []
+                    _s, body, _c = shield_fetch("https://www.sec.gov/Archives/edgar/data/%d/%s/%s" % (int(e["cik"]), e["acc"].replace("-", ""), urllib.parse.quote(f)), "GET", None, _sec_hdr(), timeout=20)
+                    return parse_form4(body, {"acc": e["acc"], "filed": e["filed"], "url": e["url"]})
+                except Exception: return []
+            with ThreadPoolExecutor(max_workers=4) as sec_pool:  # SEC fair access: 4 at a time, inside the lane's 16-thread budget
+                for e, got in zip(jobs, sec_pool.map(one, jobs)): seen.add(e["acc"]); rows[:0] = got
+            del rows[1500:]; st["err6"] = ""
+        except Exception as ex: st["err6"] = str(ex)[:120]
+        if now - st.get("f13at", 0) >= 600:
+            try: st["f13"] = [{"filer": re.sub(r"^13F-HR\s*-\s*", "", e["title"])[:80], "cik": e["cik"], "filed": e["filed"], "url": e["url"]} for e in _edgar_atom("13F-HR", 40)]; st["f13at"] = now
+            except Exception: pass
+    smp = offline
+    alerts = [dict(r, alert=True) for r in rows if r["code"] == "P" and r["value"] >= INSIDER_ALERT_USD][:60]
+    return {"insiders": {"rows": rows[:400], "sample": smp, "err": st.get("err6", ""), "ts": now}, "clusters": {"rows": insider_clusters(rows, now)[:40], "sample": smp, "ts": now},
+            "alerts": {"items": alerts, "sample": smp, "ts": now}, "f13": {"rows": st.get("f13") or [], "sample": smp, "ts": now, "congress": "Congressional trades: no free, key-less public source is available, so ExTerm does not show them."}}
+
+def synth_prints(sym, px, n, seed_t, stock=False):
+    """clearly-tagged stand-in prints (synth: True) around px, so a tape never sits empty while the upstream is rate-limited"""
+    R = _fr.Random(hash((sym, int(seed_t))) & 0xFFFFFFFF); out = []; p = px if px > 0 else 100.0; t = seed_t * 1000
+    for i in range(n):
+        p *= 1 + R.gauss(0, 0.0004); side = "buy" if R.random() < 0.5 else "sell"; usd = (10 ** R.uniform(1.6, 4.4)) * (8 if stock else 1)
+        if R.random() < 0.02: usd *= 40
+        out.append({"id": "synth:%s:%d:%d" % (sym, int(seed_t), i), "t": int(t - (n - i) * R.uniform(80, 900)), "px": round(p, 8), "usd": round(usd, 2), "qty": usd / p, "side": side, "who": "SYNTH", "synth": True, "tags": []})
+    return out
+
+def tape_tags(rows, whale_usd):
+    """whale / MEV (same wallet buys and sells inside 2 s) / wallet badges (WHALE ≥ $100K cumulative · BOT ≥ 5 prints / min · NEW)"""
+    by = {}
+    for r in rows: by.setdefault(r.get("who") or "", []).append(r)
+    for who, rs in by.items():
+        tot = sum(x["usd"] for x in rs); rs.sort(key=lambda x: x["t"]); span = max(1, (rs[-1]["t"] - rs[0]["t"]) / 60000)
+        badge = "WHALE" if tot >= 100000 else "BOT" if len(rs) >= 5 and len(rs) / span >= 5 else "NEW" if len(rs) == 1 else ""
+        for i, x in enumerate(rs):
+            tg = [t for t in x.get("tags", []) if t not in ("WHALE", "MEV")]
+            if x["usd"] >= whale_usd: tg.append("WHALE")
+            if who and who != "SYNTH" and any(y["side"] != x["side"] and abs(y["t"] - x["t"]) <= 2000 for y in rs[max(0, i - 3):i + 4] if y is not x): tg.append("MEV")
+            x["tags"] = tg; x["badge"] = badge if who and who != "SYNTH" else ""
+    return rows
+
+def _tape_merge(P, new, cap=300):
+    for x in sorted(new, key=lambda r: r["t"]):
+        if x["id"] in P["seen"]: continue
+        P["seen"].add(x["id"]); P["rows"].append(x)
+    del P["rows"][:-cap]
+    if len(P["seen"]) > 4 * cap: P["seen"] = set(r["id"] for r in P["rows"])
+
+def _fetch7(sym, P, offline, now):
+    if offline: raise UpstreamBlocked(503, 1, "offline")
+    if sym.startswith("oc:"):
+        if now - P.get("gat", 0) < 4.0: return None
+        P["gat"] = now; _, chain, pool = sym.split(":", 2)
+        j = _jget("https://api.geckoterminal.com/api/v2/networks/%s/pools/%s/trades" % (urllib.parse.quote(chain), urllib.parse.quote(pool)), timeout=8); out = []
+        from datetime import datetime as _dt
+        for d in (j or {}).get("data") or []:
+            a = d.get("attributes") or {}; kind = "buy" if a.get("kind") == "buy" else "sell"; px = _hnum(a.get("price_to_in_usd") if kind == "buy" else a.get("price_from_in_usd"))
+            try: t = int(_dt.fromisoformat(str(a.get("block_timestamp") or "").replace("Z", "+00:00")).timestamp() * 1000)
+            except ValueError: continue
+            usd = _hnum(a.get("volume_in_usd"))
+            if px > 0: out.append({"id": str(a.get("tx_hash") or d.get("id"))[:100], "t": t, "px": px, "usd": usd, "qty": usd / px, "side": kind, "who": str(a.get("tx_from_address") or "")[:64], "tags": []})
+        return out, "geckoterminal"
+    j = _jget("https://api.exchange.coinbase.com/products/%s/trades?limit=100" % urllib.parse.quote(sym.replace("-USDT", "-USD")), timeout=6)
+    from datetime import datetime as _dt
+    out = []
+    for x in j if isinstance(j, list) else []:
+        px, sz = _hnum(x.get("price")), _hnum(x.get("size"))
+        try: t = int(_dt.fromisoformat(str(x.get("time", "")).replace("Z", "+00:00")).timestamp() * 1000)
+        except ValueError: continue
+        if px > 0: out.append({"id": "cb:%s" % x.get("trade_id"), "t": t, "px": px, "usd": px * sz, "qty": sz, "side": "sell" if x.get("side") == "buy" else "buy", "who": "Coinbase", "tags": []})  # Coinbase reports the maker side
+    return out, "coinbase"
+
+def _warm_tape(st, pool, offline, wants, lane):
+    now = time.time(); tapes = st.setdefault("tapes", {})
+    for sym, px in wants.items(): tapes.setdefault(sym, {"rows": [], "seen": set(), "px": px, "src": "", "synth": False, "at": 0})
+    for sym in list(tapes):
+        if sym not in wants: tapes.pop(sym)
+    def one(sym):
+        P = tapes[sym]
+        try:
+            got = (_fetch7 if lane == 7 else _fetch8)(sym, P, offline, now)
+            if got is None: return sym, None, None
+            return sym, got[0], got[1]
+        except Exception:
+            return sym, synth_prints(sym, P["rows"][-1]["px"] if P["rows"] else P["px"], 6 if P["rows"] else 40, now, lane == 8), "synth"
+    snap = {}
+    for sym, new, src in pool.map(one, list(tapes)):
+        P = tapes[sym]
+        if new is not None:
+            _tape_merge(P, new); P["src"] = src; P["synth"] = src == "synth"; P["at"] = now
+            if src != "synth": P["real"] = now
+        rows = tape_tags(P["rows"][-300:], 25000 if lane == 7 and not sym.startswith("oc:") else 10000 if lane == 7 else 250000)
+        last = rows[-1]["px"] if rows else P["px"]
+        snap["tape:" + sym] = {"sym": sym, "rows": rows, "src": P["src"], "synth": P["synth"], "sample": offline, "ts": now, "realAge": round(now - P["real"], 1) if P.get("real") else None}
+        if lane == 8: snap["tape:" + sym].update({"l2": model_l2(last, sym), "blocks": [r for r in rows if "BLOCK" in r["tags"]][-40:], "sweeps": P.get("sweeps", []), "session": P.get("session", "")})
+    return snap
+
+def model_l2(px, sym, levels=10):
+    """modelled L2 (model: True): no free US-equities depth feed exists; tick-sized ladder around the last price"""
+    if not px > 0: return {"bids": [], "asks": [], "model": True}
+    tick = 0.01 if px >= 1 else 0.0001; R = _fr.Random(hash((sym, int(time.time()))) & 0xFFFF)
+    bids = [[round(px - tick * (i + 1), 4), round(100 * R.uniform(1, 30) * (1 + i * 0.3))] for i in range(levels)]
+    asks = [[round(px + tick * (i + 1), 4), round(100 * R.uniform(1, 30) * (1 + i * 0.3))] for i in range(levels)]
+    return {"bids": bids, "asks": asks, "model": True}
+
+def _fetch8(sym, P, offline, now):
+    if offline: raise UpstreamBlocked(503, 1, "offline")
+    if now - P.get("yat", 0) < 15: return None
+    P["yat"] = now
+    j = _jget("https://query1.finance.yahoo.com/v8/finance/chart/%s?range=1d&interval=1m" % urllib.parse.quote(sym), {"User-Agent": "Mozilla/5.0", "Accept": "application/json"}, timeout=8)
+    r = ((j or {}).get("chart") or {}).get("result") or []
+    if not r: raise ValueError("no chart")
+    r = r[0]; ts = r.get("timestamp") or []; q = ((r.get("indicators") or {}).get("quote") or [{}])[0]; meta = r.get("meta") or {}
+    P["session"] = "live" if (meta.get("currentTradingPeriod") or {}).get("regular", {}).get("end", 0) > now > (meta.get("currentTradingPeriod") or {}).get("regular", {}).get("start", 0) else "last"
+    out = []; usds = []; prev = 0
+    for i, t in enumerate(ts):
+        c = (q.get("close") or [None])[i] if i < len(q.get("close") or []) else None; v = (q.get("volume") or [None])[i] if i < len(q.get("volume") or []) else None
+        if not c or not v: continue
+        usds.append(c * v); out.append({"id": "y:%s:%d" % (sym, t), "t": t * 1000 + 59000, "px": round(c, 4), "usd": round(c * v, 2), "qty": v, "side": "buy" if c >= (prev or c) else "sell", "who": str(meta.get("exchangeName") or "Consolidated")[:24], "tags": ["1M AGG"]}); prev = c
+    avg = sum(usds) / len(usds) if usds else 0
+    for x in out:
+        if avg and x["usd"] >= 3 * avg and x["usd"] >= 1e6: x["tags"].append("BLOCK")
+    if now - P.get("oat", 0) >= 60:
+        P["oat"] = now
+        try:
+            oj = _jget("https://query2.finance.yahoo.com/v7/finance/options/%s" % urllib.parse.quote(sym), {"User-Agent": "Mozilla/5.0", "Accept": "application/json"}, timeout=8)
+            oc = ((((oj or {}).get("optionChain") or {}).get("result") or [{}])[0].get("options") or [{}])[0]; sw = []
+            for side in ("calls", "puts"):
+                for c in oc.get(side) or []:
+                    vol, oi, last = _hnum(c.get("volume")), _hnum(c.get("openInterest")), _hnum(c.get("lastPrice")); prem = vol * last * 100
+                    if vol > max(oi, 1) and prem >= 250000: sw.append({"contract": str(c.get("contractSymbol"))[:32], "side": side[:-1], "strike": _hnum(c.get("strike")), "vol": vol, "oi": oi, "premium": round(prem), "flag": "SWEEP?"})
+            P["sweeps"] = sorted(sw, key=lambda s: -s["premium"])[:20]
+        except Exception: P["sweeps"] = P.get("sweeps", [])
+    return out, "yahoo-1m"
+
+import math
+# ── v17.9: Lanes 9–19 · the unified 19-lane mesh ───────────────────────────────────────────────────────────────────────────
+# 9–10  1s–1M OHLCV engines (crypto + DEX / US equities), stitched live onto every timeframe the chart pills offer
+# 11–16 the 24/7 recommendation pipeline: three scanners (equities 0DTE gamma · crypto perps squeeze · on-chain Rug Shield v2) →
+#       14 transfer-entropy + BOCPD + 6-bot consensus → 15 1,000-path fat-tailed Monte Carlo + liquidity stress → 16 multi-timeframe
+#       confluence + journal correlator (tiers S-TIER / A / B+ / Watchlist, with Passed / Pending / Failed criteria badges)
+# 17–19 request / response engines answered from the lane process (< 5 ms): smart-order-route + shadow-bracket slicer (plans only:
+#       ExTerm holds no keys), pre-trade risk firewall + PIN-gated PAPER → LIVE arming, fill accuracy + toxic-flow scratch + 3-stage
+#       ratchet + SHA-256 hash-chained audit ledger. Every number derived from a proxy says so (`proxy` / `est.` / `model`).
+EQ_UNI = ("SPY", "QQQ", "IWM", "AAPL", "MSFT", "NVDA", "AMZN", "META", "GOOGL", "TSLA", "AMD", "AVGO", "JPM", "NFLX", "PLTR", "COIN", "MSTR", "UBER", "XOM", "SMCI")
+CR_UNI = ("BTC", "ETH", "SOL", "XRP", "DOGE", "AVAX", "LINK", "SUI", "HYPE")
+DEX_CHAINS = ("solana", "base", "eth", "arbitrum")
+TF_SEC = {"1s": 1, "5s": 5, "15s": 15, "1m": 60, "5m": 300, "15m": 900, "1h": 3600, "4h": 14400, "1d": 86400, "1w": 604800, "1M": 2592000}
+MTF = ("1m", "5m", "15m", "1h", "1d")
+BOTS6 = ("HUNTER-α", "MUTATOR-EVO", "HEDGER-ARB", "RISK-GUARD", "SNIPER-EXEC", "SCALPER-EXIT")
+LANE_WORKERS = {5: 16, 6: 16, 7: 16, 8: 16, 9: 16, 10: 16, 11: 32, 12: 32, 13: 32, 14: 32, 15: 32, 16: 32, 17: 32, 18: 32, 19: 32}
+
+def bucket_of(t, tf):
+    """bucket start (unix s) for a timeframe; 1w aligns to Monday 00:00 UTC, 1M to the calendar month"""
+    if tf == "1M":
+        g = time.gmtime(t); import calendar
+        return calendar.timegm((g.tm_year, g.tm_mon, 1, 0, 0, 0))
+    if tf == "1w": return (int(t) - 345600) // 604800 * 604800 + 345600
+    s = TF_SEC[tf]; return int(t) // s * s
+
+def agg_bars(bars, tf):
+    """[[t, o, h, l, c, v]] ascending (t in s) → bars of `tf` (exact OHLCV aggregation)"""
+    out = []
+    for t, o, h, l, c, v in bars:
+        k = bucket_of(t, tf)
+        if out and out[-1][0] == k: b = out[-1]; b[2] = max(b[2], h); b[3] = min(b[3], l); b[4] = c; b[5] += v
+        else: out.append([k, o, h, l, c, v])
+    return out
+
+def stitch(bars, ticks, tf):
+    """overlay live ticks [[t_ms, px, size]] onto bars: the forming bar (and any newer ones) end exactly at the last tick"""
+    out = [list(b) for b in bars]
+    for tm, px, sz in sorted(ticks):
+        t = tm / 1000.0; k = bucket_of(t, tf)
+        if out and k < out[-1][0]: continue
+        if out and out[-1][0] == k: b = out[-1]; b[2] = max(b[2], px); b[3] = min(b[3], px); b[4] = px; b[5] += sz
+        else: out.append([k, out[-1][4] if out else px, max(px, out[-1][4] if out else px), min(px, out[-1][4] if out else px), px, sz])
+    return out
+
+def sample_bars(sym, tf, n=300, px=0.0):
+    """seeded offline OHLCV (sample: True) ending now; deterministic per symbol + timeframe"""
+    R = _fr.Random(int(hashlib.sha256((sym + tf).encode()).hexdigest()[:8], 16)); s = TF_SEC[tf]; now = time.time(); p = px if px > 0 else 10 ** R.uniform(0, 4); vol = 0.002 * math.sqrt(s / 60.0) if 'math' in globals() else 0.002
+    out = []; t0 = bucket_of(now, tf) - (n - 1) * s; c = p * R.uniform(0.8, 1.2)
+    for i in range(n):
+        o = c; c = o * (1 + R.gauss(0, min(0.08, vol))); h = max(o, c) * (1 + abs(R.gauss(0, vol / 3))); l = min(o, c) * (1 - abs(R.gauss(0, vol / 3)))
+        out.append([bucket_of(t0 + i * s, tf), round(o, 8), round(h, 8), round(l, 8), round(c, 8), round(R.uniform(10, 1000), 4)])
+    if px > 0 and out:  # end on the page's price
+        f = px / out[-1][4]; out = [[b[0]] + [round(x * f, 8) for x in b[1:5]] + [b[5]] for b in out]
+    return out
+
+def trend_sign(bars, n=20):
+    """+1 / −1 / 0: close vs its n-bar mean and the mean's slope"""
+    if len(bars) < n + 2: return 0
+    cs = [b[4] for b in bars[-(n + 2):]]; m1 = sum(cs[-n:]) / n; m0 = sum(cs[-n - 1:-1]) / n
+    return 1 if cs[-1] > m1 and m1 >= m0 else -1 if cs[-1] < m1 and m1 <= m0 else 0
+
+def atr_of(bars, n=14):
+    if len(bars) < 2: return 0.0
+    trs = [max(b[2] - b[3], abs(b[2] - a[4]), abs(b[3] - a[4])) for a, b in zip(bars[:-1], bars[1:])][-n:]
+    return sum(trs) / len(trs) if trs else 0.0
+
+# ---- Lane 9 / 10: OHLCV engines ----
+CB_GRAN = {"1m": (60, "1m"), "5m": (300, "5m"), "15m": (900, "15m"), "1h": (3600, "1h"), "4h": (3600, "4h"), "1d": (86400, "1d"), "1w": (86400, "1w"), "1M": (86400, "1M")}
+GT_TF = {"1m": ("minute", 1, "1m"), "5m": ("minute", 5, "5m"), "15m": ("minute", 15, "15m"), "1h": ("hour", 1, "1h"), "4h": ("hour", 4, "4h"), "1d": ("day", 1, "1d"), "1w": ("day", 1, "1w"), "1M": ("day", 1, "1M")}
+YF_TF = {"1m": ("1m", "5d", "1m"), "5m": ("5m", "1mo", "5m"), "15m": ("15m", "1mo", "15m"), "1h": ("60m", "3mo", "1h"), "4h": ("60m", "6mo", "4h"), "1d": ("1d", "2y", "1d"), "1w": ("1wk", "10y", "1w"), "1M": ("1mo", "max", "1M")}
+
+def _cb_trades(sym, limit=1000):
+    j = _jget("https://api.exchange.coinbase.com/products/%s/trades?limit=%d" % (urllib.parse.quote(sym.replace("-USDT", "-USD")), limit), timeout=6); out = []
+    from datetime import datetime as _dt
+    for x in j if isinstance(j, list) else []:
+        try: out.append([int(_dt.fromisoformat(str(x["time"]).replace("Z", "+00:00")).timestamp() * 1000), _hnum(x["price"]), _hnum(x["size"])])
+        except Exception: continue
+    return out
+
+def _gt_trades(chain, pool):
+    j = _jget("https://api.geckoterminal.com/api/v2/networks/%s/pools/%s/trades" % (urllib.parse.quote(chain), urllib.parse.quote(pool)), timeout=8); out = []
+    from datetime import datetime as _dt
+    for d in (j or {}).get("data") or []:
+        a = d.get("attributes") or {}; kind = a.get("kind"); px = _hnum(a.get("price_to_in_usd") if kind == "buy" else a.get("price_from_in_usd"))
+        try: t = int(_dt.fromisoformat(str(a.get("block_timestamp") or "").replace("Z", "+00:00")).timestamp() * 1000)
+        except ValueError: continue
+        if px > 0: out.append([t, px, _hnum(a.get("volume_in_usd")) / px, str(a.get("tx_from_address") or "")[:64], kind])
+    return out
+
+def candles9(sym, tf):
+    """crypto / DEX bars for one timeframe (real upstream; raises on failure)"""
+    if sym.startswith("oc:"):
+        _, chain, pool = sym.split(":", 2)
+        if TF_SEC[tf] < 60:
+            tr = _gt_trades(chain, pool); return stitch([], [[t, p, q] for t, p, q, _w, _k in tr], tf), "geckoterminal-trades"
+        name, ag, base = GT_TF[tf]
+        j = _jget("https://api.geckoterminal.com/api/v2/networks/%s/pools/%s/ohlcv/%s?aggregate=%d&limit=300" % (urllib.parse.quote(chain), urllib.parse.quote(pool), name, ag), timeout=8)
+        rows = sorted([[int(r[0]), _hnum(r[1]), _hnum(r[2]), _hnum(r[3]), _hnum(r[4]), _hnum(r[5])] for r in (((j or {}).get("data") or {}).get("attributes") or {}).get("ohlcv_list") or []])
+        return (agg_bars(rows, tf) if tf in ("1w", "1M") else rows), "geckoterminal"
+    if TF_SEC[tf] < 60:
+        return stitch([], _cb_trades(sym), tf), "coinbase-trades"
+    g, _ = CB_GRAN[tf]
+    j = _jget("https://api.exchange.coinbase.com/products/%s/candles?granularity=%d" % (urllib.parse.quote(sym.replace("-USDT", "-USD")), g), timeout=8)
+    rows = sorted([[int(k[0]), _hnum(k[3]), _hnum(k[2]), _hnum(k[1]), _hnum(k[4]), _hnum(k[5])] for k in j if isinstance(k, list) and len(k) >= 6])
+    rows = agg_bars(rows, tf) if tf in ("4h", "1w", "1M") else rows
+    try: rows = stitch(rows, _cb_trades(sym, 100), tf)
+    except Exception: pass
+    return rows, "coinbase"
+
+def candles10(sym, tf):
+    if TF_SEC[tf] < 60: raise ValueError("seconds bars for US equities come from the launcher's tick feed")
+    iv, rng, _ = YF_TF[tf]
+    j = _jget("https://query1.finance.yahoo.com/v8/finance/chart/%s?range=%s&interval=%s" % (urllib.parse.quote(sym), rng, iv), {"User-Agent": "Mozilla/5.0", "Accept": "application/json"}, timeout=8)
+    r = (((j or {}).get("chart") or {}).get("result") or [None])[0]
+    if not r: raise ValueError("no chart")
+    q = ((r.get("indicators") or {}).get("quote") or [{}])[0]; ts = r.get("timestamp") or []; rows = []
+    for i, t in enumerate(ts):
+        try: o, h, l, c, v = q["open"][i], q["high"][i], q["low"][i], q["close"][i], q["volume"][i] or 0
+        except (KeyError, IndexError): continue
+        if None not in (o, h, l, c): rows.append([int(t), o, h, l, c, v])
+    rows = agg_bars(rows, tf) if tf == "4h" else rows
+    last = _hnum((r.get("meta") or {}).get("regularMarketPrice"))
+    if rows and last > 0: rows = stitch(rows, [[int(time.time() * 1000), last, 0]], tf)
+    return rows, "yahoo"
+
+def _warm_ohlc(st, pool, offline, wants, lane):
+    """on-demand: every wanted sym|tf is refreshed (seconds bars every second, minute bars every 10 s, daily+ every 5 min);
+    plus the multi-timeframe trend table for the scanner universe, forwarded to Lane 16"""
+    now = time.time(); cache = st.setdefault("c", {}); snap = {}
+    def per(tf): return 1 if TF_SEC[tf] < 60 else 10 if TF_SEC[tf] < 86400 else 300
+    def one(key):
+        sym, tf = key.split("|"); C = cache.get(key)
+        if C and now - C["at"] < per(tf): return key, None
+        if lane == 10 and TF_SEC[tf] < 60: return key, {"rows": [], "src": "unsupported", "sample": offline, "at": now, "unsupported": True}  # seconds bars for equities come from the launcher's tick feed
+        if offline: return key, {"rows": sample_bars(sym, tf, 300, wants.get(key, 0.0)), "src": "sample", "sample": True, "at": now}
+        try: rows, src = (candles9 if lane == 9 else candles10)(sym, tf); return key, {"rows": rows[-1500:], "src": src, "sample": False, "at": now}
+        except Exception as e: return key, ({"rows": C["rows"], "src": C["src"], "sample": C["sample"], "at": now, "stale": True} if C else {"rows": [], "src": "unavailable", "err": str(e)[:100], "sample": False, "at": now, "unsupported": "seconds" in str(e)})
+    for key, v in pool.map(one, list(wants)):
+        if v is not None: cache[key] = v
+    for key in list(cache):
+        if key not in wants: cache.pop(key)
+    for key, C in cache.items():
+        sym, tf = key.split("|"); snap["c:" + key] = dict({k: C[k] for k in C if k != "at"}, sym=sym, tf=tf, n=len(C["rows"]), ts=C["at"])
+    # MTF trend table for the universe (forwarded to Lane 16)
+    if now - st.get("mtfAt", 0) >= (60 if not offline else 30):
+        st["mtfAt"] = now; uni = [c + "-USD" for c in CR_UNI if c != "HYPE"] if lane == 9 else list(EQ_UNI)
+        def mt(sym):
+            row = {}
+            for tf in MTF:
+                try: rows = sample_bars(sym, tf, 60) if offline else (candles9 if lane == 9 else candles10)(sym, tf)[0]
+                except Exception: rows = []
+                row[tf] = trend_sign(rows)
+            return sym, row
+        st["mtf"] = dict(pool.map(mt, uni))
+    snap["mtf"] = {"rows": st.get("mtf", {}), "sample": offline, "ts": now}; snap["fwd"] = {"mtf": st.get("mtf", {})}
+    return snap
+
+# ---- Lane 11: equities & 0DTE gamma scanner ----
+def bs_gamma(S, K, T, iv):
+    if not (S > 0 and K > 0 and T > 0 and iv > 0): return 0.0
+    d1 = (math.log(S / K) + 0.5 * iv * iv * T) / (iv * math.sqrt(T)); return math.exp(-0.5 * d1 * d1) / math.sqrt(2 * math.pi) / (S * iv * math.sqrt(T))
+
+def gex_levels(S, calls, puts, T):
+    """net dealer GEX by strike (calls +, puts −) → zero-gamma flip, call wall, put wall, and max pain"""
+    g = {}
+    for c in calls: g[c["strike"]] = g.get(c["strike"], 0) + bs_gamma(S, c["strike"], T, c["iv"]) * c["oi"] * 100 * S * S * 0.01
+    for p in puts: g[p["strike"]] = g.get(p["strike"], 0) - bs_gamma(S, p["strike"], T, p["iv"]) * p["oi"] * 100 * S * S * 0.01
+    ks = sorted(g); cum = 0.0; flip = None; prev = None
+    for k in ks:
+        cum += g[k]
+        if prev is not None and (prev < 0) != (cum < 0) and flip is None: flip = k
+        prev = cum
+    cw = max((c for c in calls), key=lambda c: bs_gamma(S, c["strike"], T, c["iv"]) * c["oi"], default=None); pw = max((p for p in puts), key=lambda p: bs_gamma(S, p["strike"], T, p["iv"]) * p["oi"], default=None)
+    strikes = sorted(set([c["strike"] for c in calls] + [p["strike"] for p in puts]))
+    pain = min(strikes, key=lambda X: sum(max(0, X - c["strike"]) * c["oi"] for c in calls) + sum(max(0, p["strike"] - X) * p["oi"] for p in puts)) if strikes else None
+    return {"flip": flip, "callWall": cw and cw["strike"], "putWall": pw and pw["strike"], "maxPain": pain, "net": sum(g.values())}
+
+def orb_avwap(bars, orb_min=30):
+    """opening-range breakout + session-anchored VWAP reclaim on 1m bars of the current session"""
+    if len(bars) < orb_min + 5: return None
+    day = time.gmtime(bars[-1][0])[:3]; ses = [b for b in bars if time.gmtime(b[0])[:3] == day]
+    if len(ses) < orb_min + 5: return None
+    hi = max(b[2] for b in ses[:orb_min]); lo = min(b[3] for b in ses[:orb_min]); pv = vv = 0.0; aw = []
+    for b in ses: tp = (b[2] + b[3] + b[4]) / 3; pv += tp * b[5]; vv += b[5]; aw.append(pv / vv if vv else tp)
+    c, c1, a, a1 = ses[-1][4], ses[-2][4], aw[-1], aw[-2]
+    if c > hi and c > a and c1 <= a1 * 1.0005: return {"side": "buy", "setup": "ORB + AVWAP reclaim", "lvl": hi, "avwap": a}
+    if c < lo and c < a and c1 >= a1 * 0.9995: return {"side": "sell", "setup": "ORB + AVWAP loss", "lvl": lo, "avwap": a}
+    if c > hi and c > a: return {"side": "buy", "setup": "ORB breakout above AVWAP", "lvl": hi, "avwap": a}
+    if c < lo and c < a: return {"side": "sell", "setup": "ORB breakdown below AVWAP", "lvl": lo, "avwap": a}
+    return None
+
+def pin_est(bars):
+    """Easley–O'Hara PIN, tick-rule estimate on 1m bars: |buy − sell| volume share (est.)"""
+    b = s = 0.0
+    for a, x in zip(bars[:-1], bars[1:]):
+        if x[4] > a[4]: b += x[5]
+        elif x[4] < a[4]: s += x[5]
+    return abs(b - s) / (b + s) if b + s > 0 else 0.0
+
+def rmt_residuals(rets):
+    """random-matrix-theory alpha residuals: remove the market eigen-mode (power iteration) from standardized returns;
+    rets: {sym: [daily returns]} → ({sym: residual z of the latest day}, eigenvalues above the Marchenko–Pastur edge)"""
+    syms = [k for k, v in rets.items() if len(v) >= 20]; T = min((len(rets[k]) for k in syms), default=0)
+    if len(syms) < 4 or T < 20: return {}, 0
+    Z = []
+    for k in syms:
+        x = rets[k][-T:]; m = sum(x) / T; sd = math.sqrt(sum((y - m) ** 2 for y in x) / T) or 1; Z.append([(y - m) / sd for y in x])
+    N = len(syms); C = [[sum(Z[i][t] * Z[j][t] for t in range(T)) / T for j in range(N)] for i in range(N)]
+    v = [1.0 / math.sqrt(N)] * N
+    for _ in range(60):
+        w = [sum(C[i][j] * v[j] for j in range(N)) for i in range(N)]; nw = math.sqrt(sum(x * x for x in w)) or 1; v = [x / nw for x in w]
+    lam = sum(v[i] * sum(C[i][j] * v[j] for j in range(N)) for i in range(N)); edge = (1 + math.sqrt(N / T)) ** 2
+    f = sum(v[i] * Z[i][-1] for i in range(N)); res = {syms[i]: round(Z[i][-1] - v[i] * f, 3) for i in range(N)}
+    return res, int(lam > edge)
+
+def _sample_cands(lane, n, now):
+    R = _fr.Random(lane * 7919 + int(now // 300)); out = []
+    pools = {11: [(s, "stocks") for s in EQ_UNI], 12: [(c + "-USD", "crypto") for c in CR_UNI], 13: [("oc:solana:Sample%sPool%032d" % (c, i), "onchain") for i, c in enumerate("ABCDEFGHJK")]}[lane]
+    setups = {11: ["ORB + AVWAP reclaim", "Zero-Gamma flip breach", "Call Wall break", "0DTE Max-Pain snap", "RMT alpha residual"], 12: ["Funding extreme squeeze", "Spot-Perp basis dislocation", "Liquidation cluster sweep (est.)", "P_micro skew", "Cross-exchange impulse"], 13: ["Rug Shield v2 pass · net buy pressure", "Retention half-life rising", "Fresh pool momentum"]}[lane]
+    for sym, mkt in R.sample(pools, min(n, len(pools))):
+        px = round(10 ** R.uniform(-3 if mkt == "onchain" else 0.5, 3.5), 6); side = "buy" if R.random() < 0.62 else "sell"
+        out.append({"sym": sym, "mkt": mkt, "side": side, "setup": R.choice(setups), "score": round(R.uniform(0.2, 0.95), 3), "px": px, "atr": round(px * R.uniform(0.004, 0.03), 8), "liq": round(10 ** R.uniform(4.5, 8), 0), "feat": {"funding8h": round(R.gauss(0, 4), 2), "basis": round(R.gauss(0, 8), 2), "skew": round(R.gauss(0, 2), 2), "impact": round(R.uniform(0.05, 3.5), 2), "top3": round(R.uniform(0.04, 0.3), 3), "entropy": round(R.uniform(0.4, 0.98), 3)}, "sample": True})
+    return out
+
+def _warm11(st, pool, offline, wants):
+    now = time.time()
+    if offline:
+        c = _sample_cands(11, 12, now); return {"scan": {"rows": c, "gex": {"SPY": {"flip": None, "note": "sample"}}, "sample": True, "ts": now}, "fwd": {"cands": c, "series": [math.sin(now / 60 + i) * 0.001 for i in range(64)]}}
+    yhdr = {"User-Agent": "Mozilla/5.0", "Accept": "application/json"}
+    def bars(sym):
+        try: return sym, candles10(sym, "1m")[0]
+        except Exception: return sym, []
+    B = dict(pool.map(bars, EQ_UNI))
+    if now - st.get("dAt", 0) > 600 or "daily" not in st:
+        def daily(sym):
+            try: rows = candles10(sym, "1d")[0][-90:]; return sym, [b[4] / a[4] - 1 for a, b in zip(rows[:-1], rows[1:])]
+            except Exception: return sym, []
+        st["daily"] = dict(pool.map(daily, EQ_UNI)); st["dAt"] = now
+    res, nmode = rmt_residuals(st["daily"]); gex = {}
+    for u in ("SPY", "QQQ"):
+        try:
+            oj = _jget("https://query2.finance.yahoo.com/v7/finance/options/%s" % u, yhdr, timeout=6); r = ((oj.get("optionChain") or {}).get("result") or [{}])[0]; S = _hnum((r.get("quote") or {}).get("regularMarketPrice")); o = (r.get("options") or [{}])[0]
+            T = max(1 / 365 / 24, (_hnum(o.get("expirationDate")) - now) / 31557600) if o.get("expirationDate") else 1 / 365
+            mk = lambda arr: [{"strike": _hnum(x.get("strike")), "oi": _hnum(x.get("openInterest")), "iv": _hnum(x.get("impliedVolatility"))} for x in arr or [] if _hnum(x.get("openInterest")) > 0]
+            lv = gex_levels(S, mk(o.get("calls")), mk(o.get("puts")), T); lv["S"] = S; lv["zeroDte"] = T * 365 < 1; gex[u] = lv
+        except Exception as e: gex[u] = {"err": "options chain unavailable (" + str(e)[:60] + ")"}
+    cands = []
+    for sym, b in B.items():
+        if len(b) < 40: continue
+        px = b[-1][4]; at = atr_of(b); liq = sum(x[4] * x[5] for x in b[-30:]) / 30; o = orb_avwap(b); pin = pin_est(b[-120:])
+        g = gex.get(sym) or {}
+        if g.get("flip") and len(b) > 2 and (b[-2][4] - g["flip"]) * (px - g["flip"]) < 0: cands.append({"sym": sym, "mkt": "stocks", "side": "buy" if px > g["flip"] else "sell", "setup": "Zero-Gamma flip breach", "score": 0.8, "px": px, "atr": at, "liq": liq, "feat": {"pin": round(pin, 3), "flip": g["flip"]}})
+        if g.get("callWall") and px > g["callWall"]: cands.append({"sym": sym, "mkt": "stocks", "side": "buy", "setup": "Call Wall break", "score": 0.7, "px": px, "atr": at, "liq": liq, "feat": {"wall": g["callWall"]}})
+        if g.get("putWall") and px < g["putWall"]: cands.append({"sym": sym, "mkt": "stocks", "side": "sell", "setup": "Put Wall break", "score": 0.7, "px": px, "atr": at, "liq": liq, "feat": {"wall": g["putWall"]}})
+        if g.get("maxPain") and g.get("zeroDte") and abs(px / g["maxPain"] - 1) < 0.003: cands.append({"sym": sym, "mkt": "stocks", "side": "buy" if px < g["maxPain"] else "sell", "setup": "0DTE Max-Pain snap", "score": 0.6, "px": px, "atr": at, "liq": liq, "feat": {"maxPain": g["maxPain"]}})
+        if o: cands.append({"sym": sym, "mkt": "stocks", "side": o["side"], "setup": o["setup"], "score": round(0.55 + min(0.35, pin), 3), "px": px, "atr": at, "liq": liq, "feat": {"pin": round(pin, 3), "avwap": round(o["avwap"], 4)}})
+        r = res.get(sym)
+        if r is not None and abs(r) >= 1.5: cands.append({"sym": sym, "mkt": "stocks", "side": "buy" if r < 0 else "sell", "setup": "RMT alpha residual (mean reversion)", "score": round(min(0.9, abs(r) / 4), 3), "px": px, "atr": at, "liq": liq, "feat": {"resid": r}})
+    spy = B.get("SPY") or []; ser = [b[4] / a[4] - 1 for a, b in zip(spy[-65:-1], spy[-64:])]
+    return {"scan": {"rows": cands, "gex": gex, "rmtModes": nmode, "universe": len(EQ_UNI), "sample": False, "ts": now}, "fwd": {"cands": cands, "series": ser}}
+
+# ---- Lane 12: crypto majors & perps squeeze scanner ----
+def micro_price(bid, bsz, ask, asz):
+    """Stoikov micro-price: size-weighted toward the thinner side's opposite quote"""
+    return (bid * asz + ask * bsz) / (bsz + asz) if bsz + asz > 0 else (bid + ask) / 2
+
+def _warm12(st, pool, offline, wants):
+    now = time.time(); ser = st.setdefault("btc", [])
+    if offline:
+        c = _sample_cands(12, 9, now); ser.append(math.sin(now / 37) * 0.0012); del ser[:-64]
+        return {"scan": {"rows": c, "sample": True, "ts": now}, "fwd": {"cands": c, "series": list(ser)}}
+    hp = lambda body: json.loads(shield_fetch(HL_INFO_URL, "POST", json.dumps(body).encode(), {"Content-Type": "application/json", "User-Agent": "ExTerm/1.0"}, timeout=8)[1])
+    meta, ctxs = hp({"type": "metaAndAssetCtxs"}); names = [u.get("name") for u in meta.get("universe", [])]; cands = []; info = {}
+    for nm, cx in zip(names, ctxs):
+        if nm not in CR_UNI: continue
+        mark, orc = _hnum(cx.get("markPx")), _hnum(cx.get("oraclePx")); f8 = _hnum(cx.get("funding")) * 8 * 1e4; basis = (mark / orc - 1) * 1e4 if orc else 0.0; prev = _hnum(cx.get("prevDayPx")); ch = (mark / prev - 1) * 100 if prev else 0.0
+        info[nm] = {"mark": mark, "funding8hBps": round(f8, 2), "basisBps": round(basis, 2), "oi": _hnum(cx.get("openInterest")) * mark, "chg24": round(ch, 2), "vlm": _hnum(cx.get("dayNtlVlm"))}
+    def book(nm):
+        try: b = hp({"type": "l2Book", "coin": nm}); lv = b.get("levels") or [[], []]; bid, ask = lv[0][0], lv[1][0]; return nm, (_hnum(bid["px"]), _hnum(bid["sz"]), _hnum(ask["px"]), _hnum(ask["sz"]))
+        except Exception: return nm, None
+    for nm, q in pool.map(book, [n for n in CR_UNI if n in info][:6]):
+        if q: mid = (q[0] + q[2]) / 2; info[nm]["microSkewBps"] = round((micro_price(*q) / mid - 1) * 1e4, 3) if mid else 0
+    def cb(nm):
+        try: return nm, _hnum(_jget("https://api.exchange.coinbase.com/products/%s-USD/ticker" % nm, timeout=4).get("price"))
+        except Exception: return nm, 0.0
+    for nm, p in pool.map(cb, ["BTC", "ETH", "SOL"]):
+        if p and nm in info: d = (p / info[nm]["mark"] - 1) * 1e4; pr = st.setdefault("cbd", {}).get(nm, d); info[nm]["xexBps"] = round(d, 2); info[nm]["xexImpulseBps"] = round(d - pr, 2); st["cbd"][nm] = d
+    for nm, x in info.items():
+        sym = nm + "-USD"; base = {"sym": sym, "mkt": "crypto", "px": x["mark"], "atr": x["mark"] * max(0.004, abs(x["chg24"]) / 100 / 4), "liq": x["vlm"] / 1440, "feat": dict(x)}
+        if abs(x["funding8hBps"]) >= 3: cands.append(dict(base, side="sell" if x["funding8hBps"] > 0 else "buy", setup="Funding extreme squeeze", score=round(min(0.95, abs(x["funding8hBps"]) / 10), 3)))
+        if abs(x["basisBps"]) >= 8: cands.append(dict(base, side="sell" if x["basisBps"] > 0 else "buy", setup="Spot-Perp basis dislocation", score=round(min(0.9, abs(x["basisBps"]) / 30), 3)))
+        if abs(x["chg24"]) > 3 and x["funding8hBps"] * x["chg24"] < 0: cands.append(dict(base, side="buy" if x["chg24"] > 0 else "sell", setup="Liquidation cluster sweep (est.)", score=0.6))
+        if abs(x.get("microSkewBps", 0)) >= 0.5: cands.append(dict(base, side="buy" if x["microSkewBps"] > 0 else "sell", setup="P_micro skew", score=round(min(0.8, abs(x["microSkewBps"]) / 3), 3)))
+        if abs(x.get("xexImpulseBps", 0)) >= 3: cands.append(dict(base, side="buy" if x["xexImpulseBps"] > 0 else "sell", setup="Cross-exchange impulse", score=0.55))
+    b = info.get("BTC")
+    if b: lp = st.get("lastBtc"); st["lastBtc"] = b["mark"]; ser.append((b["mark"] / lp - 1) if lp else 0.0); del ser[:-64]
+    return {"scan": {"rows": cands, "perps": info, "sample": False, "ts": now}, "fwd": {"cands": cands, "series": list(ser)}}
+
+# ---- Lane 13: on-chain DEX & Rug Shield v2 ----
+def entropy_norm(xs):
+    """normalised Shannon entropy of a list of labels (1 = perfectly spread, 0 = one actor)"""
+    if not xs: return 0.0
+    c = {}
+    for x in xs: c[x] = c.get(x, 0) + 1
+    n = len(xs); h = -sum((v / n) * math.log(v / n) for v in c.values()); return h / math.log(n) if n > 1 else 0.0
+
+def top_share(xs, w, k=3):
+    tot = sum(w) or 1; c = {}
+    for x, y in zip(xs, w): c[x] = c.get(x, 0) + y
+    return sum(sorted(c.values(), reverse=True)[:k]) / tot
+
+def amm_impact_pct(order_usd, reserve_usd):
+    """constant-product price impact of a market order (half the reserve is the quote side)"""
+    q = reserve_usd / 2; return order_usd / (q + order_usd) * 100 if q > 0 else 100.0
+
+def retention_half_life(b1, b6, b24):
+    """buyer-rate half-life in hours from unique buyers over 1h / 6h / 24h (∞ when the rate is rising)"""
+    r1, r24 = b1, b24 / 24.0
+    if r1 <= 0 or r24 <= 0: return 0.0
+    if r1 >= r24: return float("inf")
+    k = math.log(r24 / r1) / 23.0; return math.log(2) / k if k > 0 else float("inf")
+
+def rug_shield_v2(m):
+    """Rug Shield v2 gate → (pass, list of [criterion, state]); state passed / failed / pending (unknown)"""
+    cr = [["AMM impact ≤ 2% ($1K)", "passed" if m.get("impact") is not None and m["impact"] <= 2 else "failed" if m.get("impact") is not None else "pending"],
+          ["Top-3 buyers / Slot 0–2 bundle ≤ 15%", "passed" if m.get("top3") is not None and m["top3"] <= 0.15 else "failed" if m.get("top3") is not None else "pending"],
+          ["Sybil entropy ≥ 0.6", "passed" if m.get("entropy") is not None and m["entropy"] >= 0.6 else "failed" if m.get("entropy") is not None else "pending"],
+          ["No freeze / mint authority", "failed" if m.get("freeze") else "passed" if m.get("freeze") is False else "pending"],
+          ["LP locked / burned", "passed" if m.get("lpLocked") else "failed" if m.get("lpLocked") is False else "pending"],
+          ["Net buy pressure 24h > 0 (smart-money proxy)", "passed" if (m.get("netBuy") or 0) > 0 else "failed"]]
+    return all(s != "failed" for _, s in cr) and sum(1 for _, s in cr if s == "passed") >= 4, cr
+
+def _warm13(st, pool, offline, wants):
+    now = time.time()
+    if offline:
+        c = _sample_cands(13, 10, now)
+        for x in c: ok, cr = rug_shield_v2({"impact": x["feat"]["impact"], "top3": x["feat"]["top3"], "entropy": x["feat"]["entropy"], "freeze": False, "lpLocked": True, "netBuy": 1}); x["feat"]["shield"] = cr; x["feat"]["shieldPass"] = ok
+        c = [x for x in c if x["feat"]["shieldPass"]] or c[:3]
+        return {"scan": {"rows": c, "sample": True, "ts": now, "clmm": "CLMM tick-cliff data is not in the free APIs: shown as pending"}, "fwd": {"cands": c, "series": [math.cos(now / 90 + i) * 0.003 for i in range(64)], "forensics": {x["sym"]: {"freeze": False, "honeypot": False} for x in c}}}
+    if now - st.get("tAt", 0) < 120 and st.get("last"): return st["last"]
+    st["tAt"] = now; pools = []
+    def trending(ch):
+        try: return ch, (_jget("https://api.geckoterminal.com/api/v2/networks/%s/trending_pools?include=base_token" % ch, timeout=8).get("data") or [])[:8]
+        except Exception: return ch, []
+    for ch, rows in pool.map(trending, DEX_CHAINS):
+        for d in rows:
+            a = d.get("attributes") or {}; tx = a.get("transactions") or {}; vol = a.get("volume_usd") or {}; pc = a.get("price_change_percentage") or {}
+            base = (((d.get("relationships") or {}).get("base_token") or {}).get("data") or {}).get("id", ""); mint = base.split("_", 1)[1] if "_" in base else ""
+            pools.append({"chain": ch, "pool": str(a.get("address") or ""), "name": _CTRL_RX.sub("", str(a.get("name") or ""))[:40], "mint": mint, "px": _hnum(a.get("base_token_price_usd")), "reserve": _hnum(a.get("reserve_in_usd")), "vol24": _hnum(vol.get("h24")),
+                          "b1": _hnum((tx.get("h1") or {}).get("buyers")), "b6": _hnum((tx.get("h6") or {}).get("buyers")), "b24": _hnum((tx.get("h24") or {}).get("buyers")), "buys24": _hnum((tx.get("h24") or {}).get("buys")), "sells24": _hnum((tx.get("h24") or {}).get("sells")),
+                          "ch1": _hnum(pc.get("h1")), "ch6": _hnum(pc.get("h6")), "ch24": _hnum(pc.get("h24"))})
+    def forensics(p):
+        m = {"impact": round(amm_impact_pct(1000, p["reserve"]), 3), "netBuy": (p["buys24"] - p["sells24"]) / max(1, p["buys24"] + p["sells24"]), "halfLife": retention_half_life(p["b1"], p["b6"], p["b24"])}
+        try:
+            tr = _gt_trades(p["chain"], p["pool"]); buys = [(w, q * px) for t, px, q, w, k in tr if k == "buy" and w]
+            if buys: m["top3"] = round(top_share([w for w, _ in buys], [u for _, u in buys]), 4); m["entropy"] = round(entropy_norm([w for w, _ in buys]), 4)
+        except Exception: pass
+        if p["chain"] == "solana" and p["mint"]:
+            try:
+                rc = _jget("https://api.rugcheck.xyz/v1/tokens/%s/report/summary" % urllib.parse.quote(p["mint"]), timeout=6); names = " ".join(str(r.get("name", "")) for r in rc.get("risks") or []).lower()
+                m["freeze"] = "freeze" in names or "mint authority" in names; m["lpLocked"] = not ("lp unlocked" in names or "liquidity unlocked" in names); m["rugScore"] = _hnum(rc.get("score"))
+            except Exception: pass
+        ok, cr = rug_shield_v2(m); m["shield"] = cr; m["shieldPass"] = ok; return p, m
+    top = sorted(pools, key=lambda p: -p["vol24"])[:12]; cands = []; fx = {}
+    for p, m in pool.map(forensics, top):
+        sym = "oc:%s:%s" % (p["chain"], p["pool"]); fx[sym] = {"freeze": bool(m.get("freeze")), "honeypot": m.get("netBuy", 0) > 0.95 and p["sells24"] < 3, "impact": m["impact"]}
+        if not p["px"] > 0: continue
+        side = "buy" if p["ch1"] > 0 and m["netBuy"] > 0 else "sell"
+        cands.append({"sym": sym, "mkt": "onchain", "name": p["name"], "side": side, "setup": "Rug Shield v2 pass · net buy pressure" if m["shieldPass"] else "Rug Shield v2 incomplete", "score": round(min(0.95, 0.4 + abs(p["ch1"]) / 20 + max(0, m["netBuy"]) * 0.3), 3) * (1 if m["shieldPass"] else 0.6), "px": p["px"], "atr": p["px"] * max(0.01, abs(p["ch1"]) / 100), "liq": p["reserve"],
+                      "feat": {"impact": m["impact"], "top3": m.get("top3"), "entropy": m.get("entropy"), "halfLifeH": None if m["halfLife"] == float("inf") else round(m["halfLife"], 1), "rising": m["halfLife"] == float("inf"), "freeze": m.get("freeze"), "lpLocked": m.get("lpLocked"), "shield": m["shield"], "shieldPass": m["shieldPass"], "ch1": p["ch1"], "ch24": p["ch24"]}})
+    ser = st.setdefault("ser", []); ser.append(sum(p["ch1"] for p in pools) / max(1, len(pools)) / 100); del ser[:-64]
+    st["last"] = {"scan": {"rows": cands, "chains": list(DEX_CHAINS), "sample": False, "ts": now, "clmm": "CLMM tick-cliff data is not in the free APIs: shown as pending"}, "fwd": {"cands": cands, "series": list(ser), "forensics": fx}}
+    return st["last"]
+
+# ---- Lane 14: transfer entropy + BOCPD + 6-bot consensus ----
+def _disc(a, bins=3):
+    s = sorted(a); q = [s[(i * len(s)) // bins] for i in range(1, bins)]
+    return [sum(1 for t in q if v > t) for v in a]
+
+def transfer_entropy(x, y, bins=3):
+    """TE X → Y in bits (k = 1), same estimator as V178.transferEntropy in the page"""
+    n = min(len(x), len(y))
+    if n < 8: return 0.0
+    X, Y = _disc(x[:n], bins), _disc(y[:n], bins); c3, c2a, c2b, c1 = {}, {}, {}, {}
+    for t in range(n - 1):
+        for d, k in ((c3, (Y[t + 1], Y[t], X[t])), (c2a, (Y[t], X[t])), (c2b, (Y[t + 1], Y[t])), (c1, Y[t])): d[k] = d.get(k, 0) + 1
+    N = n - 1; te = 0.0
+    for (y1, y0, x0), v in c3.items(): te += (v / N) * math.log2((v / c2a[(y0, x0)]) / (c2b[(y1, y0)] / c1[y0]))
+    return max(0.0, te)
+
+class BOCPDpy:
+    """Adams–MacKay BOCPD, Normal-Gamma prior, truncated run length (same model as V178.BOCPD)"""
+    def __init__(self, h=1 / 60, mx=120): self.h, self.mx, self.R, self.mu, self.k, self.a, self.b, self.cp, self.map = h, mx, [1.0], [0.0], [1.0], [1.0], [1.0], 0.0, 0
+    def push(self, x):
+        n = len(self.R); pred = []
+        for r in range(n):
+            nu = 2 * self.a[r]; sc = math.sqrt(self.b[r] * (self.k[r] + 1) / (self.a[r] * self.k[r])); z = (x - self.mu[r]) / sc
+            pred.append(math.exp(math.lgamma((nu + 1) / 2) - math.lgamma(nu / 2) - 0.5 * math.log(nu * math.pi) - math.log(sc) - (nu + 1) / 2 * math.log1p(z * z / nu)))
+        m = min(n + 1, self.mx); R2 = [0.0] * m; cp = 0.0
+        for r in range(n):
+            g = self.R[r] * pred[r]; cp += g * self.h
+            if r + 1 < m: R2[r + 1] += g * (1 - self.h)
+        R2[0] = cp; s = sum(R2) or 1.0; R2 = [v / s for v in R2]
+        mu, k, a, b = [0.0], [1.0], [1.0], [1.0]
+        for r in range(min(m - 1, n)): mu.append((self.k[r] * self.mu[r] + x) / (self.k[r] + 1)); k.append(self.k[r] + 1); a.append(self.a[r] + 0.5); b.append(self.b[r] + self.k[r] * (x - self.mu[r]) ** 2 / (2 * (self.k[r] + 1)))
+        self.R, self.mu, self.k, self.a, self.b = R2, mu, k, a, b; self.cp = sum(R2[:6]); self.map = max(range(m), key=lambda i: R2[i]); return self
+
+def bot_votes(c, regime_cp):
+    """the 6-bot peer review: each bot scores the candidate in [−1, 1] from its own discipline"""
+    f = c.get("feat") or {}; sgn = 1 if c["side"] == "buy" else -1; liq = c.get("liq") or 0; imp = f.get("impact") if f.get("impact") is not None else amm_impact_pct(1000, liq * 2) if liq else 5
+    v = {"HUNTER-α": max(-1, min(1, c.get("score", 0) * 1.4 - 0.3)),
+         "MUTATOR-EVO": max(-1, min(1, 0.6 - regime_cp * 1.2)),
+         "HEDGER-ARB": max(-1, min(1, -sgn * (f.get("funding8hBps", 0) or 0) / 8 - sgn * (f.get("basisBps", 0) or 0) / 30 + 0.2)),
+         "RISK-GUARD": 1.0 if imp <= 0.5 else 0.4 if imp <= 2 else -1.0,
+         "SNIPER-EXEC": max(-1, min(1, 0.3 + sgn * (f.get("microSkewBps", 0) or 0) / 2 + (0.3 if f.get("avwap") or f.get("flip") or f.get("wall") else 0))),
+         "SCALPER-EXIT": max(-1, min(1, 0.5 if (c.get("atr") or 0) > 0 and c["atr"] / (c["px"] or 1) < 0.05 else -0.3))}
+    return {k: round(x, 3) for k, x in v.items()}
+
+def consensus(cands, series, regime_cp):
+    w = {"HUNTER-α": 1.2, "MUTATOR-EVO": 0.8, "HEDGER-ARB": 1.0, "RISK-GUARD": 1.4, "SNIPER-EXEC": 1.0, "SCALPER-EXIT": 0.8}; out = []
+    for c in cands:
+        v = bot_votes(c, regime_cp); sc = sum(v[k] * w[k] for k in v) / sum(w.values()); yes = sum(1 for x in v.values() if x > 0)
+        out.append(dict(c, votes=v, consensus=round(sc, 3), agree=yes, peer=yes >= 4 and v["RISK-GUARD"] > 0))
+    return sorted(out, key=lambda x: -x["consensus"])
+
+def _warm14(st, pool, offline, wants):
+    now = time.time(); F = st.get("feed", {}); cands = []; series = {}
+    for ln in (11, 12, 13):
+        d = F.get("lane%d" % ln) or {}; cands += d.get("cands") or []; series[ln] = d.get("series") or []
+    bo = st.setdefault("bo", BOCPDpy(1 / 40)); s12 = series.get(12) or []
+    for x in s12[st.get("seen12", 0) if st.get("seen12", 0) <= len(s12) else 0:]: bo.push(x * 100)
+    st["seen12"] = len(s12)
+    links = []
+    names = {11: "US equities (SPY)", 12: "Crypto majors (BTC)", 13: "On-chain DEX"}
+    for a in (11, 12, 13):
+        for b in (11, 12, 13):
+            if a != b and len(series[a]) >= 16 and len(series[b]) >= 16: links.append({"from": names[a], "to": names[b], "te": round(transfer_entropy(series[a], series[b]), 4)})
+    links.sort(key=lambda x: -x["te"]); ranked = consensus(cands, series, bo.cp)
+    out = {"rows": ranked[:40], "te": links, "regime": {"cp": round(bo.cp, 3), "runLength": bo.map, "state": "CHANGE-POINT" if bo.cp > 0.5 else "STABLE"}, "bots": list(BOTS6), "sample": offline or any(c.get("sample") for c in cands), "ts": now}
+    return {"consensus": out, "fwd": {"cands": ranked[:30], "regime": out["regime"]}}
+
+# ---- Lane 15: adversarial 1,000-path Monte Carlo + liquidity stress ----
+_TT = None
+def _t_table(n=20000, nu=3, seed=1789):
+    global _TT
+    if _TT is None:
+        R = _fr.Random(seed); out = []
+        for _ in range(n):
+            z = R.gauss(0, 1); ch = sum(R.gauss(0, 1) ** 2 for _ in range(nu)); out.append(z / math.sqrt(ch / nu) / math.sqrt(nu / (nu - 2)))  # unit-variance Student-t(3)
+        _TT = out
+    return _TT
+
+def mc_stress(c, paths=1000, steps=40, size_usd=1000.0, seed=0):
+    """1,000 fat-tailed paths (unit-variance Student-t ν = 3 + Hawkes-clustered jumps); SL 1 ATR, TP 2 ATR →
+    P(TP first), expectancy (R), 5 % CVaR (R), slippage %; veto on > 2 % slippage, negative expectancy or a fat left tail"""
+    T = _t_table(); R = _fr.Random(seed or hash((c["sym"], c["side"], round(c["px"], 6))) & 0xFFFFFFFF); px = c["px"]; atr = c.get("atr") or px * 0.01
+    sgn = 1 if c["side"] == "buy" else -1; sig = atr / 3.0; tp, sl = 2.0, 1.0; outs = []; wins = 0; nT = len(T)
+    # signal-edge prior: the scanner score sets a small drift in the signal's direction (score 0.5 = no edge, 1.0 = 0.15 σ / step);
+    # without it every path is pure noise and no setup could ever pass. The adversarial part stays: fat tails, jump clusters, gaps
+    mu = sgn * max(0.0, min(1.0, c.get("score", 0.5)) - 0.5) * 0.3 * sig
+    for _ in range(paths):
+        x = 0.0; lam = 0.02; res = None
+        for k in range(steps):
+            x += mu + sig * T[R.randrange(nT)]
+            if R.random() < lam: j = 2.5 * sig * T[R.randrange(nT)]; x += j; lam = min(0.5, lam + 0.15)  # self-exciting jump cluster
+            lam = 0.02 + (lam - 0.02) * 0.8
+            r = sgn * x / atr
+            if r >= tp: res = tp; wins += 1; break
+            if r <= -sl: res = -sl * (1 + max(0, -r - sl)); break  # gap through the stop costs extra
+        outs.append(res if res is not None else sgn * x / atr)
+    outs.sort(); cv = outs[:max(1, paths // 20)]; cvar = sum(cv) / len(cv); ev = sum(outs) / paths; liq = c.get("liq") or 0
+    imp = (c.get("feat") or {}).get("impact")
+    slip = imp if imp is not None and c.get("mkt") == "onchain" else (amm_impact_pct(size_usd, liq * 2) if c.get("mkt") == "onchain" else min(5.0, 0.02 + size_usd / max(1.0, liq) * 10))
+    veto = []
+    if slip > 2: veto.append("slippage %.2f%% > 2%%" % slip)
+    if ev <= 0: veto.append("negative expectancy %.2fR" % ev)
+    if cvar < -2.5: veto.append("tail 5%% CVaR %.2fR" % cvar)  # gap-through-stop losses on fat tails routinely reach ≈ −2R
+    return {"pTP": round(wins / paths, 3), "evR": round(ev, 3), "cvar5R": round(cvar, 3), "slipPct": round(slip, 3), "paths": paths, "veto": veto, "verdict": "VETO" if len(veto) >= 2 or (veto and veto[0].startswith("slippage")) else "DOWNGRADE" if veto else "PASS"}
+
+def _warm15(st, pool, offline, wants):
+    now = time.time(); F = (st.get("feed") or {}).get("lane14") or {}; cands = F.get("cands") or []
+    key = json.dumps([(c["sym"], c["side"], c["setup"]) for c in cands]);
+    if key == st.get("key") and now - st.get("at", 0) < 30 and st.get("last"): return st["last"]
+    _t_table(); rows = [dict(c, mc=m) for c, m in zip(cands, pool.map(mc_stress, cands))]
+    st["key"], st["at"] = key, now
+    st["last"] = {"stress": {"rows": rows, "paths": 1000, "model": "Student-t(3) + Hawkes jumps", "sample": offline or any(c.get("sample") for c in cands), "ts": now}, "fwd": {"cands": rows, "regime": F.get("regime") or {}}}
+    return st["last"]
+
+# ---- Lane 16: multi-timeframe confluence + journal correlator ----
+_WORD = re.compile(r"[a-z0-9]+")
+def journal_match(c, journal, k=8):
+    """lexical retrieval over the personal journal (setup + symbol + market words, Jaccard) → similarity-weighted win rate"""
+    q = set(_WORD.findall((c.get("setup", "") + " " + c["sym"].split(":")[-1] + " " + c.get("mkt", "")).lower())); sc = []
+    for e in journal or []:
+        txt = " ".join(str(e.get(f, "")) for f in ("sym", "setup", "strategy", "tags", "note", "notes", "side")).lower(); w = set(_WORD.findall(txt))
+        if not w: continue
+        j = len(q & w) / len(q | w)
+        if j > 0: sc.append((j, 1 if _hnum(e.get("pnl")) > 0 else 0))
+    sc.sort(reverse=True); sc = sc[:k]
+    if not sc: return None, 0
+    return round(sum(j * x for j, x in sc) / sum(j for j, _ in sc) * 100, 1), len(sc)
+
+def mtf_align(c, mtf):
+    key = c["sym"] if c["sym"] in mtf else c["sym"].replace("-USD", "") if c["sym"].replace("-USD", "") in mtf else None
+    row = mtf.get(key) if key else None
+    if not row:
+        f = c.get("feat") or {}
+        if c.get("mkt") == "onchain" and ("ch1" in f): s = [1 if f.get("ch1", 0) > 0 else -1, 1 if f.get("ch24", 0) > 0 else -1]; sgn = 1 if c["side"] == "buy" else -1; return sum(1 for x in s if x == sgn), len(s)
+        return None, 0
+    sgn = 1 if c["side"] == "buy" else -1; return sum(1 for tf in MTF if row.get(tf) == sgn), len(MTF)
+
+def tier_of(c, mtf, journal, regime):
+    """criteria → 0–100 score, tier, and Passed / Pending / Failed badges (never empty: partial matches rank as B+ / Watchlist)"""
+    mc = c.get("mc") or {}; al, n = mtf_align(c, mtf); wr, jn = journal_match(c, journal); cr = []
+    cr.append(["6-bot consensus ≥ 4/6 (peer-reviewed)", "passed" if c.get("peer") else "failed"])
+    cr.append(["Monte Carlo 1,000 paths: expectancy > 0, tail ok", "passed" if mc.get("verdict") == "PASS" else "failed" if mc.get("verdict") == "VETO" else "pending" if not mc else "failed"])
+    cr.append(["Multi-timeframe alignment ≥ 4/5 (1m · 5m · 15m · 1h · 1d)" if n == 5 else "Timeframe alignment (%d frames)" % n if n else "Multi-timeframe alignment", "pending" if not n else "passed" if al >= max(2, round(n * 0.8)) else "failed"])
+    cr.append(["Slippage ≤ 2%", "passed" if mc and mc.get("slipPct", 9) <= 2 else "pending" if not mc else "failed"])
+    cr.append(["Journal: similar setups win ≥ 55%", "pending" if wr is None or jn < 3 else "passed" if wr >= 55 else "failed"])
+    cr.append(["Regime stable (BOCPD change-point < 50%)", "passed" if (regime or {}).get("cp", 0) < 0.5 else "failed"])
+    wts = [22, 22, 18, 14, 12, 12]; pts = sum(w * (1 if s == "passed" else 0.45 if s == "pending" else 0) for w, (_, s) in zip(wts, cr))
+    pts += 6 * max(0, min(1, (c.get("consensus") or 0))) - (8 if mc.get("verdict") == "VETO" else 0); score = int(max(0, min(100, round(pts))))
+    allp = all(s == "passed" for _, s in cr); score = max(92, score) if allp else min(91, score)
+    tier = "S-TIER" if allp else "A" if score >= 80 else "B+" if score >= 62 else "WATCHLIST"
+    return dict(c, tierScore=score, tier=tier, criteria=cr, passed=sum(1 for _, s in cr if s == "passed"), pending=sum(1 for _, s in cr if s == "pending"), journalWin=wr, journalN=jn, mtf="%d/%d" % (al, n) if n else "–")
+
+def _warm16(st, pool, offline, wants):
+    now = time.time(); F = st.get("feed") or {}; cands = (F.get("lane15") or {}).get("cands") or []; regime = (F.get("lane15") or {}).get("regime") or {}
+    mtf = dict((F.get("lane9") or {}).get("mtf") or {}); mtf.update((F.get("lane10") or {}).get("mtf") or {}); journal = (F.get("journal") or {}).get("rows") or []
+    rows = sorted((tier_of(c, mtf, journal, regime) for c in cands), key=lambda r: (-r["tierScore"], -(r.get("consensus") or 0)))
+    seen = set(); uniq = []
+    for r in rows:
+        k = (r["sym"], r["side"])
+        if k in seen: continue
+        seen.add(k); uniq.append(r)
+    return {"recs": {"rows": uniq[:30], "tiers": {t: sum(1 for r in uniq if r["tier"] == t) for t in ("S-TIER", "A", "B+", "WATCHLIST")}, "journal": len(journal), "mtfSyms": len(mtf), "sample": offline or any(r.get("sample") for r in uniq), "ts": now}}
+
+# ---- Lane 17: smart order router + shadow-bracket slicer (plans only) ----
+VENUES = {"crypto": [("Coinbase", 6.0, 1.0), ("Kraken", 8.0, 1.2)], "onchain": [("Jupiter", 0.0, 1.0), ("Raydium", 25.0, 1.1), ("Orca", 30.0, 1.15)], "stocks": [("Alpaca", 0.0, 1.0), ("IBKR", 0.5, 0.9)]}  # (venue, taker fee bps, depth factor)
+
+def route_plan(req, fees=None):
+    """SOR: rank venues by all-in cost (fee + half spread + impact), POV-paced IOC micro-slices, RAM-only shadow brackets,
+    Solana priority fee from live percentiles, optional split across up to 3 of your own wallets (a sizing plan; ExTerm never signs)"""
+    mkt = req.get("mkt") or ("onchain" if str(req.get("sym", "")).startswith("oc:") else "crypto" if "-" in str(req.get("sym", "")) else "stocks")
+    usd = max(0.0, _hnum(req.get("usd"))); px = _hnum(req.get("px")); liq = max(1.0, _hnum(req.get("liq"), 1e6)); spread = _hnum(req.get("spreadBps"), 4.0); vol = max(1.0, _hnum(req.get("volPerMin"), liq / 50)); pov = min(0.25, max(0.01, _hnum(req.get("pov"), 0.1)))
+    ranked = []
+    for v, fee, depth in VENUES[mkt]:
+        imp = amm_impact_pct(usd, liq * 2 * depth) * 100 if mkt == "onchain" else usd / (liq * depth) * 1e4 * 0.1
+        ranked.append({"venue": v, "feeBps": fee, "impactBps": round(imp, 2), "allInBps": round(fee + spread / 2 + imp, 2)})
+    ranked.sort(key=lambda x: x["allInBps"]); per_min = vol * pov; n = max(1, min(60, int(math.ceil(usd / max(1.0, per_min))))); child = usd / n
+    sl, tp = _hnum(req.get("sl")), _hnum(req.get("tp")); wallets = max(1, min(3, int(_hnum(req.get("wallets"), 1))))
+    plan = {"mkt": mkt, "route": ranked, "best": ranked[0]["venue"], "slices": n, "childUsd": round(child, 2), "orderType": "IOC", "povPct": round(pov * 100, 1), "spacingSec": round(60.0 / max(1, min(n, 60)) * (1 if n > 1 else 0), 2),
+            "shadowBracket": {"sl": sl or None, "tp": tp or None, "where": "RAM only (never sent to the venue until triggered)"}, "wallets": [{"wallet": "W%d" % (i + 1), "usd": round(usd / wallets, 2)} for i in range(wallets)], "signs": False}
+    if mkt == "onchain":
+        f = fees or {}; plan["priorityFee"] = {"microLamports": int(f.get("p75") or 10000), "p50": f.get("p50"), "p90": f.get("p90"), "src": f.get("src", "default"), "jitoTip": "use your bot's Jito tip floor (not fetched: not on the allow-list)"}
+    return plan
+
+def _warm17(st, pool, offline, wants):
+    now = time.time()
+    if not offline and now - st.get("fAt", 0) >= 10:
+        st["fAt"] = now
+        try:
+            j = json.loads(shield_fetch("https://solana-rpc.publicnode.com", "POST", json.dumps({"jsonrpc": "2.0", "id": 1, "method": "getRecentPrioritizationFees", "params": []}).encode(), {"Content-Type": "application/json", "User-Agent": "ExTerm/1.0"}, timeout=6)[1])
+            fs = sorted(int(x.get("prioritizationFee") or 0) for x in j.get("result") or []); q = lambda f: fs[min(len(fs) - 1, int(f * (len(fs) - 1)))] if fs else 0
+            st["fees"] = {"p50": q(0.5), "p75": q(0.75), "p90": q(0.9), "src": "getRecentPrioritizationFees", "at": now}
+        except Exception: pass
+    if offline and "fees" not in st: st["fees"] = {"p50": 5000, "p75": 12000, "p90": 50000, "src": "sample", "at": now}
+    return {"status": {"fees": st.get("fees"), "brackets": len(st.get("br", {})), "venues": VENUES, "ts": now, "sample": offline}}
+
+def _call17(st, job, a):
+    if job == "route": return route_plan(a, st.get("fees"))
+    br = st.setdefault("br", {})
+    if job == "bracket":
+        oid = str(a.get("id") or "")[:64]
+        if not oid: raise ValueError("id required")
+        if len(br) >= 500 and oid not in br: raise ValueError("too many open shadow brackets")
+        br[oid] = {"sym": str(a.get("sym", ""))[:120], "side": "sell" if a.get("side") == "sell" else "buy", "sl": _hnum(a.get("sl")), "tp": _hnum(a.get("tp")), "qty": _hnum(a.get("qty"))}
+        return {"ok": True, "open": len(br)}
+    if job == "tick":
+        sym, px, hits = str(a.get("sym", "")), _hnum(a.get("px")), []
+        for oid, b in list(br.items()):
+            if b["sym"] != sym or not px > 0: continue
+            long = b["side"] == "buy"
+            if b["sl"] and (px <= b["sl"] if long else px >= b["sl"]): hits.append({"id": oid, "exit": "STOP", "px": px, "orderType": "IOC"}); br.pop(oid)
+            elif b["tp"] and (px >= b["tp"] if long else px <= b["tp"]): hits.append({"id": oid, "exit": "TAKE-PROFIT", "px": px, "orderType": "IOC"}); br.pop(oid)
+        return {"triggered": hits, "open": len(br)}
+    if job == "cancel": return {"ok": br.pop(str(a.get("id", "")), None) is not None, "open": len(br)}
+    raise ValueError("unknown job")
+
+# ---- Lane 18: pre-trade risk firewall + PIN-gated arming ----
+MACRO_2026 = [("FOMC", "2026-01-28 19:00"), ("FOMC", "2026-03-18 18:00"), ("FOMC", "2026-04-29 18:00"), ("FOMC", "2026-06-17 18:00"), ("FOMC", "2026-07-29 18:00"), ("FOMC", "2026-09-16 18:00"), ("FOMC", "2026-10-28 18:00"), ("FOMC", "2026-12-09 19:00")]  # UTC decision times; add CPI dates in macro.json (the BLS calendar changes)
+
+def macro_events(data_dir):
+    from datetime import datetime as _dt, timezone as _tz
+    ev = list(MACRO_2026)
+    try: ev += [(str(e[0])[:12], str(e[1])[:16]) for e in json.loads((pathlib.Path(data_dir) / "macro.json").read_text())[:200]]
+    except Exception: pass
+    out = []
+    for n, s in ev:
+        try: out.append((n, _dt.strptime(s, "%Y-%m-%d %H:%M").replace(tzinfo=_tz.utc).timestamp()))
+        except ValueError: pass
+    return out
+
+def risk_check(a, st, now=None):
+    """the synchronous pre-trade firewall → {ok, verdict, checks[], size}; every LIVE order must pass, PAPER orders get the same report"""
+    now = now or time.time(); ch = []; usd = _hnum(a.get("usd")); px = _hnum(a.get("px")); eq = max(1.0, _hnum(a.get("equity"), 10000)); atr = _hnum(a.get("atr")); sym = str(a.get("sym", ""))
+    fx = (st.get("feed", {}).get("lane13") or {}).get("forensics", {}).get(sym) or a.get("forensics") or {}
+    if sym.startswith("oc:"):
+        ch.append(["honeypot / sell simulation", "fail" if fx.get("honeypot") else "pass" if fx else "warn", "sells blocked or no sells seen" if fx.get("honeypot") else "sells observed in the pool" if fx else "not yet scanned by Lane 13"])
+        ch.append(["freeze / mint authority", "fail" if fx.get("freeze") else "pass" if fx else "warn", "authority still enabled" if fx.get("freeze") else "renounced" if fx else "unknown"])
+    slip = _hnum(a.get("slipPct"), fx.get("impact") if fx.get("impact") is not None else 0.0)
+    ch.append(["slippage ≤ 2% hard cap", "fail" if slip > 2 else "pass", "%.2f%%" % slip])
+    p, b = min(0.99, max(0.01, _hnum(a.get("winp"), 0.5))), max(0.1, _hnum(a.get("payoff"), 2.0)); kelly = max(0.0, p - (1 - p) / b); risk_pct = min(0.02, kelly * 0.25)
+    vol_size = (eq * risk_pct) / (atr / px) if atr > 0 and px > 0 else eq * risk_pct * 10; cap = min(vol_size, eq * 0.25)
+    ch.append(["volatility-scaled size (ATR + ¼ Kelly f*)", "fail" if usd > cap * 1.0001 else "pass", "max $%.0f (f* %.3f)" % (cap, kelly)])
+    pos = a.get("positions") or []; var = 1.65 * math.sqrt(sum((_hnum(x.get("usd")) * _hnum(x.get("vol"), 0.03)) ** 2 for x in pos) + (usd * (atr / px if px else 0.03)) ** 2)
+    ch.append(["portfolio VaR heat cap (95 %, ≤ 6 % equity)", "fail" if var > eq * 0.06 else "pass", "VaR $%.0f" % var])
+    losses = sorted(_hnum(t) for t in (a.get("lossTimes") or []))[-3:]
+    ch.append(["3-loss cooldown (30 min)", "fail" if len(losses) == 3 and now - losses[0] <= 3600 and now - losses[-1] < 1800 else "pass", "%d recent losses" % len(losses)])
+    age = _hnum(a.get("feedAgeSec"), 0); ch.append(["dead-feed lock (> 5.0 s)", "fail" if age > 5.0 else "pass", "%.1f s since the last tick" % age])
+    soon = [n for n, t in macro_events(st.get("data", ".")) if 0 <= t - now <= 1800]; ch.append(["pre-CPI / FOMC 30-min pause", "fail" if soon else "pass", (soon[0] + " within 30 min") if soon else "no event within 30 min"])
+    mode = st.get("mode", "PAPER"); fails = [c for c in ch if c[1] == "fail"]
+    return {"ok": not fails, "verdict": "BLOCK" if fails else "ALLOW", "mode": mode, "live": mode == "LIVE" and not fails, "checks": [{"name": n, "state": s, "detail": d} for n, s, d in ch], "maxUsd": round(cap, 2)}
+
+def _pin_hash(pin, salt): return hashlib.pbkdf2_hmac("sha256", pin.encode(), bytes.fromhex(salt), 200000).hex()
+
+def _call18(st, job, a):
+    d = pathlib.Path(st.get("data", ".")); f = d / "arming.json"
+    if job == "check": return risk_check(a, st)
+    if job == "status":
+        cfg = json.loads(f.read_text()) if f.exists() else {}
+        return {"mode": st.get("mode", "PAPER"), "pinSet": bool(cfg.get("hash")), "locked": st.get("lockUntil", 0) > time.time(), "lockLeft": max(0, int(st.get("lockUntil", 0) - time.time()))}
+    if job == "pin":  # set the PIN once (changing it needs the old PIN)
+        pin = str(a.get("pin", "")); cfg = json.loads(f.read_text()) if f.exists() else {}
+        if not re.match(r"^\d{4,12}$", pin): raise ValueError("PIN must be 4–12 digits")
+        if cfg.get("hash") and _pin_hash(str(a.get("old", "")), cfg["salt"]) != cfg["hash"]: raise ValueError("old PIN is wrong")
+        salt = secrets.token_hex(16); d.mkdir(parents=True, exist_ok=True); f.write_text(json.dumps({"salt": salt, "hash": _pin_hash(pin, salt)})); st["mode"] = "PAPER"; return {"ok": True, "mode": "PAPER"}
+    if job == "arm":
+        want = "LIVE" if a.get("mode") == "LIVE" else "PAPER"
+        if want == "PAPER": st["mode"] = "PAPER"; return {"ok": True, "mode": "PAPER"}  # disarming never needs the PIN
+        if st.get("lockUntil", 0) > time.time(): raise ValueError("too many wrong PINs: locked for %ds" % int(st["lockUntil"] - time.time()))
+        cfg = json.loads(f.read_text()) if f.exists() else {}
+        if not cfg.get("hash"): raise ValueError("set a PIN first")
+        if not _hmac.compare_digest(_pin_hash(str(a.get("pin", "")), cfg["salt"]), cfg["hash"]):
+            st["bad"] = st.get("bad", 0) + 1
+            if st["bad"] >= 5: st["bad"] = 0; st["lockUntil"] = time.time() + 300
+            raise ValueError("wrong PIN")
+        st["bad"] = 0; st["mode"] = "LIVE"; return {"ok": True, "mode": "LIVE"}
+    raise ValueError("unknown job")
+
+def _warm18(st, pool, offline, wants):
+    return {"status": dict(_call18(st, "status", {}), events=[{"name": n, "at": t} for n, t in macro_events(st.get("data", ".")) if t > time.time()][:4], ts=time.time())}
+
+# ---- Lane 19: fill accuracy, toxic-flow scratch, 3-stage ratchet, SHA-256 audit ledger ----
+def ratchet_stop(side, entry, r_unit, px, atr, stop):
+    """3-stage profit lock: break-even at +1R → lock +1.5R at +2.5R → trail 0.6 × ATR beyond that; stops only ever tighten"""
+    s = 1 if side == "buy" else -1; gain = s * (px - entry) / r_unit if r_unit > 0 else 0; new, stage = stop, 0
+    if gain >= 1: new, stage = entry, 1
+    if gain >= 2.5: new, stage = entry + s * 1.5 * r_unit, 2
+    if gain > 2.5 and atr > 0: tr = px - s * 0.6 * atr; new, stage = (max(new, tr) if s > 0 else min(new, tr)), 3
+    new = max(stop, new) if s > 0 else min(stop, new)
+    return {"stop": round(new, 10), "stage": stage, "gainR": round(gain, 3)}
+
+def manage_position(a):
+    """→ actions: toxic-flow scratch (< 500 ms after entry, VPIN > 0.75 against us), emergency IOC exit (> 25 % pool liquidity
+    drained in one block), or the ratchet stop"""
+    side = "sell" if a.get("side") == "sell" else "buy"; age_ms = _hnum(a.get("ageMs")); vpin = _hnum(a.get("vpin")); flow = _hnum(a.get("flowSign"))  # +1 buys dominate, −1 sells
+    if age_ms <= 500 and vpin > 0.75 and flow * (1 if side == "buy" else -1) < 0: return {"action": "SCRATCH", "orderType": "IOC", "why": "toxic flow: VPIN %.2f against the position %d ms after entry" % (vpin, age_ms)}
+    drain = _hnum(a.get("liqDrainPct"))
+    if drain > 25: return {"action": "EMERGENCY_EXIT", "orderType": "IOC", "why": "%.1f%% of pool liquidity drained in one block" % drain}
+    r = ratchet_stop(side, _hnum(a.get("entry")), _hnum(a.get("rUnit")), _hnum(a.get("px")), _hnum(a.get("atr")), _hnum(a.get("stop")))
+    return dict(r, action="MOVE_STOP" if r["stop"] != _hnum(a.get("stop")) else "HOLD")
+
+def ledger_append(path, rec, cache=None):
+    """SHA-256 hash chain: each line carries the previous line's hash; editing any line breaks every later hash.
+    `cache` (the lane's memory) keeps the chain head, so an append is O(1) after the first scan"""
+    p = pathlib.Path(path); prev = "0" * 64; n = 0
+    if cache is not None and cache.get("path") == str(p) and p.exists() and cache.get("size") == p.stat().st_size: prev, n = cache["head"], cache["n"]
+    elif p.exists():
+        with p.open("rb") as fh:
+            for line in fh:
+                if line.strip(): n += 1; last = line
+        if n: prev = json.loads(last)["hash"]
+    body = {"n": n, "ts": round(time.time(), 3), "prev": prev, "rec": rec}
+    h = hashlib.sha256((prev + json.dumps(body["rec"], sort_keys=True, separators=(",", ":")) + str(body["ts"]) + str(n)).encode()).hexdigest(); body["hash"] = h
+    p.parent.mkdir(parents=True, exist_ok=True)
+    with p.open("ab") as fh: fh.write((json.dumps(body, separators=(",", ":")) + "\n").encode())
+    if cache is not None: cache.update(path=str(p), head=h, n=n + 1, size=p.stat().st_size)
+    return {"n": n, "hash": h}
+
+def ledger_verify(path):
+    p = pathlib.Path(path); prev = "0" * 64; n = 0
+    if not p.exists(): return {"ok": True, "n": 0, "head": prev}
+    for line in p.read_bytes().splitlines():
+        if not line.strip(): continue
+        b = json.loads(line); h = hashlib.sha256((prev + json.dumps(b["rec"], sort_keys=True, separators=(",", ":")) + str(b["ts"]) + str(b["n"])).encode()).hexdigest()
+        if b.get("prev") != prev or b.get("hash") != h or b.get("n") != n: return {"ok": False, "n": n, "badAt": n}
+        prev = h; n += 1
+    return {"ok": True, "n": n, "head": prev}
+
+def _call19(st, job, a):
+    led = str(pathlib.Path(st.get("data", ".")) / "audit-ledger.jsonl"); fills = st.setdefault("fills", deque(maxlen=500))
+    if job == "fill":
+        exp, got, side = _hnum(a.get("expected")), _hnum(a.get("fill")), "sell" if a.get("side") == "sell" else "buy"
+        bps = ((got / exp - 1) * 1e4 * (1 if side == "buy" else -1)) if exp > 0 else 0.0; fills.append(bps)
+        rec = {"kind": "fill", "id": str(a.get("id", ""))[:64], "sym": str(a.get("sym", ""))[:120], "side": side, "expected": exp, "fill": got, "qty": _hnum(a.get("qty")), "slipBps": round(bps, 3), "mode": str(a.get("mode", "PAPER"))[:8]}
+        L = ledger_append(led, rec, st.setdefault("lc", {})); return {"slipBps": round(bps, 3), "avgBps": round(sum(fills) / len(fills), 3), "n": len(fills), "ledger": L}
+    if job == "order": return {"ledger": ledger_append(led, {"kind": "order", **{k: (str(v)[:120] if isinstance(v, str) else v) for k, v in a.items() if k in ("id", "sym", "side", "usd", "type", "mode", "venue", "verdict")}}, st.setdefault("lc", {}))}
+    if job == "manage": return manage_position(a)
+    if job == "verify": return ledger_verify(led)
+    if job == "stats": v = ledger_verify(led); return {"fills": len(fills), "avgBps": round(sum(fills) / len(fills), 3) if fills else 0.0, "ledger": v}
+    raise ValueError("unknown job")
+
+def _warm19(st, pool, offline, wants):
+    return {"status": dict(_call19(st, "stats", {}), ts=time.time())}
+
+FAST_CALL = {17: _call17, 18: _call18, 19: _call19}
+FAST_FWD = {9: (16,), 10: (16,), 11: (14,), 12: (14,), 13: (14, 18), 14: (15,), 15: (16,)}
+
+FAST_WARM = {5: (_warm5, 15.0), 6: (_warm6, 10.0), 7: (lambda st, p, o, w: _warm_tape(st, p, o, w, 7), 1.0), 8: (lambda st, p, o, w: _warm_tape(st, p, o, w, 8), 2.0),
+             9: (lambda st, p, o, w: _warm_ohlc(st, p, o, w, 9), 1.0), 10: (lambda st, p, o, w: _warm_ohlc(st, p, o, w, 10), 2.0), 11: (_warm11, 60.0), 12: (_warm12, 10.0), 13: (_warm13, 30.0),
+             14: (_warm14, 5.0), 15: (_warm15, 5.0), 16: (_warm16, 5.0), 17: (_warm17, 10.0), 18: (_warm18, 5.0), 19: (_warm19, 10.0)}
+
+def _fast_child(lane, inq, outq, offline, data_dir="."):
+    """lane process entry point (top-level so Windows spawn can import it). Event-driven: blocks on its queue, so a call is
+    answered the moment it arrives; warms on its period; forwarded snapshots re-warm early; exits with the parent"""
+    import queue as _q
+    fn, period = FAST_WARM[lane]; st = {"data": data_dir, "feed": {}}; wants = {}; pool = ThreadPoolExecutor(max_workers=LANE_WORKERS.get(lane, FAST_WORKERS), thread_name_prefix="fast%d" % lane); call = FAST_CALL.get(lane)
+    try:
+        import multiprocessing as _mp
+        parent = _mp.parent_process()
+    except Exception: parent = None
+    nxt = 0.0; pid = os.getpid()
+    while True:
+        try:
+            cmd, a, b = inq.get(timeout=max(0.0, min(0.5, nxt - time.time())))
+            if cmd == "want": wants[a] = b; wants.pop(next(iter(wants)), None) if len(wants) > 24 else None; nxt = 0.0
+            elif cmd == "feed": st["feed"][a] = b; nxt = min(nxt, time.time() + 0.25)
+            elif cmd == "call":
+                t0 = time.perf_counter()
+                try: out = {"ok": True, "out": call(st, b[0], b[1]) if call else None}
+                except Exception as e: out = {"ok": False, "err": str(e)[:200]}
+                out["ms"] = (time.perf_counter() - t0) * 1000; outq.put(("res", a, out, pid)); continue
+            elif cmd == "stop": return
+        except _q.Empty: pass
+        except (EOFError, OSError): return
+        if parent is not None and not parent.is_alive(): return
+        if time.time() >= nxt:
+            t0 = time.perf_counter()
+            try: snap = fn(st, pool, offline, dict(wants)); err = ""
+            except Exception as e: snap = {}; err = str(e)[:160]
+            try: outq.put(("snap", lane, snap, (time.perf_counter() - t0) * 1000, err, pid))
+            except Exception: return
+            nxt = time.time() + period
+
+class FastLane:
+    NAMES = {5: "Lane 5 · Crypto / Perps / On-Chain PnL", 6: "Lane 6 · Stocks / SEC Form 4 / 13F", 7: "Lane 7 · Crypto + DEX Transactions Tape", 8: "Lane 8 · US Stocks Tape / Blocks / L2",
+             9: "Lane 9 · Crypto + DEX 1s–1M OHLCV", 10: "Lane 10 · US Equities 1m–1M OHLCV", 11: "Lane 11 · Equities & 0DTE Gamma Scanner", 12: "Lane 12 · Crypto Perps Squeeze Scanner", 13: "Lane 13 · On-Chain DEX / Rug Shield v2",
+             14: "Lane 14 · Transfer Entropy + 6-Bot Consensus", 15: "Lane 15 · 1,000-Path Monte Carlo Stress", 16: "Lane 16 · MTF Confluence + Journal Correlator", 17: "Lane 17 · Order Router & Shadow-Bracket Slicer",
+             18: "Lane 18 · Pre-Trade Risk Firewall & PIN Arming", 19: "Lane 19 · Fill Accuracy, Toxic Scratch & SHA-256 Audit"}
+    def __init__(self, lane, offline=False, mode=None, data_dir="."):
+        self.lane, self.offline = lane, offline; self.mode = mode or os.environ.get("EXTERM_FASTLANES", "process")
+        self.snap, self.lru, self.lock = {}, MicroLRU(), threading.Lock(); self.ms = deque(maxlen=512); self.cms = deque(maxlen=512); self.warms = 0; self.warm_ms = 0.0; self.err = ""; self.pid = None; self.kind = "cold"; self.wants = {}
+        self.waits, self.seq = {}, 0
+        try:
+            if self.mode != "process": raise RuntimeError("thread mode")
+            import multiprocessing as _mp
+            ctx = _mp.get_context("spawn"); self.inq, self.outq = ctx.Queue(), ctx.Queue()
+            self.proc = ctx.Process(target=_fast_child, args=(lane, self.inq, self.outq, offline, str(data_dir)), daemon=True, name="exterm-lane%d" % lane); self.proc.start(); self.kind = "process"
+        except Exception:
+            import queue as _q
+            self.inq, self.outq, self.proc = _q.Queue(), _q.Queue(), None
+            threading.Thread(target=_fast_child, args=(lane, self.inq, self.outq, offline, str(data_dir)), daemon=True, name="exterm-lane%d" % lane).start(); self.kind = "thread"
+        threading.Thread(target=self._drain, daemon=True, name="lane%d-drain" % lane).start()
+    def _drain(self):
+        while True:
+            try: m = self.outq.get()
+            except Exception: return
+            if m[0] == "res":
+                w = self.waits.pop(m[1], None); self.pid = m[3]
+                if w: w[1].append(m[2]); w[0].set()
+                continue
+            _, lane, snap, ms, err, pid = m; fwd = snap.pop("fwd", None)
+            with self.lock: self.snap.update(snap); self.warms += 1; self.warm_ms = ms; self.err = err; self.pid = pid
+            if fwd is not None:
+                for t in FAST_FWD.get(lane, ()):
+                    L = FAST.get(t)
+                    if L is not None: L.feed("lane%d" % lane, fwd)
+    def feed(self, key, val):
+        try: self.inq.put(("feed", key, val))
+        except Exception: pass
+    def call(self, job, args, timeout=2.0):
+        """request / response through the lane process → (result, round-trip ms, in-lane ms); raises ValueError with the lane's message"""
+        t0 = time.perf_counter(); ev = threading.Event(); box = []
+        with self.lock: self.seq += 1; k = self.seq
+        self.waits[k] = (ev, box); self.inq.put(("call", k, (job, args)))
+        if not ev.wait(timeout): self.waits.pop(k, None); raise ValueError("lane %d timed out" % self.lane)
+        r = box[0]; ms = (time.perf_counter() - t0) * 1000; self.cms.append(ms)
+        if not r.get("ok"): raise ValueError(r.get("err") or "lane error")
+        return r["out"], ms, r.get("ms", 0.0)
+    def want(self, sym, px):
+        if sym in self.wants and time.time() - self.wants[sym] < 5: return
+        self.wants[sym] = time.time()
+        if len(self.wants) > 64: self.wants.pop(next(iter(self.wants)))
+        try: self.inq.put(("want", sym, px))
+        except Exception: pass
+    def get(self, key, fallback=None):
+        """→ (encoded bytes, cache state). Never blocks on upstream: LRU → snapshot → fallback builder (synth / warming stub)"""
+        t0 = time.perf_counter(); b = self.lru.get(key); state = "LRU"
+        if b is None:
+            with self.lock: v = self.snap.get(key)
+            state = "SNAP"
+            if v is None: v = fallback() if fallback else {"warming": True, "rows": [], "items": []}; state = "FALLBACK"
+            v = dict(v, lane=self.lane); b = json.dumps(v).encode(); self.lru.put(key, b)
+        ms = (time.perf_counter() - t0) * 1000; self.ms.append(ms)
+        return b, state, ms
+    def public(self):
+        ms = sorted(self.ms); cm = sorted(self.cms); q = lambda a, f: a[min(len(a) - 1, int(f * (len(a) - 1) + 0.5))] if a else 0
+        return {"lane": self.lane, "name": self.NAMES[self.lane], "kind": self.kind, "workers": LANE_WORKERS.get(self.lane, FAST_WORKERS), "pid": self.pid, "isolated": self.kind == "process" and self.pid not in (None, os.getpid()),
+                "warms": self.warms, "warmMs": round(self.warm_ms, 1), "keys": len(self.snap), "hits": self.lru.hits, "miss": self.lru.miss, "err": self.err,
+                "p50": q(ms, 0.5), "p99": q(ms, 0.99), "callP50": q(cm, 0.5), "callP99": q(cm, 0.99), "calls": len(cm), "lruMs": int(FAST_LRU_TTL * 1000)}
+    def shutdown(self):
+        try: self.inq.put(("stop", None, None))
+        except Exception: pass
+
+FAST = {}
+FAST_LANE_IDS = tuple(range(5, 20))  # v17.8 Lanes 5–8 + v17.9 Lanes 9–19
+
+
 class H(http.server.BaseHTTPRequestHandler):
     def log_message(self, fmt, *a):
         pass
@@ -2084,6 +3218,52 @@ class H(http.server.BaseHTTPRequestHandler):
                 bots = BOTS.public()["bots"] if BOTS is not None else []
                 return self._send(200, json.dumps({"version": VERSION, "uptime": int(time.time() - STARTED), "cache": dict(CACHE_STATS), "polls": FEED.polls if FEED is not None else 0,
                                                    "bots": {"total": len(bots), "active": sum(1 for b in bots if b.get("active")), "lastBar": max([b.get("lastBar") or 0 for b in bots] or [0])}}).encode())
+            if p == "/api/fast" and method == "GET":  # v17.8: Lanes 5–8 telemetry
+                return self._send(200, json.dumps({"lanes": [FAST[k].public() for k in sorted(FAST)], "server_pid": os.getpid()}).encode())
+            m8 = re.match(r"^/api/lane([5-8])/([a-z0-9]{2,12})$", p)
+            if m8 and method == "GET":  # v17.8: answered from the lane's RAM snapshot (never waits on upstream)
+                ln, what = int(m8.group(1)), m8.group(2); L = FAST.get(ln)
+                if L is None: return self._send(503, b'{"error":"fast lanes are off (--no-fastlanes)"}')
+                q = urllib.parse.parse_qs(urllib.parse.urlparse(self.path).query); fb = None
+                if ln == 5 and what == "board":
+                    win = (q.get("win") or ["24h"])[0]
+                    if win not in LB_WIN: raise ValueError("win must be 24h, 7d or 30d")
+                    key = "board:" + win
+                elif (ln, what) in ((5, "whales"), (5, "perps"), (6, "insiders"), (6, "clusters"), (6, "alerts"), (6, "f13")): key = what
+                elif ln in (7, 8) and what == "tape":
+                    sym = (q.get("sym") or [""])[0][:120]
+                    if not TAPE_SYM.match(sym) or (ln == 8) == (sym.startswith("oc:") or "-" in sym): raise ValueError("unsupported symbol for this lane")
+                    px = _hnum((q.get("px") or ["0"])[0][:24]); L.want(sym, px if 0 < px < 1e9 else 0.0); key = "tape:" + sym
+                    fb = lambda: {"sym": sym, "rows": tape_tags(synth_prints(sym, px, 40, time.time(), ln == 8), 25000), "src": "synth", "synth": True, "warming": True, "ts": time.time(), **({"l2": model_l2(px, sym), "blocks": [], "sweeps": []} if ln == 8 else {})}
+                else: return self._send(404, b'{"error":"not found"}')
+                body, state, ms = L.get(key, fb)
+                return self._send(200, body, "application/json", {"X-ExTerm-Lane": str(ln), "X-ExTerm-Cache": state, "Server-Timing": "lane%d;dur=%.3f;desc=%s" % (ln, ms, state)})
+            m9 = re.match(r"^/api/lane(9|1[0-9])/([a-z0-9]{2,12})$", p)
+            if m9:  # v17.9: Lanes 9–19 (snapshots for GET, request / response through the lane process for POST)
+                ln, what = int(m9.group(1)), m9.group(2); L = FAST.get(ln)
+                if L is None: return self._send(503, b'{"error":"fast lanes are off (--no-fastlanes)"}')
+                q = urllib.parse.parse_qs(urllib.parse.urlparse(self.path).query); fb = None
+                if method == "GET":
+                    if ln in (9, 10) and what == "candles":
+                        sym, tf = (q.get("sym") or [""])[0][:120], (q.get("tf") or [""])[0][:4]
+                        if tf not in TF_SEC or not TAPE_SYM.match(sym) or (ln == 10) == (sym.startswith("oc:") or "-" in sym): raise ValueError("unsupported symbol / timeframe for this lane")
+                        px = _hnum((q.get("px") or ["0"])[0][:24]); L.want(sym + "|" + tf, px if 0 < px < 1e12 else 0.0); key = "c:" + sym + "|" + tf
+                        fb = lambda: {"sym": sym, "tf": tf, "rows": [], "warming": True, "unsupported": ln == 10 and TF_SEC[tf] < 60}
+                    elif (ln, what) in ((9, "mtf"), (10, "mtf"), (11, "scan"), (12, "scan"), (13, "scan"), (14, "consensus"), (15, "stress"), (16, "recs"), (17, "status"), (19, "status")): key = what
+                    elif ln == 18 and what == "status":
+                        out, rt, inner = L.call("status", {}); return self._send(200, json.dumps({"ok": True, "out": out, "ms": rt, "laneMs": inner}).encode(), "application/json", {"Server-Timing": "lane18;dur=%.3f" % rt})
+                    elif ln == 19 and what == "ledger":
+                        out, rt, inner = L.call("verify", {}); return self._send(200, json.dumps({"ok": True, "out": out, "ms": rt, "laneMs": inner}).encode(), "application/json", {"Server-Timing": "lane19;dur=%.3f" % rt})
+                    else: return self._send(404, b'{"error":"not found"}')
+                    body, state, ms = L.get(key, fb)
+                    return self._send(200, body, "application/json", {"X-ExTerm-Lane": str(ln), "X-ExTerm-Cache": state, "Server-Timing": "lane%d;dur=%.3f;desc=%s" % (ln, ms, state)})
+                if method == "POST":
+                    jobs = {17: ("route", "bracket", "tick", "cancel"), 18: ("check", "pin", "arm"), 19: ("fill", "order", "manage", "verify")}
+                    if what not in jobs.get(ln, ()): return self._send(404, b'{"error":"not found"}')
+                    if ln == 18 and what in ("pin", "arm") and not self._loopback(): return self._send(403, b'{"error":"the PIN gate only works on the computer running ExTerm"}')
+                    out, rt, inner = L.call(what, self._json_body(64 * 1024))
+                    return self._send(200, json.dumps({"ok": True, "out": out, "ms": rt, "laneMs": inner}).encode(), "application/json", {"X-ExTerm-Lane": str(ln), "Server-Timing": "lane%d;dur=%.3f" % (ln, rt)})
+                return self._send(405, b'{"error":"method not allowed"}')
             if p.startswith("/api/lanes"):  # v17.5: 4 dedicated execution lanes (telemetry + allow-listed jobs)
                 if LANES is None: return self._send(503, b'{"error":"execution lanes are off (--no-lanes)"}')
                 if p == "/api/lanes" and method == "GET": return self._send(200, json.dumps(LANES.public()).encode())
@@ -2593,6 +3773,15 @@ if __name__ == "__main__":
         LLM = LlmBridge()
     if "--no-lanes" not in sys.argv:
         LANES = Lanes()
+    if "--no-fastlanes" not in sys.argv:  # v17.8: Lanes 5–8 start warming now, before the first browser request
+        for _ln in FAST_LANE_IDS: FAST[_ln] = FastLane(_ln, offline="--offline" in sys.argv, data_dir=DATA_DIR)
+        def _journal_fwd():  # v17.9: the personal journal feeds Lane 16's correlator
+            while True:
+                try:
+                    if STATE is not None and 16 in FAST: FAST[16].feed("journal", {"rows": (STATE.public(True).get("journal") or [])[-500:]})
+                except Exception: pass
+                time.sleep(30)
+        threading.Thread(target=_journal_fwd, daemon=True, name="journal-fwd").start()
     if FEED is not None:
         if ALERTS:
             _slow = ALERTS.fetch

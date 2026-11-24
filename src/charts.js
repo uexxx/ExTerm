@@ -144,6 +144,7 @@ class CandleChart {
       if (o.kc && ind.kc && isFinite(ind.kc.up[i])) { hi = Math.max(hi, ind.kc.up[i]); lo = Math.min(lo, ind.kc.lo[i]); }
     }
     if (fcN) for (const f of this.fc) { hi = Math.max(hi, f.hi); lo = Math.min(lo, f.lo); }
+    if (typeof this.rangeHook === 'function') { try { const r = this.rangeHook(lo, hi); if (r && r.hi > r.lo) { lo = r.lo; hi = r.hi; } } catch (e) { /* plug-in only */ } } // v18.0: keep plan lines (Entry / Stop / TP) inside the price axis
     const padv = (hi - lo) * (subMin ? 0.04 : 0.07) || hi * (subMin ? 0.0004 : 0.01); lo -= padv; hi += padv;
     if (subMin && typeof V162 !== 'undefined') ({ lo, hi } = V162.minSpan(lo, hi, 0.002)); // v16.2: ≥ 0.20 % span so quiet seconds never flatten into dashes
     const volH = o.vol ? mainH * 0.16 : 0, y0 = Tm, y1 = Tm + mainH - volH * 0.0;
