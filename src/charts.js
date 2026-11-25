@@ -137,15 +137,10 @@ class CandleChart {
     // price range
     let lo = Infinity, hi = -Infinity;
     const subMin = this.tfSec > 0 && this.tfSec <= 15; // v15.1: 1s / 5s / 15s scale strictly to the visible candles, so real tick ranges fill the pane
-    for (let i = start; i < end; i++) {
-      lo = Math.min(lo, D[i].l); hi = Math.max(hi, D[i].h);
-      if (subMin) continue;
-      if (o.bb && isFinite(ind.bb.up[i])) { hi = Math.max(hi, ind.bb.up[i]); lo = Math.min(lo, ind.bb.lo[i]); }
-      if (o.kc && ind.kc && isFinite(ind.kc.up[i])) { hi = Math.max(hi, ind.kc.up[i]); lo = Math.min(lo, ind.kc.lo[i]); }
-    }
-    if (fcN) for (const f of this.fc) { hi = Math.max(hi, f.hi); lo = Math.min(lo, f.lo); }
-    if (typeof this.rangeHook === 'function') { try { const r = this.rangeHook(lo, hi); if (r && r.hi > r.lo) { lo = r.lo; hi = r.hi; } } catch (e) { /* plug-in only */ } } // v18.0: keep plan lines (Entry / Stop / TP) inside the price axis
-    const padv = (hi - lo) * (subMin ? 0.04 : 0.07) || hi * (subMin ? 0.0004 : 0.01); lo -= padv; hi += padv;
+    // v18.2.1: the axis comes only from visible candle High / Low; plan, GEX, band and forecast lines clamp to edge badges instead
+    for (let i = start; i < end; i++) { lo = Math.min(lo, D[i].l); hi = Math.max(hi, D[i].h); }
+    if (typeof this.rangeHook === 'function') { try { const r = this.rangeHook(lo, hi); if (r && r.hi > r.lo) { lo = r.lo; hi = r.hi; } } catch (e) { /* plug-in only */ } } // a user axis drag only
+    const padv = (hi - lo) * 0.12 || hi * 0.01; lo -= padv; hi += padv;
     if (subMin && typeof V162 !== 'undefined') ({ lo, hi } = V162.minSpan(lo, hi, 0.002)); // v16.2: ≥ 0.20 % span so quiet seconds never flatten into dashes
     const volH = o.vol ? mainH * 0.16 : 0, y0 = Tm, y1 = Tm + mainH - volH * 0.0;
     const py = (p) => y0 + (hi - p) / (hi - lo) * (mainH - volH - 4);
@@ -203,7 +198,7 @@ class CandleChart {
     for (let i = start; i < end && (T === 'candles' || T === 'ha'); i++) {
       const k = T === 'ha' && ind.ha ? ind.ha[i] : D[i], x = kx(i), up = k.c >= k.o, c = up ? col.up : col.dn;
       g.strokeStyle = c; g.fillStyle = c; g.lineWidth = 1;
-      g.beginPath(); g.moveTo(Math.round(x) + 0.5, py(k.h)); g.lineTo(Math.round(x) + 0.5, py(k.l)); g.stroke();
+      const w = NT.wickSpan(py(k.h), py(k.l)); g.beginPath(); g.moveTo(Math.round(x) + 0.5, w[0]); g.lineTo(Math.round(x) + 0.5, w[1]); g.stroke();
       const br = NT.bodyRect(py(k.o), py(k.c), x, bw);
       g.fillRect(br.x, br.y, br.w, br.h);
     }

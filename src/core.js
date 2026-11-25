@@ -11,6 +11,7 @@
   NT.uid = () => Math.random().toString(36).slice(2, 8) + Date.now().toString(36).slice(-3);
   NT.TF = { '1s': 1, '5s': 5, '10s': 10, '15s': 15, '30s': 30, '1m': 60, '3m': 180, '5m': 300, '15m': 900, '30m': 1800, '1h': 3600, '2h': 7200, '4h': 14400, '1d': 86400, '1w': 604800, '1M': 2592000 };
   /* v15p4 candle body: pixel-snapped, never thinner than 2 px (flat 1s / 5s ticks draw as clean bars, not scattered dashes) */
+  NT.wickSpan = (yh, yl) => { const h = yl - yh; return h >= 6 ? [yh, yl] : [(yh + yl) / 2 - 3, (yh + yl) / 2 + 3]; }; // v18.2.1: ≥ 6 px wick on every timeframe
   NT.bodyRect = (yo, yc, x, bw) => { const w = Math.max(1, Math.round(Math.max(1.5, bw * 0.7))), minH = 3; let top = Math.min(yo, yc), h = Math.abs(yo - yc); if (h < minH) { top -= (minH - h) / 2; h = minH; } const y = Math.round(top); return { x: Math.round(x) - Math.floor(w / 2), y, w, h: Math.max(minH, Math.round(top + h) - y) }; }; // body centred on the wick at round(x)+0.5
   NT.STABLES = new Set(['USDT', 'USDC', 'DAI', 'USDE', 'FDUSD', 'TUSD', 'USDD', 'PYUSD', 'USDS', 'BUSD', 'USDG', 'USD1', 'RLUSD', 'USDTB', 'USDF', 'BUIDL', 'USYC']);
   NT.WRAPPED = new Set(['WBTC', 'STETH', 'WSTETH', 'WETH', 'WBETH', 'WEETH', 'CBBTC', 'CBETH', 'RETH', 'METH', 'BSC-USD', 'LBTC', 'SOLVBTC', 'JITOSOL', 'MSOL', 'WBNB']);

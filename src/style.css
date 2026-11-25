@@ -2549,3 +2549,6 @@ button.x182-dn{border-color:#EF4444!important;color:#EF4444!important}
   .x182-acts .btn{min-height:36px}
   .x182-live{right:12px;bottom:12px}
 }
+/* ══ v18.2.1 True Single 44px Top Strip: the legacy Reach row (Stocks | Crypto | Options | Futures …) lives in Ctrl+K now ══ */
+body.x182 #x17Reach{display:none!important}
+body.x182 #top{height:44px!important;min-height:44px!important;max-height:44px;box-sizing:border-box;flex-wrap:nowrap;overflow:hidden}

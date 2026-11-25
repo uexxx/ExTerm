@@ -189,14 +189,14 @@ const V180UI = (() => {
     attach() {
       const c = ch(); if (!c || !c.overlays) return; if (!c.overlays.includes(this.overlay)) { c.overlays.push(this.overlay); c.invalidate(); }
       /* an Alpha plan on this symbol widens the price axis to include its four lines, so every handle can be grabbed */
-      if (!c.rangeHook) c.rangeHook = (lo, hi) => { if (U.drag && U.drag.lo != null) return { lo: U.drag.lo, hi: U.drag.hi }; const pl = U.plans[sel()]; if (!pl) return null; let a = lo, b = hi; for (const k of V180.PLAN_KEYS) { if (pl[k] > 0) { a = Math.min(a, pl[k]); b = Math.max(b, pl[k]); } } return { lo: a, hi: b }; };
+      if (!c.rangeHook) c.rangeHook = (lo, hi) => { if (U.drag && U.drag.lo != null) return { lo: U.drag.lo, hi: U.drag.hi }; return null; }; // v18.2.1: plan lines never stretch the axis (edge badges instead)
     },
     p95() { return V180.p95(U.cost); },
   };
   Depth.overlay = (g, L, c) => {
     const t0 = performance.now(), D = L.D || c.data, a = L.start, b = L.end; if (!D || !(b - a > 2) || !L.py || !L.kx) return;
     const st = U.layers, py = L.py, kx = L.kx, bw = L.bw, x0 = L.Lm, x1 = L.W - L.Rm, y0 = L.y0, y1 = L.y0 + L.mainH - (L.volH || 0), passes = [], s0 = sel();
-    const yin = (y) => y >= y0 && y <= y1;
+    const yin = (y) => y >= y0 && y <= y1, yc = (y) => Math.max(y0 + 9, Math.min(y1 - 9, y)), arw = (y) => (y < y0 ? '▲ ' : y > y1 ? '▼ ' : ''); // off-axis lines → edge badges
     g.save(); g.beginPath(); g.rect(x0, y0, x1 - x0, y1 - y0); g.clip();
     /* behind the candles */
     g.globalCompositeOperation = 'destination-over';
@@ -213,7 +213,7 @@ const V180UI = (() => {
     /* on top */
     if (st.vdc && bw >= 2) { const cw = Math.max(1, bw * 0.26); for (let i = a; i < b; i++) { const k = D[i], v = k.v || 0; if (!(v > 0)) continue; const d = V180.delta(k) / v, yA = py(Math.max(k.o, k.c)), yB = py(Math.min(k.o, k.c)), h = Math.max(1, (yB - yA) * Math.min(1, Math.abs(d) * 1.4 + 0.15)), ym = (yA + yB) / 2; g.fillStyle = d >= 0 ? GA(0.9) : RA(0.9); g.fillRect(kx(i) - cw / 2, ym - h / 2, cw, h); } passes.push('vdc'); }
     if (st.l2 && U.book && U.bookSym === s0 && Date.now() - U.bookAt < 8000) { const wMax = (x1 - x0) * 0.22; for (const z of V180.shelves(U.book, 8)) { const y = py(z.p); if (!yin(y)) continue; const w = Math.max(6, z.w * wMax), x = x1 - w; g.fillStyle = 'rgba(0,0,0,0.5)'; g.fillRect(x - 4, y + 2, w, 4); g.fillStyle = z.side === 'bid' ? GA(0.18 + 0.4 * z.w) : RA(0.18 + 0.4 * z.w); g.fillRect(x, y - 2, w, 4); g.fillStyle = z.side === 'bid' ? GA(0.9) : RA(0.9); g.fillRect(x, y - 2, 2, 4); } passes.push('l2'); }
-    if (st.gex) { const A17 = typeof V17App !== 'undefined' ? V17App : null, ls = V180.gexLines(A17 && A17.gex && A17.gex.r); g.font = '10px ' + MONO; g.textAlign = 'right'; g.textBaseline = 'bottom'; for (const z of ls) { const y = py(z.p); if (!yin(y)) continue; const c0 = z.c === 'red' ? RA : GA; g.strokeStyle = c0(0.8); g.lineWidth = 1.2; if (z.dash) g.setLineDash([6, 4]); g.beginPath(); g.moveTo(x0, y); g.lineTo(x1, y); g.stroke(); g.setLineDash([]); g.fillStyle = c0(0.95); g.fillText(z.k + ' ' + V180.px(z.p), x1 - 4, y - 2); } if (ls.length) passes.push('gex'); }
+    if (st.gex) { const A17 = typeof V17App !== 'undefined' ? V17App : null, ls = V180.gexLines(A17 && A17.gex && A17.gex.r); g.font = '10px ' + MONO; g.textAlign = 'right'; g.textBaseline = 'bottom'; for (const z of ls) { const yr = py(z.p), y = yc(yr), c0 = z.c === 'red' ? RA : GA; if (yin(yr)) { g.strokeStyle = c0(0.8); g.lineWidth = 1.2; if (z.dash) g.setLineDash([6, 4]); g.beginPath(); g.moveTo(x0, y); g.lineTo(x1, y); g.stroke(); g.setLineDash([]); } g.fillStyle = c0(0.95); g.fillText(arw(yr) + z.k + ' ' + V180.px(z.p), x1 - 4, yin(yr) ? y - 2 : y + 5); } if (ls.length) passes.push('gex'); }
     if (st.cone) { const sig = V180.sigma(D, Math.max(a, b - 120), b), k = D[b - 1], xs = kx(b - 1), room = Math.floor((x1 - xs) / Math.max(1, bw)), n = Math.min(24, Math.max(0, room)); if (sig > 0) { const C = V180.cone(k.c, sig, Math.max(1, n)); if (n >= 2) { g.beginPath(); g.moveTo(xs, py(k.c)); for (const z of C) g.lineTo(xs + z.k * bw, py(z.up)); for (let i = C.length - 1; i >= 0; i--) g.lineTo(xs + C[i].k * bw, py(C[i].dn)); g.closePath(); g.fillStyle = GA(0.07); g.fill(); g.strokeStyle = GA(0.4); g.setLineDash([2, 3]); g.stroke(); g.setLineDash([]); } else { const z = C[C.length - 1]; g.strokeStyle = GA(0.6); g.beginPath(); g.moveTo(xs + bw, py(z.up)); g.lineTo(xs + bw, py(z.dn)); g.stroke(); } passes.push('cone'); } }
     if (st.abs) { const S = spr(); g.globalCompositeOperation = 'lighter'; for (const z of V180.absorb(D, a, b, 1.5)) { const r = Math.max(9, bw * 1.8), x = kx(z.i), y = py(z.p); g.globalAlpha = z.kind === 'exh' ? 0.75 : 0.55; g.drawImage(z.side === 'buy' ? S.g : S.r, x - r, y - r, r * 2, r * 2); } g.globalAlpha = 1; g.globalCompositeOperation = 'source-over'; passes.push('abs'); }
     /* the Alpha plan: drag-handle Entry / Stop / TP1 / TP2 */
@@ -222,8 +222,8 @@ const V180UI = (() => {
       const ye = py(pl.entry), ys = py(pl.stop), y2 = py(pl.tp2); g.fillStyle = RA(0.07); g.fillRect(x0, Math.min(ye, ys), x1 - x0, Math.abs(ys - ye)); g.fillStyle = GA(0.06); g.fillRect(x0, Math.min(ye, y2), x1 - x0, Math.abs(y2 - ye));
       g.font = '600 10.5px ' + MONO; g.textBaseline = 'middle'; g.textAlign = 'left';
       for (const [k, lab, c0, dash] of [['entry', 'ENTRY', GA, false], ['stop', 'STOP', RA, false], ['tp1', 'TP1', GA, true], ['tp2', 'TP2', GA, true]]) {
-        const y = py(pl[k]); if (!yin(y)) continue; g.strokeStyle = c0(U.drag && U.drag.key === k ? 1 : 0.85); g.lineWidth = U.drag && U.drag.key === k ? 2 : 1.3; if (dash) g.setLineDash([5, 4]); g.beginPath(); g.moveTo(x0, y); g.lineTo(x1, y); g.stroke(); g.setLineDash([]);
-        const tx = lab + ' ' + V180.px(pl[k]) + (k === 'tp2' ? ' · R:R ' + V180.rr(pl).toFixed(2) : ''), w = g.measureText(tx).width + 12, hx = x1 - w - 8; g.fillStyle = 'rgba(10,13,18,0.92)'; g.fillRect(hx, y - 8, w, 16); g.strokeStyle = c0(0.9); g.strokeRect(hx + 0.5, y - 7.5, w - 1, 15); g.fillStyle = c0(1); g.fillText(tx, hx + 6, y); g.fillRect(hx - 9, y - 3, 6, 6); // the 6 px square is the drag handle
+        if (!(pl[k] > 0)) continue; const yr = py(pl[k]), y = yc(yr); if (yin(yr)) { g.strokeStyle = c0(U.drag && U.drag.key === k ? 1 : 0.85); g.lineWidth = U.drag && U.drag.key === k ? 2 : 1.3; if (dash) g.setLineDash([5, 4]); g.beginPath(); g.moveTo(x0, y); g.lineTo(x1, y); g.stroke(); g.setLineDash([]); }
+        const tx = arw(yr) + lab + ' ' + V180.px(pl[k]) + (k === 'tp2' ? ' · R:R ' + V180.rr(pl).toFixed(2) : ''), w = g.measureText(tx).width + 12, hx = x1 - w - 8; g.fillStyle = 'rgba(10,13,18,0.92)'; g.fillRect(hx, y - 8, w, 16); g.strokeStyle = c0(0.9); g.strokeRect(hx + 0.5, y - 7.5, w - 1, 15); g.fillStyle = c0(1); g.fillText(tx, hx + 6, y); g.fillRect(hx - 9, y - 3, 6, 6); // the 6 px square is the drag handle
       }
       passes.push('plan');
     }
@@ -249,7 +249,7 @@ const V180UI = (() => {
         if (U.drawPts) { const p = priceAt(y), i = Math.round((x - L.Lm) / L.bw - 0.5) + (L.end - L.bars), D = L.D; if (!(p > 0) || !D || !D.length) return; U.drawPts.push({ t: D[Math.max(0, Math.min(D.length - 1, i))].t, i, p }); e.stopImmediatePropagation(); e.preventDefault(); if (U.drawPts.length === 3) this.finishPattern(); inval(); return; }
         const pl = U.plans[sel()]; if (!pl || x > L.W - L.Rm) return; const k = V180.nearest(pl, y, L.py, 7); if (!k) return;
         /* the axis holds still while you drag (no feedback loop): freeze the un-padded range the chart pads by 7 % per side */
-        const raw = (L.hi - L.lo) / 1.14, cut = (L.hi - L.lo - raw) / 2; U.drag = { key: k, id: e.pointerId, lo: L.lo + cut, hi: L.hi - cut }; try { c.cv.setPointerCapture(e.pointerId); } catch (x2) { /* synthetic */ } e.stopImmediatePropagation(); e.preventDefault(); inval();
+        const raw = (L.hi - L.lo) / 1.24, cut = (L.hi - L.lo - raw) / 2; U.drag = { key: k, id: e.pointerId, lo: L.lo + cut, hi: L.hi - cut }; try { c.cv.setPointerCapture(e.pointerId); } catch (x2) { /* synthetic */ } e.stopImmediatePropagation(); e.preventDefault(); inval();
       }, true);
       h.addEventListener('pointermove', (e) => {
         if (e.target !== c.cv) return; const [x, y] = xy(e);
@@ -327,6 +327,7 @@ const V180UI = (() => {
     cmds() {
       const top = () => V180.feed((U.data && U.data.rows) || [], U.filter)[0];
       const out = V180.TABS.map(([k, l]) => ({ l: 'Go to ' + l, k: 'tab rail ' + k, f: () => V177UI.go(k) }));
+      for (const b of document.querySelectorAll('#x17Reach [data-x17r]')) out.push({ l: 'Open ' + b.dataset.x17r, k: 'asset class reach ' + b.dataset.x17r.toLowerCase(), f: () => b.click() }); // v18.2.1: the hidden Reach row lives on in Ctrl+K
       for (const [k, l] of V180.FILTERS) out.push({ l: 'Alpha Recs: ' + l, k: 'filter alpha ' + k, f: () => { U.filter = k; V177UI.go('alpha'); Alpha.paint(); } });
       for (const [k, l] of V180.LAYERS) out.push({ l: (U.layers[k] ? 'Hide ' : 'Show ') + l, k: '2d depth layer ' + k, f: () => Depth.set(k, !U.layers[k]) });
       out.push({ l: 'Copy top Alpha setup', k: 'clipboard copy setup', f: () => { const r = top(); if (r) Act.copy(r); else T('No setup yet', 'amb'); } }, { l: 'Open top Alpha setup on chart', k: 'chart plan entry stop tp', f: () => { const r = top(); if (r) Act.chart(r); else T('No setup yet', 'amb'); } },

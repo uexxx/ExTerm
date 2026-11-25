@@ -1,4 +1,4 @@
-// ExTerm v18.2 launch tests (70): the 26-lane zero-clutter cockpit. Pure V182 core (tfSeq tokens, Lane 22 3-source > 4σ guard, adaptive
+// ExTerm v18.2 launch tests (73, incl. 3 v18.2.1 flat-candle / single-top-strip checks): the 26-lane zero-clutter cockpit. Pure V182 core (tfSeq tokens, Lane 22 3-source > 4σ guard, adaptive
 // decimals, US session clock, SHA-256 idempotency, Lane 26 isolated PAPER / LIVE books + VaR + sector cap + CSV guard, Lane 25 search,
 // Lanes 14 / 21 drift-locked evolution, ruler + HUD pass), a live offline launcher (Lanes 20–26 over HTTP, the 26-lane mesh + self-heal,
 // the guard inside Lanes 9 / 10, Stocks / 0DTE 24/7, JS ↔ Python parity, compact mode) and static checks (wiring, worker bundle, layout,
@@ -151,6 +151,24 @@ ok('version 18.2 everywhere it ships: package.json, serve.py, bridge, About, And
 ok('browser flows wired into v17pro_e2e (desktop 1440 × 900 + phone 390 × 844): the crawl fails on any dead, erroring or ≥ 10 ms control', /require\('\.\/v182_flows\.js'\)\.desktop/.test(e2e) && /require\('\.\/v182_flows\.js'\)\.phone/.test(e2e) && /const UI_MS = 10;/.test(flows) && /r\.alive && !r\.err && r\.ms < UI_MS/.test(flows));
 ok('runners: test/run-all.ps1 and test/run-all.sh run the v182 suite', /'v181', 'v182'/.test(src('test/run-all.ps1')) && /v181 v182/.test(src('test/run-all.sh')));
 ok('docs: README and CHANGELOG describe v18.2 (Lanes 20–26, Portfolio & Risk Console, UI-speed crawl)', /ExTerm v18\.2/.test(src('README.md')) && /## v18\.2/.test(src('CHANGELOG.md')) && /Lane 26/.test(src('CHANGELOG.md')) && /crawl/i.test(src('CHANGELOG.md')));
+
+/* ── v18.2.1: zero flat candles + one 44px top strip (3) ── */
+{
+  const NT = require('../src/core.js'), chS = src('src/charts.js'), v180S = src('src/v180.js'), cssS = src('src/style.css');
+  const flat = ['1s', '15m', '1h', '1d'].map((tf) => {
+    const sec = { '1s': 1, '15m': 900, '1h': 3600, '1d': 86400 }[tf], vol = 0.0004 * Math.sqrt(sec), px = 64000;
+    const D = Array.from({ length: 120 }, (_, i) => { const o = px * (1 + Math.sin(i / 7) * vol), c = i % 9 === 0 ? o : o * (1 + Math.cos(i) * vol / 2); return { o, c, h: Math.max(o, c) * (1 + vol / 4), l: Math.min(o, c) * (1 - vol / 4) }; });
+    let lo = Math.min(...D.map((k) => k.l)), hi = Math.max(...D.map((k) => k.h)); const pad = (hi - lo) * 0.12; lo -= pad; hi += pad; // plan lines at ±25 % are ignored by design
+    const py = (p) => (hi - p) / (hi - lo) * 400, bodies = D.map((k) => NT.bodyRect(py(k.o), py(k.c), 50, 8).h), wicks = D.map((k) => { const w = NT.wickSpan(py(k.h), py(k.l)); return w[1] - w[0]; });
+    return { tf, minBody: Math.min(...bodies), minWick: Math.min(...wicks), medBody: bodies.sort((a, b) => a - b)[60] };
+  });
+  ok('v18.2.1 no flat candles on 1s / 15m / 1h / 1d: axis from visible High / Low only (12 % pad), every body ≥ 3 px (doji too), every wick ≥ 6 px, median body well above the floor', flat.every((f) => f.minBody >= 3 && f.minWick >= 6 - 1e-9 && f.medBody > 6), flat);
+  ok('v18.2.1 axis wiring: charts.js range loop reads only D[i].l / D[i].h with a 0.12 pad, Lanes 9 / 10 fetch native 1m / 5m / 15m / 1h / 4h / 1d upstream bars per timeframe (Coinbase granularity, Yahoo interval), Entry / Stop / TP / GEX never stretch the axis (clamped edge badges)',
+    /for \(let i = start; i < end; i\+\+\) \{ lo = Math\.min\(lo, D\[i\]\.l\); hi = Math\.max\(hi, D\[i\]\.h\); \}/.test(chS) && /\(hi - lo\) \* 0\.12/.test(chS) && /NT\.wickSpan\(py\(k\.h\), py\(k\.l\)\)/.test(chS) && !/ind\.bb\.up\[i\]\); lo = Math\.min/.test(chS) &&
+    ['"1m": (60', '"5m": (300', '"15m": (900', '"1h": (3600', '"4h": (3600', '"1d": (86400'].every((s) => serveS.includes(s)) && /"15m": \("15m", "1mo"/.test(serveS) && /"4h": \("60m", "6mo"/.test(serveS) && /return \{ lo: U\.drag\.lo, hi: U\.drag\.hi \}; return null; \}/.test(v180S) && !/V180\.PLAN_KEYS\) \{ if \(pl\[k\] > 0\) \{ a = Math\.min/.test(v180S) && (v180S.match(/yc\(yr\)/g) || []).length >= 2);
+  ok('v18.2.1 true single 44px top strip: the legacy Reach row is hidden, #top is pinned to 44 px, and every Reach shortcut is a Ctrl+K command',
+    /body\.x182 #x17Reach\{display:none!important\}/.test(cssS) && /body\.x182 #top\{height:44px!important/.test(cssS) && /#x17Reach \[data-x17r\]'\)\) out\.push\(\{ l: 'Open '/.test(v180S));
+}
 
 console.log(`\nv18.2: ${pass} passed, ${fail} failed`);
 process.exit(fail ? 1 : 0);
