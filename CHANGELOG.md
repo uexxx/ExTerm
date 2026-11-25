@@ -2,6 +2,96 @@
 
 ExTerm holds no funds and no keys in every version. Up to v15.7 it was paper only; from v16.0 it can send HMAC-signed signals to a bot you run on your own machine, only after four explicit gates, and it starts in PAPER. v16.1 adds eight fail-safe engines on that path; v16.3 closes the loop with ACK + fill sync and a live cockpit; v16.4 adds DEX discovery, a local Copilot and a realistic backtester; v16.5 lets any AI or bot advise through one deterministic firewall; v16.6 adds a live transactions tape for every market.
 
+## v18.2 — 26-Lane Zero-Clutter Cockpit, UI-Speed Crawl, Portfolio & Risk Console (Lane 26) & Auto-Evolution — 24 Nov 2026
+
+v18.2 also ships v18.1 below; it was not released on its own.
+
+- **Strip** (`src/v182.js`, maths in `src/v182core.js`): the one floating blur(12px) rail keeps its 5 tabs and gains the ◎ active
+  target (symbol · timeframe) + ★ star (Lane 25), ◫ Portfolio, Z Zen, R refresh, the 26-lane mesh pulse dot and the PIN-gated
+  PAPER | LIVE pill (LIVE still needs the PIN in the Live Bot strip). Below 820 px these move to the dock's More sheet.
+- **Hotkeys:** 1–5 tabs, Z Zen mode, R force refresh (new `tfSeq`, the active store reloaded, Alpha Recs + mesh refreshed), P console,
+  Shift+Esc FLATTEN ALL (the console's book when it is open). Typing in a field never triggers them.
+- **Portfolio & Risk Console** replaces the portfolio view (the old journal / bot accounts / equity curve stay behind **Full journal ▸**
+  and only render while it is open). PAPER and LIVE books are built from their own sources (paper spot + paper perps; bot-ACKed fills)
+  and never summed; a position tagged for the other book is refused by `V182.agg` and by Lane 26. KPIs: Net Liquidation Value,
+  Available Buying Power, Total Open $ Risk to Stop (no stop = full mark value, flagged), Day Realized + Unrealized PnL. Per-venue cash
+  and exposure, correlated VaR, 25 % sector cap. Rows: a recycled 16-row pool with Close 50 % · Close 100 % · Stop → BE · Chart (LIVE rows:
+  Chart only, ExTerm never sends LIVE exits from here); every action is logged to the Lane 19 ledger. Closed Trades + a local SHA-256
+  chain beside the Lane 19 ledger check; CSV (formula-guarded, `# sha256-chain` footer) and JSON export.
+- **Lanes 20–26** in `serve.py` (request / response lanes like 17–19, `GET /api/lane2x/status` snapshots):
+  - Lane 20: `us_session` (DST-aware pre / regular / post / closed), `exec_plan` (extended-hours equities → LIMIT + DAY, crypto GTC,
+    closed market queued, 30-minute pre-CPI / FOMC throttle from the Lane 18 calendar, 50 % TP1 scale-out then stop → BE) and
+    `idem_key` (SHA-256 over sym · side · usd · px · src · nonce; a repeat within 10 minutes is flagged `dup`; same key as `V182.idemKey`).
+  - Lane 21: outcome-attributed evolution with isolated `stocks` / `crypto` books (`evo.json`), one step per 10 outcomes, each
+    parameter clamped to ≤ 10 % of its range per generation and to the Lane 18 bounds; rollback; evolve / rollback loopback-only.
+    The page feeds closed paper trades to it; `grok_exterm_bridge.py` serves `GET /evo` and adds the book's parameters to every
+    `/signal` context and answer.
+  - Lane 22: `outlier_clean` 3-source rolling median + > 4σ robust (MAD) test (single source: > 4σ and > 3× the largest neighbouring
+    wick); Lanes 9 / 10 run it on the newest 240 bars of every candle set (`guard` count in the snapshot); the page runs the same
+    maths on every loader result (`V182.guardTail`, sources: provider, Lane 9 / 10 cache, live ticks) and the HUD rings repaired bars.
+  - Lane 23: serial-rugger blacklist (`ruggers.json`, 2 rugged pools → blacklisted); fed by Lane 13 forensics, forwarded to Lane 18,
+    whose firewall gains a "serial-rugger blacklist (Lane 23)" check for on-chain symbols.
+  - Lane 24: warm-boot snapshot (`warmboot.json`, ≤ 64 KB). Lane 25: aliases + ranked search + starred watchlist (`watchlist.json`).
+    Lane 26: `portfolio_agg`, `book_var` (ρ 0.6 in-sector / 0.3 across), `sector_caps`, `sector_check`.
+  - `GET /api/mesh`: every lane's health, self-heal (a dead lane process is re-created), LIVE readiness (PIN · firewall · ledger).
+  - Compact mode: `EXTERM_COMPACT=1` or ≤ 8 GB RAM runs Lanes 20–26 as threads.
+  - Lane 11: Stocks / 0DTE never empty (`offhours_cands`: next-session plans from daily bars when the 1m scanners are quiet); every
+    candidate carries `session` / `extended_hours`.
+- **Atomic timeframe / symbol switches:** the pill click bumps `tfSeq` before the app handler and commits the target pill, quote and
+  HUD in the same frame; any other path (Ctrl+K, copilot, workspace links) is caught on the next frame.
+- **OffscreenCanvas HUD worker** (`WORKER182_SRC` = `v182core.js` + `v182work.js`): Shift+Drag ruler, outlier rings, SYMBOL · TF
+  watermark; main-thread fallback runs the same `V182.hud`. **Live →** snap pill when panned.
+- **Hover pre-warm:** ≥ 80 ms on an Alpha Recs card loads its candles before the click.
+- **Frame-0 commits:** rail tabs, the market switch, the Reach strip (and the phone More sheet), `showTab` during a click, the Live Bot
+  queue Approve, two v15.5 popovers and CSV / JSON downloads acknowledge in the click and render / execute on the next frame. The empty
+  chart-search "Go" now focuses the box and says what to type (it did nothing before).
+- **UI-speed crawl** (`test/v182_flows.js`, inside `v17pro_e2e`): clicks every visible, enabled control on the 5 tabs + the console
+  (desktop 1440 × 900) and Co-Pilot / Paper + console (phone 390 × 844); fails on a dead control (no DOM mutation, state change,
+  focus move, download or clipboard write), an error, or ≥ 10 ms of main-thread time in the click. Destructive controls (reset /
+  delete / flatten …) are skipped by the crawl and tested on their own. Desktop run: 232 controls, p50 0.3 ms, p95 2.7 ms, max 5.3 ms.
+- **Tests:** `test/v182.test.js` (70: core maths, live Lanes 20–26 over HTTP, JS ↔ Python parity for the guard, search, portfolio,
+  EVO and idempotency key, mesh, compact mode, wiring, palette, CSP, caps, license, version, docs, runners) and 26 browser checks in
+  `test/v182_flows.js`. Version pins and build-order checks in `test/v175`–`v181` widened to accept 18.2 and Lanes 20–26;
+  `deep_a.js`, `ctl.js` and `e2e_pf.js` open **Full journal ▸** before using the legacy portfolio.
+
+## v18.1 — Instant < 25 ms Universal Candle Hydration & Full 19-Lane Price Unification — 24 Nov 2026
+
+- **Canonical symbol normalizer** (`src/v181core.js` `V181.norm`, mirrored by `serve.py` `norm_sym`; a test runs both over the
+  same 26 spellings and requires identical results): `oc:eth:` / `oc:sol:` / `oc:base:` / `oc:arb:` and other chain aliases,
+  DexScreener / GeckoTerminal URLs, raw `0x…` (40 or 64 hex) and Base58 contracts, `BTCUSDT` / `ETH/USDT` / `SOL_USDC` /
+  `BTC-PERP` / bare crypto tickers, and equities (`NVDA`, `BRK.B`, `^GSPC`; a listed stock keeps its ticker). EVM addresses are
+  lower-cased. `selectSym`, `setMode`, `openSym` and `ensureSym` are wrapped once, so every surface (Bot Radar, Alpha Recs,
+  Picks, Tracker, watchlist, Ctrl+K) hands the chart the canonical symbol.
+- **Lane 9 resolve** (`GET /api/lane9/resolve?q=`): a raw contract → its most liquid DexScreener pool (cached 10 min; offline
+  → the chain guess, flagged `guess`). `candles9` resolves an `oc:` token address to its pool when GeckoTerminal has no
+  OHLCV for it. Lane 9 candle requests accept every alias (`oc:sol:…` answers as `oc:solana:…`).
+- **Instant hydration** (`src/v181.js`): `TFX.candles` is wrapped outermost (after the v17.9 Lane 9 / 10 wrap). Cache hit →
+  bars at once plus a background refresh. Miss → the provider and Lanes 9 / 10 race; the provider wins if it answers with bars
+  within 60 ms, otherwise the first answer with bars is used and a later provider answer is merged. A key Lanes 9 / 10 have
+  never seen is polled while it reports `warming` (≤ 1.5 s). Opening a store with cached bars fills it synchronously
+  (frame 1). Deep 5,000-bar backfills bypass the cache. Offline lane samples are used by the cache only for DEX pools, and by
+  the hedge only when the launcher runs `--offline` (its proxied feeds are simulated too).
+- **1s / 5s / 15s synthesis** (`V181.synthSub`): each 1m bar is split along o → l → h → c (up) or o → h → l → c (down) so the
+  pieces aggregate back to that minute's exact OHLCV; the forming bar ends on the live spot; with no history at all, flat
+  bars at the quote. Replaces the "No quote … sub-minute bars start with the next tick" error on every handoff.
+- **Cross-lane pre-warming:** the page pre-warms symbols surfaced by the Bot Radar, Alpha Recs, Picks and Tracker
+  (`POST /api/lane9/prewarm`, ≤ 40 symbols, 16 KB body, ≤ 6 timeframes) plus its own cache. On an offline launcher, crypto /
+  stock symbols are pre-loaded from the page's own simulated feed. The server forwards Lanes 11–13 scanner candidates to
+  Lanes 9 / 10. Pre-warm keys are refreshed newest-first every 60 s (DEX 120 s) inside an upstream budget (≤ 3 Coinbase /
+  Yahoo and ≤ 1 GeckoTerminal fetch per pass, GeckoTerminal at most every 6 s), expire after 15 min, and never evict the
+  keys the page is actively asking for. A pre-warmed offline sample is rebuilt when the page later asks with its price.
+  Lane 9 / 10 want capacity: 24 → 64 keys.
+- **Bot Radar → chart:** double-click a bot, or Enter on the locked bot (no panel; the canvas stays full-bleed). **Ctrl+K:**
+  *Open on chart · …* for a typed contract, DEX URL, `oc:` symbol or pair.
+- **Fix:** `serve.py` defined `DEX_CHAINS` twice. The v17.9 scanner tuple shadowed the page → DexScreener chain map, so
+  `PriceFeed.kind` raised `TypeError` for every `oc:` symbol and the launcher's DEX watchlist prices stopped. The tuple is now
+  `DEX_SCAN_CHAINS`.
+- **Tests:** `test/v181.test.js` (25: normalizer, synthesis exactness, cache policy, pre-warm picker, live Lanes 9 / 10 resolve
+  / aliases / 11 timeframes / latency / prewarm / cross-lane, JS ↔ Python parity, price-feed regression, wiring, layout,
+  palette, CSP, license, version) and `test/v181_flows.js` (10 browser checks inside `v17pro_e2e`: Alpha Recs, Bot Radar,
+  Tracker, normalizer forms, raw contract, Ctrl+K, warm < 25 ms, hygiene, phone). Version regexes in `test/v175`–`v180` widened
+  to accept 18.1.
+
 ## v18.0 — Dedicated 24/7 Alpha Recs Tab, Deep "Why" Intel, 1-Click Copy / Execute & Fighter-Jet 1s–1M 2D Depth Chart — 24 Nov 2026
 
 v18.0 also ships v17.9 and v17.8 below; neither was released on its own.

@@ -25,7 +25,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * ExTerm v18.0 for Android: the same single-file workstation, served from the APK's assets on a secure
+ * ExTerm v18.2 for Android: the same single-file workstation, served from the APK's assets on a secure
  * https origin (so IndexedDB, localStorage and WebCrypto all work), with wallet / DEX deep links handed to
  * the installed apps, and Picture-in-Picture when the user leaves the app.
  */
@@ -51,7 +51,7 @@ public class MainActivity extends Activity {
         s.setAllowContentAccess(false);
         s.setSupportMultipleWindows(false);
         s.setMixedContentMode(WebSettings.MIXED_CONTENT_NEVER_ALLOW);
-        s.setUserAgentString(s.getUserAgentString() + " ExTermAndroid/18.0");
+        s.setUserAgentString(s.getUserAgentString() + " ExTermAndroid/18.2");
         web.setWebChromeClient(new WebChromeClient());
         web.setWebViewClient(new WebViewClient() {
             @Override

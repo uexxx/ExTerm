@@ -119,7 +119,7 @@ const CHROME = process.env.CHROME_PATH || (process.platform === 'win32' ? 'C:/Pr
     ok('Voice commands navigate and stage orders without executing them', voice.a === 'tab' && voice.tab === 'pulse' && voice.staged && voice.trades === 0, JSON.stringify(voice));
 
     // Academy
-    await ev(() => document.querySelector('[data-x17r="Academy"]').click());
+    await ev(() => document.querySelector('[data-x17r="Academy"]').click()); await sleep(250); // v18.2: the Reach strip renders the workspace one frame after the click
     const ac = await ev(() => { const mods = document.querySelectorAll('.x17-mod').length, missions = document.querySelectorAll('.x17-mod li').length, done = document.querySelectorAll('.x17-mod li.ok').length; document.querySelector('[data-x17a="drill"]').click(); return { mods, missions, done, drill: !!V17App.cfg.drill && document.querySelector('.x17-drill ol li') !== null }; });
     ok('Academy: 5 modules, 15 missions, progress from tools already used, Custom Drill Generator', ac.mods === 5 && ac.missions === 15 && ac.done >= 6 && ac.drill, JSON.stringify(ac));
 
@@ -376,7 +376,7 @@ const CHROME = process.env.CHROME_PATH || (process.platform === 'win32' ? 'C:/Pr
       const fast = await (await fetch('/api/fast', { headers: { 'X-ExTerm': tok } })).json();
       await hit('/api/lane9/candles?sym=BTC-USD&tf=1h&px=60000'); await new Promise((r) => setTimeout(r, 2500));
       return { lanes: fast.lanes.length, iso: fast.lanes.every((l) => l.kind === 'process' && l.isolated), c9: await warm('/api/lane9/candles?sym=BTC-USD&tf=1h&px=60000'), recs: await warm('/api/lane16/recs'), scan: await warm('/api/lane11/scan'), route: await warm('/api/lane17/route', { sym: 'BTC-USD', usd: 1000, liq: 5e6 }), check: await warm('/api/lane18/check', { sym: 'BTC-USD', usd: 100, px: 60000, atr: 300, equity: 10000 }) }; });
-    ok('v17.9 19-lane mesh from the page: 15 fast lanes as isolated processes; Lane 9 candles < 20 ms, Lanes 11 / 16 recommendations < 10 ms, Lanes 17 / 18 execution calls < 5 ms through the lane process', lat.lanes === 15 && lat.iso && lat.c9.net < 20 && lat.c9.n >= 100 && lat.recs.net < 10 && lat.recs.n > 0 && lat.scan.net < 10 && lat.route.lane < 5 && lat.check.lane < 5 && lat.route.n >= 2, JSON.stringify(lat));
+    ok('v17.9 19-lane mesh from the page: 15 fast lanes as isolated processes; Lane 9 candles < 20 ms, Lanes 11 / 16 recommendations < 10 ms, Lanes 17 / 18 execution calls < 5 ms through the lane process', lat.lanes >= 15 && lat.iso && lat.c9.net < 20 && lat.c9.n >= 100 && lat.recs.net < 10 && lat.recs.n > 0 && lat.scan.net < 10 && lat.route.lane < 5 && lat.check.lane < 5 && lat.route.n >= 2, JSON.stringify(lat));
     const cw = await ev(async () => { V177UI.go('copilot'); setMode('crypto', 'BTC-USD'); await new Promise((r) => setTimeout(r, 1000)); const out = {}, a0 = V179UI.candles.asked;
       for (const tf of ['1s', '1m', '5m', '15m', '1h', '4h', '1d']) { const b = [...document.querySelectorAll('#tfBtns button')].find((x) => x.textContent.trim() === tf); if (!b) { out[tf] = 'no pill'; continue; } b.click(); for (let i = 0; i < 60 && !(ST.tf === tf && chart.data.length > 5); i++) await new Promise((r) => setTimeout(r, 200)); out[tf] = chart.data.length; }
       const b1 = [...document.querySelectorAll('#tfBtns button')].find((x) => x.textContent.trim() === '1m'); if (b1) b1.click(); return { out, asked: V179UI.candles.asked - a0, used: V179UI.candles.used, fell: V179UI.candles.fell, last: V179UI.candles.last }; });
@@ -405,6 +405,14 @@ const CHROME = process.env.CHROME_PATH || (process.platform === 'win32' ? 'C:/Pr
 
     { // ═════ v18.0: 24/7 Alpha Recs tab + fighter-jet 1s–1M 2D depth chart (flows shared with test/v180_flows.js) ═════
     await require('./v180_flows.js').desktop(page, ok, ev, waitFor, errs); await clean();
+    }
+
+    { // ═════ v18.1: instant universal candle hydration, every tab → chart handoff (flows shared with test/v181_flows.js) ═════
+    await require('./v181_flows.js').desktop(page, ok, ev, waitFor, errs); await clean();
+    }
+
+    { // ═════ v18.2: UI-speed crawl (every visible control alive / error-free / < 10 ms), Lanes 20–26, Portfolio & Risk Console (flows shared with test/v182_flows.js) ═════
+    await require('./v182_flows.js').desktop(page, ok, ev, waitFor, errs); await clean();
     }
 
     // 10-language first-launch picker (fresh context: no saved language)
@@ -468,6 +476,8 @@ const CHROME = process.env.CHROME_PATH || (process.platform === 'win32' ? 'C:/Pr
     ok('v17.8 phone < 820 px: every below-chart tape control (Pause / Live, All, Whales, Blocks, Buys, Sells, Min $, Hide) on screen and tappable, live rows, Buys filter + Pause work, Tracker drawer fits, no horizontal scroll', Object.values(q8.ctl).every(Boolean) && q8.rows > 0 && q8.buys && q8.paused && q8.live && q8.trk.fit && q8.trk.rows >= 50 && !q8.hscroll, JSON.stringify(q8));
     }
     await require('./v180_flows.js').phone(ph, ok, errs); // v18.0 phone 390 × 844
+    await require('./v181_flows.js').phone(ph, ok, errs); // v18.1 phone 390 × 844
+    await require('./v182_flows.js').phone(ph, ok, errs); // v18.2 phone 390 × 844 (crawl + console)
     }
     await m.close();
 

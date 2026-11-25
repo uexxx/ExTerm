@@ -22,7 +22,7 @@ const { chromium } = require('/opt/npm-tools/node_modules/playwright');
     if (ST.bots[0]) { const a = ST.bots[0].account, s = ST.bots[0].sym, p = px(s); for (let i = 0; i < 6; i++) { a.buy(s, p * (1 - i * 0.003), 1500, now - (8 - i) * 864e5 / 2); a.sell(s, p * (1 + (i % 3 === 0 ? -0.02 : 0.025)), null, now - (8 - i) * 864e5 / 2 + 3 * 36e5, { reason: i % 3 ? 'signal exit' : 'stop-loss' }); } } });
   await sleep(9000);
   console.log('badge:', await ev(() => !$('#pfBadge').hidden && $('#pfBadge').textContent));
-  await page.click('nav button[data-tab="port"]'); await sleep(1500);
+  await page.click('nav button[data-tab="port"]'); await sleep(300); await ev(() => { if (typeof V182UI !== 'undefined') V182UI.Pf.legacy(true); }); await sleep(1200);
   console.log('stats:', (await page.textContent('#pfStats')).replace(/\s+/g, ' ').slice(0, 330));
   console.log('accounts:', await ev(() => [...document.querySelectorAll('#pfAccts tr.acc-row')].map((r) => r.querySelector('b').textContent + ' ' + r.children[3].textContent + ' tr=' + r.children[6].textContent).join(' | ')));
   console.log('positions:', await ev(() => document.querySelectorAll('#pfHold tbody tr').length), '| journal:', (await page.textContent('#pfTradeSum')));

@@ -40,7 +40,7 @@ const { chromium } = require('/opt/npm-tools/node_modules/playwright');
   ok('leaderboard backtests every strategy', lbRows >= nStrat - 1, `${lbRows} rows / ${nStrat} strategies`);
   await page.click('#lbGrade'); await page.waitForFunction(() => document.querySelectorAll('#lbOut .grade').length >= 10, null, { timeout: 240000 }).catch(() => {}); ok('leaderboard grades top 10', await ev(() => document.querySelectorAll('#lbOut .grade').length >= 10));
   // ── portfolio + CSV
-  await page.click('nav button[data-tab="port"]'); await sleep(800); ok('portfolio lists trades + bot accounts', await ev(() => pfTrades().length >= 3 && document.querySelectorAll('#pfAccts tr.acc-row').length >= 5));
+  await page.click('nav button[data-tab="port"]'); await sleep(300); await ev(() => { if (typeof V182UI !== 'undefined') V182UI.Pf.legacy(true); }); await sleep(500); ok('portfolio lists trades + bot accounts', await ev(() => pfTrades().length >= 3 && document.querySelectorAll('#pfAccts tr.acc-row').length >= 5));
   const dl = page.waitForEvent('download', { timeout: 5000 }).catch(() => null); await page.click('#pfCsv'); const d1 = await dl; ok('portfolio CSV export downloads', !!d1, d1 ? d1.suggestedFilename() : '');
   await page.click('#pfSide button[data-v="buy"]'); await sleep(200); ok('journal filter: buys only', await ev(() => [...document.querySelectorAll('#pfTrades td:nth-child(4)')].every((t) => /buy/.test(t.textContent))));
   // ── palette, themes, mode switch

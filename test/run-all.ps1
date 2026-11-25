@@ -25,7 +25,7 @@ function Run([string]$name, [string]$exe, [string[]]$argv) {
 try {
   if (-not $Only -or $Only -eq 'unit') {
     Write-Output '-- unit'
-    foreach ($t in 'core', 'strategies', 'validate', 'robust', 'bigdata', 'solana', 'v12', 'v13', 'v14', 'v15', 'v15p2', 'v15p3', 'v15p4', 'v15p5', 'world', 'v151', 'v152', 'v153', 'v154', 'v155', 'v156', 'v157', 'v160', 'v161', 'v162', 'v163', 'v164', 'v165', 'v166', 'v170', 'v171', 'v172', 'v173', 'v175', 'v176', 'v177', 'v178', 'v179', 'v180') { if (Test-Path "test/$t.test.js") { Run "$t.test.js" node @("test/$t.test.js") } }
+    foreach ($t in 'core', 'strategies', 'validate', 'robust', 'bigdata', 'solana', 'v12', 'v13', 'v14', 'v15', 'v15p2', 'v15p3', 'v15p4', 'v15p5', 'world', 'v151', 'v152', 'v153', 'v154', 'v155', 'v156', 'v157', 'v160', 'v161', 'v162', 'v163', 'v164', 'v165', 'v166', 'v170', 'v171', 'v172', 'v173', 'v175', 'v176', 'v177', 'v178', 'v179', 'v180', 'v181', 'v182') { if (Test-Path "test/$t.test.js") { Run "$t.test.js" node @("test/$t.test.js") } }
     Run 'community strategies' node @('tools/validate-strategies.js')
     Run 'launcher/page strategy parity' node @('test/v13_parity.js')
   }

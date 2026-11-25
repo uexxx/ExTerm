@@ -314,7 +314,7 @@ class NoRedirect(urllib.request.HTTPRedirectHandler):
 NOTIFY_OPENER = urllib.request.build_opener(NoRedirect(), urllib.request.HTTPSHandler(context=CTX))
 LOCAL_OPENER = urllib.request.build_opener(NoRedirect(), urllib.request.HTTPHandler())
 
-VERSION = "18.0"
+VERSION = "18.2"
 STARTED = time.time()
 CACHE_STATS = {"hits": 0, "total": 0}  # /api/feed symbols answered from RAM vs asked for (Grok telemetry strip)
 OLD_DATA_DIR = pathlib.Path.home() / (".nova" + "term")  # pre-v15 data folder, moved to ~/.exterm on first start
@@ -2336,7 +2336,7 @@ import math
 #       ratchet + SHA-256 hash-chained audit ledger. Every number derived from a proxy says so (`proxy` / `est.` / `model`).
 EQ_UNI = ("SPY", "QQQ", "IWM", "AAPL", "MSFT", "NVDA", "AMZN", "META", "GOOGL", "TSLA", "AMD", "AVGO", "JPM", "NFLX", "PLTR", "COIN", "MSTR", "UBER", "XOM", "SMCI")
 CR_UNI = ("BTC", "ETH", "SOL", "XRP", "DOGE", "AVAX", "LINK", "SUI", "HYPE")
-DEX_CHAINS = ("solana", "base", "eth", "arbitrum")
+DEX_SCAN_CHAINS = ("solana", "base", "eth", "arbitrum")  # v18.1: was DEX_CHAINS, which shadowed the page → DexScreener chain map above
 TF_SEC = {"1s": 1, "5s": 5, "15s": 15, "1m": 60, "5m": 300, "15m": 900, "1h": 3600, "4h": 14400, "1d": 86400, "1w": 604800, "1M": 2592000}
 MTF = ("1m", "5m", "15m", "1h", "1d")
 BOTS6 = ("HUNTER-α", "MUTATOR-EVO", "HEDGER-ARB", "RISK-GUARD", "SNIPER-EXEC", "SCALPER-EXIT")
@@ -2414,15 +2414,84 @@ def _gt_trades(chain, pool):
         if px > 0: out.append([t, px, _hnum(a.get("volume_in_usd")) / px, str(a.get("tx_from_address") or "")[:64], kind])
     return out
 
+# ---- v18.1: one canonical symbol for every lane (mirrors V181.norm in src/v181core.js) ----
+CHAIN_ALIAS = {"eth": "eth", "ethereum": "eth", "ether": "eth", "erc20": "eth", "mainnet": "eth", "sol": "solana", "solana": "solana", "base": "base",
+               "arb": "arbitrum", "arbitrum": "arbitrum", "arbitrum_one": "arbitrum", "arbitrum-one": "arbitrum", "bsc": "bsc", "bnb": "bsc", "binance": "bsc",
+               "polygon": "polygon_pos", "polygon_pos": "polygon_pos", "matic": "polygon_pos", "avax": "avax", "avalanche": "avax", "op": "optimism", "optimism": "optimism", "sim": "sim"}
+GT2DS = {"eth": "ethereum", "solana": "solana", "base": "base", "arbitrum": "arbitrum", "bsc": "bsc", "polygon_pos": "polygon", "avax": "avalanche", "optimism": "optimism"}
+DS2GT = {v: k for k, v in GT2DS.items()}
+CRYPTO_BASES = set(("BTC ETH SOL XRP DOGE AVAX LINK SUI HYPE ADA DOT LTC BCH TRX TON NEAR ATOM UNI AAVE ARB OP PEPE SHIB BONK WIF POL MATIC FIL ICP ETC XLM HBAR INJ SEI TIA JUP "
+                    "RNDR RENDER FET ONDO ENA WLD IMX MKR LDO CRV GRT ALGO XTZ EOS SAND MANA FLOKI TAO KAS JTO PYTH TRUMP USDC USDT DAI").split())
+_EVM = re.compile(r"^0x[0-9a-fA-F]{40}$|^0x[0-9a-fA-F]{64}$"); _B58 = re.compile(r"^[1-9A-HJ-NP-Za-km-z]{32,44}$"); _ADDR = re.compile(r"^[A-Za-z0-9_.-]{3,90}$")
+_PAIR = re.compile(r"^([A-Z0-9]{2,12})(?:[-/_ ](USD|USDT|USDC|EUR|PERP)|(USDT|USDC|PERP))$"); _TICK = re.compile(r"^\^?[A-Z][A-Z0-9.^=-]{0,10}$")
+
+def _chain_of(c):
+    k = str(c or "").lower(); return CHAIN_ALIAS.get(k) or (k if re.match(r"^[a-z0-9_-]{2,20}$", k) else None)
+
+def norm_sym(q):
+    """any spelling → (canonical sym, kind) with kind in crypto / stock / onchain / ca (raw contract, chain guessed); (None, None) if unknown"""
+    s = str(q or "").strip().lstrip("$")
+    if not s or len(s) > 200: return None, None
+    m = re.match(r"^https?://(?:www\.)?(?:dexscreener\.com|geckoterminal\.com)/([a-z0-9_-]{2,20})/(?:pools/)?([A-Za-z0-9]{20,90})", s, re.I)
+    if m:
+        c = _chain_of(m.group(1)); a = m.group(2).lower() if _EVM.match(m.group(2)) else m.group(2)
+        return ("oc:%s:%s" % (c, a), "onchain") if c else (None, None)
+    m = re.match(r"^oc:([^:\s]{2,20}):([^:\s]{3,90})$", s, re.I)
+    if m:
+        c = _chain_of(m.group(1)); a = m.group(2).lower() if _EVM.match(m.group(2)) else m.group(2)
+        return ("oc:%s:%s" % (c, a), "onchain") if c and _ADDR.match(a) else (None, None)
+    if _EVM.match(s): return "oc:eth:" + s.lower(), "ca"
+    if _B58.match(s) and re.search(r"[a-z]", s) and re.search(r"[0-9]", s): return "oc:solana:" + s, "ca"
+    u = s.upper(); m = _PAIR.match(u)
+    if m: return m.group(1) + "-" + ("EUR" if (m.group(2) or m.group(3)) == "EUR" else "USD"), "crypto"
+    m = re.match(r"^([A-Z0-9]{2,12})USD$", u)
+    if m and m.group(1) in CRYPTO_BASES: return m.group(1) + "-USD", "crypto"
+    if u in CRYPTO_BASES: return u + "-USD", "crypto"
+    if _TICK.match(u): return u, "stock"
+    return None, None
+
+_RESOLVED = {}
+
+def resolve_pool(addr, chain=None, offline=False):
+    """a contract / pool address → oc:<network>:<most liquid pool> via DexScreener (cached 10 min); offline → the chain guess"""
+    a = addr.lower() if _EVM.match(addr) else addr; k = (chain or "") + ":" + a; hit = _RESOLVED.get(k)
+    if hit and time.time() - hit[1] < 600: return hit[0]
+    guess = "oc:%s:%s" % (chain or ("eth" if a.startswith("0x") else "solana"), a)
+    if offline: return guess
+    sym = None
+    try:
+        if chain and chain in GT2DS:  # already a pool on that chain?
+            j = _jget("https://api.dexscreener.com/latest/dex/pairs/%s/%s" % (GT2DS[chain], urllib.parse.quote(a)), timeout=5) or {}
+            ps = j.get("pairs") or ([j["pair"]] if j.get("pair") else [])
+            if ps and ps[0].get("pairAddress"): sym = "oc:%s:%s" % (chain, ps[0]["pairAddress"])
+        if not sym:  # a token: its most liquid pool on a supported chain
+            j = _jget("https://api.dexscreener.com/latest/dex/tokens/%s" % urllib.parse.quote(a), timeout=5) or {}
+            ps = [p for p in j.get("pairs") or [] if DS2GT.get(p.get("chainId")) and p.get("pairAddress") and (not chain or DS2GT[p["chainId"]] == chain)]
+            if ps:
+                b = max(ps, key=lambda p: _hnum((p.get("liquidity") or {}).get("usd")))
+                sym = "oc:%s:%s" % (DS2GT[b["chainId"]], b["pairAddress"].lower() if _EVM.match(b["pairAddress"]) else b["pairAddress"])
+    except Exception: sym = None
+    _RESOLVED[k] = (sym or guess, time.time())
+    if len(_RESOLVED) > 2000: _RESOLVED.pop(next(iter(_RESOLVED)))
+    return sym or guess
+
+def _gt_ohlcv(chain, pool, tf):
+    name, ag, base = GT_TF[tf]
+    j = _jget("https://api.geckoterminal.com/api/v2/networks/%s/pools/%s/ohlcv/%s?aggregate=%d&limit=300" % (urllib.parse.quote(chain), urllib.parse.quote(pool), name, ag), timeout=8)
+    return sorted([[int(r[0]), _hnum(r[1]), _hnum(r[2]), _hnum(r[3]), _hnum(r[4]), _hnum(r[5])] for r in (((j or {}).get("data") or {}).get("attributes") or {}).get("ohlcv_list") or []])
+
 def candles9(sym, tf):
-    """crypto / DEX bars for one timeframe (real upstream; raises on failure)"""
+    """crypto / DEX bars for one timeframe (real upstream; raises on failure). v18.1: an oc: symbol that names a token instead of a
+    pool is resolved to its most liquid pool before giving up"""
     if sym.startswith("oc:"):
         _, chain, pool = sym.split(":", 2)
         if TF_SEC[tf] < 60:
             tr = _gt_trades(chain, pool); return stitch([], [[t, p, q] for t, p, q, _w, _k in tr], tf), "geckoterminal-trades"
-        name, ag, base = GT_TF[tf]
-        j = _jget("https://api.geckoterminal.com/api/v2/networks/%s/pools/%s/ohlcv/%s?aggregate=%d&limit=300" % (urllib.parse.quote(chain), urllib.parse.quote(pool), name, ag), timeout=8)
-        rows = sorted([[int(r[0]), _hnum(r[1]), _hnum(r[2]), _hnum(r[3]), _hnum(r[4]), _hnum(r[5])] for r in (((j or {}).get("data") or {}).get("attributes") or {}).get("ohlcv_list") or []])
+        try: rows = _gt_ohlcv(chain, pool, tf)
+        except Exception: rows = []
+        if not rows:
+            alt = resolve_pool(pool, chain).split(":", 2)
+            if alt[2] != pool or alt[1] != chain: rows = _gt_ohlcv(alt[1], alt[2], tf)
         return (agg_bars(rows, tf) if tf in ("1w", "1M") else rows), "geckoterminal"
     if TF_SEC[tf] < 60:
         return stitch([], _cb_trades(sym), tf), "coinbase-trades"
@@ -2450,24 +2519,50 @@ def candles10(sym, tf):
     if rows and last > 0: rows = stitch(rows, [[int(time.time() * 1000), last, 0]], tf)
     return rows, "yahoo"
 
+def guard_tail(rows, n=240):
+    """v18.2 Lane 22 guard inside Lanes 9 / 10: the newest n bars pass the > 4σ flash-wick filter before any page sees them"""
+    try:
+        if len(rows) < 8: return rows, 0
+        head, tail = rows[:-n], [list(r) for r in rows[-n:]]; clean, fixed = outlier_clean(tail)
+        return head + clean, len(fixed)
+    except Exception: return rows, 0
+
 def _warm_ohlc(st, pool, offline, wants, lane):
     """on-demand: every wanted sym|tf is refreshed (seconds bars every second, minute bars every 10 s, daily+ every 5 min);
     plus the multi-timeframe trend table for the scanner universe, forwarded to Lane 16"""
     now = time.time(); cache = st.setdefault("c", {}); snap = {}
+    # v18.1 cross-lane pre-warm keys (symbols surfaced by the Radar / Alpha Recs / Picks / Tracker / Lanes 11–13): refreshed slowly
+    # and inside an upstream budget (≤ 3 Coinbase / Yahoo and ≤ 1 GeckoTerminal fetch per pass, GeckoTerminal at most every 6 s)
+    pre = st.setdefault("pre", {})
+    for k in [k for k, t in pre.items() if now - t > 900]: pre.pop(k, None)
     def per(tf): return 1 if TF_SEC[tf] < 60 else 10 if TF_SEC[tf] < 86400 else 300
+    def pper(key): return 120 if key.startswith("oc:") else 60
+    due, nx, ng = [], 0, 0
+    for key in reversed(list(pre)):  # newest surfaced first
+        if key in wants: continue
+        C = cache.get(key)
+        if C and now - C["at"] < pper(key): continue
+        if key.startswith("oc:") and not offline:
+            if ng >= 1 or now - st.get("gtPreAt", 0) < 6: continue
+            ng += 1; st["gtPreAt"] = now
+        elif nx >= (6 if offline else 3): continue
+        else: nx += 1
+        due.append(key)
+    wants = dict(wants); wants.update({k: 0.0 for k in due})
     def one(key):
         sym, tf = key.split("|"); C = cache.get(key)
-        if C and now - C["at"] < per(tf): return key, None
+        stale_px = offline and C is not None and wants.get(key, 0.0) > 0 and C.get("px") != wants.get(key)  # a pre-warmed sample re-anchors on the page price
+        if C and not stale_px and now - C["at"] < (per(tf) if key not in due else 0): return key, None
         if lane == 10 and TF_SEC[tf] < 60: return key, {"rows": [], "src": "unsupported", "sample": offline, "at": now, "unsupported": True}  # seconds bars for equities come from the launcher's tick feed
-        if offline: return key, {"rows": sample_bars(sym, tf, 300, wants.get(key, 0.0)), "src": "sample", "sample": True, "at": now}
-        try: rows, src = (candles9 if lane == 9 else candles10)(sym, tf); return key, {"rows": rows[-1500:], "src": src, "sample": False, "at": now}
+        if offline: rows, g = guard_tail(sample_bars(sym, tf, 300, wants.get(key, 0.0))); return key, {"rows": rows, "src": "sample", "sample": True, "at": now, "px": wants.get(key, 0.0), "guard": g}
+        try: rows, src = (candles9 if lane == 9 else candles10)(sym, tf); rows, g = guard_tail(rows[-1500:]); return key, {"rows": rows, "src": src, "sample": False, "at": now, "guard": g}
         except Exception as e: return key, ({"rows": C["rows"], "src": C["src"], "sample": C["sample"], "at": now, "stale": True} if C else {"rows": [], "src": "unavailable", "err": str(e)[:100], "sample": False, "at": now, "unsupported": "seconds" in str(e)})
     for key, v in pool.map(one, list(wants)):
         if v is not None: cache[key] = v
     for key in list(cache):
-        if key not in wants: cache.pop(key)
+        if key not in wants and key not in pre: cache.pop(key)
     for key, C in cache.items():
-        sym, tf = key.split("|"); snap["c:" + key] = dict({k: C[k] for k in C if k != "at"}, sym=sym, tf=tf, n=len(C["rows"]), ts=C["at"])
+        sym, tf = key.split("|"); snap["c:" + key] = dict({k: C[k] for k in C if k not in ("at", "px")}, sym=sym, tf=tf, n=len(C["rows"]), ts=C["at"])
     # MTF trend table for the universe (forwarded to Lane 16)
     if now - st.get("mtfAt", 0) >= (60 if not offline else 30):
         st["mtfAt"] = now; uni = [c + "-USD" for c in CR_UNI if c != "HYPE"] if lane == 9 else list(EQ_UNI)
@@ -2552,7 +2647,9 @@ def _sample_cands(lane, n, now):
 def _warm11(st, pool, offline, wants):
     now = time.time()
     if offline:
-        c = _sample_cands(11, 12, now); return {"scan": {"rows": c, "gex": {"SPY": {"flip": None, "note": "sample"}}, "sample": True, "ts": now}, "fwd": {"cands": c, "series": [math.sin(now / 60 + i) * 0.001 for i in range(64)]}}
+        c = _sample_cands(11, 12, now); ses = us_session(now)
+        for x in c: x["session"] = ses["session"]; x["extended_hours"] = ses["extended_hours"]
+        return {"scan": {"rows": c, "gex": {"SPY": {"flip": None, "note": "sample"}}, "session": ses, "sample": True, "ts": now}, "fwd": {"cands": c, "series": [math.sin(now / 60 + i) * 0.001 for i in range(64)]}}
     yhdr = {"User-Agent": "Mozilla/5.0", "Accept": "application/json"}
     def bars(sym):
         try: return sym, candles10(sym, "1m")[0]
@@ -2560,9 +2657,9 @@ def _warm11(st, pool, offline, wants):
     B = dict(pool.map(bars, EQ_UNI))
     if now - st.get("dAt", 0) > 600 or "daily" not in st:
         def daily(sym):
-            try: rows = candles10(sym, "1d")[0][-90:]; return sym, [b[4] / a[4] - 1 for a, b in zip(rows[:-1], rows[1:])]
-            except Exception: return sym, []
-        st["daily"] = dict(pool.map(daily, EQ_UNI)); st["dAt"] = now
+            try: rows = candles10(sym, "1d")[0][-90:]; return sym, ([b[4] / a[4] - 1 for a, b in zip(rows[:-1], rows[1:])], rows)
+            except Exception: return sym, ([], [])
+        dd = dict(pool.map(daily, EQ_UNI)); st["daily"] = {k: v[0] for k, v in dd.items()}; st["drows"] = {k: v[1] for k, v in dd.items()}; st["dAt"] = now
     res, nmode = rmt_residuals(st["daily"]); gex = {}
     for u in ("SPY", "QQQ"):
         try:
@@ -2583,8 +2680,27 @@ def _warm11(st, pool, offline, wants):
         if o: cands.append({"sym": sym, "mkt": "stocks", "side": o["side"], "setup": o["setup"], "score": round(0.55 + min(0.35, pin), 3), "px": px, "atr": at, "liq": liq, "feat": {"pin": round(pin, 3), "avwap": round(o["avwap"], 4)}})
         r = res.get(sym)
         if r is not None and abs(r) >= 1.5: cands.append({"sym": sym, "mkt": "stocks", "side": "buy" if r < 0 else "sell", "setup": "RMT alpha residual (mean reversion)", "score": round(min(0.9, abs(r) / 4), 3), "px": px, "atr": at, "liq": liq, "feat": {"resid": r}})
+    ses = us_session(now)
+    if len(cands) < 6: cands += offhours_cands(st.get("drows") or {}, {c["sym"] for c in cands}, 8 - len(cands))  # v18.2: Stocks / 0DTE populated 24/7
+    for c in cands: c.setdefault("session", ses["session"]); c["extended_hours"] = ses["extended_hours"]
     spy = B.get("SPY") or []; ser = [b[4] / a[4] - 1 for a, b in zip(spy[-65:-1], spy[-64:])]
-    return {"scan": {"rows": cands, "gex": gex, "rmtModes": nmode, "universe": len(EQ_UNI), "sample": False, "ts": now}, "fwd": {"cands": cands, "series": ser}}
+    return {"scan": {"rows": cands, "gex": gex, "rmtModes": nmode, "universe": len(EQ_UNI), "session": ses, "sample": False, "ts": now}, "fwd": {"cands": cands, "series": ser}}
+
+def offhours_cands(drows, have, n):
+    """v18.2: outside (or early in) the US session the 1m scanners are quiet, so Stocks / 0DTE never goes empty: next-session plans
+    from daily bars (20-day breakout watch, RSI(2) stretch, gap-fill), ranked by how close the trigger is"""
+    out = []
+    for sym, rows in drows.items():
+        if sym in have or len(rows) < 25: continue
+        c = [r[4] for r in rows]; px = c[-1]; hi20 = max(r[2] for r in rows[-21:-1]); lo20 = min(r[3] for r in rows[-21:-1]); at = atr_of(rows)
+        g = [c[i] - c[i - 1] for i in range(len(c) - 2, len(c))]; up = sum(x for x in g if x > 0); dn = -sum(x for x in g if x < 0); rsi2 = 100.0 if dn == 0 else 100 - 100 / (1 + up / dn)
+        base = {"sym": sym, "mkt": "stocks", "px": px, "atr": at, "liq": sum(r[4] * r[5] for r in rows[-20:]) / 20, "session": "next"}
+        if px >= hi20 * 0.99: out.append(dict(base, side="buy", setup="Next-session 20D breakout watch", score=round(0.55 + 0.35 * max(0.0, 1 - (hi20 - px) / (0.01 * hi20 + 1e-9)), 3), feat={"hi20": hi20}))
+        elif px <= lo20 * 1.01: out.append(dict(base, side="sell", setup="Next-session 20D breakdown watch", score=0.6, feat={"lo20": lo20}))
+        elif rsi2 < 10: out.append(dict(base, side="buy", setup="Daily RSI(2) stretch · mean-reversion plan", score=round(0.5 + (10 - rsi2) / 40, 3), feat={"rsi2": round(rsi2, 1)}))
+        elif rsi2 > 90: out.append(dict(base, side="sell", setup="Daily RSI(2) stretch · fade plan", score=round(0.5 + (rsi2 - 90) / 40, 3), feat={"rsi2": round(rsi2, 1)}))
+        else: out.append(dict(base, side="buy" if px > c[-21] else "sell", setup="Trend continuation plan (20D)", score=round(0.45 + min(0.2, abs(px / c[-21] - 1)), 3), feat={"ret20": round(px / c[-21] - 1, 4)}))
+    return sorted(out, key=lambda x: -x["score"])[:max(0, n)]
 
 # ---- Lane 12: crypto majors & perps squeeze scanner ----
 def micro_price(bid, bsz, ask, asz):
@@ -2669,7 +2785,7 @@ def _warm13(st, pool, offline, wants):
     def trending(ch):
         try: return ch, (_jget("https://api.geckoterminal.com/api/v2/networks/%s/trending_pools?include=base_token" % ch, timeout=8).get("data") or [])[:8]
         except Exception: return ch, []
-    for ch, rows in pool.map(trending, DEX_CHAINS):
+    for ch, rows in pool.map(trending, DEX_SCAN_CHAINS):
         for d in rows:
             a = d.get("attributes") or {}; tx = a.get("transactions") or {}; vol = a.get("volume_usd") or {}; pc = a.get("price_change_percentage") or {}
             base = (((d.get("relationships") or {}).get("base_token") or {}).get("data") or {}).get("id", ""); mint = base.split("_", 1)[1] if "_" in base else ""
@@ -2696,7 +2812,7 @@ def _warm13(st, pool, offline, wants):
         cands.append({"sym": sym, "mkt": "onchain", "name": p["name"], "side": side, "setup": "Rug Shield v2 pass · net buy pressure" if m["shieldPass"] else "Rug Shield v2 incomplete", "score": round(min(0.95, 0.4 + abs(p["ch1"]) / 20 + max(0, m["netBuy"]) * 0.3), 3) * (1 if m["shieldPass"] else 0.6), "px": p["px"], "atr": p["px"] * max(0.01, abs(p["ch1"]) / 100), "liq": p["reserve"],
                       "feat": {"impact": m["impact"], "top3": m.get("top3"), "entropy": m.get("entropy"), "halfLifeH": None if m["halfLife"] == float("inf") else round(m["halfLife"], 1), "rising": m["halfLife"] == float("inf"), "freeze": m.get("freeze"), "lpLocked": m.get("lpLocked"), "shield": m["shield"], "shieldPass": m["shieldPass"], "ch1": p["ch1"], "ch24": p["ch24"]}})
     ser = st.setdefault("ser", []); ser.append(sum(p["ch1"] for p in pools) / max(1, len(pools)) / 100); del ser[:-64]
-    st["last"] = {"scan": {"rows": cands, "chains": list(DEX_CHAINS), "sample": False, "ts": now, "clmm": "CLMM tick-cliff data is not in the free APIs: shown as pending"}, "fwd": {"cands": cands, "series": list(ser), "forensics": fx}}
+    st["last"] = {"scan": {"rows": cands, "chains": list(DEX_SCAN_CHAINS), "sample": False, "ts": now, "clmm": "CLMM tick-cliff data is not in the free APIs: shown as pending"}, "fwd": {"cands": cands, "series": list(ser), "forensics": fx}}
     return st["last"]
 
 # ---- Lane 14: transfer entropy + BOCPD + 6-bot consensus ----
@@ -2933,6 +3049,8 @@ def risk_check(a, st, now=None):
     now = now or time.time(); ch = []; usd = _hnum(a.get("usd")); px = _hnum(a.get("px")); eq = max(1.0, _hnum(a.get("equity"), 10000)); atr = _hnum(a.get("atr")); sym = str(a.get("sym", ""))
     fx = (st.get("feed", {}).get("lane13") or {}).get("forensics", {}).get(sym) or a.get("forensics") or {}
     if sym.startswith("oc:"):
+        bl = (st.get("feed", {}).get("lane23") or {}); hit = sym in (bl.get("pools") or []) or (fx.get("deployer") and fx.get("deployer") in (bl.get("black") or []))
+        ch.append(["serial-rugger blacklist (Lane 23)", "fail" if hit else "pass", "deployer rugged ≥ 2 pools" if hit else "not blacklisted"])
         ch.append(["honeypot / sell simulation", "fail" if fx.get("honeypot") else "pass" if fx else "warn", "sells blocked or no sells seen" if fx.get("honeypot") else "sells observed in the pool" if fx else "not yet scanned by Lane 13"])
         ch.append(["freeze / mint authority", "fail" if fx.get("freeze") else "pass" if fx else "warn", "authority still enabled" if fx.get("freeze") else "renounced" if fx else "unknown"])
     slip = _hnum(a.get("slipPct"), fx.get("impact") if fx.get("impact") is not None else 0.0)
@@ -3041,12 +3159,360 @@ def _call19(st, job, a):
 def _warm19(st, pool, offline, wants):
     return {"status": dict(_call19(st, "stats", {}), ts=time.time())}
 
-FAST_CALL = {17: _call17, 18: _call18, 19: _call19}
-FAST_FWD = {9: (16,), 10: (16,), 11: (14,), 12: (14,), 13: (14, 18), 14: (15,), 15: (16,)}
+# ════ v18.2: Lanes 20–26 (each a request / response lane like 17–19; mirrored for the offline page by src/v182core.js) ════
+def _jload(p, d):
+    try: return json.loads(pathlib.Path(p).read_text(encoding="utf-8"))
+    except Exception: return d
+
+def _jsave(p, obj):
+    p = pathlib.Path(p); p.parent.mkdir(parents=True, exist_ok=True); tmp = p.with_suffix(p.suffix + ".tmp")
+    tmp.write_text(json.dumps(obj, separators=(",", ":")), encoding="utf-8"); os.replace(tmp, p)
+
+# ---- Lane 20: US session router, pre-CPI / FOMC 30-min throttle, 50 % TP1 scale-out, SHA-256 idempotency ----
+def _us_dst(y, ts):
+    """US DST: 2nd Sunday of March 07:00 UTC (02:00 EST) → 1st Sunday of November 06:00 UTC (02:00 EDT)"""
+    import calendar as _cal
+    def nth_sun(m, n):
+        d = 1 + (6 - _cal.weekday(y, m, 1)) % 7; return d + 7 * (n - 1)
+    a = _cal.timegm((y, 3, nth_sun(3, 2), 7, 0, 0)); b = _cal.timegm((y, 11, nth_sun(11, 1), 6, 0, 0))
+    return a <= ts < b
+
+def us_session(ts=None):
+    """→ {session: pre | regular | post | closed, extended_hours, open, offset}: pre 04:00–09:30, regular 09:30–16:00, post 16:00–20:00 ET
+    on weekdays (exchange holidays are not modelled: the venue rejects the order and the router says so)"""
+    ts = time.time() if ts is None else ts; off = -4 if _us_dst(time.gmtime(ts).tm_year, ts) else -5; et = time.gmtime(ts + off * 3600)
+    mins = et.tm_hour * 60 + et.tm_min; wk = et.tm_wday < 5
+    s = "closed" if not wk else "pre" if 240 <= mins < 570 else "regular" if 570 <= mins < 960 else "post" if 960 <= mins < 1200 else "closed"
+    return {"session": s, "extended_hours": s in ("pre", "post"), "open": s == "regular", "offset": off, "etMin": mins, "weekday": wk}
+
+def idem_key(o):
+    """SHA-256 idempotency key over the order's identity fields (same fields as V182.idemKey): a retried click never double-sends"""
+    f = lambda v: ("%.8f" % v) if isinstance(v, (int, float)) and not isinstance(v, bool) else str(v)
+    s = "|".join("%s=%s" % (k, f(o[k])) for k in ("sym", "side", "usd", "px", "src", "nonce") if o.get(k) is not None)
+    return hashlib.sha256(s.encode()).hexdigest()
+
+def exec_plan(a, st, now=None):
+    now = time.time() if now is None else now; sym = str(a.get("sym", ""))[:120]; kind = norm_sym(sym)[1] if sym else None
+    ses = us_session(now); stock = kind == "stock"; side = "sell" if a.get("side") == "sell" else "buy"
+    px = _hnum(a.get("px")); usd = max(0.0, _hnum(a.get("usd"))); tp1 = _hnum(a.get("tp1")); tp2 = _hnum(a.get("tp2"))
+    soon = [n for n, t in macro_events(st.get("data", ".")) if 0 <= t - now <= 1800]
+    key = idem_key(dict(a, sym=sym, side=side)); seen = st.setdefault("idem", {})
+    for k in [k for k, t in seen.items() if now - t > 600]: seen.pop(k, None)
+    dup = key in seen
+    if not dup: seen[key] = now
+    while len(seen) > 5000: seen.pop(next(iter(seen)))
+    reasons = []
+    if dup: reasons.append("duplicate order (same SHA-256 idempotency key within 10 min)")
+    if soon: reasons.append("%s within 30 min: new entries throttled" % soon[0])
+    if stock and ses["session"] == "closed": reasons.append("US market closed: queue for the next session")
+    plan = {"sym": sym, "kind": kind, "side": side, "session": ses["session"], "extended_hours": bool(stock and ses["extended_hours"]),
+            "orderType": "LIMIT" if stock and ses["extended_hours"] else "MARKET" if not px else "LIMIT", "tif": "DAY" if stock else "GTC",
+            "throttled": bool(soon), "macro": soon[0] if soon else None, "idem": key, "dup": dup, "ok": not reasons, "why": reasons,
+            "scaleOut": [{"at": tp1, "frac": 0.5, "then": "stop → break-even"}, {"at": tp2, "frac": 0.5}] if tp1 > 0 else [], "usd": round(usd, 2), "px": px}
+    return plan
+
+def _call20(st, job, a):
+    if job == "plan": return exec_plan(a, st)
+    if job == "session": return us_session(_hnum(a.get("ts")) or None)
+    raise ValueError("unknown job")
+
+def _warm20(st, pool, offline, wants):
+    now = time.time()
+    return {"status": {"session": us_session(now), "events": [{"name": n, "at": t} for n, t in macro_events(st.get("data", ".")) if t > now][:4], "idem": len(st.get("idem", {})), "ts": now}}
+
+# ---- Lane 21: outcome-attributed Auto-Evolution, isolated Stocks EVO / Crypto-DEX EVO books, drift-locked inside Lane 18 ----
+EVO_BOOKS = ("stocks", "crypto")
+EVO_START = {"riskPct": 1.0, "atrStop": 1.5, "tp1R": 1.0, "tp2R": 2.5, "minScore": 0.6}
+EVO_BOUNDS = {"riskPct": (0.25, 2.0), "atrStop": (0.8, 3.0), "tp1R": (0.5, 2.0), "tp2R": (1.5, 5.0), "minScore": (0.45, 0.9)}  # riskPct ≤ 2 %: the Lane 18 per-trade cap
+EVO_DRIFT, EVO_BATCH = 0.10, 10  # one generation moves a parameter by at most 10 % of its allowed range; a generation needs 10 outcomes
+
+def evo_book_of(sym):
+    k = norm_sym(str(sym or ""))[1]; return "stocks" if k == "stock" else "crypto"
+
+def evo_step(params, outs):
+    """one generation from attributed outcomes [{r, score, exit}] → (new params, attribution notes); every move is clamped to the drift
+    lock and the Lane 18 bounds, so evolution can never loosen the firewall"""
+    n = len(outs)
+    if n == 0: return dict(params), []
+    wins = [o for o in outs if o["r"] > 0]; losses = [o for o in outs if o["r"] <= 0]; wr = len(wins) / n
+    exp = sum(o["r"] for o in outs) / n; stopped = sum(1 for o in losses if o.get("exit") == "stop") / max(1, len(losses))
+    tp2 = sum(1 for o in wins if o.get("exit") == "tp2") / max(1, len(wins))
+    low = [o for o in outs if o.get("score", 1) < params["minScore"] + 0.1]; low_exp = sum(o["r"] for o in low) / len(low) if low else 0.0
+    want, notes = dict(params), []
+    if low and low_exp < 0: want["minScore"] += 0.05; notes.append("low-score setups lost %.2fR on average: minScore up" % low_exp)
+    elif wr > 0.6 and exp > 0.3: want["minScore"] -= 0.03; notes.append("win rate %.0f%%: minScore down" % (wr * 100))
+    if stopped > 0.6 and wr < 0.45: want["atrStop"] += 0.25; notes.append("%.0f%% of losses hit the stop: stop widened" % (stopped * 100))
+    if wins and tp2 < 0.2: want["tp2R"] -= 0.3; notes.append("only %.0f%% of winners reached TP2: TP2 pulled in" % (tp2 * 100))
+    elif wins and tp2 > 0.6: want["tp2R"] += 0.3; notes.append("%.0f%% of winners reached TP2: TP2 extended" % (tp2 * 100))
+    want["riskPct"] *= 1.1 if exp > 0.25 else 0.8 if exp < 0 else 1.0
+    if exp < 0: notes.append("expectancy %.2fR: risk per trade cut" % exp)
+    new = {}
+    for k, (lo, hi) in EVO_BOUNDS.items():
+        cap = (hi - lo) * EVO_DRIFT; v = max(params[k] - cap, min(params[k] + cap, want[k])); new[k] = round(max(lo, min(hi, v)), 4)
+    return new, notes
+
+def _evo_state(st):
+    if "evo" not in st:
+        d = _jload(pathlib.Path(st.get("data", ".")) / "evo.json", {})
+        st["evo"] = {b: {"ver": 1, "params": dict(EVO_START), "hist": [], "pending": [], "n": 0, "notes": []} for b in EVO_BOOKS}
+        for b in EVO_BOOKS:
+            x = d.get(b) if isinstance(d.get(b), dict) else None
+            if x and isinstance(x.get("params"), dict) and all(k in x["params"] for k in EVO_START): st["evo"][b].update({k: x[k] for k in ("ver", "params", "hist", "pending", "n", "notes") if k in x})
+    return st["evo"]
+
+def _evo_save(st): _jsave(pathlib.Path(st.get("data", ".")) / "evo.json", st["evo"])
+
+def _call21(st, job, a):
+    E = _evo_state(st)
+    if job == "status": return {b: {"ver": E[b]["ver"], "params": E[b]["params"], "pending": len(E[b]["pending"]), "n": E[b]["n"], "notes": E[b]["notes"][-3:], "canRollback": bool(E[b]["hist"])} for b in EVO_BOOKS}
+    if job == "outcome":
+        book = a.get("book") if a.get("book") in EVO_BOOKS else evo_book_of(a.get("sym")); r = max(-10.0, min(20.0, _hnum(a.get("r"))))
+        E[book]["pending"].append({"r": r, "score": max(0.0, min(1.0, _hnum(a.get("score"), 0.6))), "exit": str(a.get("exit", ""))[:12], "sym": str(a.get("sym", ""))[:120], "mode": "LIVE" if a.get("mode") == "LIVE" else "PAPER"})
+        E[book]["n"] += 1; evolved = None
+        if len(E[book]["pending"]) >= EVO_BATCH: evolved = _call21(st, "evolve", {"book": book})
+        else: _evo_save(st)
+        return {"book": book, "pending": len(E[book]["pending"]), "evolved": evolved}
+    if job == "evolve":
+        book = a.get("book") if a.get("book") in EVO_BOOKS else None
+        if not book: raise ValueError("book must be stocks or crypto")
+        B = E[book]; new, notes = evo_step(B["params"], B["pending"])
+        if not B["pending"]: return {"book": book, "ver": B["ver"], "params": B["params"], "notes": ["no outcomes yet"]}
+        B["hist"].append({"ver": B["ver"], "params": B["params"]}); B["hist"] = B["hist"][-20:]; B["ver"] += 1; B["params"] = new; B["pending"] = []; B["notes"] = (B["notes"] + notes)[-12:]
+        _evo_save(st); return {"book": book, "ver": B["ver"], "params": new, "notes": notes}
+    if job == "rollback":
+        book = a.get("book") if a.get("book") in EVO_BOOKS else None
+        if not book: raise ValueError("book must be stocks or crypto")
+        B = E[book]
+        if not B["hist"]: raise ValueError("nothing to roll back")
+        p = B["hist"].pop(); B["ver"], B["params"], B["pending"] = p["ver"], p["params"], []; B["notes"] = (B["notes"] + ["rolled back to v%d" % p["ver"]])[-12:]
+        _evo_save(st); return {"book": book, "ver": B["ver"], "params": B["params"]}
+    raise ValueError("unknown job")
+
+def _warm21(st, pool, offline, wants):
+    return {"status": dict(_call21(st, "status", {}), bounds=EVO_BOUNDS, drift=EVO_DRIFT, batch=EVO_BATCH, ts=time.time())}
+
+# ---- Lane 22: 3-source rolling-median > 4σ flash-wick outlier guard (Lanes 9 / 10 clean every candle set with it) ----
+def _med(xs):
+    s = sorted(xs); n = len(s)
+    return 0.0 if not n else s[n // 2] if n % 2 else (s[n // 2 - 1] + s[n // 2]) / 2
+
+def outlier_clean(rows, refs=(), k=4.0, win=20, floor=0.0005):
+    """rows / refs: [[t, o, h, l, c, v], …]. Per bar, the reference close is the median of the 3 sources (this feed + up to 2 others at
+    the same t; with no other source: the previous, own and next close). A close more than k robust σ (MAD × 1.4826 of the log gaps,
+    rolling ±win bars) from that median is replaced by it when another source confirms; a high / low wick more than k σ beyond the
+    rolling wick distribution (floor 5 bps) that no other source confirms is clipped. → (clean rows, [indices fixed])"""
+    n = len(rows)
+    if n < 5: return [list(r) for r in rows], []
+    R = [dict((int(x[0]), x) for x in (ref or []) if isinstance(x, (list, tuple)) and len(x) >= 5) for ref in list(refs)[:2]]
+    out = [list(r) for r in rows]; fixed = []
+    up = [max(0.0, r[2] / max(r[1], r[4]) - 1) if max(r[1], r[4]) > 0 else 0.0 for r in rows]
+    dn = [max(0.0, 1 - r[3] / min(r[1], r[4])) if min(r[1], r[4]) > 0 else 0.0 for r in rows]
+    ref_c, gap = [], []
+    for i, r in enumerate(rows):
+        others = [d[int(r[0])][4] for d in R if int(r[0]) in d and d[int(r[0])][4] > 0]
+        src = [r[4]] + others if others else [rows[max(0, i - 1)][4], r[4], rows[min(n - 1, i + 1)][4]]
+        m = _med(src); ref_c.append((m, len(others))); gap.append(math.log(r[4] / m) if r[4] > 0 and m > 0 else 0.0)
+    for i in range(n):
+        a, b = max(0, i - win), min(n, i + win + 1); nb = [j for j in range(a, b) if j != i]
+        def rs(arr):
+            xs = [arr[j] for j in nb]; m = _med(xs); return m, max(floor, 1.4826 * _med([abs(x - m) for x in xs]))
+        r = out[i]; changed = False; m, conf = ref_c[i]
+        gm, gs = rs(gap)
+        if conf >= 1 and abs(gap[i] - gm) > k * gs and m > 0: r[4] = m; r[1] = min(max(r[1], r[3]), r[2]); changed = True
+        um, us = rs(up); dm, ds = rs(dn); hi_b, lo_b = max(r[1], r[4]), min(r[1], r[4])
+        oh = [d[int(r[0])][2] for d in R if int(r[0]) in d]; ol = [d[int(r[0])][3] for d in R if int(r[0]) in d]
+        cap_h = hi_b * (1 + um + k * us); cap_l = lo_b * (1 - dm - k * ds)
+        # one source only (no other feed has this bar): clip only a true flash spike, > the 4σ cap AND > 3× the largest neighbouring wick
+        ok_h = (not any(h >= r[2] * 0.999 for h in oh)) if oh else up[i] > 3 * max(up[j] for j in nb) + floor
+        ok_l = (not any(0 < l <= r[3] * 1.001 for l in ol)) if ol else dn[i] > 3 * max(dn[j] for j in nb) + floor
+        if r[2] > cap_h and ok_h: r[2] = max(cap_h, max(oh) if oh else 0.0, hi_b); changed = True
+        if r[3] < cap_l and ok_l: r[3] = min(cap_l, min(ol) if ol else cap_l, lo_b); changed = True
+        r[2] = max(r[2], r[1], r[4]); r[3] = min(r[3], r[1], r[4])
+        if changed: fixed.append(i)
+    return out, fixed
+
+def _call22(st, job, a):
+    if job == "clean":
+        rows = [x for x in (a.get("rows") or [])[:5000] if isinstance(x, list) and len(x) >= 5 and all(isinstance(v, (int, float)) for v in x[:5])]
+        refs = [[x for x in (r or [])[:5000] if isinstance(x, list) and len(x) >= 5] for r in (a.get("refs") or [])[:2] if isinstance(r, list)]
+        k = max(2.0, min(10.0, _hnum(a.get("k"), 4.0))); clean, fixed = outlier_clean(rows, refs, k)
+        st["n"] = st.get("n", 0) + 1; st["fixed"] = st.get("fixed", 0) + len(fixed)
+        return {"rows": clean, "fixed": fixed, "k": k, "sources": 1 + len(refs)}
+    raise ValueError("unknown job")
+
+def _warm22(st, pool, offline, wants):
+    return {"status": {"calls": st.get("n", 0), "fixed": st.get("fixed", 0), "k": 4.0, "window": 20, "ts": time.time()}}
+
+# ---- Lane 23: serial-rugger auto-blacklist (fed by Lane 13 forensics; forwarded to the Lane 18 firewall) ----
+def rug_strike(db, who, pool, rugged, now=None):
+    now = time.time() if now is None else now; who = str(who or "")[:90]
+    if not who: return False
+    e = db.setdefault(who, {"rugs": 0, "pools": [], "at": now})
+    if pool and pool not in e["pools"]: e["pools"] = (e["pools"] + [str(pool)[:120]])[-20:]
+    if rugged: e["rugs"] += 1
+    e["at"] = now; return e["rugs"] >= 2
+
+def _ruggers(st):
+    if "rug" not in st: st["rug"] = _jload(pathlib.Path(st.get("data", ".")) / "ruggers.json", {}) or {}
+    return st["rug"]
+
+def _call23(st, job, a):
+    db = _ruggers(st)
+    if job == "report":
+        black = rug_strike(db, a.get("deployer") or a.get("pool"), a.get("pool"), bool(a.get("rugged")))
+        while len(db) > 5000: db.pop(next(iter(db)))
+        _jsave(pathlib.Path(st.get("data", ".")) / "ruggers.json", db); return {"blacklisted": black, "rugs": db.get(str(a.get("deployer") or a.get("pool") or "")[:90], {}).get("rugs", 0)}
+    if job == "check":
+        q = str(a.get("deployer") or a.get("pool") or a.get("sym") or "")[:120]; hit = [w for w, e in db.items() if e["rugs"] >= 2 and (w == q or q in e["pools"])]
+        return {"blocked": bool(hit), "by": hit[:3]}
+    if job == "list": return {"blacklist": [{"who": w, "rugs": e["rugs"], "pools": len(e["pools"])} for w, e in db.items() if e["rugs"] >= 2][:200]}
+    raise ValueError("unknown job")
+
+def _warm23(st, pool, offline, wants):
+    db = _ruggers(st); fx = ((st.get("feed") or {}).get("lane13") or {}).get("forensics") or {}
+    for sym, f in list(fx.items())[:200]:
+        if isinstance(f, dict) and (f.get("honeypot") or f.get("rugged")) and not st.setdefault("seen", {}).get(sym): st["seen"][sym] = 1; rug_strike(db, f.get("deployer") or sym, sym, True)
+    black = [w for w, e in db.items() if e["rugs"] >= 2]; pools = sorted({p for w in black for p in db[w]["pools"]})
+    return {"status": {"blacklisted": len(black), "tracked": len(db), "ts": time.time()}, "fwd": {"black": black[:500], "pools": pools[:2000]}}
+
+# ---- Lane 24: warm-boot snapshot (the page's cockpit state, restored in < 200 ms on the next launch or a paired phone) ----
+def _call24(st, job, a):
+    f = pathlib.Path(st.get("data", ".")) / "warmboot.json"
+    if job == "save":
+        snap = a.get("snap") if isinstance(a.get("snap"), dict) else {}
+        b = json.dumps(snap, separators=(",", ":"))
+        if len(b) > 64 * 1024: raise ValueError("snapshot too large (64 KB max)")
+        st["snap"] = snap; st["at"] = time.time(); _jsave(f, {"snap": snap, "at": st["at"]}); return {"ok": True, "bytes": len(b)}
+    if job == "load":
+        if "snap" not in st: d = _jload(f, {}); st["snap"], st["at"] = d.get("snap") or {}, d.get("at") or 0
+        return {"snap": st["snap"], "at": st["at"]}
+    raise ValueError("unknown job")
+
+def _warm24(st, pool, offline, wants):
+    return {"status": {"saved": bool(st.get("snap")), "at": st.get("at", 0), "ts": time.time()}}
+
+# ---- Lane 25: search, symbol aliasing & the starred watchlist ----
+ALIASES = {"bitcoin": "BTC-USD", "xbt": "BTC-USD", "ether": "ETH-USD", "ethereum": "ETH-USD", "solana": "SOL-USD", "ripple": "XRP-USD", "dogecoin": "DOGE-USD",
+           "chainlink": "LINK-USD", "avalanche": "AVAX-USD", "hyperliquid": "HYPE-USD", "nvidia": "NVDA", "apple": "AAPL", "microsoft": "MSFT", "amazon": "AMZN",
+           "google": "GOOGL", "alphabet": "GOOGL", "facebook": "META", "fb": "META", "tesla": "TSLA", "netflix": "NFLX", "palantir": "PLTR", "coinbase": "COIN",
+           "microstrategy": "MSTR", "strategy": "MSTR", "broadcom": "AVGO", "s&p": "SPY", "sp500": "SPY", "spx": "SPY", "nasdaq": "QQQ", "ndx": "QQQ", "russell": "IWM"}
+NAMES = {"BTC-USD": "Bitcoin", "ETH-USD": "Ethereum", "SOL-USD": "Solana", "XRP-USD": "XRP", "DOGE-USD": "Dogecoin", "AVAX-USD": "Avalanche", "LINK-USD": "Chainlink", "SUI-USD": "Sui", "HYPE-USD": "Hyperliquid",
+         "SPY": "S&P 500 ETF", "QQQ": "Nasdaq-100 ETF", "IWM": "Russell 2000 ETF", "AAPL": "Apple", "MSFT": "Microsoft", "NVDA": "NVIDIA", "AMZN": "Amazon", "META": "Meta Platforms", "GOOGL": "Alphabet",
+         "TSLA": "Tesla", "AMD": "AMD", "AVGO": "Broadcom", "JPM": "JPMorgan", "NFLX": "Netflix", "PLTR": "Palantir", "COIN": "Coinbase", "MSTR": "Strategy", "UBER": "Uber", "XOM": "Exxon Mobil", "SMCI": "Supermicro"}
+
+def search_syms(q, stars=(), limit=12):
+    """ranked: starred exact > exact canonical > alias > ticker prefix > name prefix > substring; any contract / DEX URL / pair resolves"""
+    q0 = str(q or "").strip()[:200]; ql = q0.lower(); stars = list(stars or []); out = {}
+    def add(sym, kind, sc, why):
+        if sym and (sym not in out or out[sym]["score"] < sc): out[sym] = {"sym": sym, "kind": kind, "name": NAMES.get(sym, ""), "score": sc + (50 if sym in stars else 0), "star": sym in stars, "why": why}
+    if not ql:
+        for s in stars[:limit]: add(s, norm_sym(s)[1] or "", 100, "starred")
+        return sorted(out.values(), key=lambda x: -x["score"])[:limit]
+    c, kind = norm_sym(q0)
+    if c and kind != "stock": add(c, kind, 1000, "canonical")
+    if ql in ALIASES: add(ALIASES[ql], norm_sym(ALIASES[ql])[1], 900, "alias")
+    uni = [s + "-USD" for s in CR_UNI] + list(EQ_UNI) + [s for s in stars if s not in NAMES]
+    for s in uni:
+        base = s.split("-")[0].lower(); nm = NAMES.get(s, "").lower()
+        if base == ql: add(s, norm_sym(s)[1], 950, "ticker")
+        elif base.startswith(ql): add(s, norm_sym(s)[1], 700 - len(base), "ticker prefix")
+        elif nm.startswith(ql): add(s, norm_sym(s)[1], 600 - len(nm), "name")
+        elif ql in nm or ql in s.lower(): add(s, norm_sym(s)[1], 300, "contains")
+    for al, s in ALIASES.items():
+        if al.startswith(ql) and al != ql: add(s, norm_sym(s)[1], 500, "alias prefix")
+    if c and kind == "stock" and not out: add(c, kind, 400, "ticker")
+    return sorted(out.values(), key=lambda x: -x["score"])[:limit]
+
+def _call25(st, job, a):
+    f = pathlib.Path(st.get("data", ".")) / "watchlist.json"
+    if "stars" not in st: st["stars"] = [s for s in (_jload(f, {}).get("stars") or []) if isinstance(s, str)][:200]
+    if job == "search": return {"rows": search_syms(a.get("q", ""), st["stars"], max(1, min(30, int(_hnum(a.get("limit"), 12)))))}
+    if job == "watch":
+        op = a.get("op"); sym = norm_sym(str(a.get("sym", "")))[0]
+        if op in ("add", "remove", "toggle"):
+            if not sym: raise ValueError("unrecognised symbol")
+            on = sym in st["stars"]
+            if op == "add" or (op == "toggle" and not on):
+                if not on: st["stars"] = ([sym] + st["stars"])[:200]
+            elif on: st["stars"].remove(sym)
+            _jsave(f, {"stars": st["stars"]})
+        return {"stars": st["stars"]}
+    if job == "alias": c, k = norm_sym(str(a.get("q", ""))[:200]); al = ALIASES.get(str(a.get("q", "")).strip().lower()); return {"sym": al or c, "kind": norm_sym(al)[1] if al else k}
+    raise ValueError("unknown job")
+
+def _warm25(st, pool, offline, wants):
+    return {"status": {"stars": len(_call25(st, "watch", {})["stars"]), "aliases": len(ALIASES), "universe": len(CR_UNI) + len(EQ_UNI), "ts": time.time()}}
+
+# ---- Lane 26: portfolio VaR, correlated sector cap & PnL aggregator (PAPER and LIVE are never mixed) ----
+SECTORS = {"BTC": "crypto-L1", "ETH": "crypto-L1", "SOL": "crypto-L1", "AVAX": "crypto-L1", "SUI": "crypto-L1", "XRP": "crypto-pay", "DOGE": "crypto-meme", "LINK": "crypto-infra", "HYPE": "crypto-perp-dex",
+           "NVDA": "semis", "AMD": "semis", "AVGO": "semis", "SMCI": "semis", "AAPL": "megacap-tech", "MSFT": "megacap-tech", "GOOGL": "megacap-tech", "META": "megacap-tech", "AMZN": "megacap-tech", "NFLX": "megacap-tech",
+           "TSLA": "auto-ev", "JPM": "financials", "COIN": "crypto-equity", "MSTR": "crypto-equity", "PLTR": "software", "UBER": "software", "XOM": "energy", "SPY": "index", "QQQ": "index", "IWM": "index"}
+SECTOR_CAP, RHO_IN, RHO_OUT = 0.25, 0.6, 0.3
+
+def sector_of(sym):
+    s = str(sym or "")
+    if s.startswith("oc:"): return "dex-" + (s.split(":")[1] if s.count(":") >= 2 else "chain")
+    return SECTORS.get(s.split("-")[0].upper(), "crypto-alt" if "-" in s else "equity-other")
+
+def pos_val(p):
+    """one position → its numbers (side-aware); stop missing = the whole mark value is at risk"""
+    q = abs(_hnum(p.get("qty"))); e = _hnum(p.get("entry")); m = _hnum(p.get("mark")) or e; sg = -1 if p.get("side") == "short" else 1; st = _hnum(p.get("stop"))
+    risk = q * max(0.0, sg * (m - st)) if st > 0 else q * m
+    return {"value": q * m, "upnl": sg * (m - e) * q, "risk": risk, "noStop": not st > 0, "sector": sector_of(p.get("sym")), "vol": max(0.002, min(0.5, _hnum(p.get("vol"), 0.03)))}
+
+def book_kpis(cash, pos, realized_day=0.0, lev=1.0, unreal0=0.0):
+    vs = [pos_val(p) for p in pos]; gross = sum(v["value"] for v in vs); upnl = sum(v["upnl"] for v in vs)
+    nlv = cash + sum(v["value"] if p.get("side") != "short" else 0.0 for v, p in zip(vs, pos)) + sum(v["upnl"] for v, p in zip(vs, pos) if p.get("side") == "short")
+    return {"nlv": round(nlv, 2), "buyingPower": round(max(0.0, cash) * max(1.0, lev), 2), "riskToStop": round(sum(v["risk"] for v in vs), 2), "dayPnl": round(realized_day + upnl - unreal0, 2),
+            "unrealized": round(upnl, 2), "realizedDay": round(realized_day, 2), "gross": round(gross, 2), "open": len(pos), "noStop": sum(1 for v in vs if v["noStop"])}
+
+def book_var(pos, z=1.65):
+    """95 % 1-day parametric VaR with a correlated-sector covariance: ρ 0.6 inside a sector, 0.3 across"""
+    vs = [pos_val(p) for p in pos]; xs = [(v["value"] * v["vol"] * (-1 if p.get("side") == "short" else 1), v["sector"]) for v, p in zip(vs, pos)]; s2 = 0.0
+    for i, (a, sa) in enumerate(xs):
+        for j, (b, sb) in enumerate(xs): s2 += a * b * (1.0 if i == j else RHO_IN if sa == sb else RHO_OUT)
+    return round(z * math.sqrt(max(0.0, s2)), 2)
+
+def sector_caps(pos, nlv, cap=SECTOR_CAP):
+    ex = {}
+    for p in pos: v = pos_val(p); ex[v["sector"]] = ex.get(v["sector"], 0.0) + v["value"]
+    base = max(1.0, nlv)
+    return [{"sector": k, "usd": round(u, 2), "pct": round(u / base * 100, 2), "breach": u / base > cap} for k, u in sorted(ex.items(), key=lambda x: -x[1])]
+
+def portfolio_agg(a):
+    """→ {books: {PAPER: {...}, LIVE: {...}}} computed separately; refuses a position whose mode tag does not match its book"""
+    books = a.get("books") if isinstance(a.get("books"), dict) else {}; out = {}
+    for mode in ("PAPER", "LIVE"):
+        b = books.get(mode) if isinstance(books.get(mode), dict) else {}; pos = [p for p in (b.get("pos") or [])[:500] if isinstance(p, dict)]
+        bad = [p.get("sym") for p in pos if p.get("mode", mode) != mode]
+        if bad: raise ValueError("mixed balances refused: %s position(s) tagged for the other book in %s" % (len(bad), mode))
+        k = book_kpis(_hnum(b.get("cash")), pos, _hnum(b.get("realizedDay")), _hnum(b.get("lev"), 1.0), _hnum(b.get("unreal0")))
+        venues = {}
+        for p in pos: v = str(p.get("venue") or "paper")[:24]; venues[v] = round(venues.get(v, 0.0) + pos_val(p)["value"], 2)
+        out[mode] = dict(k, var95=book_var(pos), sectors=sector_caps(pos, k["nlv"]), venues=venues, wallets={str(w)[:24]: _hnum(x) for w, x in list((b.get("wallets") or {}).items())[:20]} if isinstance(b.get("wallets"), dict) else {})
+    return {"books": out, "isolated": True}
+
+def sector_check(a):
+    """would this order push its correlated sector over the 25 % cap of its own book?"""
+    pos = [p for p in (a.get("pos") or [])[:500] if isinstance(p, dict)]; nlv = max(1.0, _hnum(a.get("nlv"))); sec = sector_of(a.get("sym"))
+    cur = sum(pos_val(p)["value"] for p in pos if pos_val(p)["sector"] == sec); after = cur + max(0.0, _hnum(a.get("usd")))
+    return {"sector": sec, "pct": round(after / nlv * 100, 2), "ok": after / nlv <= SECTOR_CAP, "cap": SECTOR_CAP * 100}
+
+def _call26(st, job, a):
+    if job == "agg": r = portfolio_agg(a); st["n"] = st.get("n", 0) + 1; return r
+    if job == "check": return sector_check(a)
+    raise ValueError("unknown job")
+
+def _warm26(st, pool, offline, wants):
+    return {"status": {"calls": st.get("n", 0), "sectorCap": SECTOR_CAP, "rho": [RHO_IN, RHO_OUT], "ts": time.time()}}
+
+FAST_CALL = {17: _call17, 18: _call18, 19: _call19, 20: _call20, 21: _call21, 22: _call22, 23: _call23, 24: _call24, 25: _call25, 26: _call26}
+FAST_FWD = {9: (16,), 10: (16,), 11: (14,), 12: (14,), 13: (14, 18, 23), 14: (15,), 15: (16,), 23: (18,)}
 
 FAST_WARM = {5: (_warm5, 15.0), 6: (_warm6, 10.0), 7: (lambda st, p, o, w: _warm_tape(st, p, o, w, 7), 1.0), 8: (lambda st, p, o, w: _warm_tape(st, p, o, w, 8), 2.0),
              9: (lambda st, p, o, w: _warm_ohlc(st, p, o, w, 9), 1.0), 10: (lambda st, p, o, w: _warm_ohlc(st, p, o, w, 10), 2.0), 11: (_warm11, 60.0), 12: (_warm12, 10.0), 13: (_warm13, 30.0),
-             14: (_warm14, 5.0), 15: (_warm15, 5.0), 16: (_warm16, 5.0), 17: (_warm17, 10.0), 18: (_warm18, 5.0), 19: (_warm19, 10.0)}
+             14: (_warm14, 5.0), 15: (_warm15, 5.0), 16: (_warm16, 5.0), 17: (_warm17, 10.0), 18: (_warm18, 5.0), 19: (_warm19, 10.0),
+             20: (_warm20, 10.0), 21: (_warm21, 10.0), 22: (_warm22, 10.0), 23: (_warm23, 15.0), 24: (_warm24, 30.0), 25: (_warm25, 30.0), 26: (_warm26, 10.0)}
 
 def _fast_child(lane, inq, outq, offline, data_dir="."):
     """lane process entry point (top-level so Windows spawn can import it). Event-driven: blocks on its queue, so a call is
@@ -3061,7 +3527,11 @@ def _fast_child(lane, inq, outq, offline, data_dir="."):
     while True:
         try:
             cmd, a, b = inq.get(timeout=max(0.0, min(0.5, nxt - time.time())))
-            if cmd == "want": wants[a] = b; wants.pop(next(iter(wants)), None) if len(wants) > 24 else None; nxt = 0.0
+            if cmd == "want": wants[a] = b; wants.pop(next(iter(wants)), None) if len(wants) > 64 else None; nxt = 0.0
+            elif cmd == "pre":  # v18.1 cross-lane pre-warm (Lanes 9 / 10)
+                p = st.setdefault("pre", {}); p.pop(a, None); p[a] = time.time()
+                while len(p) > 240: p.pop(next(iter(p)))
+                nxt = min(nxt, time.time() + 0.25)
             elif cmd == "feed": st["feed"][a] = b; nxt = min(nxt, time.time() + 0.25)
             elif cmd == "call":
                 t0 = time.perf_counter()
@@ -3084,7 +3554,9 @@ class FastLane:
     NAMES = {5: "Lane 5 · Crypto / Perps / On-Chain PnL", 6: "Lane 6 · Stocks / SEC Form 4 / 13F", 7: "Lane 7 · Crypto + DEX Transactions Tape", 8: "Lane 8 · US Stocks Tape / Blocks / L2",
              9: "Lane 9 · Crypto + DEX 1s–1M OHLCV", 10: "Lane 10 · US Equities 1m–1M OHLCV", 11: "Lane 11 · Equities & 0DTE Gamma Scanner", 12: "Lane 12 · Crypto Perps Squeeze Scanner", 13: "Lane 13 · On-Chain DEX / Rug Shield v2",
              14: "Lane 14 · Transfer Entropy + 6-Bot Consensus", 15: "Lane 15 · 1,000-Path Monte Carlo Stress", 16: "Lane 16 · MTF Confluence + Journal Correlator", 17: "Lane 17 · Order Router & Shadow-Bracket Slicer",
-             18: "Lane 18 · Pre-Trade Risk Firewall & PIN Arming", 19: "Lane 19 · Fill Accuracy, Toxic Scratch & SHA-256 Audit"}
+             18: "Lane 18 · Pre-Trade Risk Firewall & PIN Arming", 19: "Lane 19 · Fill Accuracy, Toxic Scratch & SHA-256 Audit",
+             20: "Lane 20 · US Session Router, Macro Throttle & Idempotency", 21: "Lane 21 · Outcome-Attributed Auto-Evolution (Stocks EVO · Crypto/DEX EVO)", 22: "Lane 22 · 3-Source > 4σ Outlier Guard",
+             23: "Lane 23 · Serial-Rugger Blacklist", 24: "Lane 24 · Warm-Boot Snapshot", 25: "Lane 25 · Search, Symbol Aliasing & Watchlist", 26: "Lane 26 · Portfolio VaR, Sector Cap & PnL Aggregator"}
     def __init__(self, lane, offline=False, mode=None, data_dir="."):
         self.lane, self.offline = lane, offline; self.mode = mode or os.environ.get("EXTERM_FASTLANES", "process")
         self.snap, self.lru, self.lock = {}, MicroLRU(), threading.Lock(); self.ms = deque(maxlen=512); self.cms = deque(maxlen=512); self.warms = 0; self.warm_ms = 0.0; self.err = ""; self.pid = None; self.kind = "cold"; self.wants = {}
@@ -3113,6 +3585,7 @@ class FastLane:
                 for t in FAST_FWD.get(lane, ()):
                     L = FAST.get(t)
                     if L is not None: L.feed("lane%d" % lane, fwd)
+                if lane in (11, 12, 13): prewarm_syms([c.get("sym") for c in (fwd.get("cands") or [])[:24] if isinstance(c, dict)])  # v18.1 scanners → Lanes 9 / 10
     def feed(self, key, val):
         try: self.inq.put(("feed", key, val))
         except Exception: pass
@@ -3131,6 +3604,16 @@ class FastLane:
         if len(self.wants) > 64: self.wants.pop(next(iter(self.wants)))
         try: self.inq.put(("want", sym, px))
         except Exception: pass
+    def pre(self, key):
+        """v18.1: pre-warm one sym|tf in this OHLCV lane (slow refresh, upstream-budgeted; expires after 15 min unused)"""
+        pres = self.__dict__.setdefault("pres", {})
+        if key in pres and time.time() - pres[key] < 30: return False
+        pres[key] = time.time()
+        if len(pres) > 500: pres.pop(next(iter(pres)))
+        try: self.inq.put(("pre", key, None)); return True
+        except Exception: return False
+    def prewarm(self, sym, tfs):
+        return sum(1 for tf in tfs if tf in TF_SEC and not (self.lane == 10 and TF_SEC[tf] < 60) and self.pre(sym + "|" + tf))
     def get(self, key, fallback=None):
         """→ (encoded bytes, cache state). Never blocks on upstream: LRU → snapshot → fallback builder (synth / warming stub)"""
         t0 = time.perf_counter(); b = self.lru.get(key); state = "LRU"
@@ -3151,7 +3634,62 @@ class FastLane:
         except Exception: pass
 
 FAST = {}
-FAST_LANE_IDS = tuple(range(5, 20))  # v17.8 Lanes 5–8 + v17.9 Lanes 9–19
+FAST_LANE_IDS = tuple(range(5, 27))  # v17.8 Lanes 5–8 + v17.9 Lanes 9–19 + v18.2 Lanes 20–26
+
+def total_ram_gb():
+    """physical RAM in GB (Windows GlobalMemoryStatusEx · Linux /proc/meminfo · macOS sysctl); 0 when unknown"""
+    try:
+        if sys.platform == "win32":
+            import ctypes
+            class _MS(ctypes.Structure): _fields_ = [("l", ctypes.c_ulong), ("m", ctypes.c_ulong), ("t", ctypes.c_ulonglong), ("a", ctypes.c_ulonglong), ("tp", ctypes.c_ulonglong), ("ap", ctypes.c_ulonglong), ("tv", ctypes.c_ulonglong), ("av", ctypes.c_ulonglong), ("x", ctypes.c_ulonglong)]
+            s = _MS(); s.l = ctypes.sizeof(_MS); ctypes.windll.kernel32.GlobalMemoryStatusEx(ctypes.byref(s)); return s.t / 2 ** 30
+        if os.path.exists("/proc/meminfo"):
+            for ln in open("/proc/meminfo"):
+                if ln.startswith("MemTotal:"): return int(ln.split()[1]) / 2 ** 20
+        return int(subprocess.run(["sysctl", "-n", "hw.memsize"], capture_output=True, text=True, timeout=2).stdout.strip() or 0) / 2 ** 30
+    except Exception: return 0.0
+
+def compact_mode():
+    """v18.2: ≤ 8 GB laptops (or EXTERM_COMPACT=1) run Lanes 20–26 as threads of one process instead of 7 more processes"""
+    v = os.environ.get("EXTERM_COMPACT")
+    if v is not None: return v not in ("0", "", "off")
+    g = total_ram_gb(); return 0 < g <= 8.5
+
+def lane_mode(lane, compact):
+    return "thread" if compact and lane >= 20 else None
+WARM_TFS = ("1m", "5m", "1h", "1d")  # v18.1 pre-warmed per surfaced symbol (the page synthesizes 1s / 5s / 15s from 1m)
+
+MESH = {"healed": 0, "at": 0.0}
+
+def mesh_status():
+    """v18.2 mesh pulse: every lane's health; a lane process that died is respawned once per call (self-heal); LIVE readiness = PIN
+    set + firewall answering + ledger chain intact"""
+    out, dead = [], []
+    for ln in sorted(FAST):
+        L = FAST[ln]; alive = L.proc.is_alive() if getattr(L, "proc", None) is not None else True
+        if not alive:
+            dead.append(ln)
+            try: FAST[ln] = FastLane(ln, offline=L.offline, mode=None if L.kind == "process" else "thread", data_dir=DATA_DIR); MESH["healed"] += 1; L = FAST[ln]
+            except Exception: pass
+        pb = L.public(); out.append({"lane": ln, "name": pb["name"], "kind": pb["kind"], "alive": alive, "warms": pb["warms"], "err": pb["err"], "p50": round(pb["p50"], 3), "callP50": round(pb["callP50"], 3)})
+    ready = {"pinSet": False, "mode": "PAPER", "firewall": False, "ledger": False}
+    try: s, _, _ = FAST[18].call("status", {}, 1.0); ready.update(pinSet=s["pinSet"], mode=s["mode"], firewall=True)
+    except Exception: pass
+    try: v, _, _ = FAST[19].call("verify", {}, 1.0); ready["ledger"] = bool(v.get("ok"))
+    except Exception: pass
+    MESH["at"] = time.time()
+    return {"lanes": out, "n": len(out), "dead": dead, "healed": MESH["healed"], "ok": not dead and len(out) > 0, "ready": dict(ready, live=ready["pinSet"] and ready["firewall"] and ready["ledger"]), "compact": any(x["kind"] == "thread" and x["lane"] >= 20 for x in out), "version": VERSION}
+
+def prewarm_syms(syms, tfs=WARM_TFS):
+    """v18.1 cross-lane pre-warm: canonical crypto / DEX symbols → Lane 9, US equities → Lane 10; raw contracts and simulated pools skipped"""
+    out = []
+    for s in list(syms or [])[:40]:
+        sym, kind = norm_sym(s)
+        if not sym or kind == "ca" or sym.startswith("oc:sim:") or not TAPE_SYM.match(sym) or sym in out: continue
+        L = FAST.get(10 if kind == "stock" else 9)
+        if L is None: continue
+        L.prewarm(sym, tfs); out.append(sym)
+    return out
 
 
 class H(http.server.BaseHTTPRequestHandler):
@@ -3238,18 +3776,30 @@ class H(http.server.BaseHTTPRequestHandler):
                 else: return self._send(404, b'{"error":"not found"}')
                 body, state, ms = L.get(key, fb)
                 return self._send(200, body, "application/json", {"X-ExTerm-Lane": str(ln), "X-ExTerm-Cache": state, "Server-Timing": "lane%d;dur=%.3f;desc=%s" % (ln, ms, state)})
-            m9 = re.match(r"^/api/lane(9|1[0-9])/([a-z0-9]{2,12})$", p)
-            if m9:  # v17.9: Lanes 9–19 (snapshots for GET, request / response through the lane process for POST)
+            if p == "/api/mesh" and method == "GET":  # v18.2: 26-lane mesh pulse: health, self-heal (dead lane processes respawned), LIVE readiness
+                return self._send(200, json.dumps(mesh_status()).encode())
+            m9 = re.match(r"^/api/lane(9|1[0-9]|2[0-6])/([a-z0-9]{2,12})$", p)
+            if m9:  # v17.9: Lanes 9–19 + v18.2 Lanes 20–26 (snapshots for GET, request / response through the lane process for POST)
                 ln, what = int(m9.group(1)), m9.group(2); L = FAST.get(ln)
                 if L is None: return self._send(503, b'{"error":"fast lanes are off (--no-fastlanes)"}')
                 q = urllib.parse.parse_qs(urllib.parse.urlparse(self.path).query); fb = None
                 if method == "GET":
+                    if ln == 9 and what == "resolve":  # v18.1: any symbol / contract / DEX URL → the canonical chart symbol (pool resolved)
+                        sym, kind = norm_sym((q.get("q") or [""])[0][:200])
+                        if not sym: raise ValueError("unrecognised symbol or contract")
+                        if kind == "ca": sym = resolve_pool(sym.split(":", 2)[2], None, L.offline)
+                        elif kind == "onchain" and not L.offline and not sym.startswith("oc:sim:"): sym = resolve_pool(sym.split(":", 2)[2], sym.split(":", 2)[1])
+                        return self._send(200, json.dumps({"sym": sym, "kind": "onchain" if kind == "ca" else kind, "lane": 10 if kind == "stock" else 9, "guess": kind == "ca" and L.offline}).encode())
                     if ln in (9, 10) and what == "candles":
                         sym, tf = (q.get("sym") or [""])[0][:120], (q.get("tf") or [""])[0][:4]
+                        if ln == 9: sym = norm_sym(sym)[0] or sym  # v18.1: oc:sol:… → oc:solana:…, BTCUSDT → BTC-USD, 0x… → oc:eth:0x…
                         if tf not in TF_SEC or not TAPE_SYM.match(sym) or (ln == 10) == (sym.startswith("oc:") or "-" in sym): raise ValueError("unsupported symbol / timeframe for this lane")
                         px = _hnum((q.get("px") or ["0"])[0][:24]); L.want(sym + "|" + tf, px if 0 < px < 1e12 else 0.0); key = "c:" + sym + "|" + tf
                         fb = lambda: {"sym": sym, "tf": tf, "rows": [], "warming": True, "unsupported": ln == 10 and TF_SEC[tf] < 60}
-                    elif (ln, what) in ((9, "mtf"), (10, "mtf"), (11, "scan"), (12, "scan"), (13, "scan"), (14, "consensus"), (15, "stress"), (16, "recs"), (17, "status"), (19, "status")): key = what
+                    elif (ln, what) in ((9, "mtf"), (10, "mtf"), (11, "scan"), (12, "scan"), (13, "scan"), (14, "consensus"), (15, "stress"), (16, "recs"), (17, "status"), (19, "status"), (20, "status"), (22, "status"), (23, "status"), (24, "status"), (26, "status")): key = what
+                    elif (ln, what) in ((21, "status"), (25, "search"), (24, "boot"), (23, "list")):  # v18.2: answered by the lane itself (fresh, < 5 ms)
+                        job, args = {21: ("status", {}), 25: ("search", {"q": (q.get("q") or [""])[0][:200], "limit": (q.get("limit") or ["12"])[0][:3]}), 24: ("load", {}), 23: ("list", {})}[ln]
+                        out, rt, inner = L.call(job, args); return self._send(200, json.dumps({"ok": True, "out": out, "ms": rt, "laneMs": inner}).encode(), "application/json", {"X-ExTerm-Lane": str(ln), "Server-Timing": "lane%d;dur=%.3f" % (ln, rt)})
                     elif ln == 18 and what == "status":
                         out, rt, inner = L.call("status", {}); return self._send(200, json.dumps({"ok": True, "out": out, "ms": rt, "laneMs": inner}).encode(), "application/json", {"Server-Timing": "lane18;dur=%.3f" % rt})
                     elif ln == 19 and what == "ledger":
@@ -3257,11 +3807,18 @@ class H(http.server.BaseHTTPRequestHandler):
                     else: return self._send(404, b'{"error":"not found"}')
                     body, state, ms = L.get(key, fb)
                     return self._send(200, body, "application/json", {"X-ExTerm-Lane": str(ln), "X-ExTerm-Cache": state, "Server-Timing": "lane%d;dur=%.3f;desc=%s" % (ln, ms, state)})
+                if method == "POST" and ln == 9 and what == "prewarm":  # v18.1: the page's surfaced symbols → Lanes 9 / 10 pre-warm
+                    j = self._json_body(16 * 1024); syms = j.get("syms") if isinstance(j.get("syms"), list) else []
+                    tfs = tuple(t for t in (j.get("tfs") if isinstance(j.get("tfs"), list) else WARM_TFS) if isinstance(t, str) and t in TF_SEC)[:6] or WARM_TFS
+                    done = prewarm_syms([s for s in syms if isinstance(s, str)][:40], tfs)
+                    return self._send(200, json.dumps({"ok": True, "syms": done, "tfs": list(tfs)}).encode())
                 if method == "POST":
-                    jobs = {17: ("route", "bracket", "tick", "cancel"), 18: ("check", "pin", "arm"), 19: ("fill", "order", "manage", "verify")}
+                    jobs = {17: ("route", "bracket", "tick", "cancel"), 18: ("check", "pin", "arm"), 19: ("fill", "order", "manage", "verify"),
+                            20: ("plan", "session"), 21: ("outcome", "evolve", "rollback"), 22: ("clean",), 23: ("report", "check"), 24: ("save",), 25: ("search", "watch", "alias"), 26: ("agg", "check")}
                     if what not in jobs.get(ln, ()): return self._send(404, b'{"error":"not found"}')
                     if ln == 18 and what in ("pin", "arm") and not self._loopback(): return self._send(403, b'{"error":"the PIN gate only works on the computer running ExTerm"}')
-                    out, rt, inner = L.call(what, self._json_body(64 * 1024))
+                    if ln == 21 and what in ("evolve", "rollback") and not self._loopback(): return self._send(403, b'{"error":"evolution changes only from the computer running ExTerm"}')
+                    out, rt, inner = L.call(what, self._json_body(512 * 1024 if ln == 22 else 128 * 1024 if ln in (24, 26) else 64 * 1024))
                     return self._send(200, json.dumps({"ok": True, "out": out, "ms": rt, "laneMs": inner}).encode(), "application/json", {"X-ExTerm-Lane": str(ln), "Server-Timing": "lane%d;dur=%.3f" % (ln, rt)})
                 return self._send(405, b'{"error":"method not allowed"}')
             if p.startswith("/api/lanes"):  # v17.5: 4 dedicated execution lanes (telemetry + allow-listed jobs)
@@ -3774,7 +4331,9 @@ if __name__ == "__main__":
     if "--no-lanes" not in sys.argv:
         LANES = Lanes()
     if "--no-fastlanes" not in sys.argv:  # v17.8: Lanes 5–8 start warming now, before the first browser request
-        for _ln in FAST_LANE_IDS: FAST[_ln] = FastLane(_ln, offline="--offline" in sys.argv, data_dir=DATA_DIR)
+        COMPACT = compact_mode()
+        for _ln in FAST_LANE_IDS: FAST[_ln] = FastLane(_ln, offline="--offline" in sys.argv, mode=lane_mode(_ln, COMPACT), data_dir=DATA_DIR)
+        if COMPACT: print("compact mode (≤ 8 GB RAM or EXTERM_COMPACT=1): Lanes 20–26 run as threads")
         def _journal_fwd():  # v17.9: the personal journal feeds Lane 16's correlator
             while True:
                 try:

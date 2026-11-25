@@ -31,7 +31,7 @@ const { chromium } = require('/opt/npm-tools/node_modules/playwright');
   await page.click('#botCtl [data-ctl="kill"]'); await sleep(200); await page.click('#botCtl [data-ctl="kill"]'); await page.waitForFunction(() => ST.bots.every((x) => !x.run && !x.account.pos[x.sym]) && !ST.pending.length && !ACC.orders.length, null, { timeout: 8000 }).catch(() => {}); // wait for the outcome, not a fixed delay (slow under load)
   ok('STOP EVERYTHING: bots paused, positions closed, pending + limits cancelled', await ev(() => ST.bots.every((x) => !x.run && !x.account.pos[x.sym]) && !ST.pending.length && !ACC.orders.length));
   // portfolio close all
-  await ev(() => { ACC.buy('ETH-USD', px('ETH-USD'), 800, Date.now(), { reason: 't' }); }); await page.click('nav button[data-tab="port"]'); await sleep(800);
+  await ev(() => { ACC.buy('ETH-USD', px('ETH-USD'), 800, Date.now(), { reason: 't' }); }); await page.click('nav button[data-tab="port"]'); await sleep(300); await ev(() => { if (typeof V182UI !== 'undefined') V182UI.Pf.legacy(true); }); await sleep(500);
   await page.click('#pfHoldNote [data-pfcloseall]'); await page.waitForFunction(() => /Sure/.test((document.querySelector('#pfHoldNote [data-pfcloseall]') || {}).textContent || ''), null, { timeout: 3000 }).catch(() => {}); await page.click('#pfHoldNote [data-pfcloseall]').catch(() => {}); await page.waitForFunction(() => Object.keys(ACC.pos).length === 0, null, { timeout: 3000 }).catch(() => {});
   ok('portfolio: close all positions', await ev(() => Object.keys(ACC.pos).length === 0));
   // copilot stays on chat

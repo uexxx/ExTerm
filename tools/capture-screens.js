@@ -117,6 +117,16 @@ const SHOTS = [];
     { const g = await ev(() => { const r = chart.cv.getBoundingClientRect(), L = chart.L; return { x: r.left + L.Lm + (L.W - L.Rm - L.Lm) * 0.62, y: r.top + L.y0 + L.mainH * 0.42 }; }); await p.mouse.move(g.x - 20, g.y); await p.mouse.move(g.x, g.y, { steps: 4 }); }
     await sleep(600); await p.screenshot({ path: path.join(OUT, '38-depth-chart-plan-magnifier.png') }); SHOTS.push('38-depth-chart-plan-magnifier.png'); console.log('shot 38-depth-chart-plan-magnifier.png');
     await p.mouse.move(2, 2); await ev(() => { const L = document.querySelector('#x180DPL'); if (L && !L.hidden) document.querySelector('#x180DPB').click(); });
+    // v18.1 · 41 a raw oc:eth:0x… contract opened from Ctrl+K on the 1s chart: candles on frame 1 (Lane 9 + 1m → 1s synthesis), no "next tick" wait
+    await ev(async () => { V181UI.openChart('oc:eth:0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48'); for (let i = 0; i < 100 && !(chart.data && chart.data.length > 100 && /^oc:eth:/.test(ST.sel)); i++) await new Promise((r) => setTimeout(r, 50)); const t = [...document.querySelectorAll('#tfBtns button')].find((x) => x.textContent.trim() === '1s'); if (t) t.click(); for (let i = 0; i < 100 && !(ST.tf === '1s' && chart.data.length > 100); i++) await new Promise((r) => setTimeout(r, 50)); chart.invalidate(); });
+    await shot('41-instant-chart-contract-1s.png', 1500);
+    // v18.2 · 43 Portfolio & Risk Console (paper positions, 4 KPIs, actions, audit, EVO) · 44 the strip + a Shift+Drag ruler on the chart
+    await ev(async () => { setMode('crypto', 'BTC-USD'); await new Promise((r) => setTimeout(r, 800)); const now = Date.now(); for (const [s, u, sl] of [['BTC-USD', 2500, 0.985], ['ETH-USD', 1500, 0.97], ['SOL-USD', 900, 0]]) { const q = px(s); if (q > 0) { ACC.buy(s, q, u, now, { reason: 'screenshot', src: 'manual' }); if (sl && ACC.pos[s]) ACC.pos[s].sl = q * sl; } } const e = px('ETH-USD'); if (e > 0 && ACC.pos['ETH-USD']) ACC.sell('ETH-USD', e * 1.004, ACC.pos['ETH-USD'].qty * 0.3, now, { reason: 'TP1 scale-out (screenshot)', src: 'manual' }); showTab('port'); const b = document.querySelector('[data-x182pf="book"][data-m="PAPER"]'); if (b) b.click(); await new Promise((r) => setTimeout(r, 3500)); V182UI.Pf.render(true); });
+    await shot('43-portfolio-risk-console.png', 1200);
+    await ev(async () => { V177UI.go('copilot'); setMode('crypto', 'BTC-USD'); await new Promise((r) => setTimeout(r, 1500)); const t = [...document.querySelectorAll('#tfBtns button')].find((x) => x.textContent.trim() === '15m'); if (t) t.click(); await new Promise((r) => setTimeout(r, 1500)); });
+    { const g = await ev(() => { const r = chart.cv.getBoundingClientRect(), L = chart.L; return { x: r.left + L.Lm + (L.W - L.Rm - L.Lm) * 0.42, y: r.top + L.y0 + L.mainH * 0.62, x2: r.left + L.Lm + (L.W - L.Rm - L.Lm) * 0.78, y2: r.top + L.y0 + L.mainH * 0.3 }; }); await p.keyboard.down('Shift'); await p.mouse.move(g.x, g.y); await p.mouse.down(); await p.mouse.move(g.x2, g.y2, { steps: 8 }); await p.mouse.up(); await p.keyboard.up('Shift'); }
+    await sleep(500); await ev(() => { for (const t of document.querySelectorAll('#toasts > *')) t.remove(); V177UI.rail.wake(); }); await p.screenshot({ path: path.join(OUT, '44-cockpit-strip-ruler.png') }); SHOTS.push('44-cockpit-strip-ruler.png'); console.log('shot 44-cockpit-strip-ruler.png');
+    await p.keyboard.press('Escape');
     await ctx.close();
     // 14 mobile app (390 × 844 @2×)
     const m = await b.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true }); await block(m);
@@ -143,7 +153,13 @@ const SHOTS = [];
     await sleep(1500); await phShot('39-mobile-alpha-recs.png');
     await ph.evaluate(async () => { V177UI.go('copilot'); await new Promise((r) => setTimeout(r, 1500)); const a = document.querySelector('.x17-arcm'); if (a) a.click(); });
     await sleep(1000); await phShot('40-mobile-thumb-arc.png'); await ph.evaluate(() => { const a = document.querySelector('.x17-arcm'); if (a) a.click(); });
+    // v18.1 · 42 phone: an oc:sol:… pool opened on the 1s chart with candles on frame 1
+    await ph.evaluate(async () => { V181UI.openChart('oc:sol:7GCihgDB8fe6KNjn2MYtkzZcRjQy3t9GHdC8uHYmW2hr'); for (let i = 0; i < 100 && !(chart.data && chart.data.length > 100 && /^oc:solana:/.test(ST.sel)); i++) await new Promise((r) => setTimeout(r, 50)); const t = [...document.querySelectorAll('#tfBtns button')].find((x) => x.textContent.trim() === '1s'); if (t) t.click(); for (let i = 0; i < 100 && !(ST.tf === '1s' && chart.data.length > 100); i++) await new Promise((r) => setTimeout(r, 50)); chart.invalidate(); });
+    await sleep(1500); await phShot('42-mobile-instant-chart-1s.png');
+    // v18.2 · 45 phone Portfolio & Risk Console (opened from the dock More sheet)
+    await ph.evaluate(async () => { setMode('crypto', 'BTC-USD'); await new Promise((r) => setTimeout(r, 800)); const now = Date.now(); for (const [s, u, sl] of [['BTC-USD', 2000, 0.985], ['ETH-USD', 1200, 0]]) { const q = px(s); if (q > 0) { ACC.buy(s, q, u, now, { reason: 'screenshot', src: 'manual' }); if (sl && ACC.pos[s]) ACC.pos[s].sl = q * sl; } } document.querySelector('[data-x17d="more"]').click(); await new Promise((r) => setTimeout(r, 400)); const b = document.querySelector('#x17Sheet [data-x182m="pf"]'); if (b) b.click(); await new Promise((r) => setTimeout(r, 3500)); V182UI.Pf.render(true); window.scrollTo(0, 0); });
+    await sleep(1200); await phShot('45-mobile-portfolio.png');
     await m.close();
   } finally { await b.close(); }
-  console.log(SHOTS.length + ' screenshots → docs/screenshots'); process.exit(SHOTS.length === 40 ? 0 : 1);
+  console.log(SHOTS.length + ' screenshots → docs/screenshots'); process.exit(SHOTS.length === 45 ? 0 : 1);
 })().catch((e) => { console.error('CRASH', e.message); process.exit(1); });

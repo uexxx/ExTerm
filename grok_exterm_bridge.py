@@ -10,11 +10,13 @@
   runs it through ExTerm Lane 18 (/api/lane18/check). The answer is advice for PAPER mode. The bridge never places orders and
   never arms anything: LIVE stays behind ExTerm's PIN gate and 5-step wizard.
 * GET /health: version, mode (always PAPER here), whether a key is present, whether ExTerm answers.
+* GET /evo (v18.2): the Lane 21 Auto-Evolution books (Stocks EVO / Crypto-DEX EVO). Every /signal adds the symbol's book
+  parameters to the Grok context and returns them; they are drift-locked inside the Lane 18 bounds and read-only here.
 * --mock: no xAI call; a deterministic proposal (for tests and offline use).
 Standard library only."""
 import hashlib, hmac, http.server, json, os, re, secrets, sys, time, urllib.error, urllib.request
 
-VERSION = "18.0"
+VERSION = "18.2"
 XAI_URL = "https://api.x.ai/v1/chat/completions"
 SYMBOL = re.compile(r"^(oc:[a-z0-9_-]{2,30}:[A-Za-z0-9]{20,90}|[A-Z0-9]{2,12}-(USD|USDT|USDC|EUR)|[A-Z^][A-Z0-9.^=-]{0,11})$")
 PROMPT = ("You are a risk-aware trading assistant inside ExTerm. Propose at most ONE trade for the symbol as strict JSON only: "
@@ -48,6 +50,14 @@ def ask_grok(sym, context):
     with urllib.request.urlopen(req, timeout=60) as r: j = json.loads(r.read(4_000_000))
     return parse_proposal(((j.get("choices") or [{}])[0].get("message") or {}).get("content", ""))
 
+def evo_status():
+    """v18.2: Lane 21 Auto-Evolution books (Stocks EVO / Crypto-DEX EVO): read-only, drift-locked inside the Lane 18 bounds"""
+    req = urllib.request.Request(CFG["exterm"] + "/api/lane21/status", headers={"X-ExTerm": CFG["xtoken"]})
+    with urllib.request.urlopen(req, timeout=3) as r: return json.loads(r.read(1_000_000)).get("out") or {}
+
+def evo_book(sym):
+    return "crypto" if sym.startswith("oc:") or "-" in sym else "stocks"
+
 def firewall(sym, prop, equity):
     """Lane 18 pre-trade check on the ExTerm launcher (PAPER unless the user armed LIVE there with the PIN)"""
     body = {"sym": sym, "usd": prop["usd"], "px": prop["px"], "atr": prop["atr"], "winp": prop["winp"], "payoff": prop["payoff"], "equity": equity}
@@ -65,6 +75,9 @@ class Bridge(http.server.BaseHTTPRequestHandler):
         return True
     def do_GET(self):
         if not self._auth(): return
+        if self.path == "/evo":  # v18.2: the evolved parameters Grok is told to respect (read-only)
+            try: return self._send(200, {"evo": evo_status(), "mode": "PAPER", "places_orders": False})
+            except Exception as e: return self._send(502, {"error": "ExTerm Lane 21 unavailable: %s" % str(e)[:120]})
         if self.path != "/health": return self._send(404, {"error": "not found"})
         up = False
         try: up = urllib.request.urlopen(urllib.request.Request(CFG["exterm"] + "/api/lane18/status", headers={"X-ExTerm": CFG["xtoken"]}), timeout=3).status == 200
@@ -78,11 +91,15 @@ class Bridge(http.server.BaseHTTPRequestHandler):
             if n > 16384: return self._send(413, {"error": "request too large"})
             j = json.loads(self.rfile.read(n) or b"{}"); sym = str(j.get("sym", ""))[:120]
             if not SYMBOL.match(sym): return self._send(400, {"error": "unsupported symbol"})
-            prop = ask_grok(sym, j.get("context", ""))
-            if prop["side"] == "none" or not prop["usd"] > 0: return self._send(200, {"sym": sym, "proposal": prop, "verdict": "NO-TRADE", "mode": "PAPER", "places_orders": False})
+            book = evo_book(sym); evo = None
+            try: evo = (evo_status() or {}).get(book)
+            except Exception: evo = None
+            ctx = str(j.get("context", ""))[:3500] + ("\nExTerm %s EVO v%s parameters (respect them): %s" % (book, evo.get("ver"), json.dumps(evo.get("params"))) if evo else "")
+            prop = ask_grok(sym, ctx)
+            if prop["side"] == "none" or not prop["usd"] > 0: return self._send(200, {"sym": sym, "proposal": prop, "verdict": "NO-TRADE", "evo": {"book": book, "ver": evo and evo.get("ver")}, "mode": "PAPER", "places_orders": False})
             fw = firewall(sym, prop, float(j.get("equity") or 10000))
             digest = hashlib.sha256(json.dumps({"sym": sym, "p": prop, "fw": fw.get("verdict")}, sort_keys=True).encode()).hexdigest()
-            self._send(200, {"sym": sym, "proposal": prop, "firewall": fw, "verdict": fw.get("verdict"), "mode": "PAPER", "places_orders": False, "sha256": digest, "ts": time.time()})
+            self._send(200, {"sym": sym, "proposal": prop, "firewall": fw, "verdict": fw.get("verdict"), "evo": {"book": book, "ver": evo and evo.get("ver"), "params": evo and evo.get("params")}, "mode": "PAPER", "places_orders": False, "sha256": digest, "ts": time.time()})
         except PermissionError as e: self._send(503, {"error": str(e)})
         except urllib.error.HTTPError as e: self._send(502, {"error": "upstream HTTP %d" % e.code})
         except Exception as e: self._send(400, {"error": str(e)[:200]})
